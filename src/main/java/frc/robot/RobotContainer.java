@@ -4,10 +4,11 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.KrakenTeleopSwerve;
+import frc.robot.Constants.DriverConstants;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.KrakenSwerve;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -18,47 +19,48 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    /* Controllers */
+    private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
 
+    /* Drive Controller Buttons */
+    private final Trigger zeroGyro = driveController.b();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController driveController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+    /* Operator Controller Buttons */
+    //...
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-  }
+    /* Subsystems */
+    private final KrakenSwerve krakenSwerve = new KrakenSwerve();
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-  private void configureBindings() {
-    krakenSwerve.setDefaultCommand(
-            new KrakenTeleopSwerve(
+    /* Teleop Triggers */
+    //...
+
+    /* Auto Triggers */
+    //...
+
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+        configureBindings();
+    }
+
+    /** Use this method to define your trigger->command mappings. */
+    private void configureBindings() {
+        krakenSwerve.setDefaultCommand(
+            new TeleopSwerve(
                 krakenSwerve, 
                 driveController::getRightX, 
                 () -> -driveController.getLeftY(), 
                 () -> -driveController.getLeftX()
             )
-    );
-  }
+        );
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return null;
-  }
+        zeroGyro.onTrue(
+            krakenSwerve.zeroGyro()
+            .andThen(Commands.print("Zeroed gyro"))
+        );
+    }
+
+    /** Use this to pass the autonomous command */
+    public Command getAutonomousCommand() {
+        return null;
+    }
 }
