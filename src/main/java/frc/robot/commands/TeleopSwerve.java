@@ -25,11 +25,25 @@ public class TeleopSwerve extends Command {
     }
 
     @Override
-    public void execute() {
+    public void execute() { 
+        /* Curve inputs to allow for more control closer to the lower range of the joystick */
+        double translationVal = applyInputCurve(translationSup.getAsDouble());
+        double strafeVal = applyInputCurve(strafeSup.getAsDouble());
+        double rotationVal = applyInputCurve(rotSup.getAsDouble());
+
+        /* Multiply by max speed to get the velocity values in m/s */
+        translationVal *= kMaxSpeed;
+        strafeVal *= kMaxSpeed;
+        rotationVal *= kRotationRate;
+
         swerve.driveTrain.setControl(
-            kDriveRequest.withVelocityX(translationSup.getAsDouble() * kSpeedLimit)
-            .withVelocityY(strafeSup.getAsDouble() * kSpeedLimit)
-            .withRotationalRate(rotSup.getAsDouble() * 4 * Math.PI) 
+            kDriveRequest.withVelocityX(translationVal)
+            .withVelocityY(strafeVal)
+            .withRotationalRate(rotationVal) 
         );
+    }
+
+    private double applyInputCurve(double joystickInput) {
+        return Math.copySign(Math.pow(joystickInput, 2), joystickInput);
     }
 }

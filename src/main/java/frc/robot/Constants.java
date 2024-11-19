@@ -12,7 +12,8 @@ public final class Constants {
     public static class DriverConstants {
         public static final int kDriveControllerPort = 0;
 
-        public static final double kSpeedLimit = SwerveConstants.kSpeedAt12VoltsMps;
+        public static final double kMaxSpeed = SwerveConstants.kSpeedAt12VoltsMps;
+        public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new SwerveRequest.FieldCentric()
             .withDeadband(0.1) // TODO tune
