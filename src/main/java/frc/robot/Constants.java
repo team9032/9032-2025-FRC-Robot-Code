@@ -3,6 +3,9 @@ package frc.robot;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
+
+import frc.robot.subsystems.swerve.SwerveConstants;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 public final class Constants {

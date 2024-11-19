@@ -3,7 +3,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.KrakenSwerve;
+import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.DriverConstants.*;
 
