@@ -31,19 +31,29 @@ public class RobotContainer {
     /* Subsystems */
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
 
+    /* Dashboard */
+    //...
+
+    /* Robot Mode Triggers */
+    //...
+
     /* Teleop Triggers */
     //...
 
     /* Auto Triggers */
     //...
 
+    /* State Triggers */
+    //...
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        configureBindings();
+        configureButtonTriggers();
     }
 
-    /** Use this method to define your trigger->command mappings. */
-    private void configureBindings() {
+    /** Use this method to define your button trigger->command mappings. */
+    private void configureButtonTriggers() {
+        /* Driver Controls */
         krakenSwerve.setDefaultCommand(
             new TeleopSwerve(
                 krakenSwerve, 
@@ -57,8 +67,11 @@ public class RobotContainer {
             krakenSwerve.zeroGyro()
             .andThen(Commands.print("Zeroed gyro"))
         );
-    }
 
+        /* Operator Controls */
+        //...
+    }
+    
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return null;
