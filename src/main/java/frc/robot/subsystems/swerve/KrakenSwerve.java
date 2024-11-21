@@ -1,14 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import static frc.robot.Constants.PathplannerConfig.kRobotConfig;
-import static frc.robot.Constants.PathplannerConfig.kRotationPID;
-import static frc.robot.Constants.PathplannerConfig.kTranslationPID;
-import static frc.robot.subsystems.swerve.SwerveConstants.backLeft;
-import static frc.robot.subsystems.swerve.SwerveConstants.backRight;
-import static frc.robot.subsystems.swerve.SwerveConstants.drivetrainConstants;
-import static frc.robot.subsystems.swerve.SwerveConstants.frontLeft;
-import static frc.robot.subsystems.swerve.SwerveConstants.frontRight;
-
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -18,6 +9,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import static frc.robot.Constants.PathplannerConfig.*;
+import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
     public final SwerveDrivetrain driveTrain;
@@ -30,7 +24,7 @@ public class KrakenSwerve extends SubsystemBase {
             () -> driveTrain.getState().Pose, 
             driveTrain::resetPose, 
             () -> driveTrain.getState().Speeds, 
-            this::driveClosedLoop, 
+            this::drivePathPlanner, 
             new PPHolonomicDriveController(
                 kTranslationPID, 
                 kRotationPID
@@ -46,7 +40,11 @@ public class KrakenSwerve extends SubsystemBase {
         return runOnce(() -> driveTrain.getPigeon2().reset());
     }
 
-    private void driveClosedLoop(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
-        //TODO implement
+    private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
+        driveTrain.setControl(
+            kPathPlannerDriveRequest.withSpeeds(setpoint)
+            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
+            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
+        );
     }
 }
