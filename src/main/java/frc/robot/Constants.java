@@ -26,18 +26,18 @@ public final class Constants {
     }
 
     public static class PathplannerConfig {
-        private static final ModuleConfig kModuleConfig = new ModuleConfig(//TODO Find the actual constants
+        private static final ModuleConfig kModuleConfig = new ModuleConfig(
             SwerveConstants.kWheelRadius.baseUnitMagnitude(), 
-            5.0, 
-            1.0, 
+            5.0,//TODO Find the actual constants
+            1.0,//For Coulson wheels
             DCMotor.getKrakenX60(1), 
-            80.0, 
+            80.0,//...
             1
         );
 
-        public static final RobotConfig kRobotConfig = new RobotConfig(//TODO Find the actual constants
-            8.0, 
-            8.0, 
+        public static final RobotConfig kRobotConfig = new RobotConfig(
+            8.0,//TODO Find the actual constants 
+            8.0,//... 
             kModuleConfig, 
             Units.inchesToMeters(24.0),
             Units.inchesToMeters(24.0)
