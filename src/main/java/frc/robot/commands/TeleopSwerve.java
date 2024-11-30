@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
@@ -26,7 +28,7 @@ public class TeleopSwerve extends Command {
 
     @Override
     public void execute() { 
-        /* Curve inputs to allow for more control closer to the lower range of the joystick */
+        /* Curve inputs to allow for more control closer to the lower range of the joystick and apply deadband */
         double translationVal = applyInputCurve(translationSup.getAsDouble());
         double strafeVal = applyInputCurve(strafeSup.getAsDouble());
         double rotationVal = applyInputCurve(rotSup.getAsDouble());
@@ -36,14 +38,12 @@ public class TeleopSwerve extends Command {
         strafeVal *= kMaxSpeed;
         rotationVal *= kRotationRate;
 
-        swerve.driveTrain.setControl(
-            kDriveRequest.withVelocityX(translationVal)
-            .withVelocityY(strafeVal)
-            .withRotationalRate(rotationVal) 
-        );
+        swerve.driveOptimized(new ChassisSpeeds(translationVal, strafeVal, rotationVal), kDriveRequestType);
     }
 
     private double applyInputCurve(double joystickInput) {
+        joystickInput = MathUtil.applyDeadband(joystickInput, kJoystickDeadband);
+
         return Math.copySign(Math.pow(joystickInput, 2), joystickInput);
     }
 }

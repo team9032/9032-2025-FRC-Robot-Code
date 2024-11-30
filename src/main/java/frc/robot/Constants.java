@@ -1,9 +1,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.ModuleRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
-import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -19,10 +19,8 @@ public final class Constants {
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
         public static final double kRotationRate = 4 * Math.PI;
 
-        public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(0.1) // TODO tune
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+        public static final double kJoystickDeadband = 0.02;//For Xbox Controllers
+        public static final DriveRequestType kDriveRequestType = DriveRequestType.OpenLoopVoltage;
     }
 
     public static class PathplannerConfig {
@@ -49,5 +47,10 @@ public final class Constants {
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);//TODO tune
+
+        public static final ModuleRequest kModuleRequest = new ModuleRequest()
+            .withSteerRequest(SteerRequestType.MotionMagicExpo);
+
+        public static final double kMaxSteerVelocity = 4.0;//TODO find (rad/s)
     }
 }
