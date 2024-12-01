@@ -9,12 +9,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Localization;
 
 import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
     public final SwerveDrivetrain driveTrain;
+    
+    private final Localization localization;
 
     public KrakenSwerve() {
         driveTrain = new SwerveDrivetrain(drivetrainConstants, frontLeft, frontRight, backLeft, backRight);
@@ -34,6 +37,8 @@ public class KrakenSwerve extends SubsystemBase {
             () -> DriverStation.getAlliance().orElseGet(() -> DriverStation.Alliance.Blue) == DriverStation.Alliance.Red, 
             this
         );
+        
+        localization = new Localization(driveTrain);
     }
 
     public Command zeroGyro() {
@@ -47,4 +52,10 @@ public class KrakenSwerve extends SubsystemBase {
             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
         );
     }
+
+    @Override
+    public void periodic(){
+        localization.update();
+    }
+
 }
