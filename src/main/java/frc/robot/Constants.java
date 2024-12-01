@@ -67,10 +67,10 @@ public final class Constants {
         
         /* Indexed 0 to n-1 */
         static {
-            kCameraNames[0] = "camera0";
-            kCameraNames[1] = "camera1";
-            kCameraNames[2] = "camera2";
-            kCameraNames[3] = "camera3";
+            kCameraNames[0] = "FrontCamera";
+            kCameraNames[1] = "LeftCamera";
+            kCameraNames[2] = "BackCamera";
+            kCameraNames[3] = "RightCamera";
             
             kRobotToCameraTransforms[0] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
             kRobotToCameraTransforms[1] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
