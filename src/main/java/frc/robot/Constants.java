@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -8,10 +11,11 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -91,7 +95,20 @@ public final class Constants {
             1 * Math.PI //theta
             //nums can't be < 1
         );
-
-        public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        public static final List<AprilTag> aprilTags = new ArrayList<>();
+        
+        static{
+            //add zs, 55 inches
+            aprilTags.add(new AprilTag(2,new Pose3d(0,3.2004,1.397,new Rotation3d(0,0,0))));
+            aprilTags.add(new AprilTag(3,new Pose3d(3.0861,0,1.397,new Rotation3d(0,0,Math.PI/2))));
+            aprilTags.add(new AprilTag(3,new Pose3d(3.6576,0,1.397,new Rotation3d(0,0,Math.PI/2))));
+            aprilTags.add(new AprilTag(6,new Pose3d(7.2898,3.2004,1.397,new Rotation3d(0,0,Math.PI))));
+            aprilTags.add(new AprilTag(8,new Pose3d(3.6576,6.35,1.397,new Rotation3d(0,0,-Math.PI/2))));
+        }
+        
+        public static final double fieldLength = 7.2898; //x-axis
+        public static final double fieldWidth = 6.35;
+        public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(aprilTags,fieldLength,fieldWidth);
+        //public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     }
 }
