@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -20,9 +21,9 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(0.1) // TODO tune
+            .withDeadband(kMaxSpeed * 0.05) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withSteerRequestType(SteerRequestType.MotionMagic);
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
     public static class PathplannerConfig {
@@ -31,23 +32,29 @@ public final class Constants {
             5.0,//TODO Find the actual constants
             1.0,//For Coulson wheels
             DCMotor.getKrakenX60(1), 
-            80.0,//...
+            70.0,//Default from swerve project
             1
         );
 
+        public static final double kTrackwidth = Units.inchesToMeters(24.0);
+
+        public static final Translation2d kflModuleOffset = new Translation2d(kTrackwidth / 2.0, kTrackwidth / 2.0);
+        public static final Translation2d kfrModuleOffset = new Translation2d(kTrackwidth / 2.0, -kTrackwidth / 2.0);
+        public static final Translation2d kblModuleOffset = new Translation2d(-kTrackwidth / 2.0, kTrackwidth / 2.0);
+        public static final Translation2d kbrModuleOffset = new Translation2d(-kTrackwidth / 2.0, -kTrackwidth / 2.0);
+
         public static final RobotConfig kRobotConfig = new RobotConfig(
-            8.0,//TODO Find the actual constants 
-            8.0,//... 
+            Units.lbsToKilograms(55.0),//TODO Find the actual constants 
+            (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152),//... 
             kModuleConfig, 
-            Units.inchesToMeters(24.0),
-            Units.inchesToMeters(24.0)
+            kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset
         );
 
-        public static final PIDConstants kTranslationPID = new PIDConstants(0.0);//TODO Tune
-        public static final PIDConstants kRotationPID = new PIDConstants(0.0);
+        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
+        public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);//TODO tune
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 }
