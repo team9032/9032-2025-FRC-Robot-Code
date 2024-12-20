@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import frc.robot.localization.LocalizationCamera;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
@@ -72,25 +73,21 @@ public final class Constants {
     }
 
     public static final class LocalizationConstants {
-        public static final int kNumberCameras = 4; /*!!!manually add ncameras cameras!!!*/
+        public static final LocalizationCamera[] kCameras = new LocalizationCamera[] {
+            new LocalizationCamera("FrontCamera", new Transform3d(
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
 
-        public static final String[] kCameraNames = new String[kNumberCameras]; //TODO manually add ncameras cameras
-        public static final Transform3d[] kRobotToCameraTransforms = new Transform3d[kNumberCameras];
-        
-        /* Indexed 0 to n-1 */
-        static {
-            kCameraNames[0] = "FrontCamera";
-            kCameraNames[1] = "LeftCamera";
-            kCameraNames[2] = "BackCamera";
-            kCameraNames[3] = "RightCamera";
-            
-            kRobotToCameraTransforms[0] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
-            kRobotToCameraTransforms[1] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
-            kRobotToCameraTransforms[2] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
-            kRobotToCameraTransforms[3] = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
-        }
+            new LocalizationCamera("LeftCamera", new Transform3d(new 
+                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+
+            new LocalizationCamera("BackCamera", new Transform3d(
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+
+            new LocalizationCamera("RightCamera", new Transform3d(
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+        };
+
         //TODO all under need to be tuned 
-        public static final double kAmbiguityThreshold = 0.2;
         public static final double kPoseAmbiguityOffset = 0.2;
         public static final double kPoseAmbiguityMultiplier = 4;
         public static final double kNoisyDistanceMeters = 2.5;
@@ -115,7 +112,7 @@ public final class Constants {
         
         public static final double kFieldLength = 7.2898;//X-axis
         public static final double kFieldWidth = 6.35;
-        
+
         public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(kAprilTags, kFieldLength, kFieldWidth);
     }
 }
