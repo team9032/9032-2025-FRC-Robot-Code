@@ -115,6 +115,7 @@ public final class Constants {
         
         public static final double kFieldLength = 7.2898;//X-axis
         public static final double kFieldWidth = 6.35;
+        
         public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(kAprilTags, kFieldLength, kFieldWidth);
     }
 }
