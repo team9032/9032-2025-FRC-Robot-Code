@@ -35,7 +35,7 @@ public final class Constants {
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(0.1) // TODO tune
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+            .withSteerRequestType(SteerRequestType.MotionMagic);
     }
 
     public static class PathplannerConfig {
