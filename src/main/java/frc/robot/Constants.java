@@ -70,7 +70,8 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);//TODO tune
     }
-    public static final class LocalizationConstants{
+
+    public static final class LocalizationConstants {
         public static final int kNumberCameras = 4; /*!!!manually add ncameras cameras!!!*/
 
         public static final String[] kCameraNames = new String[kNumberCameras]; //TODO manually add ncameras cameras
@@ -97,25 +98,23 @@ public final class Constants {
         public static final int kTagPresenceWeight = 10;
         
         public static final Matrix<N3, N1> kVisionStandardDeviations = VecBuilder.fill(
-            1, //x
-            1, //y
-            1 * Math.PI //theta
-            //nums can't be < 1
+            1,//X
+            1,//Y
+            1 * Math.PI//Theta
         );
-        public static final List<AprilTag> aprilTags = new ArrayList<>();
+
+        public static final List<AprilTag> kAprilTags = new ArrayList<>();      
+        static { 
+            //TODO add zs, 55 inches
+            kAprilTags.add(new AprilTag(2, new Pose3d(0, 3.2004, 1.397, new Rotation3d(0, 0, 0))));
+            kAprilTags.add(new AprilTag(3, new Pose3d(3.0861, 0, 1.397, new Rotation3d(0, 0, Math.PI / 2))));
+            kAprilTags.add(new AprilTag(3, new Pose3d(3.6576, 0, 1.397, new Rotation3d(0, 0, Math.PI / 2))));
+            kAprilTags.add(new AprilTag(6, new Pose3d(7.2898, 3.2004,1.397, new Rotation3d(0, 0, Math.PI))));
+            kAprilTags.add(new AprilTag(8, new Pose3d(3.6576, 6.35, 1.397, new Rotation3d(0,0, -Math.PI / 2))));
+        } 
         
-        static{
-            //add zs, 55 inches
-            aprilTags.add(new AprilTag(2,new Pose3d(0,3.2004,1.397,new Rotation3d(0,0,0))));
-            aprilTags.add(new AprilTag(3,new Pose3d(3.0861,0,1.397,new Rotation3d(0,0,Math.PI/2))));
-            aprilTags.add(new AprilTag(3,new Pose3d(3.6576,0,1.397,new Rotation3d(0,0,Math.PI/2))));
-            aprilTags.add(new AprilTag(6,new Pose3d(7.2898,3.2004,1.397,new Rotation3d(0,0,Math.PI))));
-            aprilTags.add(new AprilTag(8,new Pose3d(3.6576,6.35,1.397,new Rotation3d(0,0,-Math.PI/2))));
-        }
-        
-        public static final double fieldLength = 7.2898; //x-axis
-        public static final double fieldWidth = 6.35;
-        public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(aprilTags,fieldLength,fieldWidth);
-        //public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+        public static final double kFieldLength = 7.2898;//X-axis
+        public static final double kFieldWidth = 6.35;
+        public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(kAprilTags, kFieldLength, kFieldWidth);
     }
 }

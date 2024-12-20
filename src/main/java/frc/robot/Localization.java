@@ -17,7 +17,7 @@ import static frc.robot.Constants.LocalizationConstants.*;
 
 import java.util.Optional;
 
-public class Localization{
+public class Localization {
     private final Field2d[] fields = new Field2d[kNumberCameras];
 
     private final PhotonCamera[] cameras = new PhotonCamera[kNumberCameras];
@@ -26,7 +26,7 @@ public class Localization{
     private final SwerveDrivetrain drivetrain;
 
     public Localization(SwerveDrivetrain drivetrain) {  
-        for(int i = 0; i < kNumberCameras; i++){
+        for(int i = 0; i < kNumberCameras; i++) {
             cameras[i] = new PhotonCamera(kCameraNames[i]);
             photonPoseEstimators[i] = new PhotonPoseEstimator(
                 kAprilTagFieldLayout, 

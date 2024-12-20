@@ -54,7 +54,7 @@ public class KrakenSwerve extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         localization.update();
     }
 
