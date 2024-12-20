@@ -20,7 +20,7 @@ public class KrakenSwerve extends SubsystemBase {
     private final Localization localization;
 
     public KrakenSwerve() {
-        driveTrain = new SwerveDrivetrain(drivetrainConstants, frontLeft, frontRight, backLeft, backRight);
+        driveTrain = new SwerveDrivetrain(drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight);
 
         /* Configure PathPlanner */
         AutoBuilder.configure(
