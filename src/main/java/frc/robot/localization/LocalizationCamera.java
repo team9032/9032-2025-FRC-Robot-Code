@@ -47,7 +47,8 @@ public class LocalizationCamera {
                 drivetrain.addVisionMeasurement(
                     estimatedPose.estimatedPose.toPose2d(),
                     estimatedPose.timestampSeconds,
-                    confidenceCalculator(estimatedPose));
+                    confidenceCalculator(estimatedPose)
+                );
 
                 field.setRobotPose(estimatedPose.estimatedPose.toPose2d());
             }

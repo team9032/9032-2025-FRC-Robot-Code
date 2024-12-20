@@ -72,7 +72,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);//TODO tune
     }
 
-    public static final class LocalizationConstants {
+    public static final class LocalizationConstants {//TODO all under need to be tuned 
         public static final LocalizationCamera[] kCameras = new LocalizationCamera[] {
             new LocalizationCamera("FrontCamera", new Transform3d(
                 new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
@@ -87,7 +87,6 @@ public final class Constants {
                 new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
         };
 
-        //TODO all under need to be tuned 
         public static final double kPoseAmbiguityOffset = 0.2;
         public static final double kPoseAmbiguityMultiplier = 4;
         public static final double kNoisyDistanceMeters = 2.5;

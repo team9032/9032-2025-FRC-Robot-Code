@@ -11,8 +11,8 @@ public class Localization {
         this.drivetrain = drivetrain;
     }
 
-    /** Gets the unread results for each camera, then add each result to its own photonPoseEstimator, 
-     *  and adds the result of the pose estimator to the swerve one. Call this method once every loop */
+    /** Gets the unread results for each camera, then adds each result to its own photonPoseEstimator, 
+     *  then adds the result of the photonPoseEstimator to the swerve one. Call this method once every loop. */
     public void update() {
         for (LocalizationCamera camera : kCameras) {
             camera.addResultsToDrivetrain(drivetrain);
