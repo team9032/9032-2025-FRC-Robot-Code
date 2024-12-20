@@ -17,7 +17,7 @@ public class KrakenSwerve extends SubsystemBase {
     public final SwerveDrivetrain driveTrain;
 
     public KrakenSwerve() {
-        driveTrain = new SwerveDrivetrain(drivetrainConstants, frontLeft, frontRight, backLeft, backRight);
+        driveTrain = new SwerveDrivetrain(drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight);
 
         /* Configure PathPlanner */
         AutoBuilder.configure(
