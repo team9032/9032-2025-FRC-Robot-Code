@@ -69,7 +69,7 @@ public final class Constants {
 
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);//TODO tune
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 

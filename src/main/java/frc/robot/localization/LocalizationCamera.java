@@ -15,27 +15,23 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
 import static frc.robot.Constants.LocalizationConstants.*;
 
 public class LocalizationCamera {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
-    private final Field2d field;
-
     public LocalizationCamera(String name, Transform3d robotToCameraTransform) {
         camera = new PhotonCamera(name);
+
         poseEstimator = new PhotonPoseEstimator(
             kAprilTagFieldLayout, 
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,  
             robotToCameraTransform
         );   
-
-        field = new Field2d();
     }
 
-    public void addResultsToDrivetrain(SwerveDrivetrain drivetrain) {
+    public void addResultsToDrivetrain(SwerveDrivetrain drivetrain, Field2d localizationField) {
         var results = camera.getAllUnreadResults();
 
         for (PhotonPipelineResult result : results) {
@@ -50,7 +46,8 @@ public class LocalizationCamera {
                     confidenceCalculator(estimatedPose)
                 );
 
-                field.setRobotPose(estimatedPose.estimatedPose.toPose2d());
+                /* Add this camera's pose to the field on the dashboard */
+                localizationField.getObject(camera.getName()).setPose(estimatedPose.estimatedPose.toPose2d());
             }
         }
     }
