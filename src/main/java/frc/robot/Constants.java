@@ -76,17 +76,18 @@ public final class Constants {
         public static final LocalizationCamera[] kCameras = new LocalizationCamera[] {
             new LocalizationCamera("FrontCamera", new Transform3d(
                 new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
-
+                //36.6 cm 
             new LocalizationCamera("LeftCamera", new Transform3d(new 
-                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI/2))),
 
             new LocalizationCamera("BackCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI))),
 
             new LocalizationCamera("RightCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+                new Translation3d(0, 0.0, 0.5), new Rotation3d(0,0,-Math.PI))),
+                //14.5 inches, 14.5 inches + 3 cm - cam extends, 29 cm up
         };
-
+        //29x29 inches
         public static final double kPoseAmbiguityOffset = 0.2;
         public static final double kPoseAmbiguityMultiplier = 4;
         public static final double kNoisyDistanceMeters = 2.5;
