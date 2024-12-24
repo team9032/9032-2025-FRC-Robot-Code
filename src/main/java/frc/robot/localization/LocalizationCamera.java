@@ -10,25 +10,28 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static frc.robot.Constants.LocalizationConstants.*;
 
 public class LocalizationCamera {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
-    public LocalizationCamera(String name, Transform3d robotToCameraTransform) {
-        camera = new PhotonCamera(name);
+    public LocalizationCamera(CameraConstants constants, AprilTagFieldLayout layout) {
+        camera = new PhotonCamera(constants.name());
 
         poseEstimator = new PhotonPoseEstimator(
-            kAprilTagFieldLayout, 
+            layout, 
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,  
-            robotToCameraTransform
-        );   
+            constants.robotToCameraTransform()
+        );
     }
 
     public void addResultsToDrivetrain(SwerveDrivetrain drivetrain, Field2d localizationField) {
@@ -40,14 +43,19 @@ public class LocalizationCamera {
             if (optionalEstimatedPose.isPresent()) {
                 EstimatedRobotPose estimatedPose = optionalEstimatedPose.get();
 
+                var standardDeviations = confidenceCalculator(estimatedPose);
+
                 drivetrain.addVisionMeasurement(
                     estimatedPose.estimatedPose.toPose2d(),
                     estimatedPose.timestampSeconds,
-                    confidenceCalculator(estimatedPose)
+                    standardDeviations
                 );
 
                 /* Add this camera's pose to the field on the dashboard */
                 localizationField.getObject(camera.getName()).setPose(estimatedPose.estimatedPose.toPose2d());
+
+                /* Add the standard deviations to the dashboard */
+                SmartDashboard.putNumberArray(camera.getName() + " StdDevs", standardDeviations.getData());
             }
         }
     }

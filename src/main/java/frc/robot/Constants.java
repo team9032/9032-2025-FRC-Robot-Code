@@ -1,8 +1,5 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -12,11 +9,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -24,7 +18,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.localization.LocalizationCamera;
+import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
@@ -44,7 +38,7 @@ public final class Constants {
         private static final ModuleConfig kModuleConfig = new ModuleConfig(
             SwerveConstants.kWheelRadius.baseUnitMagnitude(), 
             5.0,//TODO Find the actual constants
-            1.0,//For Coulson wheels
+            1.0,//TODO find for Vex Griplock wheels
             DCMotor.getKrakenX60(1), 
             70.0,//Default from swerve project
             1
@@ -73,21 +67,7 @@ public final class Constants {
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
-        public static final LocalizationCamera[] kCameras = new LocalizationCamera[] {
-            new LocalizationCamera("FrontCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
-                //36.6 cm 
-            new LocalizationCamera("LeftCamera", new Transform3d(new 
-                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI/2))),
-
-            new LocalizationCamera("BackCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI))),
-
-            new LocalizationCamera("RightCamera", new Transform3d(
-                new Translation3d(0, 0.0, 0.5), new Rotation3d(0,0,-Math.PI))),
-                //14.5 inches, 14.5 inches + 3 cm - cam extends, 29 cm up
-        };
-        //29x29 inches
+        /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityOffset = 0.2;
         public static final double kPoseAmbiguityMultiplier = 4;
         public static final double kNoisyDistanceMeters = 2.5;
@@ -100,19 +80,21 @@ public final class Constants {
             1 * Math.PI//Theta
         );
 
-        public static final List<AprilTag> kAprilTags = new ArrayList<>();      
-        static { 
-            //TODO add zs, 55 inches
-            kAprilTags.add(new AprilTag(2, new Pose3d(0, 3.2004, 1.397, new Rotation3d(0, 0, 0))));
-            kAprilTags.add(new AprilTag(3, new Pose3d(3.0861, 0, 1.397, new Rotation3d(0, 0, Math.PI / 2))));
-            kAprilTags.add(new AprilTag(3, new Pose3d(3.6576, 0, 1.397, new Rotation3d(0, 0, Math.PI / 2))));
-            kAprilTags.add(new AprilTag(6, new Pose3d(7.2898, 3.2004,1.397, new Rotation3d(0, 0, Math.PI))));
-            kAprilTags.add(new AprilTag(8, new Pose3d(3.6576, 6.35, 1.397, new Rotation3d(0,0, -Math.PI / 2))));
-        } 
-        
-        public static final double kFieldLength = 7.2898;//X-axis
-        public static final double kFieldWidth = 6.35;
+        public static final String kAprilTagFieldLayoutName = "basement-layout.json";//Loads from a JSON file in deploy
 
-        public static final AprilTagFieldLayout kAprilTagFieldLayout = new AprilTagFieldLayout(kAprilTags, kFieldLength, kFieldWidth);
+        public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
+            new CameraConstants("FrontCamera", new Transform3d(
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
+                //36.6 cm 
+            new CameraConstants("LeftCamera", new Transform3d(new 
+                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI/2))),
+
+            new CameraConstants("BackCamera", new Transform3d(
+                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI))),
+
+            new CameraConstants("RightCamera", new Transform3d(
+                new Translation3d(0, 0.0, 0.5), new Rotation3d(0,0,-Math.PI))),
+                //14.5 inches, 14.5 inches + 3 cm - cam extends, 29 cm up
+        };//29x29 inches
     }
 }
