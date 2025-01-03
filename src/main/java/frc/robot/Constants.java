@@ -74,7 +74,7 @@ public final class Constants {
         public static final double kDistanceWeight = 7;
         public static final int kTagPresenceWeight = 10;
         
-        public static final Matrix<N3, N1> kVisionStandardDeviations = VecBuilder.fill(
+        public static final Matrix<N3, N1> kBaseStandardDeviations = VecBuilder.fill(
             1,//X
             1,//Y
             1 * Math.PI//Theta
@@ -84,17 +84,21 @@ public final class Constants {
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0))),
-                //36.6 cm 
-            new CameraConstants("LeftCamera", new Transform3d(new 
-                Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI/2))),
-
+                new Translation3d(Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.0)), 
+                new Rotation3d(0, 0, 0))
+            ),
+            new CameraConstants("LeftCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
+                new Rotation3d(0, 0, Math.PI / 2.0))
+            ),
             new CameraConstants("BackCamera", new Transform3d(
-                new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,Math.PI))),
-
+                new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
+                new Rotation3d(0, 0, Math.PI))
+            ),
             new CameraConstants("RightCamera", new Transform3d(
-                new Translation3d(0, 0.0, 0.5), new Rotation3d(0,0,-Math.PI))),
-                //14.5 inches, 14.5 inches + 3 cm - cam extends, 29 cm up
-        };//29x29 inches
+                new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
+                new Rotation3d(0, 0, -Math.PI / 2.0))
+            ),
+        };
     }
 }

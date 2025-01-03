@@ -12,7 +12,6 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -61,7 +60,7 @@ public class LocalizationCamera {
     }
 
     /** Finds the standard deviations based on smallest tag distance, number of tags, and pose ambiguity  */
-    private Matrix<N3, N1> confidenceCalculator(EstimatedRobotPose estimation) {//TODO test this method
+    private Matrix<N3, N1> confidenceCalculator(EstimatedRobotPose estimation) {
         /* Find the smallest distance to a tag */
         double smallestDistance = Double.POSITIVE_INFINITY;
         for (var target : estimation.targetsUsed) {
@@ -92,6 +91,6 @@ public class LocalizationCamera {
         /* Combine all standard deviation scaling */
         double confidenceMultiplier = Math.max(1, (distanceMultiplier * poseAmbiguityMultiplier) / tagPresenceDivider);
 
-        return kVisionStandardDeviations.times(confidenceMultiplier);
+        return kBaseStandardDeviations.times(confidenceMultiplier);
     }
 }

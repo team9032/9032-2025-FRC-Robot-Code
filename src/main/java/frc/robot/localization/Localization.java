@@ -3,6 +3,7 @@ package frc.robot.localization;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,9 +24,9 @@ public class Localization {
 
         AprilTagFieldLayout layout = null;
         try {
-            layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory().getPath() + kAprilTagFieldLayoutName);
+            layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
         } catch(Exception e) {
-            e.printStackTrace();
+            DriverStation.reportError("Error opening AprilTag field layout", e.getStackTrace());
         }
 
         for (int i = 0; i < cameras.length; i++) {
