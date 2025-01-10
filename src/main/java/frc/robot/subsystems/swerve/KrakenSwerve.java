@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -15,12 +17,15 @@ import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
-    public final SwerveDrivetrain driveTrain;
+    public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> driveTrain;
     
     private final Localization localization;
 
     public KrakenSwerve() {
-        driveTrain = new SwerveDrivetrain(drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight);
+        driveTrain = new SwerveDrivetrain<>(
+            TalonFX::new, TalonFX::new, CANcoder::new,
+            drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
+        );
 
         /* Configure PathPlanner */
         AutoBuilder.configure(

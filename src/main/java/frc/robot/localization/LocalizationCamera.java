@@ -33,7 +33,7 @@ public class LocalizationCamera {
         );
     }
 
-    public void addResultsToDrivetrain(SwerveDrivetrain drivetrain, Field2d localizationField) {
+    public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         var results = camera.getAllUnreadResults();
 
         for (PhotonPipelineResult result : results) {

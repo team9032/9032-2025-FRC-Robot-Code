@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static frc.robot.Constants.LocalizationConstants.*;
 
 public class Localization {
-    private final SwerveDrivetrain drivetrain;
+    private final SwerveDrivetrain<?, ?, ?> drivetrain;
 
     private final Field2d field;
 
     private final LocalizationCamera[] cameras = new LocalizationCamera[kCameraConstants.length];
 
-    public Localization(SwerveDrivetrain drivetrain) {  
+    public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
 
         field = new Field2d();
