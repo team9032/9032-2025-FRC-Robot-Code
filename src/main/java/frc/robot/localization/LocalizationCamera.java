@@ -8,6 +8,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -46,7 +47,7 @@ public class LocalizationCamera {
 
                 drivetrain.addVisionMeasurement(
                     estimatedPose.estimatedPose.toPose2d(),
-                    estimatedPose.timestampSeconds,
+                    Utils.fpgaToCurrentTime(estimatedPose.timestampSeconds),
                     standardDeviations
                 );
 
