@@ -73,6 +73,8 @@ public final class Constants {
         public static final double kNoisyDistanceMeters = 2.5;
         public static final double kDistanceWeight = 7;
         public static final int kTagPresenceWeight = 10;
+
+        public static final double kAcceptablePoseAmbiguity = 0.1;//When to activate ambiguity compensation
         
         public static final Matrix<N3, N1> kBaseStandardDeviations = VecBuilder.fill(
             1,//X
@@ -80,7 +82,7 @@ public final class Constants {
             1 * Math.PI//Theta
         );
 
-        public static final String kAprilTagFieldLayoutName = "basement-layout.json";//Loads from a JSON file in deploy
+        public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontCamera", new Transform3d(

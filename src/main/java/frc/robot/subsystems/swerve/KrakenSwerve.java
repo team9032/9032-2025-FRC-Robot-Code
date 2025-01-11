@@ -17,21 +17,21 @@ import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
-    public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> driveTrain;
+    public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
     
     private final Localization localization;
 
     public KrakenSwerve() {
-        driveTrain = new SwerveDrivetrain<>(
+        drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
             drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
         );
 
         /* Configure PathPlanner */
         AutoBuilder.configure(
-            () -> driveTrain.getState().Pose, 
-            driveTrain::resetPose, 
-            () -> driveTrain.getState().Speeds, 
+            () -> drivetrain.getState().Pose, 
+            drivetrain::resetPose, 
+            () -> drivetrain.getState().Speeds, 
             this::drivePathPlanner, 
             new PPHolonomicDriveController(
                 kTranslationPID, 
@@ -43,15 +43,15 @@ public class KrakenSwerve extends SubsystemBase {
             this
         );
         
-        localization = new Localization(driveTrain);
+        localization = new Localization(drivetrain);
     }
 
     public Command zeroGyro() {
-        return runOnce(() -> driveTrain.getPigeon2().reset());
+        return runOnce(() -> drivetrain.getPigeon2().reset());
     }
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
-        driveTrain.setControl(
+        drivetrain.setControl(
             kPathPlannerDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())

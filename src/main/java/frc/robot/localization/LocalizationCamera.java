@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -37,27 +38,68 @@ public class LocalizationCamera {
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         var results = camera.getAllUnreadResults();
 
-        for (PhotonPipelineResult result : results) {
-            Optional<EstimatedRobotPose> optionalEstimatedPose = poseEstimator.update(result);
+        for (PhotonPipelineResult pipelineResult : results) {
+            Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
 
-            if (optionalEstimatedPose.isPresent()) {
-                EstimatedRobotPose estimatedPose = optionalEstimatedPose.get();
+            if (optionalResult.isPresent()) {
+                EstimatedRobotPose poseEstimatorResult = optionalResult.get();
 
-                var standardDeviations = confidenceCalculator(estimatedPose);
+                double convertedTimestamp = Utils.fpgaToCurrentTime(poseEstimatorResult.timestampSeconds);
+
+                Pose2d robotPose = removeAmbiguity(drivetrain, poseEstimatorResult, convertedTimestamp);
+
+                var standardDeviations = confidenceCalculator(poseEstimatorResult);
 
                 drivetrain.addVisionMeasurement(
-                    estimatedPose.estimatedPose.toPose2d(),
-                    Utils.fpgaToCurrentTime(estimatedPose.timestampSeconds),
+                    robotPose,
+                    convertedTimestamp,
                     standardDeviations
                 );
 
                 /* Add this camera's pose to the field on the dashboard */
-                localizationField.getObject(camera.getName()).setPose(estimatedPose.estimatedPose.toPose2d());
+                localizationField.getObject(camera.getName()).setPose(robotPose);
 
                 /* Add the standard deviations to the dashboard */
                 SmartDashboard.putNumberArray(camera.getName() + " StdDevs", standardDeviations.getData());
             }
         }
+    }
+
+    /** Attempts to remove pose ambiguity for single tag measurements by comparing the best and alternate pose heading 
+     *  to the drivetrain's heading and using the one with the least difference - does nothing if there are multiple tags or low ambiguity */
+    private Pose2d removeAmbiguity(SwerveDrivetrain<?, ?, ?> drivetrain, EstimatedRobotPose estimatorResult, double timestamp) {
+        /* By default, the pose estimator uses the best pose */
+        Pose2d bestReprojPose = estimatorResult.estimatedPose.toPose2d();;
+
+        if(estimatorResult.targetsUsed.size() == 1) {
+            var target = estimatorResult.targetsUsed.get(0);
+
+            if(target.getPoseAmbiguity() > kAcceptablePoseAmbiguity) {
+                Optional<Pose2d> optionalDrivetrainPose = drivetrain.samplePoseAt(timestamp);
+
+                if(optionalDrivetrainPose.isPresent()) {
+                    var drivetrainPose = optionalDrivetrainPose.get();
+                    
+                    var tagPose = poseEstimator.getFieldTags().getTagPose(target.fiducialId).get();
+
+                    /* Convert the alternate transform to a pose based on what is done in photonPoseEstimator */
+                    Pose2d alternateReprojPose = tagPose.transformBy(target.getAlternateCameraToTarget().inverse())
+                        .transformBy(poseEstimator.getRobotToCameraTransform().inverse())
+                        .toPose2d();
+        
+                    /* Find the differences between the drivetrain's pose and the estimates */
+                    double bestAngleDifference = Math.abs(bestReprojPose.minus(drivetrainPose).getRotation().getDegrees());
+                    double alternateAngleDifference = Math.abs(alternateReprojPose.minus(drivetrainPose).getRotation().getDegrees());
+                    
+                    /* Only return the alternate pose if it has a lower difference than the best pose */
+                    if(bestAngleDifference > alternateAngleDifference) {
+                        return alternateReprojPose;
+                    }
+                }
+            }
+        }
+
+        return bestReprojPose;
     }
 
     /** Finds the standard deviations based on smallest tag distance, number of tags, and pose ambiguity  */
@@ -72,7 +114,7 @@ public class LocalizationCamera {
                 smallestDistance = distance;
         }
 
-        /* If there is only 1 tag, the pose ambiguity is high, so increase standard deviations */
+        /* If there is only 1 tag there could be pose ambiguity, so increase standard deviations based on it */
         double poseAmbiguityMultiplier = 1;
         if (estimation.targetsUsed.size() == 1) {
             poseAmbiguityMultiplier = Math.max(1, 
