@@ -46,7 +46,7 @@ public class LocalizationCamera {
 
                 double convertedTimestamp = Utils.fpgaToCurrentTime(poseEstimatorResult.timestampSeconds);
 
-                Pose2d robotPose = removeAmbiguity(drivetrain, poseEstimatorResult, convertedTimestamp);
+                Pose2d robotPose = poseEstimatorResult.estimatedPose.toPose2d();
 
                 var standardDeviations = confidenceCalculator(poseEstimatorResult);
 
@@ -63,43 +63,6 @@ public class LocalizationCamera {
                 SmartDashboard.putNumberArray(camera.getName() + " StdDevs", standardDeviations.getData());
             }
         }
-    }
-
-    /** Attempts to remove pose ambiguity for single tag measurements by comparing the best and alternate pose heading 
-     *  to the drivetrain's heading and using the one with the least difference - does nothing if there are multiple tags or low ambiguity */
-    private Pose2d removeAmbiguity(SwerveDrivetrain<?, ?, ?> drivetrain, EstimatedRobotPose estimatorResult, double timestamp) {
-        /* By default, the pose estimator uses the best pose */
-        Pose2d bestReprojPose = estimatorResult.estimatedPose.toPose2d();;
-
-        if(estimatorResult.targetsUsed.size() == 1) {
-            var target = estimatorResult.targetsUsed.get(0);
-
-            if(target.getPoseAmbiguity() > kAcceptablePoseAmbiguity) {
-                Optional<Pose2d> optionalDrivetrainPose = drivetrain.samplePoseAt(timestamp);
-
-                if(optionalDrivetrainPose.isPresent()) {
-                    var drivetrainPose = optionalDrivetrainPose.get();
-                    
-                    var tagPose = poseEstimator.getFieldTags().getTagPose(target.fiducialId).get();
-
-                    /* Convert the alternate transform to a pose based on what is done in photonPoseEstimator */
-                    Pose2d alternateReprojPose = tagPose.transformBy(target.getAlternateCameraToTarget().inverse())
-                        .transformBy(poseEstimator.getRobotToCameraTransform().inverse())
-                        .toPose2d();
-        
-                    /* Find the differences between the drivetrain's pose and the estimates */
-                    double bestAngleDifference = Math.abs(bestReprojPose.minus(drivetrainPose).getRotation().getDegrees());
-                    double alternateAngleDifference = Math.abs(alternateReprojPose.minus(drivetrainPose).getRotation().getDegrees());
-                    
-                    /* Only return the alternate pose if it has a lower difference than the best pose */
-                    if(bestAngleDifference > alternateAngleDifference) {
-                        return alternateReprojPose;
-                    }
-                }
-            }
-        }
-
-        return bestReprojPose;
     }
 
     /** Finds the standard deviations based on smallest tag distance, number of tags, and pose ambiguity  */

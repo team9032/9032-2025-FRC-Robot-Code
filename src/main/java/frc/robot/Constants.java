@@ -73,8 +73,6 @@ public final class Constants {
         public static final double kNoisyDistanceMeters = 2.5;
         public static final double kDistanceWeight = 7;
         public static final int kTagPresenceWeight = 10;
-
-        public static final double kAcceptablePoseAmbiguity = 0.1;//When to activate ambiguity compensation
         
         public static final Matrix<N3, N1> kBaseStandardDeviations = VecBuilder.fill(
             1,//X
