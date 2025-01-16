@@ -36,7 +36,7 @@ public class TeleopSwerve extends Command {
         strafeVal *= kMaxSpeed;
         rotationVal *= kRotationRate;
 
-        swerve.driveTrain.setControl(
+        swerve.drivetrain.setControl(
             kDriveRequest.withVelocityX(translationVal)
             .withVelocityY(strafeVal)
             .withRotationalRate(rotationVal) 
