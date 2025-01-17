@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -17,7 +18,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveElevator(double pos) {
-        elevatorMotor.setControl(new PositionVoltage(pos));
+        elevatorMotor.setControl(new MotionMagicVoltage(pos));
     }
 
     public Command elevatorCommand(double pos) {

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -60,12 +61,17 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
+        private static final MotionMagicConfigs elevatorMotionMagicConfig = new MotionMagicConfigs()
+                .withMotionMagicCruiseVelocity(1); // TODO Tune
+
         private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
                 .withKP(1)
-                .withKI(0)
-                .withKD(0)
-                .withKG(0); // TODO Tune
-        public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration().withSlot0(elevatorPIDConfig);
-        public static final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+                .withKI(Double.POSITIVE_INFINITY)
+                .withKD(1)
+                .withKG(0);
+ // hi HARSHIL PANDENATOR
+        public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
+                .withMotionMagic(elevatorMotionMagicConfig)
+                .withSlot0(elevatorPIDConfig);
     }
 }
