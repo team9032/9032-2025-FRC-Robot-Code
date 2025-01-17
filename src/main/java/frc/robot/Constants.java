@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -65,13 +66,24 @@ public final class Constants {
                 .withMotionMagicCruiseVelocity(1); // TODO Tune
 
         private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
-                .withKP(1)
-                .withKI(Double.POSITIVE_INFINITY)
-                .withKD(1)
+                .withKP(Double.POSITIVE_INFINITY)
+                .withKI(Double.NEGATIVE_INFINITY)
+                .withKD(Double.POSITIVE_INFINITY)
                 .withKG(0);
- // hi HARSHIL PANDENATOR
+        // hi HARSHIL PANDENATOR
+
+        public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(40)
+                .withStatorCurrentLimit(120);
+
         public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
                 .withMotionMagic(elevatorMotionMagicConfig)
-                .withSlot0(elevatorPIDConfig);
+                .withSlot0(elevatorPIDConfig)
+                .withCurrentLimits(kElevatorCurrentLimits);
+
+        public static final double kElevatorDownPos = 0;
+        public static final double kElevatorMidLow = 22.5;
+        public static final double kElevatorMidHigh = 45;
+        public static final double kElevatorMax = 90;
     }
 }

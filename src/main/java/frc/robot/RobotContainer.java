@@ -33,8 +33,10 @@ public class RobotContainer {
     private final Trigger zeroGyro = driveController.b();
 
     /* Operator Controller Buttons */
-    private final Trigger elevatorUpButton = operatorController.a();
-    private final Trigger elevatorDownButton = operatorController.b();
+    private final Trigger elevatorL4Button = operatorController.a();
+    private final Trigger elevatorL1Button = operatorController.b();
+    private final Trigger elevatorL2Button = operatorController.x();
+    private final Trigger elevatorL3Button = operatorController.y();
     // ...
 
     /* Subsystems */
@@ -78,10 +80,14 @@ public class RobotContainer {
                         .andThen(Commands.print("Zeroed gyro")));
 
         /* Operator Controls */
-        elevatorUpButton.onTrue(
-                elevator.elevatorCommand(90));
-        elevatorDownButton.whileFalse(
-                elevator.elevatorCommand(0));
+        elevatorL4Button.onTrue(
+                elevator.elevatorL4Command());
+        elevatorL1Button.onTrue(
+                elevator.elevatorL1Command());
+        elevatorL2Button.onTrue(
+                elevator.elevatorL2Command());
+        elevatorL3Button.onTrue(
+                elevator.elevatorL3Command());
         // ...
     }
 

@@ -14,14 +14,25 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         elevatorMotor = new TalonFX(25); // TODO change CAN stuff
         elevatorMotor.getConfigurator().apply(ElevatorConfigs.kELevatorMotorConfig);
-
     }
 
     public void moveElevator(double pos) {
         elevatorMotor.setControl(new MotionMagicVoltage(pos));
     }
 
-    public Command elevatorCommand(double pos) {
-        return runOnce(() -> moveElevator(pos));
+    public Command elevatorL1Command() {
+        return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorDownPos));
+    }
+
+    public Command elevatorL2Command() {
+        return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorMidLow));
+    }
+
+    public Command elevatorL3Command() {
+        return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorMidHigh));
+    }
+
+    public Command elevatorL4Command() {
+        return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorMax));
     }
 }
