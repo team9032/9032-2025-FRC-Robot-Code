@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -21,20 +24,19 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(kMaxSpeed * 0.05) 
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+                .withDeadband(kMaxSpeed * 0.05)
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
     public static class PathplannerConfig {
         private static final ModuleConfig kModuleConfig = new ModuleConfig(
-            SwerveConstants.kWheelRadius.baseUnitMagnitude(), 
-            5.0,//TODO Find the actual constants
-            1.0,//For Coulson wheels
-            DCMotor.getKrakenX60(1), 
-            70.0,//Default from swerve project
-            1
-        );
+                SwerveConstants.kWheelRadius.baseUnitMagnitude(),
+                5.0, // TODO Find the actual constants
+                1.0, // For Coulson wheels
+                DCMotor.getKrakenX60(1),
+                70.0, // Default from swerve project
+                1);
 
         public static final double kTrackwidth = Units.inchesToMeters(24.0);
 
@@ -44,17 +46,26 @@ public final class Constants {
         public static final Translation2d kbrModuleOffset = new Translation2d(-kTrackwidth / 2.0, -kTrackwidth / 2.0);
 
         public static final RobotConfig kRobotConfig = new RobotConfig(
-            Units.lbsToKilograms(55.0),//TODO Find the actual constants 
-            (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152),//... 
-            kModuleConfig, 
-            kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset
-        );
+                Units.lbsToKilograms(55.0), // TODO Find the actual constants
+                (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152), // ...
+                kModuleConfig,
+                kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset);
 
-        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
+        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);// TODO Tune
         public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+                .withDriveRequestType(DriveRequestType.Velocity)
+                .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+    }
+
+    public static class ElevatorConfigs {
+        private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
+                .withKP(1)
+                .withKI(0)
+                .withKD(0)
+                .withKG(0); // TODO Tune
+        public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration().withSlot0(elevatorPIDConfig);
+        public static final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
     }
 }
