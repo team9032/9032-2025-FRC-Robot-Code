@@ -12,6 +12,7 @@ import static frc.robot.Constants.LocalizationConstants.*;
 
 import java.util.List;
 
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Localization {
@@ -56,6 +57,13 @@ public class Localization {
                 camera.switchToObjectTracking();
         }
     }
+
+    public void switchCameraToLocalization(String cameraName) {
+        for(LocalizationCamera camera : cameras) {
+            if(camera.getName().equals(cameraName)) 
+                camera.switchToLocalization();
+        }
+    }
     
     /** Gets object tracking results from a camera. If the camera is not in object tracking mode, this will return null. */
     public List<PhotonPipelineResult> getObjectTrackingResults(String cameraName) {
@@ -65,6 +73,19 @@ public class Localization {
         }
 
         return null;
+    }
+
+    /** Given a target's pitch in radians, finds the distance from the target to the robot */
+    public double findDistanceToTarget(String cameraName, double targetPitch, double targetHeight) {
+        for(var constants : kCameraConstants) {
+            if(constants.name().equals(cameraName)) {
+                var transform = constants.robotToCameraTransform();
+
+                return PhotonUtils.calculateDistanceToTargetMeters(transform.getZ(), targetHeight, transform.getRotation().getY(), targetPitch);
+            }
+        }
+
+        return 0.0;
     }
 
     public void switchAllToLocalization() {

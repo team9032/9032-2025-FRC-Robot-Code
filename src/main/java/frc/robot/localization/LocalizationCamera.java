@@ -105,11 +105,11 @@ public class LocalizationCamera {
         return kBaseStandardDeviations.times(confidenceMultiplier);
     }
 
-    /** Returns all object tracking pipeline results. Do not call this during localization (or a null pointer will happen). */
+    /** Returns all object tracking pipeline results. Do not call this during localization (or an empty list will be returned). */
     public List<PhotonPipelineResult> getObjectTrackingResults() {
-        /* This method should not run during localization */
+        /* This method should not run during localization - return an empty list */
         if(camera.getPipelineIndex() != kObjectTrackingIndex)
-            return null;
+            return List.of();
 
         return camera.getAllUnreadResults();
     }

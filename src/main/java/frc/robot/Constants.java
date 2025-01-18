@@ -66,6 +66,18 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
+    public static final class ObjectAimingConstants {
+        public static final String kObjectTrackingCameraName = "FrontCamera";
+
+        public static final double kPDistance = 1.0;
+        public static final double kDDistance = 0.01;
+
+        public static final double kPRotation = 1.0;
+        public static final double kDRotation = 0.01;
+
+        public static final double kCoralHeight = 0.0;//The distance from the ground to the middle of a coral in meters
+    }
+
     public static final class LocalizationConstants {//TODO all under need to be tuned 
         /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityOffset = 0.2;
