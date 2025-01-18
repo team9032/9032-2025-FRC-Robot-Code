@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,6 +27,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    /* Starts a webserver to allow Elastic to download layouts saved on the robot */
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
