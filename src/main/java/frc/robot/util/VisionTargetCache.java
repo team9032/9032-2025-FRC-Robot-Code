@@ -1,4 +1,3 @@
-
 package frc.robot.util;
 
 public class VisionTargetCache<T> {
@@ -17,7 +16,11 @@ public class VisionTargetCache<T> {
     }
 
     public boolean targetExpired() {
-        return cycleAmtSinceLastUpdate > expireAfterAmount || lastTarget == null;
+        return cycleAmtSinceLastUpdate > expireAfterAmount;
+    }
+
+    public boolean hasTarget() {
+        return lastTarget != null;
     }
 
     public void reset() {
@@ -26,7 +29,8 @@ public class VisionTargetCache<T> {
     }
 
     public T getAndIncrement() {
-        cycleAmtSinceLastUpdate++;
+        if(hasTarget())
+            cycleAmtSinceLastUpdate++;
 
         return lastTarget;
     }

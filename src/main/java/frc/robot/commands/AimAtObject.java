@@ -26,8 +26,6 @@ public class AimAtObject extends Command {
 
     private final double objectHeight;
 
-    private boolean lostTarget = false;
-
     public AimAtObject(KrakenSwerve swerve, int objectToTrackId, double objectHeight) {
        this.swerve = swerve; 
        this.objectToTrackId = objectToTrackId;
@@ -38,7 +36,7 @@ public class AimAtObject extends Command {
        distanceController.setSetpoint(0.0);
 
        rotationController = new PIDController(kPRotation, 0.0, kDRotation);
-       rotationController.setSetpoint(0.0);
+       rotationController.setSetpoint(kRotationSetpoint);
 
        this.objectHeight = objectHeight;
 
@@ -54,6 +52,9 @@ public class AimAtObject extends Command {
 
     @Override
     public void execute() {
+        /* Make sure the target cache is incremented each loop */
+        var previousTarget = targetCache.getAndIncrement();
+
         var results = localization.getObjectTrackingResults(kObjectTrackingCameraName);
 
         /* Remove all results without targets - exit if no results have targets */
@@ -76,15 +77,12 @@ public class AimAtObject extends Command {
             return;
 
         PhotonTrackedTarget targetToTrack = null;
-        /* Find the target that is closest to the center of the camera */
-        if(targetCache.targetExpired()) {
+        /* Find the target that is closest to the center of the camera when there is no previous target */
+        if(!targetCache.hasTarget()) 
             targetToTrack = latestResult.getBestTarget();//TODO config the pipeline 
-        }
         /* Find the target that is closest to the previous target */
         else {
             double lowestYawDifference = Double.MAX_VALUE;
-
-            var previousTarget = targetCache.getAndIncrement();
             
             for(PhotonTrackedTarget target : filteredTargets) {
                 double yawDifference = Math.abs(target.getYaw() - previousTarget.getYaw());
@@ -94,27 +92,23 @@ public class AimAtObject extends Command {
             }
         }
 
-        if(targetToTrack != null) {
-            double distance = localization.findDistanceToTarget(kObjectTrackingCameraName, targetToTrack.pitch, objectHeight);
+        /* Drive based on target distance and yaw */
+        double distance = localization.findDistanceToTarget(kObjectTrackingCameraName, targetToTrack.pitch, objectHeight);
 
-            var speeds = new ChassisSpeeds(
-                distanceController.calculate(distance),
-                0.0, 
-                rotationController.calculate(targetToTrack.yaw)
-            );
+        var speeds = new ChassisSpeeds(
+            distanceController.calculate(distance),
+            0.0, 
+            rotationController.calculate(targetToTrack.yaw)
+        );
 
-            swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(speeds));
+        swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(speeds));
 
-            targetCache.updateTarget(targetToTrack);
-        }
-
-        else if(targetCache.targetExpired()) 
-            lostTarget = true;
+        targetCache.updateTarget(targetToTrack);
     }
 
     @Override
     public boolean isFinished() {
-        return lostTarget;
+        return targetCache.targetExpired();
     }
 
     @Override
@@ -125,8 +119,6 @@ public class AimAtObject extends Command {
         distanceController.reset();
 
         targetCache.reset();
-
-        lostTarget = false;
 
         swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
