@@ -63,7 +63,8 @@ public final class Constants {
 
     public static class ElevatorConfigs {
         private static final MotionMagicConfigs elevatorMotionMagicConfig = new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(1); // TODO Tune
+                .withMotionMagicCruiseVelocity(1)
+                .withMotionMagicAcceleration(3)
 
         private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
                 .withKP(Double.POSITIVE_INFINITY)
