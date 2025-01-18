@@ -69,6 +69,8 @@ public final class Constants {
     public static final class ObjectAimingConstants {
         public static final String kObjectTrackingCameraName = "FrontCamera";
 
+        public static final int kCycleAmtSinceTargetSeenCutoff = 5;
+
         public static final double kPDistance = 1.0;
         public static final double kDDistance = 0.01;
 

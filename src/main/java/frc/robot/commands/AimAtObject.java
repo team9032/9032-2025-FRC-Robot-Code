@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.util.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;
@@ -18,12 +19,14 @@ public class AimAtObject extends Command {
     
     private final Localization localization;
 
-    private PhotonTrackedTarget previousTarget;
+    private final VisionTargetCache<PhotonTrackedTarget> targetCache;
     
     private final PIDController distanceController;
     private final PIDController rotationController;
 
     private final double objectHeight;
+
+    private boolean lostTarget = false;
 
     public AimAtObject(KrakenSwerve swerve, int objectToTrackId, double objectHeight) {
        this.swerve = swerve; 
@@ -37,7 +40,9 @@ public class AimAtObject extends Command {
        rotationController = new PIDController(kPRotation, 0.0, kDRotation);
        rotationController.setSetpoint(0.0);
 
-        this.objectHeight = objectHeight;
+       this.objectHeight = objectHeight;
+
+       targetCache = new VisionTargetCache<>(kCycleAmtSinceTargetSeenCutoff);
 
        addRequirements(swerve);
     }
@@ -72,13 +77,15 @@ public class AimAtObject extends Command {
 
         PhotonTrackedTarget targetToTrack = null;
         /* Find the target that is closest to the center of the camera */
-        if(previousTarget == null) {
+        if(targetCache.targetExpired()) {
             targetToTrack = latestResult.getBestTarget();//TODO config the pipeline 
         }
         /* Find the target that is closest to the previous target */
         else {
             double lowestYawDifference = Double.MAX_VALUE;
 
+            var previousTarget = targetCache.getAndIncrement();
+            
             for(PhotonTrackedTarget target : filteredTargets) {
                 double yawDifference = Math.abs(target.getYaw() - previousTarget.getYaw());
 
@@ -98,8 +105,16 @@ public class AimAtObject extends Command {
 
             swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(speeds));
 
-            previousTarget = targetToTrack;
+            targetCache.updateTarget(targetToTrack);
         }
+
+        else if(targetCache.targetExpired()) 
+            lostTarget = true;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return lostTarget;
     }
 
     @Override
@@ -109,6 +124,10 @@ public class AimAtObject extends Command {
         rotationController.reset();
         distanceController.reset();
 
-        previousTarget = null;
+        targetCache.reset();
+
+        lostTarget = false;
+
+        swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 }
