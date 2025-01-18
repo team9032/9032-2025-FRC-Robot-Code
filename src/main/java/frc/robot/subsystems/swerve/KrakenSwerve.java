@@ -44,6 +44,7 @@ public class KrakenSwerve extends SubsystemBase {
         );
         
         localization = new Localization(drivetrain);
+        localization.switchAllToLocalization();
     }
 
     public Command zeroGyro() {
@@ -60,6 +61,6 @@ public class KrakenSwerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        localization.update();
+        localization.updateLocalization();
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.localization;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -36,6 +37,10 @@ public class LocalizationCamera {
     }
 
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
+        /* This method should not run during object tracking */
+        if(camera.getPipelineIndex() != kLocalizationIndex) 
+            return;
+
         var results = camera.getAllUnreadResults();
 
         for (PhotonPipelineResult pipelineResult : results) {
@@ -98,5 +103,26 @@ public class LocalizationCamera {
         double confidenceMultiplier = Math.max(1, (distanceMultiplier * poseAmbiguityMultiplier) / tagPresenceDivider);
 
         return kBaseStandardDeviations.times(confidenceMultiplier);
+    }
+
+    /** Returns all object tracking pipeline results. Do not call this during localization (or a null pointer will happen). */
+    public List<PhotonPipelineResult> getObjectTrackingResults() {
+        /* This method should not run during localization */
+        if(camera.getPipelineIndex() != kObjectTrackingIndex)
+            return null;
+
+        return camera.getAllUnreadResults();
+    }
+
+    public void switchToLocalization() {
+        camera.setPipelineIndex(kLocalizationIndex);
+    }
+
+    public void switchToObjectTracking() {
+        camera.setPipelineIndex(kObjectTrackingIndex);
+    }
+
+    public String getName() {
+        return camera.getName();
     }
 }

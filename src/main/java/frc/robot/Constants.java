@@ -73,12 +73,16 @@ public final class Constants {
         public static final double kNoisyDistanceMeters = 2.5;
         public static final double kDistanceWeight = 7;
         public static final int kTagPresenceWeight = 10;
-        
+
         public static final Matrix<N3, N1> kBaseStandardDeviations = VecBuilder.fill(
             1,//X
             1,//Y
             1 * Math.PI//Theta
         );
+
+        /* Pipeline Indexes */
+        public static final int kLocalizationIndex = 0;
+        public static final int kObjectTrackingIndex = 1;
 
         public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
 
