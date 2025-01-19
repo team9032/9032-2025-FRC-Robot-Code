@@ -72,11 +72,12 @@ public final class Constants {
 
     public static class ElevatorConfigs {
         private static final MotionMagicConfigs elevatorMotionMagicConfig = new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(1)
-                .withMotionMagicAcceleration(3);
+                .withMotionMagicCruiseVelocity(5)
+                .withMotionMagicAcceleration(10)
+                .withMotionMagicJerk(100);
 
         private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
-                .withKP(0)
+                .withKP(1)
                 .withKI(0)
                 .withKD(0)
                 .withKG(0);

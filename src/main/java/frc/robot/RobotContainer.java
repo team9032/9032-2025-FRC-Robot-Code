@@ -28,8 +28,7 @@ public class RobotContainer {
     /* Controllers */
     private final CommandXboxController driveController = new CommandXboxController(
             DriverConstants.kDriveControllerPort);
-    private final CommandXboxController operatorController = new CommandXboxController(
-            DriverConstants.kDriveControllerPort);
+    private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
