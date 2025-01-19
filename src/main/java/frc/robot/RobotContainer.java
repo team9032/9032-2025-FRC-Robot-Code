@@ -27,8 +27,6 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
-    private final Trigger climberUp = driveController.rightTrigger(0.1);
-    private final Trigger climberDown = driveController.leftTrigger(0.1);
 
     /* Operator Controller Buttons */
     //...
@@ -74,11 +72,8 @@ public class RobotContainer {
             .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
-        climberUp.whileTrue(
-            climber.setPower(() -> driveController.getLeftTriggerAxis())
-        );
-        climberDown.whileTrue(
-            climber.setPower(() -> -driveController.getRightTriggerAxis())
+        climber.setDefaultCommand(
+            climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()) * 0.2)
         );
         /* Operator Controls */
         //...
