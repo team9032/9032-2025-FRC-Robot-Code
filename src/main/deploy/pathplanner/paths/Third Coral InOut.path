@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.7891025641025635,
+        "y": 3.839230769230769
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0364076553601547,
+        "y": 5.7080310234434215
+      },
+      "isLocked": false,
+      "linkedName": "Second Coral Ending"
+    },
+    {
+      "anchor": {
+        "x": 2.0769871794871793,
+        "y": 6.2542307692307695
+      },
+      "prevControl": {
+        "x": 1.9251060802232147,
+        "y": 6.502216087435637
+      },
+      "nextControl": {
+        "x": 2.228868278751144,
+        "y": 6.006245451025902
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.4392948717948713,
+        "y": 5.5627564102564095
+      },
+      "prevControl": {
+        "x": 3.606536054700483,
+        "y": 5.376932873694617
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -58.815025341261666
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 0.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": true
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -62.17590361574663
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}
