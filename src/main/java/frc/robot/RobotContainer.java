@@ -8,6 +8,7 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -26,12 +27,15 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
+    private final Trigger climberUp = driveController.rightTrigger(0.1);
+    private final Trigger climberDown = driveController.leftTrigger(0.1);
 
     /* Operator Controller Buttons */
     //...
 
     /* Subsystems */
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    private final Climber climber = new Climber();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
@@ -70,6 +74,12 @@ public class RobotContainer {
             .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
+        climberUp.whileTrue(
+            climber.setPower(() -> driveController.getLeftTriggerAxis())
+        );
+        climberDown.whileTrue(
+            climber.setPower(() -> -driveController.getRightTriggerAxis())
+        );
         /* Operator Controls */
         //...
     }

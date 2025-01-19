@@ -101,4 +101,7 @@ public final class Constants {
             ),
         };
     }
+    public static class ClimberConstants{
+        public static final int motorID = 0;
+    }
 }
