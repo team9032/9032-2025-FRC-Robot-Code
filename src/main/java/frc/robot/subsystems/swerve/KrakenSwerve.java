@@ -31,28 +31,27 @@ public class KrakenSwerve extends SubsystemBase {
             drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
         );
 
-        RobotConfig pathplannerConfig = null;
         try {
-            pathplannerConfig = RobotConfig.fromGUISettings();
+            var pathplannerConfig = RobotConfig.fromGUISettings();
+
+            /* Configure PathPlanner */
+            AutoBuilder.configure(
+                () -> drivetrain.getState().Pose, 
+                drivetrain::resetPose, 
+                () -> drivetrain.getState().Speeds, 
+                this::drivePathPlanner, 
+                new PPHolonomicDriveController(
+                    kTranslationPID, 
+                    kRotationPID
+                ), 
+                pathplannerConfig, 
+                /* Supplier for if the path should be mirrored for the red alliance - will always use blue for origin */
+                () -> DriverStation.getAlliance().orElseGet(() -> DriverStation.Alliance.Blue) == DriverStation.Alliance.Red, 
+                this
+            );
         } catch (Exception e) {
             DriverStation.reportError("Failed to load PathPlanner config - Auto will commit die!", e.getStackTrace());
         }
-
-        /* Configure PathPlanner */
-        AutoBuilder.configure(
-            () -> drivetrain.getState().Pose, 
-            drivetrain::resetPose, 
-            () -> drivetrain.getState().Speeds, 
-            this::drivePathPlanner, 
-            new PPHolonomicDriveController(
-                kTranslationPID, 
-                kRotationPID
-            ), 
-            pathplannerConfig, 
-            /* Supplier for if the path should be mirrored for the red alliance - will always use blue for origin */
-            () -> DriverStation.getAlliance().orElseGet(() -> DriverStation.Alliance.Blue) == DriverStation.Alliance.Red, 
-            this
-        );
         
         // localization = new Localization(drivetrain);
 
