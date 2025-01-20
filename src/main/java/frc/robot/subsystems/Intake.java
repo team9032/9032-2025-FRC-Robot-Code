@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
+
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 import static frc.robot.Constants.IntakeConstants.*;
 
@@ -18,11 +18,11 @@ public class Intake extends SubsystemBase{
 
     public Intake(){
 
-        extensionMotor = new TalonFX(CANID);
-        extensionMotor.config();
+        extensionMotor = new TalonFX(kExtensionMotorId);
+        extensionMotor.getConfigurator().apply(kMotorConfig);
 
-        wheelMotor = new TalonFX(CANID);
-        wheelMotor.config();
+        wheelMotor = new TalonFX(36);
+        wheelMotor.configFactoryDefault();
 
        
     }
@@ -34,6 +34,11 @@ public class Intake extends SubsystemBase{
     private Command setExtensionPower(double power) {
         return runOnce(() -> extensionMotor.set(power));
     }
+
+    public Command disableRollers() {
+        return setRollerPower(0.0);
+    }
+
     
     @Override
     public void periodic() {

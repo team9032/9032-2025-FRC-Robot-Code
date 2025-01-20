@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -103,9 +104,11 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        
-        public int intakeArmConstants;
-        public int intakeRollerConstants;
+        public static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration();
+
+
+        public static final int kExtensionMotor1 = 35;
+        public static final int kWheelMotor1 = 36;
 
     } 
 
