@@ -101,4 +101,13 @@ public final class Constants {
             ),
         };
     }
+
+    public static final class IntakeConstants {
+        
+        public int intakeArmConstants;
+        public int intakeRollerConstants;
+
+    } 
+
+
 }

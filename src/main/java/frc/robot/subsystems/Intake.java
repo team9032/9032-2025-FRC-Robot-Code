@@ -1,6 +1,4 @@
-package frc.robot;
 package frc.robot.subsystems;
-
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -11,20 +9,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
+
+import com.ctre.phoenix6.hardware.TalonFX;
+
 public class Intake extends SubsystemBase{
-    private final WPI_TalonFX extensionMotor;
-    private final WPI_TalonFX wheelMotor;
+    private final TalonFX extensionMotor;
+    private final TalonFX wheelMotor;
 
     public Intake(){
 
-        extensionMotor = new WPI_TalonFX(intakeArmConstants);
+        extensionMotor = new TalonFX(CANID);
         extensionMotor.config();
 
-        wheelMotor = new WPI_TalonFX(intakeRollerConstants);
+        wheelMotor = new TalonFX(CANID);
         wheelMotor.config();
 
-        intakeTab.add(extensionMotor).withPosition(0, 0).withSize(...);
-        intakeTab.add(wheelMotor).withPosition(...).withSize(...);
+       
     }
    
     public Command resetCommand() {
