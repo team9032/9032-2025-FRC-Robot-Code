@@ -86,7 +86,7 @@ public class SwerveSysId {
         );
 
         /* Set the routine to run here */
-        sysIdRoutineToApply = sysIdRoutineTranslation;
+        sysIdRoutineToApply = sysIdRoutineRotation;
     }
 
     /**

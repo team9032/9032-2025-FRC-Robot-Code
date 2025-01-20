@@ -9,6 +9,11 @@ import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -39,6 +44,7 @@ public class RobotContainer {
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
+    private final SendableChooser<Command> autoChooser;
 
     /* Robot Mode Triggers */
     //...
@@ -55,6 +61,10 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureButtonTriggers();
+
+        /* Allows us to choose from all autos in the deploy directory */
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     /** Use this method to define your button trigger->command mappings. */
@@ -96,7 +106,7 @@ public class RobotContainer {
     
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
-        return null;
+        return autoChooser.getSelected();
     }
 
     private Command sendInfoNotification(String info) {
