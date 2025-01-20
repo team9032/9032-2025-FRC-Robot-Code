@@ -1,5 +1,14 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;
+import static frc.robot.Constants.PathplannerConfig.kRotationPID;
+import static frc.robot.Constants.PathplannerConfig.kTranslationPID;
+import static frc.robot.subsystems.swerve.SwerveConstants.drivetrainConstants;
+import static frc.robot.subsystems.swerve.SwerveConstants.kBackLeft;
+import static frc.robot.subsystems.swerve.SwerveConstants.kBackRight;
+import static frc.robot.subsystems.swerve.SwerveConstants.kFrontLeft;
+import static frc.robot.subsystems.swerve.SwerveConstants.kFrontRight;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,14 +24,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.localization.Localization;
-
-import static frc.robot.Constants.PathplannerConfig.*;
-import static frc.robot.subsystems.swerve.SwerveConstants.*;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.subsystems.SwerveSysId;
 
 public class KrakenSwerve extends SubsystemBase {
     public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
     
+    private final SwerveSysId sysId;
+
     // private final Localization localization;
 
     public KrakenSwerve() {
@@ -68,10 +77,20 @@ public class KrakenSwerve extends SubsystemBase {
             .withName("Update Drive Constants")
             .ignoringDisable(true)
         );
+
+        sysId = new SwerveSysId(this);
     }
 
     public Command zeroGyro() {
         return runOnce(() -> drivetrain.getPigeon2().reset());
+    }
+
+    public Command runSysIdDynamic(Direction direction) {
+        return sysId.sysIdDynamic(direction);
+    }
+
+    public Command runSysIdQuasistatic(Direction direction) {
+        return sysId.sysIdQuasistatic(direction);
     }
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {

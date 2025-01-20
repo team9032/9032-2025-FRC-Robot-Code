@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,6 +27,9 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
+    private final Trigger sysId1 = driveController.x();
+    private final Trigger sysId2 = driveController.y();
+    private final Trigger sysIdDirection = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...
@@ -68,6 +72,22 @@ public class RobotContainer {
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
             .andThen(sendInfoNotification("Zeroed gyro"))
+        );
+
+        sysId1.and(sysIdDirection.negate()).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kForward)
+        );
+
+        sysId1.and(sysIdDirection).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kReverse)
+        );
+
+        sysId2.and(sysIdDirection.negate()).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kForward)
+        );
+
+        sysId2.and(sysIdDirection).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
         );
 
         /* Operator Controls */
