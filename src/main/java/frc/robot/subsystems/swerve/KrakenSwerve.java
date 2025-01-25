@@ -1,14 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;
-import static frc.robot.Constants.PathplannerConfig.kRotationPID;
-import static frc.robot.Constants.PathplannerConfig.kTranslationPID;
-import static frc.robot.subsystems.swerve.SwerveConstants.drivetrainConstants;
-import static frc.robot.subsystems.swerve.SwerveConstants.kBackLeft;
-import static frc.robot.subsystems.swerve.SwerveConstants.kBackRight;
-import static frc.robot.subsystems.swerve.SwerveConstants.kFrontLeft;
-import static frc.robot.subsystems.swerve.SwerveConstants.kFrontRight;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,14 +16,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.localization.Localization;
 import frc.robot.subsystems.SwerveSysId;
+
+import static frc.robot.Constants.PathplannerConfig.*;
+import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
     public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
     
     private final SwerveSysId sysId;
 
-    // private final Localization localization;
+    private final Localization localization;
 
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
@@ -62,7 +57,7 @@ public class KrakenSwerve extends SubsystemBase {
             DriverStation.reportError("Failed to load PathPlanner config - Auto will commit die!", e.getStackTrace());
         }
         
-        // localization = new Localization(drivetrain);
+        localization = new Localization(drivetrain);
 
         /* Allow drive motor constants to be updated from the dashboard */
         SmartDashboard.putNumber("Drive kP", 0.0);
@@ -126,6 +121,6 @@ public class KrakenSwerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // localization.update();
+        localization.update();
     }
 }

@@ -50,7 +50,7 @@
     "rotation": -0.7778875714991357
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Tuning",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
