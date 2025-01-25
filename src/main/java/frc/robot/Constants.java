@@ -104,12 +104,16 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration();
+        public static final TalonFXConfiguration kExtensionMotorConfig = new TalonFXConfiguration();
+        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
+        
+        public static final int kExtensionMotorID = 35;
+        public static final int kWheelMotorID = 36;
 
-
-        public static final int kExtensionMotor1 = 35;
-        public static final int kWheelMotor1 = 36;
-
+        public static final double kEjectCoral = -1.0;
+        public static final double kGroundPosition = 28828;
+        public static final double kIntakeCoral = 1.0;
+        public static final double kStowPosition = 1000;
     } 
 
 

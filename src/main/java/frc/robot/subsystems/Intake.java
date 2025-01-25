@@ -3,36 +3,48 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
-public class Intake extends SubsystemBase{
+public class Intake extends SubsystemBase {
     private final MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);
 
     private final TalonFX armMotor;
-    private final TalonFX wheelMotor;
+    // private final TalonFX wheelMotor;
 
-    public Intake(){
-        //Call arm motor, use motion magic
+    public Intake() {
 
-        armMotor = new TalonFX(kArmMotorId);
-        armMotor.getConfigurator().apply(kMotorConfig);
+        armMotor = new TalonFX(kExtensionMotorID);
+        armMotor.getConfigurator().apply(kExtensionMotorConfig);
 
-        var talonFXConfigs = new TalonFXConfiguration();        
+        // wheelMotor = new TalonFX(kWheelMotorID);
+        // wheelMotor.getConfigurator().apply(kWheelMotorConfig);
 
-        wheelMotor = new TalonFX(kWheelMotorId);
-        wheelMotor.getConfigurator().apply(kMotorConfig);
-       
     }
+
+    // //public Command transferToElevator() {
+    //     r
+    // //}
+    
+    public Command returnToStowPosition() {
+        return runOnce(() -> armMotor.setControl(armControlRequest.withPosition(kStowPosition)));
+    }
+
+    // public Command intakeCoral() {
+    //     return runOnce(() -> wheelMotor.set(kIntakeCoral));
+    // }
 
     public Command moveToGround() {
-        return runOnce(() -> armMotor.setControl(armControlRequest.withPosition(28828)));
+        return runOnce(() -> armMotor.setControl(armControlRequest.withPosition(kGroundPosition)));
     }
-    
+
+    // public Command ejectCoral() {
+    //     return runOnce(() -> wheelMotor.set(kEjectCoral));
+    // }
+
     @Override
     public void periodic() {
-        // lastUltrasonicDistance = ultrasonicFilter.calculate(ultrasonic.getRangeInches());
+
     }
 }
