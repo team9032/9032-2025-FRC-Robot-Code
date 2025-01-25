@@ -77,13 +77,6 @@ public class LocalizationCamera {
                 smallestDistance = distance;
         }
 
-        /* If there is only 1 tag there could be pose ambiguity, so increase standard deviations based on it */
-        double poseAmbiguityMultiplier = 1;
-        if (estimation.targetsUsed.size() == 1) {
-            poseAmbiguityMultiplier = Math.max(1, 
-                (estimation.targetsUsed.get(0).getPoseAmbiguity() + kPoseAmbiguityOffset) * kPoseAmbiguityMultiplier);
-        }
-
         /* Scale the deviations by distance if the smaller distance is beyond the noisy distance */
         double distanceMultiplier = 1;
         if (smallestDistance > kNoisyDistanceMeters) {
@@ -91,12 +84,20 @@ public class LocalizationCamera {
                 (smallestDistance - kNoisyDistanceMeters) * kDistanceWeight);
         }
 
-        /* If there is more than 1 tag, lower the deviations based on number of tags */
-        double tagPresenceDivider = 1 + ((estimation.targetsUsed.size() - 1) * kTagPresenceWeight);
+        /* If there is only 1 tag there could be pose ambiguity, so increase standard deviations based on it */
+        if (estimation.targetsUsed.size() == 1) {
+            double poseAmbiguityMultiplier = Math.max(1, 
+                (estimation.targetsUsed.get(0).getPoseAmbiguity() + kPoseAmbiguityOffset) * kPoseAmbiguityMultiplier);
 
-        /* Combine all standard deviation scaling */
-        double confidenceMultiplier = Math.max(1, (distanceMultiplier * poseAmbiguityMultiplier) / tagPresenceDivider);
+            /* Combine distance and ambiguity deviation scaling */
+            double confidenceMultiplier = distanceMultiplier * poseAmbiguityMultiplier;
 
-        return kBaseStandardDeviations.times(confidenceMultiplier);
+            return kSingleTagBaseStandardDeviations.times(confidenceMultiplier);
+        }
+
+        else {
+            /* If there are multiple tags, only scale based on distance */
+            return kMultiTagBaseStandardDeviations.times(distanceMultiplier);
+        }
     }
 }
