@@ -68,10 +68,13 @@ public final class Constants {
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
         /* Constants for the confidence calculator */
-        public static final double kPoseAmbiguityOffset = 0.2;
-        public static final double kPoseAmbiguityMultiplier = 4;
+        public static final double kPoseAmbiguityMultiplier = 40;
         public static final double kNoisyDistanceMeters = 2.5;
         public static final double kDistanceWeight = 7;
+
+        /* Thresholds for when to reject an estimate */
+        public static final double kAmbiguityThreshold = 0.2;
+        public static final double kDistanceThreshold = 4.0;//Meters
         
         public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X
@@ -80,8 +83,8 @@ public final class Constants {
         );
 
         public static final Matrix<N3, N1> kMultiTagBaseStandardDeviations = VecBuilder.fill(
-            0.5,//X
-            0.5,//Y
+            0.25,//X
+            0.25,//Y
             0.5 * Math.PI//Theta
         );
 
