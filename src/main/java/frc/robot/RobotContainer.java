@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
@@ -20,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
+import static frc.robot.Constants.DriverConstants.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -28,13 +29,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
+    private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
-    private final Trigger sysId1 = driveController.x();
-    private final Trigger sysId2 = driveController.y();
-    private final Trigger sysIdDirection = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...
@@ -58,9 +56,12 @@ public class RobotContainer {
     /* State Triggers */
     //...
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         configureButtonTriggers();
+
+        if(kRunSysId)
+            bindSysIdTriggers();
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -84,26 +85,32 @@ public class RobotContainer {
             .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
-        sysId1.and(sysIdDirection.negate()).whileTrue(
-            krakenSwerve.runSysIdDynamic(Direction.kForward)
-        );
-
-        sysId1.and(sysIdDirection).whileTrue(
-            krakenSwerve.runSysIdDynamic(Direction.kReverse)
-        );
-
-        sysId2.and(sysIdDirection.negate()).whileTrue(
-            krakenSwerve.runSysIdQuasistatic(Direction.kForward)
-        );
-
-        sysId2.and(sysIdDirection).whileTrue(
-            krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
-        );
-
         /* Operator Controls */
         //...
     }
     
+    private void bindSysIdTriggers() {
+        Trigger sysIdReverse = driveController.leftBumper();
+        Trigger sysIdDynamic = driveController.start();
+        Trigger sysIdQuasistatic = driveController.back();
+
+        sysIdDynamic.and(sysIdReverse.negate()).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kForward)
+        );
+
+        sysIdDynamic.and(sysIdReverse).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kReverse)
+        );
+
+        sysIdQuasistatic.and(sysIdReverse.negate()).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kForward)
+        );
+
+        sysIdQuasistatic.and(sysIdReverse).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
+        );
+    }
+
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();

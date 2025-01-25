@@ -18,6 +18,8 @@ import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
     public static class DriverConstants {
+        public static final boolean kRunSysId = false;
+
         public static final int kDriveControllerPort = 0;
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
