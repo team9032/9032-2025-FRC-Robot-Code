@@ -46,8 +46,9 @@ public class KrakenSwerve extends SubsystemBase {
         localization = new Localization(drivetrain);
     }
 
-    public Command zeroGyro() {
-        return runOnce(() -> drivetrain.getPigeon2().reset());
+    /** Sets the current robot's rotation as the operator perspective */
+    public Command resetPerspective() {
+        return runOnce(() -> drivetrain.setOperatorPerspectiveForward(drivetrain.getState().Pose.getRotation()));
     }
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {

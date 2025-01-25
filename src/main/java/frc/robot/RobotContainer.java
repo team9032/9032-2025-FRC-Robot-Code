@@ -25,7 +25,7 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger zeroGyro = driveController.b();
+    private final Trigger resetPerspective = driveController.b();
 
     /* Operator Controller Buttons */
     //...
@@ -65,9 +65,9 @@ public class RobotContainer {
             )
         );
 
-        zeroGyro.onTrue(
-            krakenSwerve.zeroGyro()
-            .andThen(sendInfoNotification("Zeroed gyro"))
+        resetPerspective.onTrue(
+            krakenSwerve.resetPerspective()
+            .andThen(sendInfoNotification("Reset perspective"))
         );
 
         /* Operator Controls */
