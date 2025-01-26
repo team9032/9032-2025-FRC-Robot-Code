@@ -9,6 +9,7 @@ import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,6 +33,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    private final Intake intake = new Intake();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
@@ -40,7 +42,8 @@ public class RobotContainer {
     //...
 
     /* Teleop Triggers */
-    //...
+    private final Trigger groundPTrigger = driveController.y();
+    private final Trigger stowPTrigger = driveController.x();
 
     /* Auto Triggers */
     //...
@@ -68,6 +71,16 @@ public class RobotContainer {
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
             .andThen(sendInfoNotification("Zeroed gyro"))
+        );
+
+        groundPTrigger.onTrue(
+            intake.moveToGround()
+            .andThen(sendInfoNotification("Ground Position works"))
+        );
+
+        stowPTrigger.onTrue(
+            intake.returnToStowPosition()
+            .andThen(sendInfoNotification("Stow Position works"))
         );
 
         /* Operator Controls */

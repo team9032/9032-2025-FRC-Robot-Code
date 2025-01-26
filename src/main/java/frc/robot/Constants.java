@@ -107,38 +107,36 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        
-        public static CurrentLimitsConfigs kExtensionMotorCurrentLimit = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(40)
                 .withStatorCurrentLimit(120);
 
-        public static Slot0Configs kArmMotorPidConstants = new Slot0Configs()
+        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
                 .withKP(1)
                 .withKD(0)
-                .withKG(0) //TODO tune values
+                .withKG(0) // TODO tune values
                 .withKS(0)
                 .withKV(0)
                 .withKA(0);
-        
-        public static MotionMagicConfigs kArmMotionMagicConfigs= new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(5)
-                .withMotionMagicAcceleration(10) //TODO tune values
-                .withMotionMagicJerk(100);
 
-        public static final TalonFXConfiguration kExtensionMotorConfig = new TalonFXConfiguration()                
-            .withCurrentLimits(kExtensionMotorCurrentLimit)
-            .withSlot0(kArmMotorPidConstants)
-            .withMotionMagic(kArmMotionMagicConfigs);
+        public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
+                .withMotionMagicCruiseVelocity(5)
+                .withMotionMagicAcceleration(10); // TODO tune values
+
+        public static final TalonFXConfiguration kArmMotorConfig = new TalonFXConfiguration()
+                .withCurrentLimits(kArmMotorCurrentLimit)
+                .withSlot0(kArmMotorPidConstants)
+                .withMotionMagic(kArmMotionMagicConfigs);
 
         public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
         public static final int kExtensionMotorID = 35;
         public static final int kWheelMotorID = 36;
 
-        public static final double kEjectCoral = -1.0;
+        public static final double kEjectPower = -1.0;
         public static final double kGroundPosition = 28828;
-        public static final double kIntakeCoral = 1.0;
+        public static final double kIntakePower = 1.0;
         public static final double kStowPosition = 1000;
-    } 
+    }
 
 
 }

@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
 
         armMotor = new TalonFX(kExtensionMotorID);
-        armMotor.getConfigurator().apply(kExtensionMotorConfig);
+        armMotor.getConfigurator().apply(kArmMotorConfig);
 
         // wheelMotor = new TalonFX(kWheelMotorID);
         // wheelMotor.getConfigurator().apply(kWheelMotorConfig);
