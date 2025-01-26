@@ -20,21 +20,17 @@ public class EndEffector extends SubsystemBase {
 
     public Command placeCoral() {
         return Commands.sequence(
-            runOnce(() -> endEffectorMotor.set(kEndEffectorSpeed)),
+            runOnce(() -> endEffectorMotor.set(kEndEffectorOuttakeSpeed)),
             Commands.waitSeconds(0.5),
             runOnce(() -> endEffectorMotor.set(0))
         );
     }
 
     public Command pickupCoral() {
-        if (!endEffectorBeamBreak.get()) {
-            return Commands.sequence(
-            runOnce(() -> endEffectorMotor.set(-kEndEffectorSpeed)),
+        return Commands.sequence(
+            runOnce(() -> endEffectorMotor.set(-kEndEffectorIntakeSpeed)),
             Commands.waitUntil(() -> endEffectorBeamBreak.get()),
             runOnce(() -> endEffectorMotor.set(0))
         );
-        } else {
-            return Commands.runOnce(() -> endEffectorMotor.set(0));
-        }
     }
 }

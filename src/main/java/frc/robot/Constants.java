@@ -109,7 +109,8 @@ public final class Constants {
 
     public static final class EndEffectorConstants {
         public static final int kEndEffectorID = 26;
-        public static final double kEndEffectorSpeed = 0.5;
+        public static final double kEndEffectorOuttakeSpeed = 0.25;
+        public static final double kEndEffectorIntakeSpeed = -0.5;
         public static final int kEndEffectorBeamBreakID = 27;
         public static final Slot0Configs kEndEffectorPID = new Slot0Configs()
             .withKA(0) //TODO tune
