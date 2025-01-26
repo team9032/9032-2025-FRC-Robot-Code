@@ -4,13 +4,10 @@
 
 package frc.robot;
 
-import frc.lib.Elastic;
-import frc.lib.Elastic.Notification;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
-
+import frc.robot.utils.ElasticUtil;
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,7 +37,6 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
 
     /* Dashboard */
-    private final Notification elasticNotification = new Notification();
     private final SendableChooser<Command> autoChooser;
 
     /* Robot Mode Triggers */
