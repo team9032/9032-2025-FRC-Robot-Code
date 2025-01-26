@@ -54,7 +54,7 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureButtonTriggers();
-    }
+    }   
 
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
@@ -74,14 +74,12 @@ public class RobotContainer {
         );
 
         groundPTrigger.onTrue(
-            intake.moveToGround()
-            .andThen(sendInfoNotification("Ground Position works"))
-        );
+                intake.moveToGround()
+                        .andThen(sendInfoNotification("Ground Position")));
 
         stowPTrigger.onTrue(
-            intake.returnToStowPosition()
-            .andThen(sendInfoNotification("Stow Position works"))
-        );
+                intake.returnToStowPosition()
+                        .andThen(sendInfoNotification("Stow Position")));
 
         /* Operator Controls */
         //...

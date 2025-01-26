@@ -108,25 +108,25 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(40)
-                .withStatorCurrentLimit(120);
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(120);
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-                .withKP(1)
-                .withKD(0)
-                .withKG(0) // TODO tune values
-                .withKS(0)
-                .withKV(0)
-                .withKA(0);
+            .withKP(1)
+            .withKD(0)
+            .withKG(0) // TODO tune values
+            .withKS(0)
+            .withKV(0)
+            .withKA(0);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(5)
-                .withMotionMagicAcceleration(10); // TODO tune values
+            .withMotionMagicCruiseVelocity(5)
+            .withMotionMagicAcceleration(10); // TODO tune values
 
         public static final TalonFXConfiguration kArmMotorConfig = new TalonFXConfiguration()
-                .withCurrentLimits(kArmMotorCurrentLimit)
-                .withSlot0(kArmMotorPidConstants)
-                .withMotionMagic(kArmMotionMagicConfigs);
+            .withCurrentLimits(kArmMotorCurrentLimit)
+            .withSlot0(kArmMotorPidConstants)
+            .withMotionMagic(kArmMotionMagicConfigs);
 
         public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
         public static final int kExtensionMotorID = 35;
@@ -137,6 +137,4 @@ public final class Constants {
         public static final double kIntakePower = 1.0;
         public static final double kStowPosition = 1000;
     }
-
-
 }
