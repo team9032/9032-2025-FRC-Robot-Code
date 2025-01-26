@@ -22,15 +22,14 @@ public class Localization {
 
         field = new Field2d();
 
-        AprilTagFieldLayout layout = null;
         try {
-            layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
-        } catch(Exception e) {
-            DriverStation.reportError("Error opening AprilTag field layout", e.getStackTrace());
-        }
+            AprilTagFieldLayout layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
 
-        for (int i = 0; i < cameras.length; i++) {
-            cameras[i] = new LocalizationCamera(kCameraConstants[i], layout); 
+            for (int i = 0; i < cameras.length; i++) {
+                cameras[i] = new LocalizationCamera(kCameraConstants[i], layout); 
+            }
+        } catch(Exception e) {
+            DriverStation.reportError("Error opening AprilTag field layout - Localization will commit die!", e.getStackTrace());
         }
 
         SmartDashboard.putData("Localization Field", field);
