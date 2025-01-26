@@ -14,7 +14,6 @@ public class Intake extends SubsystemBase {
     // private final TalonFX wheelMotor;
 
     public Intake() {
-
         armMotor = new TalonFX(kExtensionMotorID);
         armMotor.getConfigurator().apply(kArmMotorConfig);
 
@@ -23,13 +22,12 @@ public class Intake extends SubsystemBase {
 
     }
 
-    
     public Command returnToStowPosition() {
         return runOnce(() -> armMotor.setControl(armControlRequest.withPosition(kStowPosition)));
     }
 
     // public Command intakeCoral() {
-    //     return runOnce(() -> wheelMotor.set(kIntakeCoral));
+    //     return runOnce(() -> wheelMotor.set(kIntakePower));
     // }
 
     public Command moveToGround() {
@@ -37,7 +35,7 @@ public class Intake extends SubsystemBase {
     }
 
     // public Command ejectCoral() {
-    //     return runOnce(() -> wheelMotor.set(kEjectCoral));
+    //     return runOnce(() -> wheelMotor.set(kEjectPower));
     // }
 
     @Override

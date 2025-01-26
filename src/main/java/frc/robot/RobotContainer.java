@@ -84,7 +84,7 @@ public class RobotContainer {
      */
     public RobotContainer() {
         configureButtonTriggers();
-    }
+    }   
 
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
@@ -99,18 +99,16 @@ public class RobotContainer {
 
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
-            .andThen(sendInfoNotification("Zeroed gyro"))
+                .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
         groundPTrigger.onTrue(
             intake.moveToGround()
-            .andThen(sendInfoNotification("Ground Position works"))
-        );
+            .andThen(sendInfoNotification("Ground Position")));
 
         stowPTrigger.onTrue(
             intake.returnToStowPosition()
-            .andThen(sendInfoNotification("Stow Position works"))
-        );
+            .andThen(sendInfoNotification("Stow Position")));
 
         armTrough.onTrue(arm.armToTroughPos());
         armLevel1.onTrue(arm.armToLevel1Pos());
