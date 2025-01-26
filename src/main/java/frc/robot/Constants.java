@@ -207,4 +207,15 @@ public final class Constants {
             .withSlot0(kArmMotorPidConstants)
             .withMotionMagic(kArmMotionMagicConfigs);
     }
+
+    public static class ClimberConstants {
+        public static final int kMotorID = 50;
+        
+        public static final CurrentLimitsConfigs kMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(70)
+            .withStatorCurrentLimit(120);
+
+        public static final TalonFXConfiguration kMotorConfiguration= new TalonFXConfiguration()
+            .withCurrentLimits(kMotorCurrentLimitConfigs); 
+    }
 }

@@ -11,6 +11,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +56,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
+    private final Climber climber = new Climber();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
@@ -109,6 +111,10 @@ public class RobotContainer {
         armLevel2.onTrue(arm.armToLevel2Pos());
         armLevel3.onTrue(arm.armToLevel3Pos());
         
+
+        climber.setDefaultCommand(
+            climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()) * 0.2)
+        );
         /* Operator Controls */
         elevatorL4Button.onTrue(
                 elevator.elevatorL4Command());
