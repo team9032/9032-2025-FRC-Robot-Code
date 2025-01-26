@@ -13,11 +13,12 @@ public class Indexer extends SubsystemBase {
 
     public Indexer() {
         rollerMotor = new TalonFX(kRollerMotorID);
-        sensor = new DigitalInput(kSensorPortID);
+        sensor = new DigitalInput(kSensorPort);
+        rollerMotor.getConfigurator().apply(kRollerMotorConfiguration);
     }
 
     public Command spinRollers() {
-        return runOnce(() -> rollerMotor.set(kRollerMotorSpeed));
+        return runOnce(() -> rollerMotor.set(kRollerMotorPower));
     }
 
     public Command stopRollers() {
