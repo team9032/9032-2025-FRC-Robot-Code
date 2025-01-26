@@ -149,4 +149,33 @@ public final class Constants {
         public static final double kIntakePower = 1.0;
         public static final double kStowPosition = 1000;
     }
+
+    public static class ArmConstants {
+        public static final int kArmMotorId = 25;
+        public static final double kArmTroughPos = 0.05;
+        public static final double kArmLevel1Pos = 0.1; //TODO change
+        public static final double kArmLevel2Pos = 0.15;
+        public static final double kArmLevel3Pos = 0.2;
+
+        public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(120);
+
+        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
+            .withKP(1)
+            .withKD(0)
+            .withKG(0) // TODO tune values
+            .withKS(0)
+            .withKV(0)
+            .withKA(0);
+
+        public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(20)
+            .withMotionMagicAcceleration(40); // TODO tune values
+
+        public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
+            .withCurrentLimits(kArmMotorCurrentLimit)
+            .withSlot0(kArmMotorPidConstants)
+            .withMotionMagic(kArmMotionMagicConfigs);
+    }
 }
