@@ -8,6 +8,7 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.swerve.Elevator;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -18,19 +19,30 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
+    private final CommandXboxController driveController = new CommandXboxController(
+            DriverConstants.kDriveControllerPort);
+    private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
 
     /* Operator Controller Buttons */
+    private final Trigger elevatorL4Button = operatorController.a();
+    private final Trigger elevatorL1Button = operatorController.b();
+    private final Trigger elevatorL2Button = operatorController.x();
+    private final Trigger elevatorL3Button = operatorController.y();
+    // ...
+
     //...
     private final Trigger armTrough = driveController.povUp();
     private final Trigger armLevel1 = driveController.povRight();
@@ -41,26 +53,26 @@ public class RobotContainer {
 
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
-    private final Indexer indexer = new Indexer();
-    private final Intake intake = new Intake();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
 
     /* Robot Mode Triggers */
-    //...
+    // ...
 
     /* Teleop Triggers */
     private final Trigger groundPTrigger = driveController.y();
     private final Trigger stowPTrigger = driveController.x();
 
     /* Auto Triggers */
-    //...
+    // ...
 
     /* State Triggers */
-    //...
+    // ...
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
     public RobotContainer() {
         configureButtonTriggers();
     }
@@ -69,13 +81,11 @@ public class RobotContainer {
     private void configureButtonTriggers() {
         /* Driver Controls */
         krakenSwerve.setDefaultCommand(
-            new TeleopSwerve(
-                krakenSwerve, 
-                driveController::getRightX, 
-                () -> -driveController.getLeftY(), 
-                () -> -driveController.getLeftX()
-            )
-        );
+                new TeleopSwerve(
+                        krakenSwerve,
+                        driveController::getRightX,
+                        () -> -driveController.getLeftY(),
+                        () -> -driveController.getLeftX()));
 
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
@@ -98,9 +108,17 @@ public class RobotContainer {
         armLevel3.onTrue(arm.armToLevel3Pos());
         
         /* Operator Controls */
-        //...
+        elevatorL4Button.onTrue(
+                elevator.elevatorL4Command());
+        elevatorL1Button.onTrue(
+                elevator.elevatorL1Command());
+        elevatorL2Button.onTrue(
+                elevator.elevatorL2Command());
+        elevatorL3Button.onTrue(
+                elevator.elevatorL3Command());
+        // ...
     }
-    
+
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return null;

@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -67,6 +68,34 @@ public final class Constants {
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
                 .withDriveRequestType(DriveRequestType.Velocity)
                 .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+    }
+
+    public static class ElevatorConfigs {
+        private static final MotionMagicConfigs elevatorMotionMagicConfig = new MotionMagicConfigs()
+                .withMotionMagicCruiseVelocity(5)
+                .withMotionMagicAcceleration(10)
+                .withMotionMagicJerk(100);
+
+        private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
+                .withKP(1)
+                .withKI(0)
+                .withKD(0)
+                .withKG(0);
+        // hi HARSHIL PANDENATOR
+
+        public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(40)
+                .withStatorCurrentLimit(120);
+
+        public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
+                .withMotionMagic(elevatorMotionMagicConfig)
+                .withSlot0(elevatorPIDConfig)
+                .withCurrentLimits(kElevatorCurrentLimits);
+
+        public static final double kElevatorDownPos = 0;
+        public static final double kElevatorMidLow = 22.5;
+        public static final double kElevatorMidHigh = 45;
+        public static final double kElevatorMax = 90;
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
