@@ -6,8 +6,11 @@ package frc.robot;
 
 import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
+import frc.lib.Elastic;
+import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,8 +33,14 @@ public class RobotContainer {
 
     /* Operator Controller Buttons */
     //...
-
+    private final Trigger armTrough = driveController.povUp();
+    private final Trigger armLevel1 = driveController.povRight();
+    private final Trigger armLevel2 = driveController.povDown();
+    private final Trigger armLevel3 = driveController.povLeft();
     /* Subsystems */
+    //private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+
+    private final ArmSubsystem arm = new ArmSubsystem();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Intake intake = new Intake();
 
@@ -83,6 +92,11 @@ public class RobotContainer {
             .andThen(sendInfoNotification("Stow Position works"))
         );
 
+        armTrough.onTrue(arm.armToTroughPos());
+        armLevel1.onTrue(arm.armToLevel1Pos());
+        armLevel2.onTrue(arm.armToLevel2Pos());
+        armLevel3.onTrue(arm.armToLevel3Pos());
+        
         /* Operator Controls */
         //...
     }

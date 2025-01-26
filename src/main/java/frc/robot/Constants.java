@@ -33,9 +33,9 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(kMaxSpeed * 0.05) 
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+                .withDeadband(kMaxSpeed * 0.05)
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
     public static class PathplannerConfig {
@@ -56,18 +56,17 @@ public final class Constants {
         public static final Translation2d kbrModuleOffset = new Translation2d(-kTrackwidth / 2.0, -kTrackwidth / 2.0);
 
         public static final RobotConfig kRobotConfig = new RobotConfig(
-            Units.lbsToKilograms(55.0),//TODO Find the actual constants 
-            (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152),//... 
-            kModuleConfig, 
-            kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset
-        );
+                Units.lbsToKilograms(55.0), // TODO Find the actual constants
+                (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152), // ...
+                kModuleConfig,
+                kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset);
 
-        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
+        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);// TODO Tune
         public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+                .withDriveRequestType(DriveRequestType.Velocity)
+                .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
