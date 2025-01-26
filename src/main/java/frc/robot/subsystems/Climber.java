@@ -13,7 +13,8 @@ public class Climber extends SubsystemBase {
 
     private TalonFX climberMotor;
     public Climber(){
-        climberMotor = new TalonFX(motorID);
+        climberMotor = new TalonFX(kMotorID);
+        climberMotor.getConfigurator().apply(kMotorConfiguration);
     }
 
     public Command setPower(DoubleSupplier pressure){

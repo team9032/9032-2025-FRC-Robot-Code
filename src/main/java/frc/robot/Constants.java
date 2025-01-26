@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -103,6 +105,13 @@ public final class Constants {
     }
 
     public static class ClimberConstants {
-        public static final int motorID = 25;
+        public static final int kMotorID = 50;
+        
+        public static final CurrentLimitsConfigs kMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(70)
+            .withStatorCurrentLimit(120);
+
+        public static final TalonFXConfiguration kMotorConfiguration= new TalonFXConfiguration()
+            .withCurrentLimits(kMotorCurrentLimitConfigs); 
     }
 }
