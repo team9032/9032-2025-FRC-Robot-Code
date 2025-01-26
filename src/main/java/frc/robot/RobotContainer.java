@@ -8,6 +8,7 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,11 +28,15 @@ public class RobotContainer {
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
 
+    private final Trigger scoreCoral = driveController.a();
+
+    private final Trigger pickupCoral = driveController.y();
     /* Operator Controller Buttons */
     //...
 
     /* Subsystems */
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
@@ -70,6 +75,9 @@ public class RobotContainer {
             .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
+        scoreCoral.onTrue(endEffector.placeCoral());
+
+        pickupCoral.onTrue(endEffector.pickupCoral());
         /* Operator Controls */
         //...
     }

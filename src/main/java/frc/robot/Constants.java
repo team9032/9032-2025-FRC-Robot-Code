@@ -1,5 +1,10 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -100,5 +105,29 @@ public final class Constants {
                 new Rotation3d(0, 0, -Math.PI / 2.0))
             ),
         };
+    }
+
+    public static final class EndEffectorConstants {
+        public static final int kEndEffectorID = 26;
+        public static final double kEndEffectorSpeed = 0.5;
+        public static final int kEndEffectorBeamBreakID = 27;
+        public static final Slot0Configs kEndEffectorPID = new Slot0Configs()
+            .withKA(0) //TODO tune
+            .withKD(0)
+            .withKP(1)
+            .withKV(0)
+            .withKS(0);
+
+        public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(120)
+            .withSupplyCurrentLimit(40);
+
+        public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
+            .withNeutralMode(NeutralModeValue.Coast);
+
+        public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kCurrentLimits)
+            .withSlot0(kEndEffectorPID)
+            .withMotorOutput(kEndEffectorOutputConfigs);
     }
 }
