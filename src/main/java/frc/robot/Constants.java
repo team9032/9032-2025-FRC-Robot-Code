@@ -112,16 +112,16 @@ public final class Constants {
             .withStatorCurrentLimit(120);
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKP(1)
+            .withKP(0.17)
             .withKD(0)
             .withKG(0) // TODO tune values
             .withKS(0)
-            .withKV(0)
+            .withKV(.117)
             .withKA(0);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(5)
-            .withMotionMagicAcceleration(10); // TODO tune values
+            .withMotionMagicCruiseVelocity(120)
+            .withMotionMagicAcceleration(80); // TODO tune values
 
         public static final TalonFXConfiguration kArmMotorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
