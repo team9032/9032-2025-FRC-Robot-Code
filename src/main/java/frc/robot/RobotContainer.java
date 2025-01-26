@@ -8,6 +8,7 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,7 +33,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
-
+    private final Indexer indexer = new Indexer();
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
 

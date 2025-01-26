@@ -101,4 +101,9 @@ public final class Constants {
             ),
         };
     }
+    public static final class IndexerConstants{
+        public static final int kRollerMotorID = 0;
+        public static final int kSensorPortID = 0;
+        public static final double kRollerMotorSpeed = 0.5;
+    }
 }
