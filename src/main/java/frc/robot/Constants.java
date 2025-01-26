@@ -117,8 +117,6 @@ public final class Constants {
         public static final TalonFXConfiguration kRollerMotorConfiguration= new TalonFXConfiguration().withCurrentLimits(rollerMotorCurrentLimitConfigs)
             ;
     }
-}
-
 
     public static final class IntakeConstants {
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
@@ -151,6 +149,4 @@ public final class Constants {
         public static final double kIntakePower = 1.0;
         public static final double kStowPosition = 1000;
     }
-
-
 }

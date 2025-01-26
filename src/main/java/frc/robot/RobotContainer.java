@@ -6,8 +6,6 @@ package frc.robot;
 
 import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
-import frc.lib.Elastic;
-import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Indexer;
