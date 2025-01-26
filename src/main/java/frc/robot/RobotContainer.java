@@ -8,8 +8,8 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.swerve.Elevator;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.Intake;
@@ -49,10 +49,12 @@ public class RobotContainer {
     private final Trigger armLevel2 = driveController.povDown();
     private final Trigger armLevel3 = driveController.povLeft();
     /* Subsystems */
-    //private final KrakenSwerve krakenSwerve = new KrakenSwerve();
 
+    private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    private final Elevator elevator = new Elevator();
+    private final Indexer indexer = new Indexer();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
