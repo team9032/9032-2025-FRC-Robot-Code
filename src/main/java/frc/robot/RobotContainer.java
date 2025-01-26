@@ -12,6 +12,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,6 +38,9 @@ public class RobotContainer {
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
 
+    private final Trigger scoreCoral = driveController.a();
+
+    private final Trigger pickupCoral = driveController.y();
     /* Operator Controller Buttons */
     private final Trigger elevatorL4Button = operatorController.a();
     private final Trigger elevatorL1Button = operatorController.b();
@@ -57,6 +61,7 @@ public class RobotContainer {
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
     private final Climber climber = new Climber();
+    private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
     private final Notification elasticNotification = new Notification();
@@ -115,6 +120,9 @@ public class RobotContainer {
         climber.setDefaultCommand(
             climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))
         );
+        scoreCoral.onTrue(endEffector.placeCoral());
+
+        pickupCoral.onTrue(endEffector.pickupCoral());
         /* Operator Controls */
         elevatorL4Button.onTrue(
                 elevator.elevatorL4Command());
