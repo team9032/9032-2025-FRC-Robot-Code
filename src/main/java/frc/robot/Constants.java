@@ -104,6 +104,21 @@ public final class Constants {
             ),
         };
     }
+    public static final class IndexerConstants {
+        public static final int kRollerMotorID = 0;
+        public static final int kSensorPort = 0;
+
+        public static final double kRollerMotorPower = 0.5;
+
+        public static final CurrentLimitsConfigs rollerMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(120);
+
+        public static final TalonFXConfiguration kRollerMotorConfiguration= new TalonFXConfiguration().withCurrentLimits(rollerMotorCurrentLimitConfigs)
+            ;
+    }
+}
+
 
     public static final class IntakeConstants {
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()

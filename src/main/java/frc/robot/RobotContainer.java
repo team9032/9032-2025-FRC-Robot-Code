@@ -10,6 +10,7 @@ import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.Intake;
@@ -42,6 +43,7 @@ public class RobotContainer {
 
     private final ArmSubsystem arm = new ArmSubsystem();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
+    private final Indexer indexer = new Indexer();
     private final Intake intake = new Intake();
 
     /* Dashboard */
