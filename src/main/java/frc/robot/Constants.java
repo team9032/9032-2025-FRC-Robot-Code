@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -104,9 +107,30 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final TalonFXConfiguration kExtensionMotorConfig = new TalonFXConfiguration();
-        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
         
+        public static CurrentLimitsConfigs kExtensionMotorCurrentLimit = new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(40)
+                .withStatorCurrentLimit(120);
+
+        public static Slot0Configs kArmMotorPidConstants = new Slot0Configs()
+                .withKP(1)
+                .withKD(0)
+                .withKG(0) //TODO tune values
+                .withKS(0)
+                .withKV(0)
+                .withKA(0);
+        
+        public static MotionMagicConfigs kArmMotionMagicConfigs= new MotionMagicConfigs()
+                .withMotionMagicCruiseVelocity(5)
+                .withMotionMagicAcceleration(10) //TODO tune values
+                .withMotionMagicJerk(100);
+
+        public static final TalonFXConfiguration kExtensionMotorConfig = new TalonFXConfiguration()                
+            .withCurrentLimits(kExtensionMotorCurrentLimit)
+            .withSlot0(kArmMotorPidConstants)
+            .withMotionMagic(kArmMotionMagicConfigs);
+
+        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
         public static final int kExtensionMotorID = 35;
         public static final int kWheelMotorID = 36;
 

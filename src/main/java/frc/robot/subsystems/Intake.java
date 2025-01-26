@@ -23,9 +23,6 @@ public class Intake extends SubsystemBase {
 
     }
 
-    // //public Command transferToElevator() {
-    //     r
-    // //}
     
     public Command returnToStowPosition() {
         return runOnce(() -> armMotor.setControl(armControlRequest.withPosition(kStowPosition)));
