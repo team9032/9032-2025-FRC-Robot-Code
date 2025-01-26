@@ -85,11 +85,12 @@ public class RobotContainer {
     private void configureButtonTriggers() {
         /* Driver Controls */
         krakenSwerve.setDefaultCommand(
-                new TeleopSwerve(
-                        krakenSwerve,
-                        driveController::getRightX,
-                        () -> -driveController.getLeftY(),
-                        () -> -driveController.getLeftX()));
+            new TeleopSwerve(
+                krakenSwerve,
+                driveController::getRightX,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX())
+        );
 
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
@@ -111,9 +112,8 @@ public class RobotContainer {
         armLevel2.onTrue(arm.armToLevel2Pos());
         armLevel3.onTrue(arm.armToLevel3Pos());
         
-
         climber.setDefaultCommand(
-            climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()) * 0.2)
+            climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))
         );
         /* Operator Controls */
         elevatorL4Button.onTrue(
