@@ -4,57 +4,51 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.Elastic;
 import frc.lib.Elastic.Notification;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.swerve.KrakenSwerve;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driveController = new CommandXboxController(
-            DriverConstants.kDriveControllerPort);
+    private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
     private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
-
     private final Trigger scoreCoral = driveController.a();
-
     private final Trigger pickupCoral = driveController.y();
+    private final Trigger groundPTrigger = driveController.y();
+    private final Trigger stowPTrigger = driveController.x();
+    private final Trigger armTrough = driveController.povUp();
+    private final Trigger armLevel1 = driveController.povRight();
+    private final Trigger armLevel2 = driveController.povDown();
+    private final Trigger armLevel3 = driveController.povLeft();
+
     /* Operator Controller Buttons */
     private final Trigger elevatorL4Button = operatorController.a();
     private final Trigger elevatorL1Button = operatorController.b();
     private final Trigger elevatorL2Button = operatorController.x();
     private final Trigger elevatorL3Button = operatorController.y();
-    // ...
 
-    //...
-    private final Trigger armTrough = driveController.povUp();
-    private final Trigger armLevel1 = driveController.povRight();
-    private final Trigger armLevel2 = driveController.povDown();
-    private final Trigger armLevel3 = driveController.povLeft();
     /* Subsystems */
-
     private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
@@ -70,8 +64,7 @@ public class RobotContainer {
     // ...
 
     /* Teleop Triggers */
-    private final Trigger groundPTrigger = driveController.y();
-    private final Trigger stowPTrigger = driveController.x();
+    // ...
 
     /* Auto Triggers */
     // ...
@@ -94,21 +87,24 @@ public class RobotContainer {
                 krakenSwerve,
                 driveController::getRightX,
                 () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX())
+                () -> -driveController.getLeftX()
+            )
         );
 
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
-                .andThen(sendInfoNotification("Zeroed gyro"))
+            .andThen(sendInfoNotification("Zeroed gyro"))
         );
 
         groundPTrigger.onTrue(
             intake.moveToGround()
-            .andThen(sendInfoNotification("Ground Position")));
+            .andThen(sendInfoNotification("Ground Position"))
+        );
 
         stowPTrigger.onTrue(
             intake.returnToStowPosition()
-            .andThen(sendInfoNotification("Stow Position")));
+            .andThen(sendInfoNotification("Stow Position"))
+        );
 
         armTrough.onTrue(arm.armToTroughPos());
         armLevel1.onTrue(arm.armToLevel1Pos());
@@ -118,19 +114,15 @@ public class RobotContainer {
         climber.setDefaultCommand(
             climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))
         );
-        scoreCoral.onTrue(endEffector.placeCoral());
 
+        scoreCoral.onTrue(endEffector.placeCoral());
         pickupCoral.onTrue(endEffector.pickupCoral());
+
         /* Operator Controls */
-        elevatorL4Button.onTrue(
-                elevator.elevatorL4Command());
-        elevatorL1Button.onTrue(
-                elevator.elevatorL1Command());
-        elevatorL2Button.onTrue(
-                elevator.elevatorL2Command());
-        elevatorL3Button.onTrue(
-                elevator.elevatorL3Command());
-        // ...
+        elevatorL1Button.onTrue(elevator.elevatorL1Command());
+        elevatorL2Button.onTrue(elevator.elevatorL2Command());
+        elevatorL3Button.onTrue(elevator.elevatorL3Command());
+        elevatorL4Button.onTrue(elevator.elevatorL4Command());
     }
 
     /** Use this to pass the autonomous command */
