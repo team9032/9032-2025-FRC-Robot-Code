@@ -48,19 +48,19 @@ public final class Constants {
         public static final double kRotationSetpoint = 0.0;
 
         /* PID Constants */
-        public static final double kPDistance = 1.0;
-        public static final double kDDistance = 0.01;
+        public static final double kPDistance = 0.0;//TODO distance PID
+        public static final double kDDistance = 0.00;
 
-        public static final double kPRotation = 1.0;
-        public static final double kDRotation = 0.01;
+        public static final double kPRotation = 0.15;
+        public static final double kDRotation = 0.002;
 
         /* Class Ids */
-        public static final int kCoralId = 0;
-        public static final int kAlgaeId = 1;
+        public static final int kCoralId = 1;
+        public static final int kAlgaeId = 0;
         
         /* Heights */
         public static final double kCoralHeight = 0.1;//The distance from the ground to the middle of a coral in meters
-        public static final double kAlgaeHeight = 0.4;//The distance from the ground to the middle of an algae in meters
+        public static final double kAlgaeHeight = 0.205;//The distance from the ground to the middle of an algae in meters
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 

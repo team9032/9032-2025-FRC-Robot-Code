@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -9,6 +10,8 @@ import frc.robot.util.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;
+
+import java.util.ArrayList;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -55,7 +58,7 @@ public class AimAtObject extends Command {
         /* Make sure the target cache is incremented each loop */
         var previousTarget = targetCache.getAndIncrement();
 
-        var results = localization.getObjectTrackingResults(kObjectTrackingCameraName);
+        var results = new ArrayList<>(localization.getObjectTrackingResults(kObjectTrackingCameraName));
 
         /* Remove all results without targets - exit if no results have targets */
         results.removeIf((result) -> !result.hasTargets());
@@ -71,7 +74,7 @@ public class AimAtObject extends Command {
 
         /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
         var filteredTargets = latestResult.getTargets();
-        filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);
+        // filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);//TODO get class ids
 
         if(filteredTargets.isEmpty())
             return;
@@ -94,6 +97,8 @@ public class AimAtObject extends Command {
 
         /* Drive based on target distance and yaw */
         double distance = localization.findDistanceToTarget(kObjectTrackingCameraName, targetToTrack.pitch, objectHeight);
+
+        SmartDashboard.putNumber(kObjectTrackingCameraName + " Object Distance", distance);
 
         var speeds = new ChassisSpeeds(
             distanceController.calculate(distance),
