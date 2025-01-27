@@ -4,13 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.Elastic;
-import frc.lib.Elastic.Notification;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -19,6 +12,16 @@ import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.ElasticUtil;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+
+import static frc.robot.Constants.DriverConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,7 +31,7 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driveController = new CommandXboxController(DriverConstants.kDriveControllerPort);
+    private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
     private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
@@ -58,7 +61,7 @@ public class RobotContainer {
     private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
-    private final Notification elasticNotification = new Notification();
+    private final SendableChooser<Command> autoChooser;
 
     /* Robot Mode Triggers */
     // ...
@@ -72,12 +75,17 @@ public class RobotContainer {
     /* State Triggers */
     // ...
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
+    /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         configureButtonTriggers();
-    }   
+
+        if(kRunSysId)
+            bindSysIdTriggers();
+
+        /* Allows us to choose from all autos in the deploy directory */
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+    }
 
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
@@ -93,17 +101,17 @@ public class RobotContainer {
 
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
-            .andThen(sendInfoNotification("Zeroed gyro"))
+            .andThen(ElasticUtil.sendInfoCommand("Zeroed gyro"))
         );
 
         groundPTrigger.onTrue(
             intake.moveToGround()
-            .andThen(sendInfoNotification("Ground Position"))
+            .andThen(ElasticUtil.sendInfoCommand("Ground Position"))
         );
 
         stowPTrigger.onTrue(
             intake.returnToStowPosition()
-            .andThen(sendInfoNotification("Stow Position"))
+            .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
         );
 
         armTrough.onTrue(arm.armToTroughPos());
@@ -124,13 +132,31 @@ public class RobotContainer {
         elevatorL3Button.onTrue(elevator.elevatorL3Command());
         elevatorL4Button.onTrue(elevator.elevatorL4Command());
     }
+    
+    private void bindSysIdTriggers() {
+        Trigger sysIdReverse = driveController.leftBumper();
+        Trigger sysIdDynamic = driveController.start();
+        Trigger sysIdQuasistatic = driveController.back();
+
+        sysIdDynamic.and(sysIdReverse.negate()).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kForward)
+        );
+
+        sysIdDynamic.and(sysIdReverse).whileTrue(
+            krakenSwerve.runSysIdDynamic(Direction.kReverse)
+        );
+
+        sysIdQuasistatic.and(sysIdReverse.negate()).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kForward)
+        );
+
+        sysIdQuasistatic.and(sysIdReverse).whileTrue(
+            krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
+        );
+    }
 
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return null;
-    }
-
-    private Command sendInfoNotification(String info) {
-        return new InstantCommand(() -> Elastic.sendNotification(elasticNotification.withTitle(info)));
     }
 }
