@@ -114,12 +114,12 @@ public class RobotContainer {
             intake.returnToStowPosition()
             .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
         );
-
+/*
         armTrough.onTrue(arm.armToTroughPos());
-        armLevel1.onTrue(arm.armToLevel1Pos());
+        armLevel1.onTrue(arm.armToLevel1Pos()); //TODO uncomment after neoification
         armLevel2.onTrue(arm.armToLevel2Pos());
         armLevel3.onTrue(arm.armToLevel3Pos());
-        
+*/
         climber.setDefaultCommand(
             climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))
         );

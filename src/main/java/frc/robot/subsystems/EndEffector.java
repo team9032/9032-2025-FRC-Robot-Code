@@ -29,7 +29,8 @@ public class EndEffector extends SubsystemBase {
     public Command pickupCoral() {
         return Commands.sequence(
             runOnce(() -> endEffectorMotor.set(-kEndEffectorIntakeSpeed)),
-            Commands.waitUntil(() -> endEffectorBeamBreak.get()),
+            //Commands.waitUntil(() -> endEffectorBeamBreak.get()), //TODO Uncomment when beam break sensor is added
+            Commands.waitSeconds(0.1),
             runOnce(() -> endEffectorMotor.set(0))
         );
     }
