@@ -26,9 +26,9 @@ public class SwerveConstants {
         .withKS(0.2).withKV(1.5).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-    private static final Slot0Configs driveGains = new Slot0Configs()//TODO these gains need to be tuned to your individual robot.
-        .withKP(0.05).withKI(0).withKD(0.005)
-        .withKS(0).withKV(0.12);
+    private static final Slot0Configs driveGains = new Slot0Configs()
+        .withKP(0.1666).withKI(0).withKD(0.0)
+        .withKS(0.060837).withKA(0.007183).withKV(0.11509);//Rotational kA is 0.011365
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -91,7 +91,8 @@ public class SwerveConstants {
             .withPigeon2Id(kPigeonId)
             .withPigeon2Configs(pigeonConfigs);
 
-    private static final SwerveModuleConstantsFactory constantCreator = new SwerveModuleConstantsFactory()
+    private static final SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constantCreator =
+        new SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
             .withDriveMotorGearRatio(kDriveGearRatio)
             .withSteerMotorGearRatio(kSteerGearRatio)
             .withCouplingGearRatio(kCoupleRatio)
@@ -105,7 +106,7 @@ public class SwerveConstants {
             .withFeedbackSource(kSteerFeedbackType)
             .withDriveMotorInitialConfigs(driveInitialConfigs)
             .withSteerMotorInitialConfigs(steerInitialConfigs)
-            .withCANcoderInitialConfigs(cancoderInitialConfigs)
+            .withEncoderInitialConfigs(cancoderInitialConfigs)
             .withSteerInertia(kSteerInertia)
             .withDriveInertia(kDriveInertia)
             .withSteerFrictionVoltage(kSteerFrictionVoltage)
@@ -157,16 +158,16 @@ public class SwerveConstants {
     private static final Distance kBackRightYPos = Inches.of(-12);
 
 
-    public static final SwerveModuleConstants kFrontLeft = constantCreator.createModuleConstants(
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> kFrontLeft = constantCreator.createModuleConstants(
             kFrontLeftSteerMotorId, kFrontLeftDriveMotorId, kFrontLeftEncoderId, kFrontLeftEncoderOffset,
             kFrontLeftXPos, kFrontLeftYPos, kInvertLeftSide, kFrontLeftSteerMotorInverted, kFrontLeftCANcoderInverted);
-    public static final SwerveModuleConstants kFrontRight = constantCreator.createModuleConstants(
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> kFrontRight = constantCreator.createModuleConstants(
             kFrontRightSteerMotorId, kFrontRightDriveMotorId, kFrontRightEncoderId, kFrontRightEncoderOffset,
             kFrontRightXPos, kFrontRightYPos, kInvertRightSide, kFrontRightSteerMotorInverted, kFrontRightCANcoderInverted);
-    public static final SwerveModuleConstants kBackLeft = constantCreator.createModuleConstants(
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> kBackLeft = constantCreator.createModuleConstants(
             kBackLeftSteerMotorId, kBackLeftDriveMotorId, kBackLeftEncoderId, kBackLeftEncoderOffset,
             kBackLeftXPos, kBackLeftYPos, kInvertLeftSide, kBackLeftSteerMotorInverted, kBackLeftCANcoderInverted);
-    public static final SwerveModuleConstants kBackRight = constantCreator.createModuleConstants(
+    public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> kBackRight = constantCreator.createModuleConstants(
             kBackRightSteerMotorId, kBackRightDriveMotorId, kBackRightEncoderId, kBackRightEncoderOffset,
             kBackRightXPos, kBackRightYPos, kInvertRightSide, kBackRightSteerMotorInverted, kBackRightCANcoderInverted);
 }
