@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -163,13 +162,12 @@ public final class Constants {
         public static final double kArmLevel1Pos = 0.1; //TODO change
         public static final double kArmLevel2Pos = 0.15;
         public static final double kArmLevel3Pos = 0.2;
-        public static final boolean kArmMotorInverted = false;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs() //TODO change all to neo stuff
+        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
             .withKP(1)
             .withKD(0)
             .withKG(0) // TODO tune values
