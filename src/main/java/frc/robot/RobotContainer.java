@@ -7,6 +7,8 @@ package frc.robot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
+import frc.robot.utils.GitData;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,6 +63,9 @@ public class RobotContainer {
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        /* Add Git Data to Elastic */
+        SmartDashboard.putString("Version Info", "Branch (" + GitData.GIT_BRANCH + ") Build date (" + GitData.BUILD_DATE + ")");
     }
 
     /** Use this method to define your button trigger->command mappings. */
