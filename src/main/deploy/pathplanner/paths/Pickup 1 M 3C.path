@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.81301282051282,
+        "y": 4.169487179487179
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.515897435897435,
+        "y": 5.294423076923076
+      },
+      "isLocked": false,
+      "linkedName": "M 3C Coral 1 End"
+    },
+    {
+      "anchor": {
+        "x": 1.7570512820512816,
+        "y": 7.152115384615384
+      },
+      "prevControl": {
+        "x": 3.346410256410255,
+        "y": 7.812628205128205
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "M 3C Pickup"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 128.74596725608353
+  },
+  "reversed": false,
+  "folder": "M 3C",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
