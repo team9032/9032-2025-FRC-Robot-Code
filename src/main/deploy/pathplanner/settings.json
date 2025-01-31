@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "L 2C",
+    "M 3C",
     "R 3C",
     "Tuning"
   ],
