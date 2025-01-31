@@ -8,11 +8,17 @@ import frc.robot.subsystems.*;
 public class Compositions {
     private Compositions() {}
 
-    public static Command autoIntakeCoralSequence(Indexer indexer, Elevator elevator, EndEffector endEffector) { 
+    public static Command intakeAndStoreCoral(Intake intake, Indexer indexer, Elevator elevator, EndEffector endEffector, Arm arm) { 
         return Commands.sequence(
+            elevator.moveToIndexerPosition()//TODO Should be done earlier
+                .alongWith(arm.moveToIndexerPos()),
+            intake.intakeCoral(),
             indexer.spinRollersUntilCoralReceived(),
-            elevator.elevatorL1Command(),
-            endEffector.pickupCoral()
+            intake.stopIntaking(),
+            //TODO ask design what is the point of the indexer here?
+            indexer.spinRollers(),//TODO make sure the elevator and arm are ready otherwise coral is launched into the robot
+            endEffector.receiveCoralFromIndexer(),
+            indexer.stopRollers()
         );
     }
 }

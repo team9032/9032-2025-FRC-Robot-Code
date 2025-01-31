@@ -124,7 +124,7 @@ public class RobotContainer {
         );
 
         scoreCoral.onTrue(endEffector.placeCoral());
-        pickupCoral.onTrue(endEffector.pickupCoral());
+        pickupCoral.onTrue(endEffector.pickupCoralFromSource());
 
         /* Operator Controls */
         elevatorL1Button.onTrue(elevator.elevatorL1Command());
