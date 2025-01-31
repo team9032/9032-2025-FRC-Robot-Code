@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 7.468721590909091,
+        "y": 1.8362357954580728
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 6.31657453098677,
+        "y": 2.124570924879575
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 4.966730769230768,
+        "y": 2.74525641025641
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 6.04734482622583,
+        "y": 2.321358013050835
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R 3C Coral 1 End"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -59.88626684901758
   },
   "reversed": false,
   "folder": "R 3C",
