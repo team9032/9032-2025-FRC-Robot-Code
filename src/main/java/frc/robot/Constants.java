@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -73,6 +72,7 @@ public final class Constants {
         public static final double kElevatorMidLow = 22.5;
         public static final double kElevatorMidHigh = 45;
         public static final double kElevatorMax = 90;
+        public static final double kElevatorIndexerPos = 90;
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
@@ -117,12 +117,12 @@ public final class Constants {
 
         public static final double kRollerMotorPower = 0.5;
 
-        public static final CurrentLimitsConfigs rollerMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kRollerMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
         public static final TalonFXConfiguration kRollerMotorConfiguration= new TalonFXConfiguration()
-            .withCurrentLimits(rollerMotorCurrentLimitConfigs);
+            .withCurrentLimits(kRollerMotorCurrentLimitConfigs);
     }
 
     public static final class IntakeConstants {
@@ -159,17 +159,18 @@ public final class Constants {
 
     public static class ArmConstants {
         public static final int kArmMotorId = 25;
+
+        public static final double kArmIndexerPos = 0.05;
         public static final double kArmTroughPos = 0.05;
         public static final double kArmLevel1Pos = 0.1; //TODO change
         public static final double kArmLevel2Pos = 0.15;
         public static final double kArmLevel3Pos = 0.2;
-        public static final boolean kArmMotorInverted = false;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs() //TODO change all to neo stuff
+        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
             .withKP(1)
             .withKD(0)
             .withKG(0) // TODO tune values
@@ -200,15 +201,13 @@ public final class Constants {
 
     public static final class EndEffectorConstants {
         public static final int kEndEffectorID = 26;
-        public static final double kEndEffectorOuttakeSpeed = 0.25;
-        public static final double kEndEffectorIntakeSpeed = -0.5;
-        public static final int kEndEffectorBeamBreakID = 27;
-        public static final Slot0Configs kEndEffectorPID = new Slot0Configs()
-            .withKA(0) //TODO tune
-            .withKD(0)
-            .withKP(1)
-            .withKV(0)
-            .withKS(0);
+        public static final int kPhotoelectricSensorID = 27;
+
+        public static final double kOuttakePower = 0.25;
+        public static final double kIntakeFromSourcePower = -0.5;
+        public static final double kReceiveFromIndexerPower = 0.25;
+
+        public static final double kOuttakeWait = 0.5;
 
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
@@ -219,7 +218,6 @@ public final class Constants {
 
         public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kCurrentLimits)
-            .withSlot0(kEndEffectorPID)
             .withMotorOutput(kEndEffectorOutputConfigs);
     }
 }

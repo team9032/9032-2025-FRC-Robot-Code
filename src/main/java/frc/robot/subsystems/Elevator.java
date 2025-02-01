@@ -19,6 +19,10 @@ public class Elevator extends SubsystemBase {
         elevatorMotor.setControl(new MotionMagicVoltage(pos));
     }
 
+    public Command moveToIndexerPosition() {
+        return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorIndexerPos));
+    }
+
     public Command elevatorL1Command() {
         return runOnce(() -> moveElevator(ElevatorConfigs.kElevatorDownPos));
     }
