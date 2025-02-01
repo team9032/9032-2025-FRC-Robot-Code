@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.localization.Localization;
-import frc.robot.subsystems.SwerveSysId;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.PathplannerConfig.*;
