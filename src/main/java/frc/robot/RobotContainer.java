@@ -54,6 +54,7 @@ public class RobotContainer {
     private final Trigger elevatorL1Button = operatorController.b();
     private final Trigger elevatorL2Button = operatorController.x();
     private final Trigger elevatorL3Button = operatorController.y();
+    private final Trigger index = operatorController.leftTrigger();
 
     /* Subsystems */
     private final Intake intake = new Intake();
@@ -141,6 +142,8 @@ public class RobotContainer {
         elevatorL2Button.onTrue(elevator.elevatorL2Command());
         elevatorL3Button.onTrue(elevator.elevatorL3Command());
         elevatorL4Button.onTrue(elevator.elevatorL4Command());
+
+        index.onTrue(indexer.spinRollersUntilCoralReceived());
     }
     
     private void bindSysIdTriggers() {
