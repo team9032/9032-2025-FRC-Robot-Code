@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.SwerveSysId;
+import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
@@ -54,7 +55,7 @@ public class KrakenSwerve extends SubsystemBase {
                 this
             );
         } catch (Exception e) {
-            DriverStation.reportError("Failed to load PathPlanner config - Auto will commit die!", e.getStackTrace());
+            ElasticUtil.sendError("Failed to load PathPlanner config", "Auto will commit die!");
         }
         
         localization = new Localization(drivetrain);
@@ -97,7 +98,7 @@ public class KrakenSwerve extends SubsystemBase {
     }
 
     private void updateDriveMotorConstants() {
-        System.out.println("Updated constants");
+        ElasticUtil.sendInfo("Updated constants");
 
         var modules = drivetrain.getModules();
 
