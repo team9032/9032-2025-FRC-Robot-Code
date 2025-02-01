@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
-import frc.robot.util.VisionTargetCache;
+import frc.robot.utils.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;

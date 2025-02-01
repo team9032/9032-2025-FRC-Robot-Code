@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.utils;
 
 public class VisionTargetCache<T> {
     private final int expireAfterAmount;
