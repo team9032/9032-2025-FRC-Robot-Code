@@ -15,7 +15,6 @@ public class Compositions {
             intake.intakeCoral(),
             indexer.spinRollersUntilCoralReceived(),
             intake.stopIntaking(),
-            //TODO ask design what is the point of the indexer here?
             indexer.spinRollers(),//TODO make sure the elevator and arm are ready otherwise coral is launched into the robot
             endEffector.receiveCoralFromIndexer(),
             indexer.stopRollers()

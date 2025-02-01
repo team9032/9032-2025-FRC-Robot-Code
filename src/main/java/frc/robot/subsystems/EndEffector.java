@@ -34,7 +34,7 @@ public class EndEffector extends SubsystemBase {
     public Command pickupCoralFromSource() {
         return Commands.sequence(
             setEndEffectorMotor(kIntakeFromSourcePower),
-            Commands.waitUntil(() -> photoelectricSensor.get()),//TODO this sensor will not be placed in the right spot - need to wait 
+            Commands.waitUntil(() -> photoelectricSensor.get()),//TODO this does not match the current design!
             setEndEffectorMotor(0.0)
         );
     }
