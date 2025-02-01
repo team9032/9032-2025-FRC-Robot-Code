@@ -115,7 +115,7 @@ public class KrakenSwerve extends SubsystemBase {
             .withKS(SmartDashboard.getNumber("Drive kS", 0.0));
 
         for(var motor : driveMotors) {
-            motor.getConfigurator().apply(newConfig);
+            ElasticUtil.checkStatus(motor.getConfigurator().apply(newConfig));
         }
     }
 

@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import com.ctre.phoenix6.StatusCode;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,5 +51,11 @@ public class ElasticUtil {
 
     public static Command sendErrorCommand(String title, String description) {
         return Commands.runOnce(() -> sendError(title, description));
+    }
+
+    /** Checks the status of a TalonFX */
+    public static void checkStatus(StatusCode statusCode) {
+        if(statusCode != StatusCode.OK) 
+            sendError("TalonFX Error", "A motor will probably not work! Check the logs. Status code: " + statusCode.getName());
     }
 }
