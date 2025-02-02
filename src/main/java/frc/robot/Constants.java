@@ -41,7 +41,11 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kPathConstraints = new PathConstraints(null, null, null, null)
+        public static final PathConstraints kPathConstraints = new PathConstraints(
+            4,
+            16, 
+            Math.PI, 
+            4*Math.PI)
 
     }
 

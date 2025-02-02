@@ -47,7 +47,7 @@
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 4.0,
     "rotation": -178.45184230102223
   },
   "useDefaultConstraints": true
