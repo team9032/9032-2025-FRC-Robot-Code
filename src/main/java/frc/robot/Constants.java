@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -200,21 +201,29 @@ public final class Constants {
     }
 
     public static final class EndEffectorConstants {
-        public static final int kEndEffectorID = 26;
-        public static final int kPhotoelectricSensorID = 27;
+        public static final int kMainEndEffectorID = 26;
+        public static final int kPhotoelectricSensor1ID = 27;
+        public static final int kSecondaryEndEffectorID = 28;
+        public static final int kAlgaeDistSensorID = 29;
+        public static final int kPhotoelectricSensor2ID = 30;
 
         public static final double kOuttakePower = 0.25;
         public static final double kIntakeFromSourcePower = -0.5;
         public static final double kReceiveFromIndexerPower = 0.25;
+        public static final double kIntakeAlgaePower = 0.25;
+        public static final double kSlowIntakeFromSourcePower = -0.25; //TODO tune
+        public static final double kSlowReceiveFromIndexerPower = 0.1; //TODO tune
 
         public static final double kOuttakeWait = 0.5;
+        public static final double kHasAlgaeDist = 100;
 
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
 
         public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast);
+            .withNeutralMode(NeutralModeValue.Coast)
+            .withInverted(InvertedValue.CounterClockwise_Positive); //TODO change if bad
 
         public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kCurrentLimits)
