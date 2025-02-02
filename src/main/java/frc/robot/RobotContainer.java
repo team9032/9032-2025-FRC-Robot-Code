@@ -125,10 +125,10 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
         );
 
-        armTrough.onTrue(arm.armToTroughPos());
-        armLevel1.onTrue(arm.armToLevel1Pos());
-        armLevel2.onTrue(arm.armToLevel2Pos());
-        armLevel3.onTrue(arm.armToLevel3Pos());
+        armTrough.onTrue(arm.moveToTroughPos());
+        armLevel1.onTrue(arm.moveToLevel1Pos());
+        armLevel2.onTrue(arm.moveToLevel2Pos());
+        armLevel3.onTrue(arm.moveToLevel3Pos());
         
         climber.setDefaultCommand(
             climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))

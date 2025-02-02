@@ -127,11 +127,11 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kIntakeMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
+        public static final Slot0Configs kIntakeMotorPidConstants = new Slot0Configs()
             .withKP(0.17)
             .withKD(0)
             .withKG(0) // TODO tune values
@@ -139,18 +139,25 @@ public final class Constants {
             .withKV(.117)
             .withKA(0);
 
-        public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
+        public static final MotionMagicConfigs kIntakeMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(120)
             .withMotionMagicAcceleration(80); // TODO tune values
 
-        public static final TalonFXConfiguration kArmMotorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kArmMotorCurrentLimit)
-            .withSlot0(kArmMotorPidConstants)
-            .withMotionMagic(kArmMotionMagicConfigs);
+        public static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kIntakeMotorCurrentLimit)
+            .withSlot0(kIntakeMotorPidConstants)
+            .withMotionMagic(kIntakeMotionMagicConfigs);
 
-        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration();
-        public static final int kExtensionMotorID = 35;
+        public static final MotorOutputConfigs kWheelOutputConfigs = new MotorOutputConfigs()
+            .withNeutralMode(NeutralModeValue.Coast); //TODO change if bad
+
+        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kIntakeMotorCurrentLimit)
+            .withMotorOutput(kWheelOutputConfigs);
+        
+        public static final int kIntakeMotorID = 35;
         public static final int kWheelMotorID = 36;
+        public static final int kPhotoelectricSensorID = 29;
 
         public static final double kEjectPower = -1.0;
         public static final double kGroundPosition = 28828;
@@ -166,6 +173,10 @@ public final class Constants {
         public static final double kArmLevel1Pos = 0.1; //TODO change
         public static final double kArmLevel2Pos = 0.15;
         public static final double kArmLevel3Pos = 0.2;
+        public static final double kArmHighAlgaePos = 0.25;
+        public static final double kArmLowAlgaePos = 0.125;
+
+        public static final double kArmPositionTolerance = 0.05;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
@@ -222,7 +233,6 @@ public final class Constants {
             .withSupplyCurrentLimit(40);
 
         public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast)
             .withInverted(InvertedValue.CounterClockwise_Positive); //TODO change if bad
 
         public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()

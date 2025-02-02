@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.EndEffectorConstants.*;
 
-
 public class EndEffector extends SubsystemBase {
     TalonFX endEffectorMainMotor;
     TalonFX endEffectorSecondaryMotor;
@@ -23,7 +22,7 @@ public class EndEffector extends SubsystemBase {
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
         endEffectorSecondaryMotor = new TalonFX(kSecondaryEndEffectorID);
-        
+
         endEffectorMainMotor.getConfigurator().apply(kEndEffectorConfig);
         endEffectorSecondaryMotor.getConfigurator().apply(kEndEffectorConfig);
     }
