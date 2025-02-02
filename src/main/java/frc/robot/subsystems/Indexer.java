@@ -1,19 +1,20 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.playingwithfusion.TimeOfFlight;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.IndexerConstants.*;
 
 public class Indexer extends SubsystemBase {
     private final TalonFX rollerMotor;
-    private final DigitalInput sensor;
+    private final TimeOfFlight coralSensor;
 
     public Indexer() {
         rollerMotor = new TalonFX(kRollerMotorID);
-        sensor = new DigitalInput(kSensorPort);
+        coralSensor = new TimeOfFlight(kSensorPort);
         rollerMotor.getConfigurator().apply(kRollerMotorConfiguration);
     }
 
@@ -26,12 +27,17 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        return sensor.get();
+        return coralSensor.getRange() < kHasCoralRange;
     }
 
     public Command spinRollersUntilCoralReceived() {
         return spinRollers()
             .until(() -> hasCoral())
             .andThen(stopRollers());
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("Indexer has coral", hasCoral());
     }
 }

@@ -48,15 +48,19 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
-        private static final MotionMagicConfigs elevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(5)
-            .withMotionMagicAcceleration(10)
-            .withMotionMagicJerk(100);
+        public static int kMotor1ID = 25; // TODO change CAN stuff
+        public static int kMotor2ID = 26; // TODO change CAN stuff
 
-        private static final Slot0Configs elevatorPIDConfig = new Slot0Configs()
+        private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(5)
+            .withMotionMagicAcceleration(10);
+
+        private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
             .withKP(1)
-            .withKI(0)
             .withKD(0)
+            .withKV(Double.POSITIVE_INFINITY)
+            .withKA(Double.NaN)
+            .withKS(Double.NEGATIVE_INFINITY)
             .withKG(0);
         //FIXME hi HARSHIL PANDENATOR
 
@@ -65,14 +69,19 @@ public final class Constants {
             .withStatorCurrentLimit(120);
 
         public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
-            .withMotionMagic(elevatorMotionMagicConfig)
-            .withSlot0(elevatorPIDConfig)
+            .withMotionMagic(kElevatorMotionMagicConfig)
+            .withSlot0(kElevatorPIDConfig)
             .withCurrentLimits(kElevatorCurrentLimits);
 
-        public static final double kElevatorDownPos = 0;
-        public static final double kElevatorMidLow = 22.5;
-        public static final double kElevatorMidHigh = 45;
-        public static final double kElevatorMax = 90;
+        public static final double kElevatorTolerance = 5;
+
+        //TODO change all elevator positions once we can find them
+        public static final double kElevatorTrough = 0;
+        public static final double kElevatorL1 = 22.5;
+        public static final double kElevatorL2 = 45;
+        public static final double kElevatorL3 = 90;
+        public static final double kElevatorLowAlgae = 0;
+        public static final double kElevatorHighAlgae = 0;
         public static final double kElevatorIndexerPos = 90;
     }
 
@@ -115,6 +124,8 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final int kRollerMotorID = 0;
         public static final int kSensorPort = 0;
+
+        public static final double kHasCoralRange = 150;
 
         public static final double kRollerMotorPower = 0.5;
 

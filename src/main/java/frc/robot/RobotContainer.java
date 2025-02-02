@@ -50,10 +50,10 @@ public class RobotContainer {
     private final Trigger armLevel3 = driveController.povLeft();
 
     /* Operator Controller Buttons */
-    private final Trigger elevatorL4Button = operatorController.a();
-    private final Trigger elevatorL1Button = operatorController.b();
-    private final Trigger elevatorL2Button = operatorController.x();
-    private final Trigger elevatorL3Button = operatorController.y();
+    private final Trigger elevatorL3Button = operatorController.a();
+    private final Trigger elevatorTroughButton = operatorController.b();
+    private final Trigger elevatorL1Button = operatorController.x();
+    private final Trigger elevatorL2Button = operatorController.y();
     private final Trigger index = operatorController.leftTrigger();
 
     /* Subsystems */
@@ -138,10 +138,10 @@ public class RobotContainer {
         pickupCoral.onTrue(endEffector.pickupCoralFromSource());
 
         /* Operator Controls */
-        elevatorL1Button.onTrue(elevator.elevatorL1Command());
-        elevatorL2Button.onTrue(elevator.elevatorL2Command());
-        elevatorL3Button.onTrue(elevator.elevatorL3Command());
-        elevatorL4Button.onTrue(elevator.elevatorL4Command());
+        elevatorTroughButton.onTrue(elevator.moveToTroughPosition());
+        elevatorL1Button.onTrue(elevator.moveToL1Position());
+        elevatorL2Button.onTrue(elevator.moveToL1Position());
+        elevatorL3Button.onTrue(elevator.moveToL3Position());
 
         index.onTrue(indexer.spinRollersUntilCoralReceived());
     }
