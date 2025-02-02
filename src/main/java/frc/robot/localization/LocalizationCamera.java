@@ -92,6 +92,9 @@ public class LocalizationCamera {
                 smallestDistance = distance;
         }
 
+        /* Display distance on the dashboard */
+        SmartDashboard.putNumber(camera.getName() + " Distance", smallestDistance);
+
         return smallestDistance;
     }
 

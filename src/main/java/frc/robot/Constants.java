@@ -90,22 +90,29 @@ public final class Constants {
 
         public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
 
+        /* Used for cameras mounted on swerve modules */
+        public static final double kCameraOffsetFromCenter = Units.inchesToMeters(16.0);//Distance from center in meters
+        public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the frame bottom in meters
+        public static final double kCameraPitch = Units.degreesToRadians(18.5);//The camera's angle
+
+        public static final double kXandYCoord = Math.sqrt(2) * kCameraOffsetFromCenter;
+
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
-            new CameraConstants("FrontCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(15.5), 0, Units.inchesToMeters(12.0)), 
-                new Rotation3d(0, 0, 0))
+            new CameraConstants("FrontLeftCamera", new Transform3d(
+                new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch, Math.PI / 4.0))
             ),
-            new CameraConstants("LeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
-                new Rotation3d(0, 0, Math.PI / 2.0))
+            new CameraConstants("FrontRightCamera", new Transform3d(
+                new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch, -Math.PI / 4.0))
             ),
-            new CameraConstants("BackCamera", new Transform3d(
-                new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(12.0)), 
-                new Rotation3d(0, 0, Math.PI))
+            new CameraConstants("BackLeftCamera", new Transform3d(
+                new Translation3d(-kXandYCoord, kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch, 3 * (Math.PI / 4.0)))
             ),
-            new CameraConstants("RightCamera", new Transform3d(
-                new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
-                new Rotation3d(0, 0, -Math.PI / 2.0))
+            new CameraConstants("BackRightCamera", new Transform3d(
+                new Translation3d(-kXandYCoord, -kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch, -3 * (Math.PI / 4.0)))
             ),
         };
     }
