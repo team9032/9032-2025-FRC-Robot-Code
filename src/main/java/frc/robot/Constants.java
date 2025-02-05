@@ -171,6 +171,7 @@ public final class Constants {
         public static final int kPhotoelectricSensorID = 29;
 
         public static final double kEjectPower = -1.0;
+        public static final double kEjectDelay = 0.2;
         public static final double kGroundPosition = 28828;
         public static final double kIntakePower = 1.0;
         public static final double kStowPosition = 1000;

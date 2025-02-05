@@ -55,6 +55,7 @@ public class RobotContainer {
     private final Trigger elevatorL1Button = operatorController.x();
     private final Trigger elevatorL2Button = operatorController.y();
     private final Trigger index = operatorController.leftTrigger();
+    private final Trigger eject = operatorController.rightTrigger();
 
     /* Subsystems */
     private final Intake intake = new Intake();
@@ -124,6 +125,8 @@ public class RobotContainer {
             intake.returnToStowPosition()
             .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
         );
+
+        eject.onTrue(intake.ejectCoral());
 
         armTrough.onTrue(arm.moveToTroughPos());
         armLevel1.onTrue(arm.moveToLevel1Pos());
