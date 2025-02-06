@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.EndEffectorConstants.*;
 
@@ -22,9 +23,9 @@ public class EndEffector extends SubsystemBase {
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
         endEffectorSecondaryMotor = new TalonFX(kSecondaryEndEffectorID);
-
-        endEffectorMainMotor.getConfigurator().apply(kEndEffectorConfig);
-        endEffectorSecondaryMotor.getConfigurator().apply(kEndEffectorConfig);
+        
+        ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kEndEffectorConfig));
+        ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kEndEffectorConfig));
     }
 
     private Command setEndEffectorMainMotor(double power) {

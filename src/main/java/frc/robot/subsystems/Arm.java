@@ -7,6 +7,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utils.ElasticUtil;
+
 import static frc.robot.Constants.ArmConstants.*;
 
 public class Arm extends SubsystemBase {
@@ -15,7 +17,7 @@ public class Arm extends SubsystemBase {
     
     public Arm() {
         armMotor = new TalonFX(kArmMotorId);
-        armMotor.getConfigurator().apply(kArmMotorConstants);
+        ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
     }
 
     public boolean atSetpoint() {

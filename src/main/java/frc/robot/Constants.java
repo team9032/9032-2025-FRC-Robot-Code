@@ -133,7 +133,7 @@ public final class Constants {
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final TalonFXConfiguration kRollerMotorConfiguration= new TalonFXConfiguration()
+        public static final TalonFXConfiguration kRollerMotorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kRollerMotorCurrentLimitConfigs);
     }
 

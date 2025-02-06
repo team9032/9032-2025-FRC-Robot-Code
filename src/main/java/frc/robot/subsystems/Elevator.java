@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.subsystems.Elevator;
+import frc.robot.utils.ElasticUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,10 +21,10 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         elevatorMotor = new TalonFX(kMotor1ID);
-        elevatorMotor.getConfigurator().apply(kELevatorMotorConfig);
+        ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kELevatorMotorConfig));
 
         elevatorMotorFollower = new TalonFX(kMotor2ID);
-        elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig);
+        ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig));
 
         followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
         elevatorMotorFollower.setControl(followerMotorControl);

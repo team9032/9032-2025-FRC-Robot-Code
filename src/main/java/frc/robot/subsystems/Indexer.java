@@ -6,6 +6,8 @@ import com.playingwithfusion.TimeOfFlight;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utils.ElasticUtil;
+
 import static frc.robot.Constants.IndexerConstants.*;
 
 public class Indexer extends SubsystemBase {
@@ -15,7 +17,7 @@ public class Indexer extends SubsystemBase {
     public Indexer() {
         rollerMotor = new TalonFX(kRollerMotorID);
         coralSensor = new TimeOfFlight(kSensorPort);
-        rollerMotor.getConfigurator().apply(kRollerMotorConfiguration);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kRollerMotorConfig));
     }
 
     public Command spinRollers() {
