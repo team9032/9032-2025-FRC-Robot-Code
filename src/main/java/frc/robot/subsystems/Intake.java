@@ -44,10 +44,13 @@ public class Intake extends SubsystemBase {
     public Command ejectCoral() {
         return Commands.sequence(
             runOnce(() -> wheelMotor.set(kEjectPower)),
-            Commands.waitUntil(() -> !photoelectricSensor.get()),
             Commands.waitSeconds(kEjectDelay),
             runOnce(()-> wheelMotor.set(0.0))
         );
+    }
+
+    public boolean hasCoral() {
+        return photoelectricSensor.get();
     }
 
     @Override
