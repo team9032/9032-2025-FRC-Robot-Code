@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.760908018867926,
-        "y": 3.335141509433962
+        "x": 2.73873820754717,
+        "y": 4.018101415094339
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.856898584905661,
-        "y": 8.171049528301886
+        "x": 2.1592570754716984,
+        "y": 2.4866155660377354
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "2nd Algae Coral Score "
     },
     {
       "anchor": {
-        "x": 3.1871462264150945,
-        "y": 6.101474056603774
+        "x": 1.8971108490566038,
+        "y": 2.1209905660377353
       },
       "prevControl": {
-        "x": 4.484080188679246,
-        "y": 5.880719339622642
+        "x": 2.166155660377359,
+        "y": 2.969516509433962
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3rd Algae Coral Pickup"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.16226320961215
   },
   "reversed": false,
-  "folder": "Ground Coral Auto",
+  "folder": "Ground Algae Coral Auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.16226320961215
   },
   "useDefaultConstraints": true
 }
