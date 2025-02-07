@@ -3,12 +3,16 @@
   "robotLength": 0.737,
   "holonomicMode": true,
   "pathFolders": [
+<<<<<<< Updated upstream
     "L 2C",
     "M 3C",
     "Ground Coral Auto",
     "R 3C",
     "Stubs",
     "Tuning"
+=======
+    "Coral Auto"
+>>>>>>> Stashed changes
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.0,
@@ -16,13 +20,19 @@
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
+<<<<<<< Updated upstream
   "robotMass": 32.11,
   "robotMOI": 18.7113704921,
+=======
+  "robotMass": 74.088,
+  "robotMOI": 6.883,
+>>>>>>> Stashed changes
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.0508,
   "driveGearing": 6.122448979591837,
   "maxDriveSpeed": 5.21208,
   "driveMotorType": "krakenX60",
+<<<<<<< Updated upstream
   "driveCurrentLimit": 70.0,
   "wheelCOF": 1.4,
   "flModuleX": 0.3048,
@@ -40,4 +50,19 @@
     "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.1,\"y\":0.1},\"size\":{\"width\":0.2,\"length\":0.5},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":true}}",
     "{\"name\":\"Circle\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":-0.2,\"y\":0.0},\"radius\":0.12,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
+=======
+  "driveCurrentLimit": 60.0,
+  "wheelCOF": 1.2,
+  "flModuleX": 0.273,
+  "flModuleY": 0.273,
+  "frModuleX": 0.273,
+  "frModuleY": -0.273,
+  "blModuleX": -0.273,
+  "blModuleY": 0.273,
+  "brModuleX": -0.273,
+  "brModuleY": -0.273,
+  "bumperOffsetX": 0.0,
+  "bumperOffsetY": 0.0,
+  "robotFeatures": []
+>>>>>>> Stashed changes
 }
