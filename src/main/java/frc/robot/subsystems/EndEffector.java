@@ -93,6 +93,10 @@ public class EndEffector extends SubsystemBase {
         return algaeDistSensor.getRange() < kHasAlgaeDist;
     }
 
+    public boolean hasCoral() {
+        return photoelectricSensor1.get() && photoelectricSensor2.get();
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", photoelectricSensor1.get());
