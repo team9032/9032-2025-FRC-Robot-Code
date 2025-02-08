@@ -75,7 +75,7 @@ public final class Constants {
 
         /* Used for cameras mounted on swerve modules */
         public static final double kCameraOffsetFromCenter = Units.inchesToMeters(16.0);//Distance from center in meters
-        public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the frame bottom in meters
+        public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the ground in meters
         public static final double kCameraPitch = Units.degreesToRadians(18.5);//The camera's angle
 
         public static final double kXandYCoord = Math.sqrt(2) * kCameraOffsetFromCenter;

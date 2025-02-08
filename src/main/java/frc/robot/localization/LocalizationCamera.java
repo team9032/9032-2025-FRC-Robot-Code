@@ -41,10 +41,18 @@ public class LocalizationCamera {
         for (PhotonPipelineResult pipelineResult : results) {
             Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
 
-            if (optionalResult.isPresent()) {
+            boolean isPresent = optionalResult.isPresent();
+
+            SmartDashboard.putBoolean(camera.getName() + " Present", isPresent);
+
+            if (isPresent) {
                 EstimatedRobotPose poseEstimatorResult = optionalResult.get();
                 
                 double distance = getSmallestTagDistance(poseEstimatorResult);
+
+                boolean isUseable = isUseableEstimate(poseEstimatorResult, distance);
+
+                SmartDashboard.putBoolean(camera.getName() + " Usable", isUseable);
 
                 if (isUseableEstimate(poseEstimatorResult, distance)) {
                     double convertedTimestamp = Utils.fpgaToCurrentTime(poseEstimatorResult.timestampSeconds);
@@ -66,6 +74,9 @@ public class LocalizationCamera {
                     SmartDashboard.putNumberArray(camera.getName() + " StdDevs", standardDeviations.getData());
                 }
             }
+
+            else 
+                SmartDashboard.putBoolean(camera.getName() + " Usable", false);
         }
     }
 

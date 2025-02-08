@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.Pathfinding;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -33,6 +34,7 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger resetPerspective = driveController.b();
+    private final Trigger testPathfinding = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...
@@ -89,6 +91,8 @@ public class RobotContainer {
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
+
+        testPathfinding.whileTrue(Pathfinding.pathTo1L(krakenSwerve));
 
         /* Operator Controls */
         //...
