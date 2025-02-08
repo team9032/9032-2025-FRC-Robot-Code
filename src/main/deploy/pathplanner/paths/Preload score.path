@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.48496462264151,
+        "y": 3.1971698113207543
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.829599056603774,
+        "y": 3.4317216981132073
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.3673938679245285,
+        "y": 3.9284198113207545
+      },
+      "prevControl": {
+        "x": 6.91928066037736,
+        "y": 3.611084905660377
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Pre-loaded coral score"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 174.03551289874684
+  },
+  "reversed": false,
+  "folder": "3 Ground Coral",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

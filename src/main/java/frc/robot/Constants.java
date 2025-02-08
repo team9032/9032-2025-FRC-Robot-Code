@@ -4,11 +4,9 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.PathConstraints;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -16,13 +14,14 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
     public static class DriverConstants {
+        public static final boolean kRunSysId = false;
+
         public static final int kDriveControllerPort = 0;
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
@@ -35,35 +34,19 @@ public final class Constants {
     }
 
     public static class PathplannerConfig {
-        private static final ModuleConfig kModuleConfig = new ModuleConfig(
-            SwerveConstants.kWheelRadius.baseUnitMagnitude(), 
-            5.0,//TODO Find the actual constants
-            1.0,//TODO find for Vex Griplock wheels
-            DCMotor.getKrakenX60(1), 
-            70.0,//Default from swerve project
-            1
-        );
-
-        public static final double kTrackwidth = Units.inchesToMeters(24.0);
-
-        public static final Translation2d kflModuleOffset = new Translation2d(kTrackwidth / 2.0, kTrackwidth / 2.0);
-        public static final Translation2d kfrModuleOffset = new Translation2d(kTrackwidth / 2.0, -kTrackwidth / 2.0);
-        public static final Translation2d kblModuleOffset = new Translation2d(-kTrackwidth / 2.0, kTrackwidth / 2.0);
-        public static final Translation2d kbrModuleOffset = new Translation2d(-kTrackwidth / 2.0, -kTrackwidth / 2.0);
-
-        public static final RobotConfig kRobotConfig = new RobotConfig(
-            Units.lbsToKilograms(55.0),//TODO Find the actual constants 
-            (1.0 / 12.0) * Units.lbsToKilograms(55.0) * (1152),//... 
-            kModuleConfig, 
-            kflModuleOffset, kfrModuleOffset, kblModuleOffset, kbrModuleOffset
-        );
-
         public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
         public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+        public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
+            2,//TODO change these
+            4, 
+            Math.PI, 
+            2 * Math.PI
+        );
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 

@@ -3,10 +3,10 @@ package frc.robot.localization;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.LocalizationConstants.*;
 
@@ -22,15 +22,14 @@ public class Localization {
 
         field = new Field2d();
 
-        AprilTagFieldLayout layout = null;
         try {
-            layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
-        } catch(Exception e) {
-            DriverStation.reportError("Error opening AprilTag field layout", e.getStackTrace());
-        }
+            AprilTagFieldLayout layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
 
-        for (int i = 0; i < cameras.length; i++) {
-            cameras[i] = new LocalizationCamera(kCameraConstants[i], layout); 
+            for (int i = 0; i < cameras.length; i++) {
+                cameras[i] = new LocalizationCamera(kCameraConstants[i], layout); 
+            }
+        } catch(Exception e) {
+            ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will commit die!");
         }
 
         SmartDashboard.putData("Localization Field", field);
