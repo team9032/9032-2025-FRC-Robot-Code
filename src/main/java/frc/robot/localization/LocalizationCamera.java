@@ -75,8 +75,12 @@ public class LocalizationCamera {
                 }
             }
 
-            else 
+            else {
                 SmartDashboard.putBoolean(camera.getName() + " Usable", false);
+
+                /* Move pose off the field when an estimate is not present to avoid clutter */
+                localizationField.getObject(camera.getName()).setPose(new Pose2d());
+            }
         }
     }
 
