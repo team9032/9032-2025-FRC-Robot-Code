@@ -41,12 +41,12 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kPathConstraints = new PathConstraints(
-            4,
-            16, 
+        public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
+            2,//TODO change these
+            4, 
             Math.PI, 
-            4*Math.PI);
-
+            2 * Math.PI
+        );
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 

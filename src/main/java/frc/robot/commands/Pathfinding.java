@@ -15,7 +15,7 @@ public class Pathfinding {
     private static Command pathTo(KrakenSwerve swerve, String pathName) {
         try {
             PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
-            Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(pathToFollow, kPathConstraints);
+            Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(pathToFollow, kdynamicPathConstraints);
 
             return pathfindingCommand;
         } catch (Exception e) {
