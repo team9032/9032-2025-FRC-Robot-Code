@@ -92,7 +92,7 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        testPathfinding.whileTrue(Pathfinding.pathTo1L(krakenSwerve));
+        testPathfinding.whileTrue(Pathfinding.pathTo3L(krakenSwerve));
 
         /* Operator Controls */
         //...

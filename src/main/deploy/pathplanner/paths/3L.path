@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.830384615384615,
+        "x": 2.574,
         "y": 3.870192307692308
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0801267504371896,
-        "y": 3.858840392462645
+        "x": 2.949054101752289,
+        "y": 3.865565435224318
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.305128205128205,
+        "x": 3.1395000000000004,
         "y": 3.870192307692308
       },
       "prevControl": {
-        "x": 3.0566572714598,
-        "y": 3.897800189211019
+        "x": 2.8895457959855637,
+        "y": 3.865407342121955
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 4.0,
+    "velocity": 0.25,
     "rotation": 180.0
   },
   "useDefaultConstraints": true
