@@ -41,24 +41,25 @@ public class LocalizationCamera {
         for (PhotonPipelineResult pipelineResult : results) {
             Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
 
-            boolean isPresent = optionalResult.isPresent();
+            if (optionalResult.isPresent()) {
+                SmartDashboard.putBoolean(camera.getName() + " Present", true);
 
-            SmartDashboard.putBoolean(camera.getName() + " Present", isPresent);
-
-            if (isPresent) {
                 EstimatedRobotPose poseEstimatorResult = optionalResult.get();
                 
                 double distance = getSmallestTagDistance(poseEstimatorResult);
+
+                Pose2d robotPose = poseEstimatorResult.estimatedPose.toPose2d();
+
+                /* Add this camera's pose to the field on the dashboard even if it isn't useable */
+                localizationField.getObject(camera.getName()).setPose(robotPose);
 
                 boolean isUseable = isUseableEstimate(poseEstimatorResult, distance);
 
                 SmartDashboard.putBoolean(camera.getName() + " Usable", isUseable);
 
-                if (isUseableEstimate(poseEstimatorResult, distance)) {
+                if (isUseable) {
                     double convertedTimestamp = Utils.fpgaToCurrentTime(poseEstimatorResult.timestampSeconds);
-
-                    Pose2d robotPose = poseEstimatorResult.estimatedPose.toPose2d();
-
+ 
                     var standardDeviations = calculateStandardDeviations(poseEstimatorResult, distance);
 
                     drivetrain.addVisionMeasurement(
@@ -67,9 +68,6 @@ public class LocalizationCamera {
                         standardDeviations
                     );
 
-                    /* Add this camera's pose to the field on the dashboard */
-                    localizationField.getObject(camera.getName()).setPose(robotPose);
-
                     /* Add the standard deviations to the dashboard */
                     SmartDashboard.putNumberArray(camera.getName() + " StdDevs", standardDeviations.getData());
                 }
@@ -77,6 +75,7 @@ public class LocalizationCamera {
 
             else {
                 SmartDashboard.putBoolean(camera.getName() + " Usable", false);
+                SmartDashboard.putBoolean(camera.getName() + " Present", false);
 
                 /* Move pose off the field when an estimate is not present to avoid clutter */
                 localizationField.getObject(camera.getName()).setPose(new Pose2d());
