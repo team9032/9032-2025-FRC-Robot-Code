@@ -12,6 +12,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -45,6 +47,13 @@ public final class Constants {
         public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+        public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
+            2,//TODO change these
+            4, 
+            Math.PI, 
+            2 * Math.PI
+        );
     }
 
     public static class ElevatorConfigs {
