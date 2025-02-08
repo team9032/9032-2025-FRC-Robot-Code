@@ -38,12 +38,17 @@ public class LocalizationCamera {
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         var results = camera.getAllUnreadResults();
 
+        SmartDashboard.putBoolean(camera.getName() + " Present", false);
+        SmartDashboard.putBoolean(camera.getName() + " Useable", false);
+
         for (PhotonPipelineResult pipelineResult : results) {
             Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
 
-            if (optionalResult.isPresent()) {
-                SmartDashboard.putBoolean(camera.getName() + " Present", true);
+            boolean isPresent = optionalResult.isPresent();
 
+            SmartDashboard.putBoolean(camera.getName() + " Present", isPresent);
+
+            if (isPresent) {
                 EstimatedRobotPose poseEstimatorResult = optionalResult.get();
                 
                 double distance = getSmallestTagDistance(poseEstimatorResult);
@@ -75,7 +80,6 @@ public class LocalizationCamera {
 
             else {
                 SmartDashboard.putBoolean(camera.getName() + " Usable", false);
-                SmartDashboard.putBoolean(camera.getName() + " Present", false);
 
                 /* Move pose off the field when an estimate is not present to avoid clutter */
                 localizationField.getObject(camera.getName()).setPose(new Pose2d());
