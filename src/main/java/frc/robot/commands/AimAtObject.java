@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -18,30 +17,23 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class AimAtObject extends Command {
     private final KrakenSwerve swerve;
-    private final int objectToTrackId;    
     
     private final Localization localization;
 
     private final VisionTargetCache<PhotonTrackedTarget> targetCache;
     
-    private final PIDController distanceController;
     private final PIDController rotationController;
 
-    private final double objectHeight;
+    private final int objectToTrackId;    
 
-    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, double objectHeight) {
+    public AimAtObject(KrakenSwerve swerve, int objectToTrackId) {
        this.swerve = swerve; 
        this.objectToTrackId = objectToTrackId;
 
        localization = swerve.getLocalization();
 
-       distanceController = new PIDController(kPDistance, 0.0, kDDistance);
-       distanceController.setSetpoint(0.0);
-
        rotationController = new PIDController(kPRotation, 0.0, kDRotation);
        rotationController.setSetpoint(kRotationSetpoint);
-
-       this.objectHeight = objectHeight;
 
        targetCache = new VisionTargetCache<>(kCycleAmtSinceTargetSeenCutoff);
 
@@ -95,13 +87,9 @@ public class AimAtObject extends Command {
             }
         }
 
-        /* Drive based on target distance and yaw */
-        double distance = localization.findDistanceToTarget(kObjectTrackingCameraName, targetToTrack.pitch, objectHeight);
-
-        SmartDashboard.putNumber(kObjectTrackingCameraName + " Object Distance", distance);
-
+        /* Drive based on target yaw */
         var speeds = new ChassisSpeeds(
-            distanceController.calculate(distance),
+            kDrivingSpeed,
             0.0, 
             rotationController.calculate(targetToTrack.yaw)
         );
@@ -121,8 +109,6 @@ public class AimAtObject extends Command {
         localization.switchCameraToLocalization(kObjectTrackingCameraName);
 
         rotationController.reset();
-        distanceController.reset();
-
         targetCache.reset();
 
         swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(new ChassisSpeeds()));

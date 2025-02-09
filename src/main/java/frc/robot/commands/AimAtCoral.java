@@ -6,6 +6,6 @@ import static frc.robot.Constants.ObjectAimingConstants.*;
 
 public class AimAtCoral extends AimAtObject {
     public AimAtCoral(KrakenSwerve swerve) {
-        super(swerve, kCoralId, kCoralHeight);
+        super(swerve, kCoralId);
     }
 }
