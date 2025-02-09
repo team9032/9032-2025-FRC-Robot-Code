@@ -8,7 +8,11 @@ import frc.robot.commands.AimAtCoral;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
+import frc.robot.utils.GitData;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +59,9 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
+        /* Stop spamming the logs if a controller is unplugged */
+        DriverStation.silenceJoystickConnectionWarning(true);
+
         configureButtonTriggers();
 
         if(kRunSysId)
@@ -63,6 +70,9 @@ public class RobotContainer {
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        /* Add Git Data to Elastic */
+        SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
     }
 
     /** Use this method to define your button trigger->command mappings. */
@@ -114,6 +124,6 @@ public class RobotContainer {
 
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
-        return null;
+        return autoChooser.getSelected();
     }
 }
