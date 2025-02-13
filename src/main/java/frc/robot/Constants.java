@@ -144,6 +144,8 @@ public final class Constants {
 
         public static final TalonFXConfiguration kRollerMotorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kRollerMotorCurrentLimitConfigs);
+
+        public static final int kPhotoelectricSensorID = 5; //TODO Change this   
     }
 
     public static final class IntakeConstants {
