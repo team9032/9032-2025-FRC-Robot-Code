@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.subsystems.Elevator;
 import frc.robot.utils.ElasticUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,12 +20,21 @@ public class Elevator extends SubsystemBase {
 
     private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
     private final Follower followerMotorControl;
+    private final StatusSignal<Angle> elevatorPosSignal;
+    private final StatusSignal<Angle> followerElevatorPosSignal;
+    
 
     public Elevator() {
         elevatorMotor = new TalonFX(kMotor1ID);
+        elevatorPosSignal = elevatorMotor.getPosition();
+        elevatorPosSignal.setUpdateFrequency(100);
+        elevatorMotor.optimizeBusUtilization();
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kELevatorMotorConfig));
 
         elevatorMotorFollower = new TalonFX(kMotor2ID);
+        followerElevatorPosSignal = elevatorMotorFollower.getPosition();
+        followerElevatorPosSignal.setUpdateFrequency(100);
+        elevatorMotorFollower.optimizeBusUtilization();
         ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig));
 
         followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
@@ -35,7 +46,7 @@ public class Elevator extends SubsystemBase {
     }
     
     public boolean atSetPoint() {
-        return MathUtil.isNear(motionMagic.Position, elevatorMotor.getPosition().getValueAsDouble(), kElevatorTolerance);
+        return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
     }
 
     public Command moveToIndexerPosition() {

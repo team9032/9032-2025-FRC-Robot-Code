@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import static frc.robot.Constants.IntakeConstants.*;
@@ -17,10 +19,13 @@ public class Intake extends SubsystemBase {
     TalonFX intakeMotor;
     TalonFX wheelMotor;
     DigitalInput photoelectricSensor = new DigitalInput(kPhotoelectricSensorID);
-
+    private final StatusSignal<Angle> intakeMotorPosSignal;
 
     public Intake() {
         intakeMotor = new TalonFX(kIntakeMotorID);
+        intakeMotorPosSignal = intakeMotor.getPosition();
+        intakeMotorPosSignal.setUpdateFrequency(100);
+        intakeMotor.optimizeBusUtilization();
         ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kIntakeMotorConfig));
 
         wheelMotor = new TalonFX(kWheelMotorID);
