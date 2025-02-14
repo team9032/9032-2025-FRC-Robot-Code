@@ -10,11 +10,10 @@ import static frc.robot.Constants.ClimberConstants.*;
 
 import java.util.function.DoubleSupplier;
 
-
 public class Climber extends SubsystemBase {
+    private final TalonFX climberMotor;
 
-    private TalonFX climberMotor;
-    public Climber(){
+    public Climber() {
         climberMotor = new TalonFX(kMotorID);
         ElasticUtil.checkStatus(climberMotor.getConfigurator().apply(kMotorConfiguration));
         climberMotor.optimizeBusUtilization();
@@ -23,5 +22,4 @@ public class Climber extends SubsystemBase {
     public Command setPower(DoubleSupplier pressure){
         return runOnce(() -> climberMotor.set(pressure.getAsDouble()));
     }
-
 }

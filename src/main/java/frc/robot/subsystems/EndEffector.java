@@ -13,12 +13,12 @@ import frc.robot.utils.ElasticUtil;
 import static frc.robot.Constants.EndEffectorConstants.*;
 
 public class EndEffector extends SubsystemBase {
-    TalonFX endEffectorMainMotor;
-    TalonFX endEffectorSecondaryMotor;
+    private final TalonFX endEffectorMainMotor;
+    private final TalonFX endEffectorSecondaryMotor;
 
-    DigitalInput photoelectricSensor1 = new DigitalInput(kPhotoelectricSensor1ID); //TODO not a thing yet
-    DigitalInput photoelectricSensor2 = new DigitalInput(kPhotoelectricSensor2ID); //TODO not a thing yet
-    TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); //TODO not a thing yet
+    private final DigitalInput photoelectricSensor1 = new DigitalInput(kPhotoelectricSensor1ID); //TODO not a thing yet
+    private final DigitalInput photoelectricSensor2 = new DigitalInput(kPhotoelectricSensor2ID); //TODO not a thing yet
+    private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); //TODO not a thing yet
 
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);

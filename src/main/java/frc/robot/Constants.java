@@ -57,8 +57,8 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
-        public static int kMotor1ID = 25; // TODO change CAN stuff
-        public static int kMotor2ID = 26; // TODO change CAN stuff
+        public static final int kMotor1ID = 25; // TODO change CAN stuff
+        public static final int kMotor2ID = 26; // TODO change CAN stuff
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(5)

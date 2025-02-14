@@ -15,17 +15,22 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
-    MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);
-    TalonFX intakeMotor;
-    TalonFX wheelMotor;
-    DigitalInput photoelectricSensor = new DigitalInput(kPhotoelectricSensorID);
+    private final MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);
+
+    private final TalonFX intakeMotor;
+    private final TalonFX wheelMotor;
+
+    private final DigitalInput photoelectricSensor = new DigitalInput(kPhotoelectricSensorID);
+
     private final StatusSignal<Angle> intakeMotorPosSignal;
 
     public Intake() {
         intakeMotor = new TalonFX(kIntakeMotorID);
+
         intakeMotorPosSignal = intakeMotor.getPosition();
         intakeMotorPosSignal.setUpdateFrequency(100);
         intakeMotor.optimizeBusUtilization();
+        
         ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kIntakeMotorConfig));
 
         wheelMotor = new TalonFX(kWheelMotorID);

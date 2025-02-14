@@ -21,19 +21,15 @@ public class Elevator extends SubsystemBase {
     private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
     private final Follower followerMotorControl;
     private final StatusSignal<Angle> elevatorPosSignal;
-    private final StatusSignal<Angle> followerElevatorPosSignal;
-    
 
     public Elevator() {
+        //The leader of a follower cannot have its bus utilization optimized
         elevatorMotor = new TalonFX(kMotor1ID);
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
-        elevatorMotor.optimizeBusUtilization();
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kELevatorMotorConfig));
 
         elevatorMotorFollower = new TalonFX(kMotor2ID);
-        followerElevatorPosSignal = elevatorMotorFollower.getPosition();
-        followerElevatorPosSignal.setUpdateFrequency(100);
         elevatorMotorFollower.optimizeBusUtilization();
         ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig));
 
