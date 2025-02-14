@@ -19,6 +19,7 @@ public class Indexer extends SubsystemBase {
     public Indexer() {
         rollerMotor = new TalonFX(kRollerMotorID);
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kRollerMotorConfig));
+        rollerMotor.optimizeBusUtilization();
     }
 
     public Command spinRollers() {

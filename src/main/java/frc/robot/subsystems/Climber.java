@@ -17,6 +17,7 @@ public class Climber extends SubsystemBase {
     public Climber(){
         climberMotor = new TalonFX(kMotorID);
         ElasticUtil.checkStatus(climberMotor.getConfigurator().apply(kMotorConfiguration));
+        climberMotor.optimizeBusUtilization();
     }
 
     public Command setPower(DoubleSupplier pressure){

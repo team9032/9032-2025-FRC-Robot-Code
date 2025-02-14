@@ -30,6 +30,7 @@ public class Intake extends SubsystemBase {
 
         wheelMotor = new TalonFX(kWheelMotorID);
         ElasticUtil.checkStatus(wheelMotor.getConfigurator().apply(kWheelMotorConfig));
+        wheelMotor.optimizeBusUtilization();
     }
 
     public Command returnToStowPosition() {

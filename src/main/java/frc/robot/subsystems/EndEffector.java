@@ -23,6 +23,9 @@ public class EndEffector extends SubsystemBase {
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
         endEffectorSecondaryMotor = new TalonFX(kSecondaryEndEffectorID);
+
+        endEffectorMainMotor.optimizeBusUtilization();
+        endEffectorSecondaryMotor.optimizeBusUtilization();
         
         ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kEndEffectorConfig));
         ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kEndEffectorConfig));
