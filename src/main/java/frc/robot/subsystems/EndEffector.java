@@ -48,7 +48,7 @@ public class EndEffector extends SubsystemBase {
 
     public Command placeCoral() {
         return Commands.sequence(
-            setEndEffectorMotors(kOuttakePower),
+            setEndEffectorMotors(kCoralOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
             setEndEffectorMotors(0.0)
         );
@@ -83,14 +83,25 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-    public Command outtakeAlgae() {
+    public Command outtakeProcessorAlgae() {
         return Commands.sequence(
-            setEndEffectorMainMotor(kOuttakePower), //TODO change if bad
-            setEndEffectorSecondaryMotor(-kOuttakePower),
+            setEndEffectorMainMotor(kProcessorOuttakePower), //TODO change if bad
+            setEndEffectorSecondaryMotor(-kProcessorOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
             setEndEffectorMotors(0.0)
         );
     }
+
+    public Command outtakeNetAlgae() {
+        return Commands.sequence(
+            setEndEffectorMainMotor(kNetOuttakePower), //TODO change if bad
+            setEndEffectorSecondaryMotor(-kNetOuttakePower),
+            Commands.waitSeconds(kOuttakeWait),
+            setEndEffectorMotors(0.0)
+        );
+    }
+
+
 
     public boolean hasAlgae() {
         return algaeDistSensor.getRange() < kHasAlgaeDist;

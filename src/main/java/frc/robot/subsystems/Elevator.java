@@ -73,6 +73,14 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorL3));
     }
 
+    public Command moveToProcessorPosition() {
+        return runOnce(() -> moveElevator(kElevatorProcessor));
+    }
+
+    public Command moveToNetPosition() {
+        return runOnce(() -> moveElevator(kElevatorNet));
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Elevator at setpoint", atSetPoint());

@@ -92,6 +92,8 @@ public final class Constants {
         public static final double kElevatorLowAlgae = 0;
         public static final double kElevatorHighAlgae = 0;
         public static final double kElevatorIndexerPos = 90;
+        public static final double kElevatorProcessor = 0; 
+        public static final double kElevatorNet = 0;
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
@@ -195,6 +197,8 @@ public final class Constants {
         public static final double kArmLevel3Pos = 0.2;
         public static final double kArmHighAlgaePos = 0.25;
         public static final double kArmLowAlgaePos = 0.125;
+        public static final double kArmProcessorPos = 0;
+        public static final double kArmNetPos = 0;
 
         public static final double kArmPositionTolerance = 0.05;
 
@@ -238,7 +242,9 @@ public final class Constants {
         public static final int kAlgaeDistSensorID = 29;
         public static final int kPhotoelectricSensor2ID = 30;
 
-        public static final double kOuttakePower = 0.25;
+        public static final double kCoralOuttakePower = 0.25;
+        public static final double kProcessorOuttakePower = 0.25;
+        public static final double kNetOuttakePower = 0.25;
         public static final double kIntakeFromSourcePower = -0.5;
         public static final double kReceiveFromIndexerPower = 0.25;
         public static final double kIntakeAlgaePower = 0.25;

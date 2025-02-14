@@ -58,6 +58,14 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmLowAlgaePos)));
     }
 
+    public Command moveToNetPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmNetPos)));
+    }
+
+    public Command moveToProcessorPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmProcessorPos)));
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
