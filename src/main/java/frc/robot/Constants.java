@@ -67,9 +67,9 @@ public final class Constants {
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
             .withKP(1)
             .withKD(0)
-            .withKV(Double.POSITIVE_INFINITY)
-            .withKA(Double.NaN)
-            .withKS(Double.NEGATIVE_INFINITY)
+            .withKV(0)
+            .withKA(0)
+            .withKS(0)
             .withKG(0);
         //FIXME hi HARSHIL PANDENATOR
 
@@ -132,9 +132,6 @@ public final class Constants {
 
     public static final class IndexerConstants {
         public static final int kRollerMotorID = 0;
-        public static final int kSensorPort = 0;
-
-        public static final double kHasCoralRange = 150;
 
         public static final double kRollerMotorPower = 0.5;
 
