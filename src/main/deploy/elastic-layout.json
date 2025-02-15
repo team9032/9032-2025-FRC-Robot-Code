@@ -31,7 +31,7 @@
             "title": "BackLeftCamera StdDevs",
             "x": 0.0,
             "y": 0.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -43,9 +43,9 @@
           },
           {
             "title": "BackRightCamera StdDevs",
-            "x": 384.0,
+            "x": 256.0,
             "y": 0.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -59,7 +59,7 @@
             "title": "BackLeftCamera Ambiguity",
             "x": 0.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -73,7 +73,7 @@
             "title": "BackLeftCamera Distance",
             "x": 0.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -85,9 +85,9 @@
           },
           {
             "title": "BackRightCamera Ambiguity",
-            "x": 384.0,
+            "x": 256.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -99,9 +99,9 @@
           },
           {
             "title": "BackRightCamera Distance",
-            "x": 384.0,
+            "x": 256.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -113,7 +113,7 @@
           },
           {
             "title": "Present",
-            "x": 256.0,
+            "x": 128.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -130,7 +130,7 @@
           },
           {
             "title": "Usable",
-            "x": 256.0,
+            "x": 128.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
@@ -147,7 +147,7 @@
           },
           {
             "title": "Present",
-            "x": 640.0,
+            "x": 384.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -164,7 +164,7 @@
           },
           {
             "title": "Usable",
-            "x": 640.0,
+            "x": 384.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
@@ -181,9 +181,9 @@
           },
           {
             "title": "FrontLeftCamera StdDevs",
-            "x": 768.0,
+            "x": 512.0,
             "y": 0.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -195,9 +195,9 @@
           },
           {
             "title": "FrontLeftCamera Ambiguity",
-            "x": 768.0,
+            "x": 512.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -209,9 +209,9 @@
           },
           {
             "title": "FrontRightCamera StdDevs",
-            "x": 1152.0,
+            "x": 768.0,
             "y": 0.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -223,9 +223,9 @@
           },
           {
             "title": "FrontRightCamera Ambiguity",
-            "x": 1152.0,
+            "x": 768.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -237,9 +237,9 @@
           },
           {
             "title": "FrontRightCamera Distance",
-            "x": 1152.0,
+            "x": 768.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -251,7 +251,7 @@
           },
           {
             "title": "Usable",
-            "x": 1024.0,
+            "x": 640.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
@@ -268,7 +268,7 @@
           },
           {
             "title": "Present",
-            "x": 1024.0,
+            "x": 640.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -285,9 +285,9 @@
           },
           {
             "title": "FrontLeftCamera Distance",
-            "x": 768.0,
+            "x": 512.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -299,7 +299,7 @@
           },
           {
             "title": "Present",
-            "x": 1408.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -316,13 +316,89 @@
           },
           {
             "title": "Usable",
-            "x": 1408.0,
+            "x": 896.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/FrontRightCamera Usable",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BackCenterCamera StdDevs",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/BackCenterCamera StdDevs",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BackCenterCamera Ambiguity",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/BackCenterCamera Ambiguity",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BackCenterCamera Distance",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/BackCenterCamera Distance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "BackCenterCamera Usable",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/BackCenterCamera Usable",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BackCenterCamera Present",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/BackCenterCamera Present",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,

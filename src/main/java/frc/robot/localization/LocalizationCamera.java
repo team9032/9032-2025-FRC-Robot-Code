@@ -38,9 +38,6 @@ public class LocalizationCamera {
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         var results = camera.getAllUnreadResults();
 
-        SmartDashboard.putBoolean(camera.getName() + " Present", false);
-        SmartDashboard.putBoolean(camera.getName() + " Usable", false);
-
         for (PhotonPipelineResult pipelineResult : results) {
             Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
 
