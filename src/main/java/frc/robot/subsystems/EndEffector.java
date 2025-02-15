@@ -101,10 +101,8 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-
-
     public boolean hasAlgae() {
-        return algaeDistSensor.getRange() < kHasAlgaeDist;
+        return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral();
     }
 
     public boolean hasCoral() {
