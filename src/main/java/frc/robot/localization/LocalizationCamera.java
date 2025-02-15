@@ -39,7 +39,7 @@ public class LocalizationCamera {
         var results = camera.getAllUnreadResults();
 
         SmartDashboard.putBoolean(camera.getName() + " Present", false);
-        SmartDashboard.putBoolean(camera.getName() + " Useable", false);
+        SmartDashboard.putBoolean(camera.getName() + " Usable", false);
 
         for (PhotonPipelineResult pipelineResult : results) {
             Optional<EstimatedRobotPose> optionalResult = poseEstimator.update(pipelineResult);
