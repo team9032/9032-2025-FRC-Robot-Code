@@ -78,7 +78,7 @@ public final class Constants {
         public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the ground in meters
         public static final double kCameraPitch = Units.degreesToRadians(17.0);//The camera's pitch
 
-        public static final double kXandYCoord = Math.sqrt(2) * kCameraOffsetFromCenter;
+        public static final double kXandYCoord = 0.282575;
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontRightCamera", new Transform3d(
