@@ -82,15 +82,15 @@ public final class Constants {
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontRightCamera", new Transform3d(
-                new Translation3d(-kXandYCoord, kXandYCoord, kCameraHeight), 
+                new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
                 new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0)))
             ),
             new CameraConstants("FrontLeftCamera", new Transform3d(
-                new Translation3d(-kXandYCoord, -kXandYCoord, kCameraHeight), 
+                new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
                 new Rotation3d(0, kCameraPitch, (Math.PI / 4.0)))
             ),
             new CameraConstants("BackCenterCamera", new Transform3d(
-                    new Translation3d(0.073025,-0.041275,0.25146),
+                    new Translation3d(-0.073025,0.041275,0.25146),
                     new Rotation3d(0,0,Math.PI))
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
