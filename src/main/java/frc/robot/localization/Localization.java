@@ -10,12 +10,15 @@ import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.LocalizationConstants.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Localization {
     private final SwerveDrivetrain<?, ?, ?> drivetrain;
 
     private final Field2d field;
 
-    private final LocalizationCamera[] cameras = new LocalizationCamera[kCameraConstants.length];
+    private final List<LocalizationCamera> cameras = new ArrayList<>();
 
     public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
@@ -25,8 +28,8 @@ public class Localization {
         try {
             AprilTagFieldLayout layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
 
-            for (int i = 0; i < cameras.length; i++) {
-                cameras[i] = new LocalizationCamera(kCameraConstants[i], layout); 
+            for (int i = 0; i < kCameraConstants.length; i++) {
+                cameras.add(new LocalizationCamera(kCameraConstants[i], layout)); 
             }
         } catch(Exception e) {
             ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will commit die!");

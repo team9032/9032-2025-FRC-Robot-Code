@@ -28,7 +28,7 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(kMaxSpeed * 0.05) 
+            .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
@@ -42,7 +42,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
-            0.25,//TODO change these
+            1,//TODO change these
             4, 
             0.5 * Math.PI, 
             2 * Math.PI
@@ -71,10 +71,9 @@ public final class Constants {
             0.5 * Math.PI//Theta
         );
 
-        public static final String kAprilTagFieldLayoutName = "field_calibration.json";//Loads from a JSON file in deploy
+        public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
 
         /* Used for cameras mounted on swerve modules */
-        public static final double kCameraOffsetFromCenter = Units.inchesToMeters(16.0);//Distance from center in meters
         public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the ground in meters
         public static final double kCameraPitch = Units.degreesToRadians(17.0);//The camera's pitch
 
