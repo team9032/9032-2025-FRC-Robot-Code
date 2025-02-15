@@ -94,11 +94,11 @@ public final class Constants {
                     new Rotation3d(0,0,Math.PI))
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(0.352425,0.104775,0.2794),
+                new Translation3d(0.104775,-0.352425,0.2794),
                 new Rotation3d(0,0,Math.PI))
             ),
             new CameraConstants("BackLeftCamera", new Transform3d(
-                new Translation3d(-0.352425,0.104775,0.35814),
+                new Translation3d(0.104775,0.352425,0.35814),
                 new Rotation3d(0,0,Math.PI))
             )
         };
