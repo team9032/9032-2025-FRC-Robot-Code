@@ -37,16 +37,25 @@ public final class Constants {
         public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
         public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
-        public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
+        public static final ApplyRobotSpeeds kClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
+        public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             1,//TODO change these
             4, 
             0.5 * Math.PI, 
             2 * Math.PI
         );
+
+        public static final double kAlignmentXYkP = 0.008;
+        public static final double kAlignmentXYkD = 0;
+        
+        public static final double kAlignmentRotkP = 5.0;
+        public static final double kAlignmentRotkD = 0;
+
+        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.5);
+        public static final double kRotAlignmentTolerance = Units.degreesToRadians(1);
     }
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 

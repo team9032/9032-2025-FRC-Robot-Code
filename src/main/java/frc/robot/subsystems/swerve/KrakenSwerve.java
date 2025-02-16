@@ -93,7 +93,7 @@ public class KrakenSwerve extends SubsystemBase {
         setpoint.omegaRadiansPerSecond *= -1;//FIXME idk why this is here but the code explodes if i remove it
 
         drivetrain.setControl(
-            kPathPlannerDriveRequest.withSpeeds(setpoint)
+            kClosedLoopDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
         );
