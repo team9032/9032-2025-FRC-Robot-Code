@@ -179,6 +179,8 @@ public final class Constants {
         public static final int kIntakeMotorID = 35;
         public static final int kWheelMotorID = 36;
         public static final int kPhotoelectricSensorID = 29;
+        public static final int kIntakeDistSensorID = 30;
+        public static final double kCoralDetectionDistance = 0.5; //TODO tune
 
         public static final double kEjectPower = -1.0;
         public static final double kEjectDelay = 0.2;

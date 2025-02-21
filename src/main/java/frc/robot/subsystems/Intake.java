@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.playingwithfusion.TimeOfFlight;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
     private final TalonFX intakeMotor;
     private final TalonFX wheelMotor;
 
-    private final DigitalInput photoelectricSensor = new DigitalInput(kPhotoelectricSensorID);
+    private final TimeOfFlight intakeDistanceSensor = new TimeOfFlight(kIntakeDistSensorID);
 
     private final StatusSignal<Angle> intakeMotorPosSignal;
 
@@ -63,11 +63,11 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        return photoelectricSensor.get();
+        return intakeDistanceSensor.getRange() < kCoralDetectionDistance; //TODO tune
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Has Coral", photoelectricSensor.get());
+        SmartDashboard.putBoolean("Has Coral", hasCoral());
     }
 }
