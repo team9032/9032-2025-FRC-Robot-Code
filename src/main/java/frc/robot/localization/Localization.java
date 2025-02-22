@@ -48,30 +48,16 @@ public class Localization {
         }
 
         field.setRobotPose(drivetrain.getState().Pose);
-    }
-
-    public void switchCameraToObjectTracking(String cameraName) {
-        for(LocalizationCamera camera : cameras) {
-            if(camera.getName().equals(cameraName)) 
-                camera.switchToObjectTracking();
-        }
-    }
-
-    public void switchCameraToLocalization(String cameraName) {
-        for(LocalizationCamera camera : cameras) {
-            if(camera.getName().equals(cameraName)) 
-                camera.switchToLocalization();
-        }
-    }
+    } 
     
-    /** Gets object tracking results from a camera. If the camera is not in object tracking mode, this will return null. */
+    /** Gets object tracking results from a camera. If the camera is not in object tracking mode, this will be empty. */
     public List<PhotonPipelineResult> getObjectTrackingResults(String cameraName) {
         for(LocalizationCamera camera : cameras) {
             if(camera.getName().equals(cameraName)) 
                 return camera.getObjectTrackingResults();
         }
 
-        return null;
+        return List.of();
     }
 
     /** Given a target's pitch in radians, finds the distance from the target to the robot */
@@ -85,11 +71,6 @@ public class Localization {
         }
 
         return 0.0;
-    }
-
-    public void switchAllToLocalization() {
-        for(LocalizationCamera camera : cameras)
-            camera.switchToLocalization();
     }
 }
    

@@ -34,7 +34,7 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
-    private final Trigger autoAimTest = driveController.a();
+    private final Trigger autoAimTest = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...

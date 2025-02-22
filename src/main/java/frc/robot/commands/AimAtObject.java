@@ -41,9 +41,7 @@ public class AimAtObject extends Command {
     }
 
     @Override
-    public void initialize() {
-        localization.switchCameraToObjectTracking(kObjectTrackingCameraName);
-    }  
+    public void initialize() {}  
 
     @Override
     public void execute() {
@@ -66,7 +64,7 @@ public class AimAtObject extends Command {
 
         /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
         var filteredTargets = latestResult.getTargets();
-        // filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);//TODO get class ids
+        filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);
 
         if(filteredTargets.isEmpty())
             return;
@@ -74,7 +72,7 @@ public class AimAtObject extends Command {
         PhotonTrackedTarget targetToTrack = null;
         /* Find the target that is closest to the center of the camera when there is no previous target */
         if(!targetCache.hasTarget()) 
-            targetToTrack = latestResult.getBestTarget();//TODO config the pipeline 
+            targetToTrack = latestResult.getBestTarget();
         /* Find the target that is closest to the previous target */
         else {
             double lowestYawDifference = Double.MAX_VALUE;
@@ -89,7 +87,7 @@ public class AimAtObject extends Command {
 
         /* Drive based on target yaw */
         var speeds = new ChassisSpeeds(
-            kDrivingSpeed,
+            -kDrivingSpeed,
             0.0, 
             rotationController.calculate(targetToTrack.yaw)
         );
@@ -106,8 +104,6 @@ public class AimAtObject extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        localization.switchCameraToLocalization(kObjectTrackingCameraName);
-
         rotationController.reset();
         targetCache.reset();
 

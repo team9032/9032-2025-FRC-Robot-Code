@@ -50,11 +50,11 @@ public final class Constants {
     }
 
     public static final class ObjectAimingConstants {
-        public static final String kObjectTrackingCameraName = "FrontCamera";
+        public static final String kObjectTrackingCameraName = "FrontCenterCamera";
 
-        public static final int kCycleAmtSinceTargetSeenCutoff = 5;
+        public static final int kCycleAmtSinceTargetSeenCutoff = 10;
 
-        public static final double kRotationSetpoint = 0.0;
+        public static final double kRotationSetpoint = 18.8;
         //TODO make faster
         public static final double kDrivingSpeed = 0.25;//Meters per second
 
@@ -81,29 +81,26 @@ public final class Constants {
             1 * Math.PI//Theta
         );
 
-        /* Pipeline Indexes */
-        public static final int kLocalizationIndex = 0;
-        public static final int kObjectTrackingIndex = 1;
-
         public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
-            new CameraConstants("FrontCamera", new Transform3d(
+            new CameraConstants("FrontCenterCamera", new Transform3d(
                 new Translation3d(Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.0)), 
-                new Rotation3d(0, 0, 0))
+                new Rotation3d(0, 0, 0)),
+                true
             ),
-            new CameraConstants("LeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
-                new Rotation3d(0, 0, Math.PI / 2.0))
-            ),
-            new CameraConstants("BackCamera", new Transform3d(
-                new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
-                new Rotation3d(0, 0, Math.PI))
-            ),
-            new CameraConstants("RightCamera", new Transform3d(
-                new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
-                new Rotation3d(0, 0, -Math.PI / 2.0))
-            ),
+            // new CameraConstants("LeftCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
+            //     new Rotation3d(0, 0, Math.PI / 2.0))
+            // ),
+            // new CameraConstants("BackCamera", new Transform3d(
+            //     new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
+            //     new Rotation3d(0, 0, Math.PI))
+            // ),
+            // new CameraConstants("RightCamera", new Transform3d(
+            //     new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
+            //     new Rotation3d(0, 0, -Math.PI / 2.0))
+            // ),
         };
     }
 }

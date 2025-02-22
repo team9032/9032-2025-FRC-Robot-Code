@@ -58,7 +58,6 @@ public class KrakenSwerve extends SubsystemBase {
         }
         
         localization = new Localization(drivetrain);
-        localization.switchAllToLocalization();
 
         /* Allow drive motor constants to be updated from the dashboard */
         SmartDashboard.putNumber("Drive kP", 0.0);

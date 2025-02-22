@@ -26,6 +26,8 @@ public class LocalizationCamera {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
+    private final boolean isObjectTracking;
+
     public LocalizationCamera(CameraConstants constants, AprilTagFieldLayout layout) {
         camera = new PhotonCamera(constants.name());
 
@@ -34,11 +36,13 @@ public class LocalizationCamera {
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,  
             constants.robotToCameraTransform()
         );
+
+        this.isObjectTracking = constants.isObjectTracking();
     }
 
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         /* This method should not run during object tracking */
-        if(camera.getPipelineIndex() != kLocalizationIndex) 
+        if (isObjectTracking) 
             return;
 
         var results = camera.getAllUnreadResults();
@@ -108,18 +112,10 @@ public class LocalizationCamera {
     /** Returns all object tracking pipeline results. Do not call this during localization (or an empty list will be returned). */
     public List<PhotonPipelineResult> getObjectTrackingResults() {
         /* This method should not run during localization - return an empty list */
-        if(camera.getPipelineIndex() != kObjectTrackingIndex)
+        if (!isObjectTracking)
             return List.of();
 
         return camera.getAllUnreadResults();
-    }
-
-    public void switchToLocalization() {
-        camera.setPipelineIndex(kLocalizationIndex);
-    }
-
-    public void switchToObjectTracking() {
-        camera.setPipelineIndex(kObjectTrackingIndex);
     }
 
     public String getName() {
