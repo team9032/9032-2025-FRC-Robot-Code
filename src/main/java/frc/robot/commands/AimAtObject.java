@@ -73,17 +73,23 @@ public class AimAtObject extends Command {
         /* Find the target that is closest to the center of the camera when there is no previous target */
         if(!targetCache.hasTarget()) 
             targetToTrack = latestResult.getBestTarget();
-        /* Find the target that is closest to the previous target */
-        else {
-            double lowestYawDifference = Double.MAX_VALUE;
-            
-            for(PhotonTrackedTarget target : filteredTargets) {
-                double yawDifference = Math.abs(target.getYaw() - previousTarget.getYaw());
+        /* Find the lowest pitch difference target that is within the pitch difference cutoff */
+        else {            
+            double lowestPitchDifference = Double.MAX_VALUE;
 
-                if(yawDifference < lowestYawDifference)
+            for(PhotonTrackedTarget target : filteredTargets) {
+                double pitchDifference = Math.abs(target.getPitch() - previousTarget.getPitch());
+
+                if(pitchDifference < kPitchDifferenceCutoff && pitchDifference < lowestPitchDifference) {
+                    lowestPitchDifference = target.getPitch();
+
                     targetToTrack = target;
+                }
             }
         }
+
+        if (targetToTrack == null)
+            return;
 
         /* Drive based on target yaw */
         var speeds = new ChassisSpeeds(

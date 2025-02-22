@@ -53,10 +53,11 @@ public final class Constants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
 
         public static final int kCycleAmtSinceTargetSeenCutoff = 10;
+        public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 18.8;
         //TODO make faster
-        public static final double kDrivingSpeed = 0.25;//Meters per second
+        public static final double kDrivingSpeed = 2.0;//Meters per second
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
