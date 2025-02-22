@@ -1,8 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -11,22 +12,25 @@ import static frc.robot.Constants.PathplannerConfig.*;
 
 /** Add your docs here. */
 public class AlignWithPose extends Command {
-    private final PIDController alignmentXPID;
-    private final PIDController alignmentYPID;
-    private final PIDController alignmentRotationPID;
+    private final ProfiledPIDController alignmentXPID;
+    private final ProfiledPIDController alignmentYPID;
+    private final ProfiledPIDController alignmentRotationPID;
 
     private final KrakenSwerve swerve;
 
     private final Pose2d targetPose;
 
     public AlignWithPose(KrakenSwerve swerve, Pose2d targetPose) {
-        alignmentXPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
+        TrapezoidProfile.Constraints kXYAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
+        TrapezoidProfile.Constraints kRotAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxAngularVelocityRadPerSec(), kDynamicPathConstraints.maxAngularAccelerationRadPerSecSq());
+
+        alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kXYAlignWithPoseContraints);
         alignmentXPID.setTolerance(kXYAlignmentTolerance);
 
-        alignmentYPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
+        alignmentYPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kXYAlignWithPoseContraints);
         alignmentYPID.setTolerance(kXYAlignmentTolerance);
 
-        alignmentRotationPID = new PIDController(kAlignmentRotkP, 0, kAlignmentRotkD);
+        alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kRotAlignWithPoseContraints);
         alignmentRotationPID.setTolerance(kRotAlignmentTolerance);
 
         this.swerve = swerve;
@@ -36,9 +40,9 @@ public class AlignWithPose extends Command {
 
     @Override
     public void initialize() {
-        alignmentXPID.setSetpoint(targetPose.getX()); 
-        alignmentYPID.setSetpoint(targetPose.getY()); 
-        alignmentRotationPID.setSetpoint(targetPose.getRotation().getRadians());
+        alignmentXPID.setGoal(targetPose.getX()); 
+        alignmentYPID.setGoal(targetPose.getY()); 
+        alignmentRotationPID.setGoal(targetPose.getRotation().getRadians());
     }
 
     @Override
@@ -65,9 +69,9 @@ public class AlignWithPose extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        alignmentXPID.reset();
-        alignmentYPID.reset();
-        alignmentRotationPID.reset();
+        alignmentXPID.reset(new TrapezoidProfile.State());
+        alignmentYPID.reset(new TrapezoidProfile.State());
+        alignmentRotationPID.reset(new TrapezoidProfile.State());
     }
 
     @Override
