@@ -90,18 +90,21 @@ public final class Constants {
                 new Rotation3d(0, 0, 0)),
                 true
             ),
-            // new CameraConstants("LeftCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
-            //     new Rotation3d(0, 0, Math.PI / 2.0))
-            // ),
-            // new CameraConstants("BackCamera", new Transform3d(
-            //     new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
-            //     new Rotation3d(0, 0, Math.PI))
-            // ),
-            // new CameraConstants("RightCamera", new Transform3d(
-            //     new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
-            //     new Rotation3d(0, 0, -Math.PI / 2.0))
-            // ),
+            new CameraConstants("LeftCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
+                new Rotation3d(0, 0, Math.PI / 2.0)),
+                false
+            ),
+            new CameraConstants("BackCamera", new Transform3d(
+                new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
+                new Rotation3d(0, 0, Math.PI)),
+                false
+            ),
+            new CameraConstants("RightCamera", new Transform3d(
+                new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
+                new Rotation3d(0, 0, -Math.PI / 2.0))
+                ,false
+            ),
         };
     }
 }
