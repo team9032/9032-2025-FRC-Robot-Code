@@ -2,15 +2,16 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.PathplannerConfig.*;
 
-/** Add your docs here. */
 public class AlignWithPose extends Command {
     private final ProfiledPIDController alignmentXPID;
     private final ProfiledPIDController alignmentYPID;
@@ -19,6 +20,8 @@ public class AlignWithPose extends Command {
     private final KrakenSwerve swerve;
 
     private final Pose2d targetPose;
+
+    private Field2d field = new Field2d();
 
     public AlignWithPose(KrakenSwerve swerve, Pose2d targetPose) {
         TrapezoidProfile.Constraints kXYAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
@@ -35,11 +38,19 @@ public class AlignWithPose extends Command {
 
         this.swerve = swerve;
 
-        this.targetPose = targetPose;
+        this.targetPose = targetPose;      
+
+        SmartDashboard.putData("The field",  field);//TODO this can be removed later
     }
 
     @Override
     public void initialize() {
+        Pose2d currentPose = swerve.drivetrain.getState().Pose;
+
+        alignmentXPID.reset(currentPose.getX());
+        alignmentYPID.reset(currentPose.getY());
+        alignmentRotationPID.reset(currentPose.getRotation().getRadians());
+
         alignmentXPID.setGoal(targetPose.getX()); 
         alignmentYPID.setGoal(targetPose.getY()); 
         alignmentRotationPID.setGoal(targetPose.getRotation().getRadians());
@@ -48,17 +59,13 @@ public class AlignWithPose extends Command {
     @Override
     public void execute() {
         Pose2d currentPose = swerve.drivetrain.getState().Pose;
-
-        double x = alignmentXPID.calculate(currentPose.getX());
-        double y = alignmentYPID.calculate(currentPose.getY());
+        
+        double x = 0;//alignmentXPID.calculate(currentPose.getX());//FIXME X and Y cause tweaking out
+        double y = 0;//alignmentYPID.calculate(currentPose.getY());
         double rot = -alignmentRotationPID.calculate(currentPose.getRotation().getRadians());
 
-        SmartDashboard.putNumber("X Alignment ", x);//TODO remove these telemtery
-        SmartDashboard.putNumber("Y Alignment ", y);
-        SmartDashboard.putNumber("Rot ", rot);
-
-        SmartDashboard.putString("Current", currentPose.toString());
-        SmartDashboard.putString("Target", targetPose.toString());
+        field.getObject("Alignment Target").setPose(targetPose);
+        field.getObject("Setpoint pose").setPose(new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position)));
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
 
@@ -68,14 +75,10 @@ public class AlignWithPose extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        alignmentXPID.reset(new TrapezoidProfile.State());
-        alignmentYPID.reset(new TrapezoidProfile.State());
-        alignmentRotationPID.reset(new TrapezoidProfile.State());
-    }
+    public void end(boolean interrupted) {}
 
     @Override
     public boolean isFinished() {
-        return alignmentXPID.atSetpoint() && alignmentYPID.atSetpoint() && alignmentRotationPID.atSetpoint();
+        return alignmentRotationPID.atGoal(); //&& alignmentXPID.atGoal() && alignmentYPID.atGoal();
     }
 }

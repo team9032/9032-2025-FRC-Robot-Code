@@ -43,15 +43,15 @@ public final class Constants {
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             1,//TODO change these
-            4, 
-            0.5 * Math.PI, 
+            2, 
+            1 * Math.PI, 
             2 * Math.PI
         );
 
-        public static final double kAlignmentXYkP = 0.008;
+        public static final double kAlignmentXYkP = 2;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
         
-        public static final double kAlignmentRotkP = 5.0;
+        public static final double kAlignmentRotkP = 10.0;
         public static final double kAlignmentRotkD = 0;
 
         public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.5);

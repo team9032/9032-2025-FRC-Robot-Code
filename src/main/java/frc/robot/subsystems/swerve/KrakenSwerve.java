@@ -90,7 +90,7 @@ public class KrakenSwerve extends SubsystemBase {
     }
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
-        setpoint.omegaRadiansPerSecond *= -1;//FIXME idk why this is here but the code explodes if i remove it
+        setpoint.omegaRadiansPerSecond *= -1;//FIXME idk why this is here but the robot becomes a blender if i remove it
 
         drivetrain.setControl(
             kClosedLoopDriveRequest.withSpeeds(setpoint)
