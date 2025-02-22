@@ -17,7 +17,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class Intake extends SubsystemBase {
     private final MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);
 
-    private final TalonFX intakeMotor;
+    private final TalonFX intakeArmMotor;
     private final TalonFX wheelMotor;
 
     private final TimeOfFlight intakeDistanceSensor = new TimeOfFlight(kIntakeDistSensorID);
@@ -25,13 +25,12 @@ public class Intake extends SubsystemBase {
     private final StatusSignal<Angle> intakeMotorPosSignal;
 
     public Intake() {
-        intakeMotor = new TalonFX(kIntakeMotorID);
-
-        intakeMotorPosSignal = intakeMotor.getPosition();
+        intakeArmMotor = new TalonFX(kIntakeMotorID);
+        intakeMotorPosSignal = intakeArmMotor.getPosition();
         intakeMotorPosSignal.setUpdateFrequency(100);
-        intakeMotor.optimizeBusUtilization();
+        intakeArmMotor.optimizeBusUtilization();
         
-        ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kIntakeMotorConfig));
+        ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeMotorConfig));
 
         wheelMotor = new TalonFX(kWheelMotorID);
         ElasticUtil.checkStatus(wheelMotor.getConfigurator().apply(kWheelMotorConfig));
@@ -39,7 +38,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command returnToStowPosition() {
-        return runOnce(() -> intakeMotor.setControl(armControlRequest.withPosition(kStowPosition)));
+        return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(kStowPosition)));
     }
 
     public Command intakeCoral() {
@@ -51,7 +50,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command moveToGround() {
-        return runOnce(() -> intakeMotor.setControl(armControlRequest.withPosition(kGroundPosition)));
+        return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(kGroundPosition)));
     }
 
     public Command ejectCoral() {

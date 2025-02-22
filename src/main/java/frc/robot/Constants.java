@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -77,10 +78,14 @@ public final class Constants {
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
+        public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(9.0 / 360.0);
+
         public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
             .withMotionMagic(kElevatorMotionMagicConfig)
             .withSlot0(kElevatorPIDConfig)
-            .withCurrentLimits(kElevatorCurrentLimits);
+            .withCurrentLimits(kElevatorCurrentLimits)
+            .withFeedback(kElevatorFeedbackConfigs);
 
         public static final double kElevatorTolerance = 5;
 
@@ -148,11 +153,11 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final CurrentLimitsConfigs kIntakeMotorCurrentLimit = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final Slot0Configs kIntakeMotorPidConstants = new Slot0Configs()
+        public static final Slot0Configs kIntakeArmMotorPidConstants = new Slot0Configs()
             .withKP(0.17)
             .withKD(0)
             .withKG(0) // TODO tune values
@@ -160,25 +165,29 @@ public final class Constants {
             .withKV(.117)
             .withKA(0);
 
-        public static final MotionMagicConfigs kIntakeMotionMagicConfigs = new MotionMagicConfigs()
+        public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(120)
             .withMotionMagicAcceleration(80); // TODO tune values
 
+        public static final FeedbackConfigs kIntakeArmFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(50.0 / 360.0); //TODO find real value alter
+
         public static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kIntakeMotorCurrentLimit)
-            .withSlot0(kIntakeMotorPidConstants)
-            .withMotionMagic(kIntakeMotionMagicConfigs);
+            .withCurrentLimits(kIntakeArmMotorCurrentLimit)
+            .withSlot0(kIntakeArmMotorPidConstants)
+            .withMotionMagic(kIntakeArmMotionMagicConfigs)
+            .withFeedback(kIntakeArmFeedbackConfigs);
 
         public static final MotorOutputConfigs kWheelOutputConfigs = new MotorOutputConfigs()
             .withNeutralMode(NeutralModeValue.Coast); //TODO change if bad
 
+
         public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kIntakeMotorCurrentLimit)
+            .withCurrentLimits(kIntakeArmMotorCurrentLimit)
             .withMotorOutput(kWheelOutputConfigs);
         
         public static final int kIntakeMotorID = 35;
         public static final int kWheelMotorID = 36;
-        public static final int kPhotoelectricSensorID = 29;
         public static final int kIntakeDistSensorID = 30;
         public static final double kCoralDetectionDistance = 0.5; //TODO tune
 
@@ -220,11 +229,16 @@ public final class Constants {
             .withMotionMagicCruiseVelocity(20)
             .withMotionMagicAcceleration(40); // TODO tune values
 
+        public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(94.5 / 360.0);
+
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
             .withSlot0(kArmMotorPidConstants)
-            .withMotionMagic(kArmMotionMagicConfigs);
+            .withMotionMagic(kArmMotionMagicConfigs)
+            .withFeedback(kArmFeedbackConfigs);
     }
+    
 
     public static class ClimberConstants {
         public static final int kMotorID = 50;
@@ -233,8 +247,12 @@ public final class Constants {
             .withSupplyCurrentLimit(70)
             .withStatorCurrentLimit(120);
 
+        public static final FeedbackConfigs kMotorFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(125.0 / 360.0); //TODO find true value
+        
         public static final TalonFXConfiguration kMotorConfiguration= new TalonFXConfiguration()
-            .withCurrentLimits(kMotorCurrentLimitConfigs); 
+            .withCurrentLimits(kMotorCurrentLimitConfigs)
+            .withFeedback(kMotorFeedbackConfigs); 
     }
 
     public static final class EndEffectorConstants {
