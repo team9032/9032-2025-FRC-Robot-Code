@@ -43,9 +43,9 @@ public final class Constants {
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             4,//TODO change these
-            3, 
-            3 * Math.PI, 
-            4 * Math.PI
+            4, 
+            2 * Math.PI, 
+            2 * Math.PI
         );
 
         public static final double kAlignmentXYkP = 2;//TODO Tune better
