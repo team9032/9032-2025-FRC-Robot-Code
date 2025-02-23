@@ -32,7 +32,7 @@ public class KrakenSwerve extends SubsystemBase {
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
-            drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
+            drivetrainConstants, kBackRight, kBackLeft, kFrontRight, kFrontLeft
         );
 
         try {
@@ -90,8 +90,6 @@ public class KrakenSwerve extends SubsystemBase {
     }
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
-        setpoint.omegaRadiansPerSecond *= -1;//FIXME idk why this is here but the robot becomes a blender if i remove it
-
         drivetrain.setControl(
             kClosedLoopDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())

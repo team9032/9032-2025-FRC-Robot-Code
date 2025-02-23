@@ -42,10 +42,10 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            1,//TODO change these
-            2, 
-            1 * Math.PI, 
-            2 * Math.PI
+            4,//TODO change these
+            3, 
+            3 * Math.PI, 
+            4 * Math.PI
         );
 
         public static final double kAlignmentXYkP = 2;//TODO Tune better
@@ -106,7 +106,7 @@ public final class Constants {
                 new Rotation3d(0,0,Math.PI))
             ),
             new CameraConstants("BackLeftCamera", new Transform3d(
-                new Translation3d(0.104775,0.352425,0.35814),
+                new Translation3d(0.104775,0.352425, Units.inchesToMeters(13.5)),
                 new Rotation3d(0,0,Math.PI))
             )
         };

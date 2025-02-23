@@ -50,7 +50,7 @@ public class Pathfinding {
             var endPose = new Pose2d(endTrans, pathToFollow.getGoalEndState().rotation());
 
             return AutoBuilder.followPath(path)
-                .andThen(new AlignWithPose(swerve, endPose))
+                // .andThen(new AlignWithPose(swerve, endPose))
                 .onlyIf(() -> !swerve.drivetrain.getState().Pose.equals(endPose));
         } catch (Exception e) {
             ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
