@@ -58,6 +58,25 @@ public final class Constants {
         public static final double kRotAlignmentTolerance = Units.degreesToRadians(1);
     }
 
+    public static final class ObjectAimingConstants {
+        public static final String kObjectTrackingCameraName = "FrontCenterCamera";
+
+        public static final int kCycleAmtSinceTargetSeenCutoff = 10;
+        public static final double kPitchDifferenceCutoff = 2.0;
+
+        public static final double kRotationSetpoint = 18.8;
+        //TODO make faster
+        public static final double kDrivingSpeed = 2.0;//Meters per second
+
+        /* PID Constants */
+        public static final double kPRotation = 0.15;
+        public static final double kDRotation = 0.002;
+
+        /* Class Ids */
+        public static final int kCoralId = 1;
+        public static final int kAlgaeId = 0;
+    }
+
     public static final class LocalizationConstants {//TODO all under need to be tuned 
         /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityMultiplier = 40;

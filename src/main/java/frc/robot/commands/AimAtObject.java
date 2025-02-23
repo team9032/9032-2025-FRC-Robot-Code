@@ -8,7 +8,7 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kPathPlannerDriveRequest;
+import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
 
 import java.util.ArrayList;
 
@@ -98,7 +98,7 @@ public class AimAtObject extends Command {
             rotationController.calculate(targetToTrack.yaw)
         );
 
-        swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(speeds));
+        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
 
         targetCache.updateTarget(targetToTrack);
     }
@@ -113,6 +113,6 @@ public class AimAtObject extends Command {
         rotationController.reset();
         targetCache.reset();
 
-        swerve.drivetrain.setControl(kPathPlannerDriveRequest.withSpeeds(new ChassisSpeeds()));
+        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 }
