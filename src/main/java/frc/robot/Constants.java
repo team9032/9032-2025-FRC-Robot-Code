@@ -89,25 +89,35 @@ public final class Constants {
         public static final double kXandYCoord = 0.282575;
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
+            new CameraConstants("FrontCenterCamera", new Transform3d(
+                new Translation3d(0, 0, 0), //TODO find offsets for this camera
+                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
+                true
+            ),
             new CameraConstants("FrontRightCamera", new Transform3d(
                 new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
-                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0)))
+                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
+                false
             ),
             new CameraConstants("FrontLeftCamera", new Transform3d(
                 new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
-                new Rotation3d(0, kCameraPitch, (Math.PI / 4.0)))
+                new Rotation3d(0, kCameraPitch, (Math.PI / 4.0))),
+                false
             ),
             new CameraConstants("BackCenterCamera", new Transform3d(
-                    new Translation3d(-0.073025,0.041275,0.25146),
-                    new Rotation3d(0,0,Math.PI))
+                new Translation3d(-0.073025,0.041275,0.25146),
+                new Rotation3d(0,0,Math.PI)),
+                false
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
                 new Translation3d(0.104775,-0.352425,0.2794),
-                new Rotation3d(0,0,Math.PI))
+                new Rotation3d(0,0,Math.PI)),
+                false
             ),
             new CameraConstants("BackLeftCamera", new Transform3d(
                 new Translation3d(0.104775,0.352425, Units.inchesToMeters(13.5)),
-                new Rotation3d(0,0,Math.PI))
+                new Rotation3d(0,0,Math.PI)),
+                false
             )
         };
     }
