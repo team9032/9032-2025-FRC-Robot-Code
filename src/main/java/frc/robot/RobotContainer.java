@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.AimAtCoral;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -33,6 +34,7 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger zeroGyro = driveController.b();
+    private final Trigger autoAimTest = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...
@@ -88,6 +90,10 @@ public class RobotContainer {
         zeroGyro.onTrue(
             krakenSwerve.zeroGyro()
             .andThen(ElasticUtil.sendInfoCommand("Zeroed Gyro"))
+        );
+
+        autoAimTest.whileTrue(
+            new AimAtCoral(krakenSwerve)
         );
 
         /* Operator Controls */

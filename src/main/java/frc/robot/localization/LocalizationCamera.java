@@ -1,5 +1,6 @@
 package frc.robot.localization;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -25,6 +26,8 @@ public class LocalizationCamera {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
+    private final boolean isObjectTracking;
+
     public LocalizationCamera(CameraConstants constants, AprilTagFieldLayout layout) {
         camera = new PhotonCamera(constants.name());
 
@@ -33,9 +36,15 @@ public class LocalizationCamera {
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,  
             constants.robotToCameraTransform()
         );
+
+        this.isObjectTracking = constants.isObjectTracking();
     }
 
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
+        /* This method should not run during object tracking */
+        if (isObjectTracking) 
+            return;
+
         var results = camera.getAllUnreadResults();
 
         for (PhotonPipelineResult pipelineResult : results) {
@@ -98,5 +107,18 @@ public class LocalizationCamera {
         double confidenceMultiplier = Math.max(1, (distanceMultiplier * poseAmbiguityMultiplier) / tagPresenceDivider);
 
         return kBaseStandardDeviations.times(confidenceMultiplier);
+    }
+
+    /** Returns all object tracking pipeline results. Do not call this during localization (or an empty list will be returned). */
+    public List<PhotonPipelineResult> getObjectTrackingResults() {
+        /* This method should not run during localization - return an empty list */
+        if (!isObjectTracking)
+            return List.of();
+
+        return camera.getAllUnreadResults();
+    }
+
+    public String getName() {
+        return camera.getName();
     }
 }
