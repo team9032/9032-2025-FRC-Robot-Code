@@ -32,7 +32,7 @@ public class KrakenSwerve extends SubsystemBase {
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
-            drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
+            drivetrainConstants, kBackRight, kBackLeft, kFrontRight, kFrontLeft
         );
 
         try {
@@ -76,8 +76,9 @@ public class KrakenSwerve extends SubsystemBase {
         sysId = new SwerveSysId(this);
     }
 
-    public Command zeroGyro() {
-        return runOnce(() -> drivetrain.getPigeon2().reset());
+    /** Sets the current robot's rotation as the operator perspective */
+    public Command resetPerspective() {
+        return runOnce(() -> drivetrain.setOperatorPerspectiveForward(drivetrain.getState().Pose.getRotation()));
     }
 
     public Command runSysIdDynamic(Direction direction) {
@@ -90,7 +91,7 @@ public class KrakenSwerve extends SubsystemBase {
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
         drivetrain.setControl(
-            kPathPlannerDriveRequest.withSpeeds(setpoint)
+            kClosedLoopDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
         );

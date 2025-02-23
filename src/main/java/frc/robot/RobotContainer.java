@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.commands.AimAtCoral;
+import frc.robot.commands.Pathfinding;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -33,8 +33,8 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger zeroGyro = driveController.b();
-    private final Trigger autoAimTest = driveController.leftBumper();
+    private final Trigger resetPerspective = driveController.b();
+    private final Trigger testPathfinding = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     //...
@@ -87,14 +87,12 @@ public class RobotContainer {
             )
         );
 
-        zeroGyro.onTrue(
-            krakenSwerve.zeroGyro()
-            .andThen(ElasticUtil.sendInfoCommand("Zeroed Gyro"))
+        resetPerspective.onTrue(
+            krakenSwerve.resetPerspective()
+            .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        autoAimTest.whileTrue(
-            new AimAtCoral(krakenSwerve)
-        );
+        testPathfinding.whileTrue(Pathfinding.pathTo3L(krakenSwerve));
 
         /* Operator Controls */
         //...

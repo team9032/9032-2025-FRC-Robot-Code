@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -7,17 +9,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
-import static frc.robot.Constants.PathplannerConfig.*;
 
 public class Pathfinding {
     private Pathfinding() {}
 
+    // private static Command pathTo(KrakenSwerve swerve, String pathName) {
+    //     return Commands.defer(() -> getFollowingAndAlignmentCommand(swerve, pathName), Set.of(swerve));
+    // }//TODO only needed if final alignment
+
     private static Command pathTo(KrakenSwerve swerve, String pathName) {
         try {
             PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
-            Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(pathToFollow, kdynamicPathConstraints);
 
-            return pathfindingCommand;
+            return AutoBuilder.pathfindThenFollowPath(pathToFollow, kDynamicPathConstraints);
+                //.andThen(new AlignWithPose(swerve, endPose))//TODO needed?
         } catch (Exception e) {
             ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
 
@@ -58,7 +63,7 @@ public class Pathfinding {
     }
 
     public static Command pathTo3L(KrakenSwerve swerve) {
-        return pathTo(swerve,"3L");
+        return pathTo(swerve, "3L");
     }
 
     public static Command pathTo3R(KrakenSwerve swerve) {

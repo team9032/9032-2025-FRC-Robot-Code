@@ -28,7 +28,7 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(kMaxSpeed * 0.05) 
+            .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
@@ -37,16 +37,25 @@ public final class Constants {
         public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
         public static final PIDConstants kRotationPID = new PIDConstants(5.0);
 
-        public static final ApplyRobotSpeeds kPathPlannerDriveRequest = new ApplyRobotSpeeds()
+        public static final ApplyRobotSpeeds kClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kdynamicPathConstraints = new PathConstraints(
-            2,//TODO change these
+        public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
+            4,//TODO change these
             4, 
-            Math.PI, 
+            2 * Math.PI, 
             2 * Math.PI
         );
+
+        public static final double kAlignmentXYkP = 2;//TODO Tune better
+        public static final double kAlignmentXYkD = 0;
+        
+        public static final double kAlignmentRotkP = 10.0;
+        public static final double kAlignmentRotkD = 0;
+
+        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.5);
+        public static final double kRotAlignmentTolerance = Units.degreesToRadians(1);
     }
 
     public static final class ObjectAimingConstants {
@@ -70,41 +79,65 @@ public final class Constants {
 
     public static final class LocalizationConstants {//TODO all under need to be tuned 
         /* Constants for the confidence calculator */
-        public static final double kPoseAmbiguityOffset = 0.2;
-        public static final double kPoseAmbiguityMultiplier = 4;
+        public static final double kPoseAmbiguityMultiplier = 40;
         public static final double kNoisyDistanceMeters = 2.5;
         public static final double kDistanceWeight = 7;
-        public static final int kTagPresenceWeight = 10;
 
-        public static final Matrix<N3, N1> kBaseStandardDeviations = VecBuilder.fill(
+        /* Thresholds for when to reject an estimate */
+        public static final double kAmbiguityThreshold = 0.2;
+        public static final double kDistanceThreshold = 4.0;//Meters
+        
+        public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X
             1,//Y
             1 * Math.PI//Theta
         );
 
+        public static final Matrix<N3, N1> kMultiTagBaseStandardDeviations = VecBuilder.fill(
+            0.25,//X
+            0.25,//Y
+            0.5 * Math.PI//Theta
+        );
+
         public static final String kAprilTagFieldLayoutName = "2025-reefscape.json";//Loads from a JSON file in deploy
+
+        /* Used for cameras mounted on swerve modules */
+        public static final double kCameraHeight = Units.inchesToMeters(8.0);//Height off of the ground in meters
+        public static final double kCameraPitch = Units.degreesToRadians(17.0);//The camera's pitch
+
+        public static final double kXandYCoord = 0.282575;
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontCenterCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.0)), 
-                new Rotation3d(0, 0, 0)),
+                new Translation3d(0, 0, 0), //TODO find offsets for this camera
+                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
                 true
             ),
-            new CameraConstants("LeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.75), Units.inchesToMeters(15.5), Units.inchesToMeters(16.0)), 
-                new Rotation3d(0, 0, Math.PI / 2.0)),
+            new CameraConstants("FrontRightCamera", new Transform3d(
+                new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
                 false
             ),
-            new CameraConstants("BackCamera", new Transform3d(
-                new Translation3d(-Units.inchesToMeters(15.5), 0, Units.inchesToMeters(14.25)), 
-                new Rotation3d(0, 0, Math.PI)),
+            new CameraConstants("FrontLeftCamera", new Transform3d(
+                new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
+                new Rotation3d(0, kCameraPitch, (Math.PI / 4.0))),
                 false
             ),
-            new CameraConstants("RightCamera", new Transform3d(
-                new Translation3d(0.0, Units.inchesToMeters(14.75), Units.inchesToMeters(13.5)), 
-                new Rotation3d(0, 0, -Math.PI / 2.0))
-                ,false
+            new CameraConstants("BackCenterCamera", new Transform3d(
+                new Translation3d(-0.073025,0.041275,0.25146),
+                new Rotation3d(0,0,Math.PI)),
+                false
             ),
+            new CameraConstants("BackRightCamera", new Transform3d(
+                new Translation3d(0.104775,-0.352425,0.2794),
+                new Rotation3d(0,0,Math.PI)),
+                false
+            ),
+            new CameraConstants("BackLeftCamera", new Transform3d(
+                new Translation3d(0.104775,0.352425, Units.inchesToMeters(13.5)),
+                new Rotation3d(0,0,Math.PI)),
+                false
+            )
         };
     }
 }
