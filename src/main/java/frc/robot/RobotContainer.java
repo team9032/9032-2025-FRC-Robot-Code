@@ -132,10 +132,6 @@ public class RobotContainer {
         armLevel1.onTrue(arm.moveToLevel1Pos());
         armLevel2.onTrue(arm.moveToLevel2Pos());
         armLevel3.onTrue(arm.moveToLevel3Pos());
-        
-        climber.setDefaultCommand(
-            climber.setPower(() -> (driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis()))
-        );
 
         scoreCoral.onTrue(endEffector.placeCoral());
         pickupCoral.onTrue(endEffector.pickupCoralFromSource());

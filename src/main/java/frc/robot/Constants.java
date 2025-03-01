@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -252,17 +253,37 @@ public final class Constants {
 
     public static class ClimberConstants {
         public static final int kMotorID = 50;
-        
-        public static final CurrentLimitsConfigs kMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+
+        public static final int kClimberUp = 580;
+        public static final int kClimberDown = -50;
+
+        private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
+            .withKP(2)
+            .withKD(0)
+            .withKV(0)
+            .withKA(0)
+            .withKS(0)
+            .withKG(0);
+        //FIXME hi HARSHIL PANDENATOR
+
+        public static final CurrentLimitsConfigs kClimberCurrentLimits = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(70)
             .withStatorCurrentLimit(120);
-
-        public static final FeedbackConfigs kMotorFeedbackConfigs = new FeedbackConfigs()
+            
+        public static final FeedbackConfigs kClimberFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(125.0 / 360.0); //TODO find true value
-        
-        public static final TalonFXConfiguration kMotorConfiguration= new TalonFXConfiguration()
-            .withCurrentLimits(kMotorCurrentLimitConfigs)
-            .withFeedback(kMotorFeedbackConfigs); 
+
+        public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(580)
+            .withReverseSoftLimitThreshold(-50);
+
+        public static final TalonFXConfiguration kClimberMotorConfig = new TalonFXConfiguration()
+            .withSlot0(kClimberPIDConfig)
+            .withFeedback(kClimberFeedbackConfigs)
+            .withCurrentLimits(kClimberCurrentLimits)
+            .withSoftwareLimitSwitch(kClimberSoftLimit);
     }
 
     public static final class EndEffectorConstants {
