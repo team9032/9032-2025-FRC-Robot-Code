@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -65,13 +66,17 @@ public final class Constants {
             .withMotionMagicCruiseVelocity(5)
             .withMotionMagicAcceleration(10);
 
+
+        public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
+
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
             .withKP(1)
             .withKD(0)
             .withKV(0)
             .withKA(0)
             .withKS(0)
-            .withKG(0);
+            .withKG(0)
+            .withGravityType(kElevatorGravityType);
         //FIXME hi HARSHIL PANDENATOR
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
@@ -156,14 +161,16 @@ public final class Constants {
         public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
-
+        public static final GravityTypeValue kIntakeArmGravityType = GravityTypeValue.Arm_Cosine;
         public static final Slot0Configs kIntakeArmMotorPidConstants = new Slot0Configs()
             .withKP(0.17)
             .withKD(0)
             .withKG(0) // TODO tune values
             .withKS(0)
             .withKV(.117)
-            .withKA(0);
+            .withKA(0)
+            .withGravityType(kIntakeArmGravityType)
+            ;
 
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(120)
@@ -216,6 +223,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
+        
+        public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
             .withKP(1)
@@ -223,7 +232,8 @@ public final class Constants {
             .withKG(0) // TODO tune values
             .withKS(0)
             .withKV(0)
-            .withKA(0);
+            .withKA(0)
+            .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(20)
