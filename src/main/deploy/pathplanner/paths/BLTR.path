@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.74,
-        "y": 3.869
+        "x": 2.7592499999999998,
+        "y": 4.863499999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.99,
-        "y": 3.869
+        "x": 2.787622708791927,
+        "y": 3.62536505418651
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BLTRS"
     },
     {
       "anchor": {
-        "x": 3.1,
-        "y": 3.879
+        "x": 2.7982500000000003,
+        "y": 2.61125
       },
       "prevControl": {
-        "x": 2.85,
-        "y": 3.879
+        "x": 2.797266727741134,
+        "y": 3.7517159601031422
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BLTRE"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 1.0,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

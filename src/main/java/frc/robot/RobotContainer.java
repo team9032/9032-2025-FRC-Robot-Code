@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.Pathfinding;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -39,7 +40,6 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
-    private final Trigger zeroGyro = driveController.b();
     private final Trigger scoreCoral = driveController.a();
     private final Trigger pickupCoral = driveController.y();
     private final Trigger groundPTrigger = driveController.y();
@@ -48,6 +48,8 @@ public class RobotContainer {
     private final Trigger armLevel1 = driveController.povRight();
     private final Trigger armLevel2 = driveController.povDown();
     private final Trigger armLevel3 = driveController.povLeft();
+    private final Trigger resetPerspective = driveController.b();
+    private final Trigger testPathfinding = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     private final Trigger elevatorL3Button = operatorController.a();
@@ -109,12 +111,7 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX()
             )
-        );
-
-        zeroGyro.onTrue(
-            krakenSwerve.zeroGyro()
-            .andThen(ElasticUtil.sendInfoCommand("Zeroed gyro"))
-        );
+        );        
 
         groundPTrigger.onTrue(
             intake.moveToGround()
@@ -135,6 +132,13 @@ public class RobotContainer {
 
         scoreCoral.onTrue(endEffector.placeCoral());
         pickupCoral.onTrue(endEffector.pickupCoralFromSource());
+
+        resetPerspective.onTrue(
+            krakenSwerve.resetPerspective()
+            .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
+        );
+
+        testPathfinding.whileTrue(Pathfinding.pathTo3L(krakenSwerve));
 
         /* Operator Controls */
         elevatorTroughButton.onTrue(elevator.moveToTroughPosition());
