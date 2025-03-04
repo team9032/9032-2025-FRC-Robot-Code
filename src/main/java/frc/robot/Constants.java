@@ -178,12 +178,19 @@ public final class Constants {
         public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(9.0 / 360.0);
 
+        public static final SoftwareLimitSwitchConfigs kElevatorSoftLimit = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(100) //TODO change
+            .withReverseSoftLimitThreshold(0);
+
         public static final TalonFXConfiguration kElevatorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withMotionMagic(kElevatorMotionMagicConfig)
             .withSlot0(kElevatorPIDConfig)
             .withCurrentLimits(kElevatorCurrentLimits)
-            .withFeedback(kElevatorFeedbackConfigs);
+            .withFeedback(kElevatorFeedbackConfigs)
+            .withSoftwareLimitSwitch(kElevatorSoftLimit);
 
         public static final double kElevatorTolerance = 5;
 
@@ -216,6 +223,8 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
+        public static final double kIntakeStartingPosition = 0; //TODO find & change
+
         public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
@@ -231,6 +240,12 @@ public final class Constants {
             .withKA(0)
             .withGravityType(kIntakeArmGravityType);
 
+        public static final SoftwareLimitSwitchConfigs kIntakeArmSoftLimit = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(60)
+            .withReverseSoftLimitThreshold(0); //TODO Change
+
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(120)
             .withMotionMagicAcceleration(80); // TODO tune values
@@ -243,7 +258,8 @@ public final class Constants {
             .withSlot0(kIntakeArmPidConstants)
             .withMotionMagic(kIntakeArmMotionMagicConfigs)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withFeedback(kIntakeArmFeedbackConfigs);
+            .withFeedback(kIntakeArmFeedbackConfigs)
+            .withSoftwareLimitSwitch(kIntakeArmSoftLimit);
 
         public static final CurrentLimitsConfigs kIntakeRollerCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
@@ -267,6 +283,8 @@ public final class Constants {
 
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
+        public static final int kArmEncoderPort = 0; //TODO change
+        public static final int kArmEncoderOffset = 0; //TODO find
 
         public static final double kArmIndexerPos = 0.05;
         public static final double kArmTroughPos = 0.05;

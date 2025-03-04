@@ -64,7 +64,7 @@ public class RobotContainer {
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
-    private final Indexer indexer = new Indexer();
+    //private final Indexer indexer = new Indexer();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -146,7 +146,7 @@ public class RobotContainer {
         elevatorL2Button.onTrue(elevator.moveToL1Position());
         elevatorL3Button.onTrue(elevator.moveToL3Position());
 
-        index.onTrue(indexer.spinRollersUntilCoralReceived());
+        //index.onTrue(indexer.spinRollersUntilCoralReceived());
     }
     
     private void bindSysIdTriggers() {
