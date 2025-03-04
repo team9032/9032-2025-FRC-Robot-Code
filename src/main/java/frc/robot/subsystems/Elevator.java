@@ -27,11 +27,11 @@ public class Elevator extends SubsystemBase {
         elevatorMotor = new TalonFX(kFrontElevatorID);
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
-        ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kELevatorMotorConfig));
+        ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kElevatorConfig));
 
         elevatorMotorFollower = new TalonFX(kBackElevatorID);
         elevatorMotorFollower.optimizeBusUtilization();
-        ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig));
+        ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kElevatorConfig));
 
         followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
         elevatorMotorFollower.setControl(followerMotorControl);

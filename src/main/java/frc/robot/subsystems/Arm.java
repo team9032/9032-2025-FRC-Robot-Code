@@ -20,9 +20,11 @@ public class Arm extends SubsystemBase {
     
     public Arm() { 
         armMotor = new TalonFX(kArmMotorId);
+        
         armPosSignal = armMotor.getPosition();
         armPosSignal.setUpdateFrequency(100);
         armMotor.optimizeBusUtilization();
+
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
     }
 

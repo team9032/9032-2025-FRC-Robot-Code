@@ -17,12 +17,13 @@ public class Indexer extends SubsystemBase {
 
     public Indexer() {
         rollerMotor = new TalonFX(kIndexerRollerID);
-        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kRollerMotorConfig));
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIndexerRollerConfig));
+        
         rollerMotor.optimizeBusUtilization();
     }
 
     public Command spinRollers() {
-        return runOnce(() -> rollerMotor.set(kRollerMotorPower));
+        return runOnce(() -> rollerMotor.set(kIndexerRollerPower));
     }
 
     public Command stopRollers() {

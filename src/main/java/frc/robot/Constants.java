@@ -87,54 +87,6 @@ public final class Constants {
         public static final int kAlgaeId = 0;
     }
 
-    public static class ElevatorConfigs {
-        public static final int kFrontElevatorID = 13; 
-        public static final int kBackElevatorID = 14; 
-
-        private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(5)
-            .withMotionMagicAcceleration(10);
-
-
-        public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
-
-        private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(1)
-            .withKD(0)
-            .withKV(0)
-            .withKA(0)
-            .withKS(0)
-            .withKG(0)
-            .withGravityType(kElevatorGravityType);
-        //FIXME hi HARSHIL PANDENATOR
-
-        public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
-            .withStatorCurrentLimit(120);
-
-        public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(9.0 / 360.0);
-
-        public static final TalonFXConfiguration kELevatorMotorConfig = new TalonFXConfiguration()
-            .withMotionMagic(kElevatorMotionMagicConfig)
-            .withSlot0(kElevatorPIDConfig)
-            .withCurrentLimits(kElevatorCurrentLimits)
-            .withFeedback(kElevatorFeedbackConfigs);
-
-        public static final double kElevatorTolerance = 5;
-
-        //TODO change all elevator positions once we can find them
-        public static final double kElevatorTrough = 0;
-        public static final double kElevatorL1 = 22.5;
-        public static final double kElevatorL2 = 45;
-        public static final double kElevatorL3 = 90;
-        public static final double kElevatorLowAlgae = 0;
-        public static final double kElevatorHighAlgae = 0;
-        public static final double kElevatorIndexerPos = 90;
-        public static final double kElevatorProcessor = 0; 
-        public static final double kElevatorNet = 0;
-    }
-
     public static final class LocalizationConstants {//TODO all under need to be tuned 
         /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityMultiplier = 40;
@@ -166,62 +118,111 @@ public final class Constants {
         public static final double kXandYCoord = 0.282575;
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
-            new CameraConstants("FrontCenterCamera", new Transform3d(
-                new Translation3d(0, 0, 0), //TODO find offsets for this camera
-                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
-                true
-            ),
-            new CameraConstants("FrontRightCamera", new Transform3d(
-                new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
-                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
-                false
-            ),
-            new CameraConstants("FrontLeftCamera", new Transform3d(
-                new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
-                new Rotation3d(0, kCameraPitch, (Math.PI / 4.0))),
-                false
-            ),
-            new CameraConstants("BackCenterCamera", new Transform3d(
-                new Translation3d(-0.073025,0.041275,0.25146),
-                new Rotation3d(0,0,Math.PI)),
-                false
-            ),
-            new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(0.104775,-0.352425,0.2794),
-                new Rotation3d(0,0,Math.PI)),
-                false
-            ),
-            new CameraConstants("BackLeftCamera", new Transform3d(
-                new Translation3d(0.104775,0.352425, Units.inchesToMeters(13.5)),
-                new Rotation3d(0,0,Math.PI)),
-                false
-            )
+            // new CameraConstants("FrontCenterCamera", new Transform3d(
+            //     new Translation3d(0, 0, 0), //TODO find offsets for this camera
+            //     new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
+            //     true
+            // ),
+            // new CameraConstants("FrontRightCamera", new Transform3d(
+            //     new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
+            //     new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
+            //     false
+            // ),
+            // new CameraConstants("FrontLeftCamera", new Transform3d(
+            //     new Translation3d(kXandYCoord, kXandYCoord, kCameraHeight), 
+            //     new Rotation3d(0, kCameraPitch, (Math.PI / 4.0))),
+            //     false
+            // ),
+            // new CameraConstants("BackCenterCamera", new Transform3d(
+            //     new Translation3d(-0.073025,0.041275,0.25146),
+            //     new Rotation3d(0,0,Math.PI)),
+            //     false
+            // ),
+            // new CameraConstants("BackRightCamera", new Transform3d(
+            //     new Translation3d(0.104775,-0.352425,0.2794),
+            //     new Rotation3d(0,0,Math.PI)),
+            //     false
+            // ),
+            // new CameraConstants("BackLeftCamera", new Transform3d(
+            //     new Translation3d(0.104775,0.352425, Units.inchesToMeters(13.5)),
+            //     new Rotation3d(0,0,Math.PI)),
+            //     false
+            // )
         };
+    }
+
+    public static class ElevatorConfigs {
+        public static final int kFrontElevatorID = 13; 
+        public static final int kBackElevatorID = 14; 
+
+        private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(5)
+            .withMotionMagicAcceleration(10);
+
+        public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
+
+        private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
+            .withKP(1)
+            .withKD(0)
+            .withKV(0)
+            .withKA(0)
+            .withKS(0)
+            .withKG(0)
+            .withGravityType(kElevatorGravityType);
+        //FIXME hi HARSHIL PANDENATOR
+
+        public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(120);
+
+        public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(9.0 / 360.0);
+
+        public static final TalonFXConfiguration kElevatorConfig = new TalonFXConfiguration()
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withMotionMagic(kElevatorMotionMagicConfig)
+            .withSlot0(kElevatorPIDConfig)
+            .withCurrentLimits(kElevatorCurrentLimits)
+            .withFeedback(kElevatorFeedbackConfigs);
+
+        public static final double kElevatorTolerance = 5;
+
+        //TODO change all elevator positions once we can find them
+        public static final double kElevatorTrough = 0;
+        public static final double kElevatorL1 = 22.5;
+        public static final double kElevatorL2 = 45;
+        public static final double kElevatorL3 = 90;
+        public static final double kElevatorLowAlgae = 0;
+        public static final double kElevatorHighAlgae = 0;
+        public static final double kElevatorIndexerPos = 90;
+        public static final double kElevatorProcessor = 0; 
+        public static final double kElevatorNet = 0;
     }
 
     public static final class IndexerConstants {
         public static final int kIndexerRollerID = 15;
 
-        public static final double kRollerMotorPower = 0.5;
+        public static final double kIndexerRollerPower = 0.5;
 
-        public static final CurrentLimitsConfigs kRollerMotorCurrentLimitConfigs = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kIndexerRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final TalonFXConfiguration kRollerMotorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kRollerMotorCurrentLimitConfigs);
+        public static final TalonFXConfiguration kIndexerRollerConfig = new TalonFXConfiguration()
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
+            .withCurrentLimits(kIndexerRollerCurrentLimitConfigs);
 
         public static final int kPhotoelectricSensorID = 5; //TODO Change this   
     }
 
     public static final class IntakeConstants {
         public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(20)
+            .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
         public static final GravityTypeValue kIntakeArmGravityType = GravityTypeValue.Arm_Cosine;
 
-        public static final Slot0Configs kIntakeArmMotorPidConstants = new Slot0Configs()
+        public static final Slot0Configs kIntakeArmPidConstants = new Slot0Configs()
             .withKP(0.17)
             .withKD(0)
             .withKG(0) // TODO tune values
@@ -239,20 +240,18 @@ public final class Constants {
 
         public static final TalonFXConfiguration kIntakeArmConfig = new TalonFXConfiguration()
             .withCurrentLimits(kIntakeArmMotorCurrentLimit)
-            .withSlot0(kIntakeArmMotorPidConstants)
+            .withSlot0(kIntakeArmPidConstants)
             .withMotionMagic(kIntakeArmMotionMagicConfigs)
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withFeedback(kIntakeArmFeedbackConfigs);
 
         public static final CurrentLimitsConfigs kIntakeRollerCurrentLimit = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(10)
-            .withStatorCurrentLimit(120);
-
-        public static final MotorOutputConfigs kIntakeRollerOutputConfigs = new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast); //TODO change if bad
+            .withSupplyCurrentLimit(40)
+            .withStatorCurrentLimit(120); 
 
         public static final TalonFXConfiguration kIntakeRollerConfig = new TalonFXConfiguration()
             .withCurrentLimits(kIntakeRollerCurrentLimit)
-            .withMotorOutput(kIntakeRollerOutputConfigs);
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast));
         
         public static final int kIntakeArmID = 16;
         public static final int kIntakeRollerID = 17;
@@ -305,12 +304,12 @@ public final class Constants {
 
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withSlot0(kArmMotorPidConstants)
             .withMotionMagic(kArmMotionMagicConfigs)
             .withFeedback(kArmFeedbackConfigs);
     }
     
-
     public static class ClimberConstants {
         public static final int kMotorID = 19;
 
@@ -341,6 +340,7 @@ public final class Constants {
 
         public static final TalonFXConfiguration kClimberMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
             .withFeedback(kClimberFeedbackConfigs)
             .withCurrentLimits(kClimberCurrentLimits)
             .withSoftwareLimitSwitch(kClimberSoftLimit);
@@ -371,7 +371,8 @@ public final class Constants {
             .withSupplyCurrentLimit(40);
 
         public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive); //TODO change if bad
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake); //TODO change if bad
 
         public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kCurrentLimits)

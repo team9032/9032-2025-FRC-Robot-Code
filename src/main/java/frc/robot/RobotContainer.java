@@ -65,7 +65,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
-    private final Climber climber = new Climber();
+    // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
