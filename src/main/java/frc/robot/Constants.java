@@ -60,8 +60,8 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
-        public static final int kMotor1ID = 25; // TODO change CAN stuff
-        public static final int kMotor2ID = 26; // TODO change CAN stuff
+        public static final int kFrontElevatorID = 13; 
+        public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(5)
@@ -144,7 +144,7 @@ public final class Constants {
     }
 
     public static final class IndexerConstants {
-        public static final int kRollerMotorID = 0;
+        public static final int kIndexerRollerID = 15;
 
         public static final double kRollerMotorPower = 0.5;
 
@@ -160,9 +160,11 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimit(20)
             .withStatorCurrentLimit(120);
+
         public static final GravityTypeValue kIntakeArmGravityType = GravityTypeValue.Arm_Cosine;
+
         public static final Slot0Configs kIntakeArmMotorPidConstants = new Slot0Configs()
             .withKP(0.17)
             .withKD(0)
@@ -170,8 +172,7 @@ public final class Constants {
             .withKS(0)
             .withKV(.117)
             .withKA(0)
-            .withGravityType(kIntakeArmGravityType)
-            ;
+            .withGravityType(kIntakeArmGravityType);
 
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(120)
@@ -180,22 +181,25 @@ public final class Constants {
         public static final FeedbackConfigs kIntakeArmFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(50.0 / 360.0); //TODO find real value alter
 
-        public static final TalonFXConfiguration kIntakeMotorConfig = new TalonFXConfiguration()
+        public static final TalonFXConfiguration kIntakeArmConfig = new TalonFXConfiguration()
             .withCurrentLimits(kIntakeArmMotorCurrentLimit)
             .withSlot0(kIntakeArmMotorPidConstants)
             .withMotionMagic(kIntakeArmMotionMagicConfigs)
             .withFeedback(kIntakeArmFeedbackConfigs);
 
-        public static final MotorOutputConfigs kWheelOutputConfigs = new MotorOutputConfigs()
+        public static final CurrentLimitsConfigs kIntakeRollerCurrentLimit = new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(10)
+            .withStatorCurrentLimit(120);
+
+        public static final MotorOutputConfigs kIntakeRollerOutputConfigs = new MotorOutputConfigs()
             .withNeutralMode(NeutralModeValue.Coast); //TODO change if bad
 
-
-        public static final TalonFXConfiguration kWheelMotorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kIntakeArmMotorCurrentLimit)
-            .withMotorOutput(kWheelOutputConfigs);
+        public static final TalonFXConfiguration kIntakeRollerConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kIntakeRollerCurrentLimit)
+            .withMotorOutput(kIntakeRollerOutputConfigs);
         
-        public static final int kIntakeMotorID = 35;
-        public static final int kWheelMotorID = 36;
+        public static final int kIntakeArmID = 16;
+        public static final int kIntakeRollerID = 17;
         public static final int kIntakeDistSensorID = 30;
         public static final double kCoralDetectionDistance = 0.5; //TODO tune
 
@@ -207,7 +211,7 @@ public final class Constants {
     }
 
     public static class ArmConstants {
-        public static final int kArmMotorId = 25;
+        public static final int kArmMotorId = 18;
 
         public static final double kArmIndexerPos = 0.05;
         public static final double kArmTroughPos = 0.05;
@@ -252,7 +256,7 @@ public final class Constants {
     
 
     public static class ClimberConstants {
-        public static final int kMotorID = 50;
+        public static final int kMotorID = 19;
 
         public static final int kClimberUp = 580;
         public static final int kClimberDown = -50;
@@ -287,9 +291,10 @@ public final class Constants {
     }
 
     public static final class EndEffectorConstants {
-        public static final int kMainEndEffectorID = 26;
+        public static final int kMainEndEffectorID = 20;
         public static final int kPhotoelectricSensor1ID = 27;
-        public static final int kSecondaryEndEffectorID = 28;
+
+        public static final int kSecondaryEndEffectorID = 21;
         public static final int kAlgaeDistSensorID = 29;
         public static final int kPhotoelectricSensor2ID = 30;
 

@@ -18,23 +18,24 @@ public class Intake extends SubsystemBase {
     private final MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);
 
     private final TalonFX intakeArmMotor;
-    private final TalonFX wheelMotor;
+    private final TalonFX rollerMotor;
 
     private final TimeOfFlight intakeDistanceSensor = new TimeOfFlight(kIntakeDistSensorID);
 
     private final StatusSignal<Angle> intakeMotorPosSignal;
 
     public Intake() {
-        intakeArmMotor = new TalonFX(kIntakeMotorID);
+        intakeArmMotor = new TalonFX(kIntakeArmID);
+        ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeArmConfig));
+
         intakeMotorPosSignal = intakeArmMotor.getPosition();
         intakeMotorPosSignal.setUpdateFrequency(100);
         intakeArmMotor.optimizeBusUtilization();
         
-        ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeMotorConfig));
-
-        wheelMotor = new TalonFX(kWheelMotorID);
-        ElasticUtil.checkStatus(wheelMotor.getConfigurator().apply(kWheelMotorConfig));
-        wheelMotor.optimizeBusUtilization();
+        rollerMotor = new TalonFX(kIntakeRollerID);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));
+        
+        rollerMotor.optimizeBusUtilization();
     }
 
     public Command returnToStowPosition() {
@@ -42,11 +43,11 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakeCoral() {
-        return runOnce(() -> wheelMotor.set(kIntakePower));
+        return runOnce(() -> rollerMotor.set(kIntakePower));
     }
 
     public Command stopIntaking() {
-        return runOnce(() -> wheelMotor.set(0.0));
+        return runOnce(() -> rollerMotor.set(0.0));
     }
 
     public Command moveToGround() {
@@ -55,9 +56,9 @@ public class Intake extends SubsystemBase {
 
     public Command ejectCoral() {
         return Commands.sequence(
-            runOnce(() -> wheelMotor.set(kEjectPower)),
+            runOnce(() -> rollerMotor.set(kEjectPower)),
             Commands.waitSeconds(kEjectDelay),
-            runOnce(()-> wheelMotor.set(0.0))
+            runOnce(()-> rollerMotor.set(0.0))
         );
     }
 

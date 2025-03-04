@@ -16,7 +16,7 @@ public class Indexer extends SubsystemBase {
     private final DigitalInput photoelectricSensor = new DigitalInput(kPhotoelectricSensorID);
 
     public Indexer() {
-        rollerMotor = new TalonFX(kRollerMotorID);
+        rollerMotor = new TalonFX(kIndexerRollerID);
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kRollerMotorConfig));
         rollerMotor.optimizeBusUtilization();
     }

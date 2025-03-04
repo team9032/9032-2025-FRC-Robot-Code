@@ -32,7 +32,7 @@ public class KrakenSwerve extends SubsystemBase {
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
-            drivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
+            kDrivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
         );
 
         try {

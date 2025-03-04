@@ -24,12 +24,12 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         //The leader of a follower cannot have its bus utilization optimized
-        elevatorMotor = new TalonFX(kMotor1ID);
+        elevatorMotor = new TalonFX(kFrontElevatorID);
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kELevatorMotorConfig));
 
-        elevatorMotorFollower = new TalonFX(kMotor2ID);
+        elevatorMotorFollower = new TalonFX(kBackElevatorID);
         elevatorMotorFollower.optimizeBusUtilization();
         ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kELevatorMotorConfig));
 
