@@ -156,18 +156,16 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(5)
-            .withMotionMagicAcceleration(10);
+            .withMotionMagicCruiseVelocity(9.3)
+            .withMotionMagicAcceleration(40);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(1)
-            .withKD(0)
-            .withKV(0)
-            .withKA(0)
-            .withKS(0)
-            .withKG(0)
+            .withKP(4)
+            .withKD(0.5)
+            .withKV(1.16)
+            .withKG(0.4)
             .withGravityType(kElevatorGravityType);
         //FIXME hi HARSHIL PANDENATOR
 
@@ -176,16 +174,19 @@ public final class Constants {
             .withStatorCurrentLimit(120);
 
         public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(9.0 / 360.0);
+            .withSensorToMechanismRatio(9.0);
 
         public static final SoftwareLimitSwitchConfigs kElevatorSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(100) //TODO change
-            .withReverseSoftLimitThreshold(0);
+            .withForwardSoftLimitThreshold(9.48) //TODO Find upper limit
+            .withReverseSoftLimitThreshold(0.2);
 
         public static final TalonFXConfiguration kElevatorConfig = new TalonFXConfiguration()
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                .withNeutralMode(NeutralModeValue.Brake)
+                .withInverted(InvertedValue.Clockwise_Positive))
             .withMotionMagic(kElevatorMotionMagicConfig)
             .withSlot0(kElevatorPIDConfig)
             .withCurrentLimits(kElevatorCurrentLimits)
