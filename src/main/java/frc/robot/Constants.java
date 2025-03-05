@@ -156,7 +156,7 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(9.3)
+            .withMotionMagicCruiseVelocity(9.3)//TODO these could be faster
             .withMotionMagicAcceleration(40);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
@@ -284,8 +284,10 @@ public final class Constants {
 
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
+
+        public static final double kArmEncoderRange = 360.0;
         public static final int kArmEncoderPort = 0; //TODO change
-        public static final int kArmEncoderOffset = 0; //TODO find
+        public static final double kArmEncoderZeroPos = 0; //TODO find
 
         public static final double kArmIndexerPos = 0.05;
         public static final double kArmTroughPos = 0.05;

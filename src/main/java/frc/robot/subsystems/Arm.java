@@ -27,7 +27,7 @@ public class Arm extends SubsystemBase {
         armPosSignal.setUpdateFrequency(100);
         armMotor.optimizeBusUtilization();
 
-        armEncoder = new DutyCycleEncoder(kArmEncoderPort);
+        armEncoder = new DutyCycleEncoder(kArmEncoderPort, kArmEncoderRange, kArmEncoderZeroPos);
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
 
@@ -39,7 +39,7 @@ public class Arm extends SubsystemBase {
     }
 
     public double getArmAbsolutePosition() {
-        return (armEncoder.get() * 360) + kArmEncoderOffset;
+        return armEncoder.get();
     }
 
     public Command moveToIndexerPos() {
