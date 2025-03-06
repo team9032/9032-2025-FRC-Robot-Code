@@ -179,8 +179,8 @@ public final class Constants {
         public static final SoftwareLimitSwitchConfigs kElevatorSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(9.48) //TODO Find upper limit
-            .withReverseSoftLimitThreshold(0.2);
+            .withForwardSoftLimitThreshold(9.5) 
+            .withReverseSoftLimitThreshold(0.05);
 
         public static final TalonFXConfiguration kElevatorConfig = new TalonFXConfiguration()
             .withMotorOutput(
@@ -286,8 +286,9 @@ public final class Constants {
         public static final int kArmMotorId = 18;
 
         public static final double kArmEncoderRange = 360.0;
-        public static final int kArmEncoderPort = 0; //TODO change
-        public static final double kArmEncoderZeroPos = 0; //TODO find
+        public static final boolean kInvertAbsEncoder = true;
+        public static final int kArmEncoderPort = 2; 
+        public static final double kArmEncoderZeroPos = -16.5; 
 
         public static final double kArmIndexerPos = 0.05;
         public static final double kArmTroughPos = 0.05;
@@ -323,11 +324,21 @@ public final class Constants {
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(94.5 / 360.0);
 
+        public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(320.0) 
+            .withReverseSoftLimitThreshold(70.0);
+
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
-            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withMotorOutput(
+                new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Brake)
+            )
             .withSlot0(kArmMotorPidConstants)
             .withMotionMagic(kArmMotionMagicConfigs)
+            .withSoftwareLimitSwitch(kArmSoftLimit)
             .withFeedback(kArmFeedbackConfigs);
     }
     

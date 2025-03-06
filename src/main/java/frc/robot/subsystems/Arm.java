@@ -28,14 +28,28 @@ public class Arm extends SubsystemBase {
         armMotor.optimizeBusUtilization();
 
         armEncoder = new DutyCycleEncoder(kArmEncoderPort, kArmEncoderRange, kArmEncoderZeroPos);
+        armEncoder.setInverted(kInvertAbsEncoder);
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
+
+        //This wait is needed for the absolute encoder to initialize
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         armMotor.setPosition(getArmAbsolutePosition());
     }
 
+    private double getRelativePosition() {
+        armPosSignal.refresh();
+
+        return armPosSignal.getValueAsDouble();
+    }
+
     public boolean atSetpoint() {
-        return MathUtil.isNear(armRequest.Position, armPosSignal.getValueAsDouble(), kArmPositionTolerance);
+        return MathUtil.isNear(armRequest.Position, getRelativePosition(), kArmPositionTolerance);
     }
 
     public double getArmAbsolutePosition() {
@@ -82,6 +96,6 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
         SmartDashboard.putNumber("End effector arm absolute position", getArmAbsolutePosition());
-        SmartDashboard.putNumber("End effector arm relative position", armPosSignal.getValueAsDouble());
+        SmartDashboard.putNumber("End effector arm relative position", getRelativePosition());
     }
 }

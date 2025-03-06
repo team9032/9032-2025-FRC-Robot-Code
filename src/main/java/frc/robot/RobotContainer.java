@@ -60,7 +60,7 @@ public class RobotContainer {
     private final Trigger eject = operatorController.rightTrigger();
 
     /* Subsystems */
-    private final Intake intake = new Intake();
+    // private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
@@ -113,17 +113,17 @@ public class RobotContainer {
             )
         );        
 
-        groundPTrigger.onTrue(
-            intake.moveToGround()
-            .andThen(ElasticUtil.sendInfoCommand("Ground Position"))
-        );
+        // groundPTrigger.onTrue(
+        //     intake.moveToGround()
+        //     .andThen(ElasticUtil.sendInfoCommand("Ground Position"))
+        // );
 
-        stowPTrigger.onTrue(
-            intake.returnToStowPosition()
-            .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
-        );
+        // stowPTrigger.onTrue(
+        //     intake.returnToStowPosition()
+        //     .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
+        // );
 
-        eject.onTrue(intake.ejectCoral());
+        // eject.onTrue(intake.ejectCoral());
 
         armTrough.onTrue(arm.moveToTroughPos());
         armLevel1.onTrue(arm.moveToLevel1Pos());
