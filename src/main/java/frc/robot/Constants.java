@@ -196,7 +196,7 @@ public final class Constants {
         public static final double kElevatorTolerance = 5;
 
         //TODO change all elevator positions once we can find them
-        public static final double kElevatorTrough = 0;
+        public static final double kElevatorTrough = 3;
         public static final double kElevatorL1 = 22.5;
         public static final double kElevatorL2 = 45;
         public static final double kElevatorL3 = 90;
@@ -309,17 +309,15 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKP(1)
+            .withKP(0.7)
             .withKD(0)
-            .withKG(0) // TODO tune values
-            .withKS(0)
-            .withKV(0)
-            .withKA(0)
+            .withKG(0)//TODO add kG
+            .withKV(0.035)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(20)
-            .withMotionMagicAcceleration(40); // TODO tune values
+            .withMotionMagicCruiseVelocity(300)
+            .withMotionMagicAcceleration(2000); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(94.5 / 360.0);
@@ -380,11 +378,12 @@ public final class Constants {
 
     public static final class EndEffectorConstants {
         public static final int kMainEndEffectorID = 20;
-        public static final int kPhotoelectricSensor1ID = 27;
 
         public static final int kSecondaryEndEffectorID = 21;
-        public static final int kAlgaeDistSensorID = 29;
-        public static final int kPhotoelectricSensor2ID = 30;
+
+        public static final int kAlgaeDistSensorID = 35;
+        public static final int kFrontPhotoelectricSensorID = 0;        
+        public static final int kBackPhotoelectricSensorID = 1;
 
         public static final double kCoralOuttakePower = 0.25;
         public static final double kProcessorOuttakePower = 0.25;

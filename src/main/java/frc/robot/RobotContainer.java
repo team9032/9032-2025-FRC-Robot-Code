@@ -49,11 +49,11 @@ public class RobotContainer {
     private final Trigger armLevel2 = driveController.povDown();
     private final Trigger armLevel3 = driveController.povLeft();
     private final Trigger resetPerspective = driveController.b();
-    private final Trigger testPathfinding = driveController.leftBumper();
+    private final Trigger testPathfinding = driveController.rightBumper();
+    private final Trigger elevatorTroughButton = driveController.leftBumper();
 
     /* Operator Controller Buttons */
     private final Trigger elevatorL3Button = operatorController.a();
-    private final Trigger elevatorTroughButton = operatorController.b();
     private final Trigger elevatorL1Button = operatorController.x();
     private final Trigger elevatorL2Button = operatorController.y();
     private final Trigger index = operatorController.leftTrigger();
