@@ -16,9 +16,9 @@ public class EndEffector extends SubsystemBase {
     private final TalonFX endEffectorMainMotor;
     private final TalonFX endEffectorSecondaryMotor;
 
-    private final DigitalInput backPhotoelectricSensor = new DigitalInput(kBackPhotoelectricSensorID); 
-    private final DigitalInput frontPhotoelectricSensor = new DigitalInput(kFrontPhotoelectricSensorID); 
-    private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); //TODO not a thing yet
+    private final DigitalInput indexerPhotoelectricSensor = new DigitalInput(kIndexerPhotoelectricSensorID); 
+    private final DigitalInput sourcePhotoelectricSensor = new DigitalInput(kSourcePhotoelectricSensorID); 
+    private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); 
 
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
@@ -27,8 +27,11 @@ public class EndEffector extends SubsystemBase {
         endEffectorMainMotor.optimizeBusUtilization();
         endEffectorSecondaryMotor.optimizeBusUtilization();
         
-        ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kEndEffectorConfig));
-        ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kEndEffectorConfig));
+        ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kMainEndEffectorConfig));
+        ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kSecondaryEndEffectorConfig));
+
+        algaeDistSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 200);
+        algaeDistSensor.setRangeOfInterest(8, 8, 12, 12);
     }
 
     private Command setEndEffectorMainMotor(double power) {
@@ -57,9 +60,9 @@ public class EndEffector extends SubsystemBase {
     public Command pickupCoralFromSource() {
         return Commands.sequence(
             setEndEffectorMotors(kIntakeFromSourcePower),
-            Commands.waitUntil(() -> backPhotoelectricSensor.get()),//TODO this does not match the current design!
+            Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
             setEndEffectorMotors(kSlowIntakeFromSourcePower),
-            Commands.waitUntil(() -> frontPhotoelectricSensor.get()),
+            Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
             setEndEffectorMotors(0.0)
         );
     }
@@ -67,9 +70,9 @@ public class EndEffector extends SubsystemBase {
     public Command receiveCoralFromIndexer() {
         return Commands.sequence(
             setEndEffectorMotors(kReceiveFromIndexerPower),
-            Commands.waitUntil(() -> frontPhotoelectricSensor.get()),
+            Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
             setEndEffectorMotors(kSlowReceiveFromIndexerPower),
-            Commands.waitUntil(() -> backPhotoelectricSensor.get()),
+            Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
             setEndEffectorMotors(0.0)
         );
     }
@@ -77,15 +80,16 @@ public class EndEffector extends SubsystemBase {
     public Command pickupAlgae() {
         return Commands.sequence(
             setEndEffectorMainMotor(kIntakeAlgaePower),
-            setEndEffectorSecondaryMotor(-kIntakeAlgaePower), //TODO change if bad
+            setEndEffectorSecondaryMotor(-kIntakeAlgaePower), 
             Commands.waitUntil(this::hasAlgae), 
-            setEndEffectorMotors(0.0)
+            setEndEffectorMainMotor(kHoldAlgaePower),
+            setEndEffectorSecondaryMotor(-kHoldAlgaePower)
         );
     }
 
     public Command outtakeProcessorAlgae() {
         return Commands.sequence(
-            setEndEffectorMainMotor(kProcessorOuttakePower), //TODO change if bad
+            setEndEffectorMainMotor(kProcessorOuttakePower), 
             setEndEffectorSecondaryMotor(-kProcessorOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
             setEndEffectorMotors(0.0)
@@ -94,7 +98,7 @@ public class EndEffector extends SubsystemBase {
 
     public Command outtakeNetAlgae() {
         return Commands.sequence(
-            setEndEffectorMainMotor(kNetOuttakePower), //TODO change if bad
+            setEndEffectorMainMotor(kNetOuttakePower),
             setEndEffectorSecondaryMotor(-kNetOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
             setEndEffectorMotors(0.0)
@@ -102,17 +106,25 @@ public class EndEffector extends SubsystemBase {
     }
 
     public boolean hasAlgae() {
-        return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral();
+        return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
     }
 
     public boolean hasCoral() {
-        return backPhotoelectricSensor.get() && frontPhotoelectricSensor.get();
+        return getIndexerPhotoelectricSensor() && getSourcePhotoelectricSensor();
+    }
+
+    private boolean getSourcePhotoelectricSensor() {
+        return !sourcePhotoelectricSensor.get();
+    }
+
+    private boolean getIndexerPhotoelectricSensor() {
+        return !indexerPhotoelectricSensor.get();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from indexer)", backPhotoelectricSensor.get());
-        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", frontPhotoelectricSensor.get());
+        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from indexer)", getIndexerPhotoelectricSensor());
+        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", getSourcePhotoelectricSensor());
         SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
         SmartDashboard.putBoolean("Has Coral", hasCoral());

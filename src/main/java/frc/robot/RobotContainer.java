@@ -42,8 +42,7 @@ public class RobotContainer {
     /* Drive Controller Buttons */
     private final Trigger scoreCoral = driveController.a();
     private final Trigger pickupCoral = driveController.y();
-    private final Trigger groundPTrigger = driveController.y();
-    private final Trigger stowPTrigger = driveController.x();
+    private final Trigger intakeAlgae = driveController.x();
     private final Trigger armTrough = driveController.povUp();
     private final Trigger armLevel1 = driveController.povRight();
     private final Trigger armLevel2 = driveController.povDown();
@@ -122,6 +121,8 @@ public class RobotContainer {
         //     intake.returnToStowPosition()
         //     .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
         // );
+
+        intakeAlgae.onTrue(endEffector.pickupAlgae());
 
         // eject.onTrue(intake.ejectCoral());
 

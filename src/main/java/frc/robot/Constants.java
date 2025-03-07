@@ -291,7 +291,7 @@ public final class Constants {
         public static final double kArmEncoderZeroPos = -16.5; 
 
         public static final double kArmIndexerPos = 0.05;
-        public static final double kArmTroughPos = 0.05;
+        public static final double kArmTroughPos = 200;
         public static final double kArmLevel1Pos = 0.1; //TODO change
         public static final double kArmLevel2Pos = 0.15;
         public static final double kArmLevel3Pos = 0.2;
@@ -382,31 +382,41 @@ public final class Constants {
         public static final int kSecondaryEndEffectorID = 21;
 
         public static final int kAlgaeDistSensorID = 35;
-        public static final int kFrontPhotoelectricSensorID = 0;        
-        public static final int kBackPhotoelectricSensorID = 1;
+        public static final int kSourcePhotoelectricSensorID = 0;        
+        public static final int kIndexerPhotoelectricSensorID = 1;
 
-        public static final double kCoralOuttakePower = 0.25;
-        public static final double kProcessorOuttakePower = 0.25;
-        public static final double kNetOuttakePower = 0.25;
-        public static final double kIntakeFromSourcePower = -0.5;
-        public static final double kReceiveFromIndexerPower = 0.25;
-        public static final double kIntakeAlgaePower = 0.25;
-        public static final double kSlowIntakeFromSourcePower = -0.25; //TODO tune
-        public static final double kSlowReceiveFromIndexerPower = 0.1; //TODO tune
+        public static final double kProcessorOuttakePower = 0.5;
+        public static final double kNetOuttakePower = 1.0;
+        public static final double kIntakeAlgaePower = -1.0;
+        public static final double kHoldAlgaePower = -0.2;
+
+        public static final double kCoralOuttakePower = -1.0;
+        public static final double kIntakeFromSourcePower = 1.0;
+        public static final double kReceiveFromIndexerPower = -1.0;
+        public static final double kSlowIntakeFromSourcePower = 0.1; 
+        public static final double kSlowReceiveFromIndexerPower = -0.1; 
 
         public static final double kOuttakeWait = 0.5;
-        public static final double kHasAlgaeDist = 100;
+        public static final double kHasAlgaeDist = 182;
 
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
 
-        public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
+        public static final MotorOutputConfigs kMainEndEffectorOutputConfigs = new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake); //TODO change if bad
+            .withNeutralMode(NeutralModeValue.Brake); 
 
-        public static final TalonFXConfiguration kEndEffectorConfig = new TalonFXConfiguration()
+        public static final MotorOutputConfigs kSecondaryEndEffectorOutputConfigs = new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake); 
+
+        public static final TalonFXConfiguration kMainEndEffectorConfig = new TalonFXConfiguration()
             .withCurrentLimits(kCurrentLimits)
-            .withMotorOutput(kEndEffectorOutputConfigs);
+            .withMotorOutput(kMainEndEffectorOutputConfigs);
+
+        public static final TalonFXConfiguration kSecondaryEndEffectorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kCurrentLimits)
+            .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
     }
 }
