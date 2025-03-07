@@ -57,6 +57,14 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
+    public Command placeCoralInTrough() {
+        return Commands.sequence(
+            setEndEffectorMainMotor(kCoralOuttakeToTrough),
+            Commands.waitSeconds(kOuttakeWait),
+            setEndEffectorMotors(0.0)
+        );
+    }
+
     public Command pickupCoralFromSource() {
         return Commands.sequence(
             setEndEffectorMotors(kIntakeFromSourcePower),
