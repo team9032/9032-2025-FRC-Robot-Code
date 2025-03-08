@@ -79,10 +79,13 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        configureButtonTriggers();
-
         if(kRunSysId)
             bindSysIdTriggers();
+        
+        else    
+            configureButtonTriggers();
+
+        configureDefaultCommands();
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -92,9 +95,7 @@ public class RobotContainer {
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
     }
 
-    /** Use this method to define your button trigger->command mappings. */
-    private void configureButtonTriggers() {
-        /* Driver Controls */
+    private void configureDefaultCommands() {
         krakenSwerve.setDefaultCommand(
             new TeleopSwerve(
                 krakenSwerve,
@@ -102,8 +103,12 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX()
             )
-        );        
+        );  
+    }
 
+    /** Use this method to define your button trigger->command mappings. */
+    private void configureButtonTriggers() {
+        /* Driver Controls */      
         intakeAlgae.onTrue(endEffector.pickupAlgae());
 
         armLevel3.onTrue(
@@ -123,6 +128,11 @@ public class RobotContainer {
                 arm.moveToSourcePos(),
                 endEffector.pickupCoralFromSource() 
             )
+        );
+
+        algaeL1.onTrue(
+            arm.moveToLowAlgaePos()
+            .andThen(elevator.moveToLowAlgaePosition())
         );
 
         resetPerspective.onTrue(

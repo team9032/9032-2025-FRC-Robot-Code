@@ -390,7 +390,7 @@ public final class Constants {
         public static final double kProcessorOuttakePower = 0.5;
         public static final double kNetOuttakePower = 1.0;
         public static final double kIntakeAlgaePower = -1.0;
-        public static final double kHoldAlgaePower = -0.2;
+        public static final double kHoldAlgaePower = -1.0;//TODO algae is dropped due to overheating
 
         public static final double kCoralOuttakePower = 1.0;
         public static final double kCoralOuttakeToTrough = -0.2;
