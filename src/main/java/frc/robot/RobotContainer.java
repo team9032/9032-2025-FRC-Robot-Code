@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -12,6 +13,7 @@ import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -34,7 +36,6 @@ import static frc.robot.Constants.DriverConstants.*;
 public class RobotContainer {
     /* Controllers */
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
-    private final CommandXboxController operatorController = new CommandXboxController(3);
 
     /* Drive Controller Buttons */
     private final Trigger scoreCoral = driveController.a();
@@ -62,6 +63,10 @@ public class RobotContainer {
 
     /* Dashboard */
     private final SendableChooser<Command> autoChooser;
+
+    /* Automation */
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
+    private final EventTrigger e = new EventTrigger("Elevator");
 
     /* Robot Mode Triggers */
     // ...
@@ -123,11 +128,13 @@ public class RobotContainer {
         );
 
         scoreCoral.onTrue(endEffector.placeCoral());
+
         pickupCoral.onTrue(
             Commands.sequence(
                 elevator.moveToSourcePosition(),
                 arm.moveToSourcePos(),
                 endEffector.pickupCoralFromSource(),
+                arm.moveToStowPos(),
                 new ScheduleCommand(endEffector.holdCoral())
             )
         );
@@ -137,6 +144,8 @@ public class RobotContainer {
             .andThen(elevator.moveToLowAlgaePosition())
         );
 
+
+
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
@@ -144,6 +153,19 @@ public class RobotContainer {
 
         /* Operator Controls */
 
+
+        buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(
+            buttonBoard.followReefPath()
+        );
+
+        e.onTrue(
+            Commands.sequence(
+                buttonBoard.moveElevatorToCoralTargetLevel(elevator),
+                buttonBoard.moveArmToCoralTargetLevel(arm),
+                Commands.waitUntil(arm::atSetpoint),
+                endEffector.placeCoral()
+           )
+        );
     }
     
     private void bindSysIdTriggers() {
