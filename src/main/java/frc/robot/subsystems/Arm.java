@@ -60,6 +60,10 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmIndexerPos)));
     }
 
+    public Command moveToSourcePos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmSourcePos)));
+    }
+
     public Command moveToTroughPos () {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmTroughPos)));
     }

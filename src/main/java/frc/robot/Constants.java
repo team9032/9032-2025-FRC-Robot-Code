@@ -422,4 +422,9 @@ public final class Constants {
             .withCurrentLimits(kCurrentLimits)
             .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
     }
+
+    public static final class ButtonBoardConstants {
+        public static final int kButtonBoardPort1 = 3;
+        public static final int kButtonBoardPort2 = 4;
+    }
 }

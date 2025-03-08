@@ -4,14 +4,9 @@
 
 package frc.robot;
 
-import frc.robot.commands.Pathfinding;
+import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
@@ -22,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -47,16 +43,12 @@ public class RobotContainer {
     private final Trigger armLevel1 = driveController.povRight();
     private final Trigger armLevel2 = driveController.povDown();
     private final Trigger armLevel3 = driveController.povLeft();
+    private final Trigger algaeL1 = driveController.leftBumper();
+    private final Trigger algaeL2 = driveController.rightBumper();
     private final Trigger resetPerspective = driveController.b();
-    private final Trigger testPathfinding = driveController.rightBumper();
-    private final Trigger elevatorTroughButton = driveController.leftBumper();
 
     /* Operator Controller Buttons */
-    private final Trigger elevatorL3Button = operatorController.a();
-    private final Trigger elevatorL1Button = operatorController.x();
-    private final Trigger elevatorL2Button = operatorController.y();
-    private final Trigger index = operatorController.leftTrigger();
-    private final Trigger eject = operatorController.rightTrigger();
+
 
     /* Subsystems */
     // private final Intake intake = new Intake();
@@ -112,42 +104,34 @@ public class RobotContainer {
             )
         );        
 
-        // groundPTrigger.onTrue(
-        //     intake.moveToGround()
-        //     .andThen(ElasticUtil.sendInfoCommand("Ground Position"))
-        // );
-
-        // stowPTrigger.onTrue(
-        //     intake.returnToStowPosition()
-        //     .andThen(ElasticUtil.sendInfoCommand("Stow Position"))
-        // );
-
         intakeAlgae.onTrue(endEffector.pickupAlgae());
 
-        // eject.onTrue(intake.ejectCoral());
+        armLevel3.onTrue(
+            arm.moveToLevel3Pos()
+            .andThen(elevator.moveToL3Position())
+        );
 
-        armTrough.onTrue(arm.moveToTroughPos());
-        armLevel1.onTrue(arm.moveToLevel1Pos());
-        armLevel2.onTrue(arm.moveToLevel2Pos());
-        armLevel3.onTrue(arm.moveToLevel3Pos());
+        armTrough.onTrue(
+            arm.moveToTroughPos()
+            .andThen(elevator.moveToTroughPosition())
+        );
 
         scoreCoral.onTrue(endEffector.placeCoral());
-        pickupCoral.onTrue(endEffector.pickupCoralFromSource());
+        pickupCoral.onTrue(
+            Commands.sequence(
+                elevator.moveToSourcePosition(),
+                arm.moveToSourcePos(),
+                endEffector.pickupCoralFromSource() 
+            )
+        );
 
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        testPathfinding.whileTrue(Pathfinding.pathTo3L(krakenSwerve));
-
         /* Operator Controls */
-        elevatorTroughButton.onTrue(elevator.moveToTroughPosition());
-        elevatorL1Button.onTrue(elevator.moveToL1Position());
-        elevatorL2Button.onTrue(elevator.moveToL1Position());
-        elevatorL3Button.onTrue(elevator.moveToL3Position());
 
-        //index.onTrue(indexer.spinRollersUntilCoralReceived());
     }
     
     private void bindSysIdTriggers() {

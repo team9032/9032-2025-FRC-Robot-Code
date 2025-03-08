@@ -41,12 +41,18 @@ public class Elevator extends SubsystemBase {
         elevatorMotor.setControl(motionMagic.withPosition(pos));
     }
     
-    public boolean atSetPoint() {
+    public boolean atSetpoint() {
+        elevatorPosSignal.refresh();
+
         return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
     }
 
     public Command moveToIndexerPosition() {
         return runOnce(() -> moveElevator(kElevatorIndexerPos));
+    }
+
+    public Command moveToSourcePosition() {
+        return runOnce(() -> moveElevator(kElevatorSource));
     }
 
     public Command moveToLowAlgaePosition() {
@@ -83,6 +89,6 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Elevator at setpoint", atSetPoint());
+        SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
     }
 }
