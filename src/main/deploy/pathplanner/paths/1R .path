@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.28875,
-        "y": 5.604500000000001
+        "x": 2.74,
+        "y": 3.869
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.298500000000001,
-        "y": 4.1907499999999995
+        "x": 2.99,
+        "y": 3.869
       },
       "isLocked": false,
-      "linkedName": "FLTR"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.279000000000001,
-        "y": 2.80625
+        "x": 3.098717948717948,
+        "y": 3.869
       },
       "prevControl": {
-        "x": 6.279000000000001,
-        "y": 3.5277499999999993
+        "x": 2.848717948717948,
+        "y": 3.869
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "FLTRE"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 4.0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
