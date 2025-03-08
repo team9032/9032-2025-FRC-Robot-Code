@@ -202,7 +202,7 @@ public final class Constants {
         public static final double kElevatorL3 = 8.6;
         public static final double kElevatorLowAlgae = 2.8;
         public static final double kElevatorHighAlgae = 5.3;
-        public static final double kElevatorIndexerPos = 0.3;
+        public static final double kElevatorIndexerPos = 1.5;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 0;
@@ -291,7 +291,7 @@ public final class Constants {
         public static final int kArmEncoderPort = 2; 
         public static final double kArmEncoderZeroPos = -16.5; 
 
-        public static final double kArmIndexerPos = 0.05;
+        public static final double kArmIndexerPos = 90;
         public static final double kArmTroughPos = 200;
         public static final double kArmLevel1Pos = 242.7; //TODO change
         public static final double kArmLevel2Pos = 242.7;
@@ -327,7 +327,7 @@ public final class Constants {
         public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(320.0) 
+            .withForwardSoftLimitThreshold(270.0) 
             .withReverseSoftLimitThreshold(70.0);
 
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()

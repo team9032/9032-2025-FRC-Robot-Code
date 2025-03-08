@@ -42,18 +42,20 @@ public class EndEffector extends SubsystemBase {
         return runOnce(() -> endEffectorSecondaryMotor.set(power));
     }
 
-    private Command setEndEffectorMotors(double power) {
-        return runOnce(() -> {
-            endEffectorMainMotor.set(power);
-            endEffectorSecondaryMotor.set(power);
-        });
+    private void setEndEffectorMotors(double power) {
+        endEffectorMainMotor.set(power);
+        endEffectorSecondaryMotor.set(power);
+    }
+
+    private Command setEndEffectorMotorsCommand(double power) {
+        return runOnce(() -> setEndEffectorMotors(power));
     }
 
     public Command placeCoral() {
         return Commands.sequence(
-            setEndEffectorMotors(kCoralOuttakePower),
+            setEndEffectorMotorsCommand(kCoralOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
     }
 
@@ -61,27 +63,41 @@ public class EndEffector extends SubsystemBase {
         return Commands.sequence(
             setEndEffectorMainMotor(kCoralOuttakeToTrough),
             Commands.waitSeconds(kOuttakeWait),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
     }
 
     public Command pickupCoralFromSource() {
         return Commands.sequence(
-            setEndEffectorMotors(kIntakeFromSourcePower),
+            setEndEffectorMotorsCommand(kIntakeFromSourcePower),
             Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
-            setEndEffectorMotors(kSlowIntakeFromSourcePower),
+            setEndEffectorMotorsCommand(kSlowIntakeFromSourcePower),
             Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
+    }
+
+    public Command holdCoral() { //TODO Add to from compositions
+        return run(() -> {
+            if (!getSourcePhotoelectricSensor()) {
+                setEndEffectorMotors(kSlowReceiveFromIndexerPower);
+            }
+
+            else if (!getIndexerPhotoelectricSensor())
+                setEndEffectorMotors(kSlowIntakeFromSourcePower);
+            
+            else if (hasCoral())
+                setEndEffectorMotors(0.0);
+        });
     }
 
     public Command receiveCoralFromIndexer() {
         return Commands.sequence(
-            setEndEffectorMotors(kReceiveFromIndexerPower),
+            setEndEffectorMotorsCommand(kReceiveFromIndexerPower),
             Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
-            setEndEffectorMotors(kSlowReceiveFromIndexerPower),
+            setEndEffectorMotorsCommand(kSlowReceiveFromIndexerPower),
             Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
     }
 
@@ -100,7 +116,7 @@ public class EndEffector extends SubsystemBase {
             setEndEffectorMainMotor(kProcessorOuttakePower), 
             setEndEffectorSecondaryMotor(-kProcessorOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
     }
 
@@ -109,7 +125,7 @@ public class EndEffector extends SubsystemBase {
             setEndEffectorMainMotor(kNetOuttakePower),
             setEndEffectorSecondaryMotor(-kNetOuttakePower),
             Commands.waitSeconds(kOuttakeWait),
-            setEndEffectorMotors(0.0)
+            setEndEffectorMotorsCommand(0.0)
         );
     }
 
