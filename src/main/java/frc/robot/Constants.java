@@ -432,5 +432,6 @@ public final class Constants {
     public static final class ButtonBoardConstants {
         public static final int kButtonBoardPort1 = 3;
         public static final int kButtonBoardPort2 = 4;
+        public static final int kButtonBoardPort3 = 5;
     }
 }
