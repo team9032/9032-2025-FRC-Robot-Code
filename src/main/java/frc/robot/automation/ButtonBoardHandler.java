@@ -19,6 +19,8 @@ import java.util.Map;
 public class ButtonBoardHandler {
     private final CommandXboxController buttonBoardController1 = new CommandXboxController(kButtonBoardPort1);
     private final CommandXboxController buttonBoardController2 = new CommandXboxController(kButtonBoardPort2);
+    private final CommandXboxController buttonBoardController3 = new CommandXboxController(kButtonBoardPort3);
+
 
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable buttonTable = inst.getTable("ButtonTable");
@@ -76,6 +78,24 @@ public class ButtonBoardHandler {
     private final Trigger algaeToggle = buttonBoardController1.button(9);
     private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
     private final Trigger autoIntake = buttonBoardController1.button(2);
+
+    private final Trigger manual1 = buttonBoardController3.button(5);
+    private final Trigger manual2 = buttonBoardController3.button(4);
+    private final Trigger manual3 = buttonBoardController3.button(3);
+    private final Trigger manual6 = buttonBoardController3.button(11);
+    private final Trigger manual7 = buttonBoardController3.button(7);
+    private final Trigger manual8 = buttonBoardController3.button(6);
+    private final Trigger manual9 = buttonBoardController3.button(2);
+    private final Trigger manual10 = buttonBoardController3.button(1);
+    private final Trigger manual11 = buttonBoardController2.button(12);
+    private final Trigger manual12 = buttonBoardController3.button(12);
+    private final Trigger manual13 = buttonBoardController3.button(10);
+    private final Trigger manual14 = buttonBoardController3.button(9);
+    private final Trigger manual15 = buttonBoardController3.button(8);
+    
+
+
+
     //TODO add bindings for auto intake button
     public ButtonBoardHandler() {
         bindButtons();
