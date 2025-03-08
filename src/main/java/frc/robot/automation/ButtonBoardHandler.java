@@ -50,32 +50,33 @@ public class ButtonBoardHandler {
     private boolean algaeMode = false;
     private boolean automaticMode = false;
 
-    private final Trigger toLSource = buttonBoardController2.button(12);
-    private final Trigger toBarge = buttonBoardController2.button(4);
-    private final Trigger toRSource = buttonBoardController2.button(6);
+    private final Trigger toLSource = buttonBoardController1.button(1);
+    private final Trigger toBarge = buttonBoardController1.button(4);
+    private final Trigger toRSource = buttonBoardController2.button(2);
     private final Trigger toProcessor = buttonBoardController2.button(11);
-    private final Trigger to1L = buttonBoardController1.button(2);
-    private final Trigger to1R = buttonBoardController1.button(1);
-    private final Trigger to2L = buttonBoardController1.button(4);
-    private final Trigger to2R = buttonBoardController1.button(3);
-    private final Trigger to3L = buttonBoardController1.button(9);
-    private final Trigger to3R = buttonBoardController1.button(7);
-    private final Trigger to4L = buttonBoardController1.button(8);
-    private final Trigger to4R = buttonBoardController1.button(10);
-    private final Trigger to5L = buttonBoardController1.button(11);
-    private final Trigger to5R = buttonBoardController1.button(12);
-    private final Trigger to6L = buttonBoardController2.button(10);
-    private final Trigger to6R = buttonBoardController1.button(5);
+    
+    private final Trigger to1L = buttonBoardController1.button(6);
+    private final Trigger to1R = buttonBoardController1.button(5);
+    private final Trigger to2L = buttonBoardController1.button(8);
+    private final Trigger to2R = buttonBoardController1.button(7);
+    private final Trigger to3L = buttonBoardController1.button(10);
+    private final Trigger to3R = buttonBoardController1.button(11);
+    private final Trigger to4L = buttonBoardController1.button(12);
+    private final Trigger to4R = buttonBoardController2.button(1);
+    private final Trigger to5L = buttonBoardController2.button(3);
+    private final Trigger to5R = buttonBoardController2.button(4);
+    private final Trigger to6L = buttonBoardController2.button(6);
+    private final Trigger to6R = buttonBoardController2.button(7);
 
     private final Trigger toTrough = buttonBoardController2.button(5);
-    private final Trigger toLevel1 = buttonBoardController2.button(3);
+    private final Trigger toLevel1 = buttonBoardController2.button(9);
     private final Trigger toLevel2 = buttonBoardController2.button(8);
-    private final Trigger toLevel3 = buttonBoardController2.button(1);
+    private final Trigger toLevel3 = buttonBoardController2.button(10);
 
-    private final Trigger algaeToggle = buttonBoardController1.button(6);
+    private final Trigger algaeToggle = buttonBoardController1.button(9);
 
-    private final Trigger enableAutomaticMode = buttonBoardController2.button(9);
-    //FIXME NO AUTO INTAKE TRIGGER AAAAHAHHHH (board 2 num 7)
+    private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
+    //FIXME NO AUTO INTAKE TRIGGER AAAAHAHHHH (board 2 num 3)
     
     public ButtonBoardHandler() {
         bindButtons();
