@@ -74,10 +74,9 @@ public class ButtonBoardHandler {
     private final Trigger toLevel3 = buttonBoardController2.button(10);
 
     private final Trigger algaeToggle = buttonBoardController1.button(9);
-
     private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
-    //FIXME NO AUTO INTAKE TRIGGER AAAAHAHHHH (board 2 num 3)
-    
+    private final Trigger autoIntake = buttonBoardController1.button(2);
+    //TODO add bindings for auto intake button
     public ButtonBoardHandler() {
         bindButtons();
     }
