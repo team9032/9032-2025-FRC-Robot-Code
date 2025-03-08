@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.453517113945524,
-        "y": 5.22562397148079
+        "x": 5.690320512820513,
+        "y": 5.665737120176878
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.108653846153846
       },
       "prevControl": {
-        "x": 5.47076538574413,
-        "y": 5.337106733308911
+        "x": 5.244230769230769,
+        "y": 4.892147495207736
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.2,
     "maxAcceleration": 10.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.42077312751099
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 4.0,
-    "rotation": 61.113418233089185
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

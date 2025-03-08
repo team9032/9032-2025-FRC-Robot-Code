@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8109251501997696,
-        "y": 4.187066957612233
+        "x": 2.8120512820512813,
+        "y": 4.210769230769231
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 4.0,
-    "rotation": -178.45184230102223
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
