@@ -31,7 +31,7 @@ import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
     public static class DriverConstants {
-        public static final boolean kRunSysId = false;
+        public static final boolean kRunSysId = true;
 
         public static final int kDriveControllerPort = 0;
 
@@ -119,37 +119,37 @@ public final class Constants {
         public static final double kXandYCoord = 0.282575;
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
-            new CameraConstants("FrontCenterCamera", new Transform3d(
-                new Translation3d(0, 0, 0), //TODO find offsets for this camera
-                new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
-                true
-            ),
+            // new CameraConstants("FrontCenterCamera", new Transform3d(
+            //     new Translation3d(0, 0, 0), //TODO find offsets for this camera
+            //     new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
+            //     true
+            // ),
             // new CameraConstants("FrontRightCamera", new Transform3d(
             //     new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
             //     new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
             //    false
             // ),
             // 
-            new CameraConstants("BackLeftCamera", new Transform3d(
-               new Translation3d(Units.inchesToMeters(3.875), Units.inchesToMeters(14.75), Units.inchesToMeters(8.375)), 
-               new Rotation3d(0,Units.degreesToRadians(-20), Units.degreesToRadians(136))),
-               false
-            ),
-            new CameraConstants("BackCenterCamera", new Transform3d(
-               new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875),Units.inchesToMeters(7.375)),
-               new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-               false
-            ),
-            new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.75),Units.inchesToMeters(-14.5),Units.inchesToMeters(12.1875)),
-                new Rotation3d(0,0,Math.PI)),
-                false
-            ),
-            new CameraConstants("FrontLeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
-            )
+            // new CameraConstants("BackLeftCamera", new Transform3d(
+            //    new Translation3d(Units.inchesToMeters(3.875), Units.inchesToMeters(14.75), Units.inchesToMeters(8.375)), 
+            //    new Rotation3d(0,Units.degreesToRadians(-20), Units.degreesToRadians(136))),
+            //    false
+            // ),
+            // new CameraConstants("BackCenterCamera", new Transform3d(
+            //    new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875),Units.inchesToMeters(7.375)),
+            //    new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //    false
+            // ),
+            // new CameraConstants("BackRightCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-0.75),Units.inchesToMeters(-14.5),Units.inchesToMeters(12.1875)),
+            //     new Rotation3d(0,0,Math.PI)),
+            //     false
+            // ),
+            // new CameraConstants("FrontLeftCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //     false
+            // )
         };
     }
 
