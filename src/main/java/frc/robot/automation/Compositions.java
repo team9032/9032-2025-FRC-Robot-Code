@@ -65,8 +65,10 @@ public class Compositions {
             /* Move coral from the indexer to the end effector */
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer(),
+            endEffector.holdCoral(),
             /* Prepare and score when ready */
-            prepareForCoralScoring(),
+            arm.moveToStowPos(),
+            // prepareForCoralScoring(),//TODO need to do at path trigger
             Commands.waitUntil(() -> readyForScoring),//TODO how to do this better... need to wait until path is finished
             endEffector.placeCoral(),
             Commands.runOnce(() -> readyForScoring = false)

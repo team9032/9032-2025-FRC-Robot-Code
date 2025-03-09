@@ -135,6 +135,7 @@ public class RobotContainer {
                 arm.moveToSourcePos(),
                 endEffector.pickupCoralFromSource(),
                 arm.moveToStowPos(),
+                elevator.moveToIndexerPosition(),
                 new ScheduleCommand(endEffector.holdCoral())
             )
         );
@@ -161,10 +162,10 @@ public class RobotContainer {
         e.onTrue(
             Commands.sequence(
                 buttonBoard.moveElevatorToCoralTargetLevel(elevator),
+                Commands.waitUntil(elevator::atSetpoint),
                 buttonBoard.moveArmToCoralTargetLevel(arm),
-                Commands.waitUntil(arm::atSetpoint),
-                endEffector.placeCoral()
-           )
+                Commands.waitUntil(arm::atSetpoint)           
+            )
         );
     }
 
