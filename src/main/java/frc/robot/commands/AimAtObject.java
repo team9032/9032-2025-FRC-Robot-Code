@@ -93,7 +93,7 @@ public class AimAtObject extends Command {
 
         /* Drive based on target yaw */
         var speeds = new ChassisSpeeds(
-            -kDrivingSpeed,
+            kDrivingSpeed,
             0.0, 
             rotationController.calculate(targetToTrack.yaw)
         );

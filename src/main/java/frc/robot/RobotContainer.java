@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.PathfindingHandler;
+import frc.robot.commands.AimAtCoral;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -41,10 +42,8 @@ public class RobotContainer {
     private final Trigger scoreCoral = driveController.a();
     private final Trigger pickupCoral = driveController.y();
     private final Trigger intakeAlgae = driveController.x();
-    private final Trigger armTrough = driveController.povUp();
-    private final Trigger armLevel1 = driveController.povRight();
-    private final Trigger armLevel2 = driveController.povDown();
-    private final Trigger armLevel3 = driveController.povLeft();
+    private final Trigger intakeCoral = driveController.povLeft();
+
     private final Trigger algaeL1 = driveController.leftBumper();
     private final Trigger algaeL2 = driveController.rightBumper();
     private final Trigger resetPerspective = driveController.b();
@@ -53,11 +52,11 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    // private final Intake intake = new Intake();
+    private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
-    //private final Indexer indexer = new Indexer();
+    private final Indexer indexer = new Indexer();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -117,16 +116,6 @@ public class RobotContainer {
         /* Driver Controls */      
         intakeAlgae.onTrue(endEffector.pickupAlgae());
 
-        armLevel3.onTrue(
-            arm.moveToLevel3Pos()
-            .andThen(elevator.moveToL3Position())
-        );
-
-        armTrough.onTrue(
-            arm.moveToTroughPos()
-            .andThen(elevator.moveToTroughPosition())
-        );
-
         scoreCoral.onTrue(endEffector.placeCoral());
 
         pickupCoral.onTrue(
@@ -145,6 +134,24 @@ public class RobotContainer {
             .andThen(elevator.moveToLowAlgaePosition())
         );
 
+        intakeCoral.onTrue(
+            Commands.sequence(
+                elevator.moveToIndexerPosition(),
+                Commands.waitUntil(elevator::atSetpoint),
+                arm.moveToIndexerPos(),            
+                Commands.waitUntil(arm::atSetpoint),
+                intake.moveToGround(),
+                Commands.waitSeconds(0.5),
+                intake.intakeCoral(),
+                indexer.spinRollers(),
+                new AimAtCoral(krakenSwerve).alongWith(endEffector.receiveCoralFromIndexer()),
+                indexer.stopRollers(),
+                intake.stopIntaking(),
+                arm.moveToStowPos(),
+                intake.returnToStowPosition(),
+                new ScheduleCommand(endEffector.holdCoral())
+            )
+        );
 
 
         resetPerspective.onTrue(

@@ -74,9 +74,8 @@ public final class Constants {
         public static final int kCycleAmtSinceTargetSeenCutoff = 10;
         public static final double kPitchDifferenceCutoff = 2.0;
 
-        public static final double kRotationSetpoint = 18.8;
-        //TODO make faster
-        public static final double kDrivingSpeed = 2.0;//Meters per second
+        public static final double kRotationSetpoint = 19.2;
+        public static final double kDrivingSpeed = 4.0;//Meters per second
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -128,7 +127,7 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackCenterCamera", new Transform3d(
-               new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875),Units.inchesToMeters(7.375)),
+               new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875),Units.inchesToMeters(7.5)),
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
@@ -187,7 +186,7 @@ public final class Constants {
             .withFeedback(kElevatorFeedbackConfigs)
             .withSoftwareLimitSwitch(kElevatorSoftLimit);
 
-        public static final double kElevatorTolerance = 0.015;
+        public static final double kElevatorTolerance = 0.02;
 
         //TODO change all elevator positions once we can find them
         public static final double kElevatorTrough = 3.042;
@@ -196,7 +195,7 @@ public final class Constants {
         public static final double kElevatorL3 = 8.6;
         public static final double kElevatorLowAlgae = 2.8;
         public static final double kElevatorHighAlgae = 5.3;
-        public static final double kElevatorIndexerPos = 1.5;
+        public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 0;
@@ -205,7 +204,7 @@ public final class Constants {
     public static final class IndexerConstants {
         public static final int kIndexerRollerID = 15;
 
-        public static final double kIndexerRollerPower = 0.5;
+        public static final double kIndexerRollerPower = -1.0;
 
         public static final CurrentLimitsConfigs kIndexerRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
@@ -219,8 +218,6 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final double kIntakeStartingPosition = 0; //TODO find & change
-
         public static final CurrentLimitsConfigs kIntakeArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
@@ -228,26 +225,22 @@ public final class Constants {
         public static final GravityTypeValue kIntakeArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kIntakeArmPidConstants = new Slot0Configs()
-            .withKP(0.17)
-            .withKD(0)
-            .withKG(0) // TODO tune values
-            .withKS(0)
-            .withKV(.117)
-            .withKA(0)
+            .withKP(0.5)
+            .withKV(0.023)
             .withGravityType(kIntakeArmGravityType);
 
         public static final SoftwareLimitSwitchConfigs kIntakeArmSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(60)
-            .withReverseSoftLimitThreshold(0); //TODO Change
+            .withForwardSoftLimitThreshold(0.0)
+            .withReverseSoftLimitThreshold(-95.0); 
 
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(120)
-            .withMotionMagicAcceleration(80); // TODO tune values
+            .withMotionMagicCruiseVelocity(300)
+            .withMotionMagicAcceleration(1000); 
 
         public static final FeedbackConfigs kIntakeArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(50.0 / 360.0); //TODO find real value alter
+            .withSensorToMechanismRatio(50.0 / 360.0); 
 
         public static final TalonFXConfiguration kIntakeArmConfig = new TalonFXConfiguration()
             .withCurrentLimits(kIntakeArmMotorCurrentLimit)
@@ -270,11 +263,11 @@ public final class Constants {
         public static final int kIntakeDistSensorID = 30;
         public static final double kCoralDetectionDistance = 0.5; //TODO tune
 
-        public static final double kEjectPower = -1.0;
-        public static final double kEjectDelay = 0.2;
-        public static final double kGroundPosition = 28828;
-        public static final double kIntakePower = 1.0;
-        public static final double kStowPosition = 1000;
+        public static final double kEjectPower = 1.0;
+        public static final double kEjectDelay = 0.5;
+        public static final double kGroundPosition = -120.0;
+        public static final double kIntakePower = -1.0;
+        public static final double kStowPosition = 0.0;
     }
 
     public static class ArmConstants {
