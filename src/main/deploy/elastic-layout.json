@@ -1,7 +1,29 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 32,
   "tabs": [
+    {
+      "name": "Driver",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Version Info",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Version Info",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "Localization",
       "grid_layout": {
@@ -529,22 +551,297 @@
       }
     },
     {
-      "name": "Driver",
+      "name": "Button Board",
       "grid_layout": {
         "layouts": [],
         "containers": [
           {
-            "title": "Version Info",
-            "x": 0.0,
-            "y": 640.0,
-            "width": 512.0,
+            "title": "to1L",
+            "x": 192.0,
+            "y": 416.0,
+            "width": 96.0,
             "height": 128.0,
-            "type": "Text Display",
+            "type": "Boolean Box",
             "properties": {
-              "topic": "/SmartDashboard/Version Info",
+              "topic": "/ButtonTable/to1L",
               "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to1R",
+            "x": 288.0,
+            "y": 416.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to1R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to2L",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to2L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to2R",
+            "x": 96.0,
+            "y": 352.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to2R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to3L",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to3L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4286578816,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to3R",
+            "x": 96.0,
+            "y": 32.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to3R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4286578816,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to4L",
+            "x": 192.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to4L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to4R",
+            "x": 288.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to4R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to5L",
+            "x": 384.0,
+            "y": 64.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to5L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901760,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to5R",
+            "x": 480.0,
+            "y": 128.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to5R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901760,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to6L",
+            "x": 384.0,
+            "y": 352.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to6L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to6R",
+            "x": 480.0,
+            "y": 256.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to6R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "algaeToggle",
+            "x": 224.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/algaeToggle",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toTrough",
+            "x": 608.0,
+            "y": 416.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toTrough",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toLevel1",
+            "x": 608.0,
+            "y": 288.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel1",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toLevel2",
+            "x": 608.0,
+            "y": 160.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel2",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toLevel3",
+            "x": 608.0,
+            "y": 32.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel3",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
