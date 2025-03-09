@@ -167,6 +167,11 @@ public class RobotContainer {
            )
         );
     }
+
+     /** Runs every loop cycle */
+    public void robotPeriodic() {
+        buttonBoard.update();
+    }
     
     private void bindSysIdTriggers() {
         Trigger sysIdReverse = driveController.leftBumper();
