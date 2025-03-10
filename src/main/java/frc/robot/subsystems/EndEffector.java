@@ -86,7 +86,7 @@ public class EndEffector extends SubsystemBase {
             else if (!getIndexerPhotoelectricSensor())
                 setEndEffectorMotors(kSlowIntakeFromSourcePower);
             
-            else if (hasCoral())
+            else if (hasCoralCentered())
                 setEndEffectorMotors(0.0);
         });
     }
@@ -133,8 +133,12 @@ public class EndEffector extends SubsystemBase {
         return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
     }
 
-    public boolean hasCoral() {
+    public boolean hasCoralCentered() {
         return getIndexerPhotoelectricSensor() && getSourcePhotoelectricSensor();
+    }
+
+    public boolean hasCoral() {
+        return getSourcePhotoelectricSensor() || getIndexerPhotoelectricSensor();
     }
 
     private boolean getSourcePhotoelectricSensor() {
@@ -151,6 +155,6 @@ public class EndEffector extends SubsystemBase {
         SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", getSourcePhotoelectricSensor());
         SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
-        SmartDashboard.putBoolean("Has Coral", hasCoral());
+        SmartDashboard.putBoolean("Has Coral Centered", hasCoralCentered());
     }
 }

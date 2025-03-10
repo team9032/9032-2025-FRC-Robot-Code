@@ -1,5 +1,7 @@
 package frc.robot.automation;
 
+import com.pathplanner.lib.events.EventTrigger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
@@ -18,6 +20,8 @@ public class Compositions {
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
+
+    private final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
 
     private boolean readyForScoring = false;
 
@@ -57,18 +61,18 @@ public class Compositions {
     private Command backgroundCoralMovement() {
         return Commands.sequence(
             prepareForIntaking(),
-            /* Move coral from the intake to the indexer */
+            /* Intake sequence */
             intake.intakeCoral(),
-            indexer.spinRollersUntilCoralReceived(),
-            intake.stopIntaking(),
-            intake.returnToStowPosition(),
-            /* Move coral from the indexer to the end effector */
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer(),
+            intake.stopIntaking(),
+            indexer.stopRollers(),
+            intake.returnToStowPosition(),
             endEffector.holdCoral(),
             /* Prepare and score when ready */
             arm.moveToStowPos(),
-            // prepareForCoralScoring(),//TODO need to do at path trigger
+            Commands.waitUntil(prepareElevatorForScoring::getAsBoolean),
+            prepareForCoralScoring(),
             Commands.waitUntil(() -> readyForScoring),//TODO how to do this better... need to wait until path is finished
             endEffector.placeCoral(),
             Commands.runOnce(() -> readyForScoring = false)
@@ -105,11 +109,11 @@ public class Compositions {
     }
 
     private Command prepareForCoralScoring() {
-        return Commands.parallel(
-            buttonBoardHandler.moveArmToCoralTargetLevel(arm)
-                .andThen(Commands.waitUntil(arm::atSetpoint)),
-            buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator)
-                .andThen(Commands.waitUntil(elevator::atSetpoint))
+        return Commands.sequence(
+            buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
+            Commands.waitUntil(elevator::atSetpoint),
+            buttonBoardHandler.moveArmToCoralTargetLevel(arm),
+            Commands.waitUntil(arm::atSetpoint)
         );
     }
 

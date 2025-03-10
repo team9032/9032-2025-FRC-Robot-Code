@@ -34,6 +34,8 @@ public final class Constants {
 
         public static final int kDriveControllerPort = 0;
 
+        public static final double kOverrideAutomationThreshold = 0.1;
+
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
         public static final double kRotationRate = 4 * Math.PI;
 

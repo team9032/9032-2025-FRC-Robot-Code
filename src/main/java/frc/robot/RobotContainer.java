@@ -4,8 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
-import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.AimAtCoral;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -65,6 +65,8 @@ public class RobotContainer {
 
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
+    private final AutomationHandler automationHandler = new AutomationHandler(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final Command automationCommand;
     private final EventTrigger e = new EventTrigger("Elevator");
 
     /* Robot Mode Triggers */
@@ -92,12 +94,24 @@ public class RobotContainer {
 
         configureDefaultCommands();
 
+        /* Setup automation */
+        automationCommand = automationHandler.automationResumeCommand()
+            .until(this::driverWantsOverride);
+
+        buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(automationCommand);
+
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
+    }
+
+    private boolean driverWantsOverride() {
+        return Math.abs(driveController.getRightX()) > kOverrideAutomationThreshold || 
+            Math.abs(driveController.getLeftX()) > kOverrideAutomationThreshold ||    
+            Math.abs(driveController.getLeftY()) > kOverrideAutomationThreshold;
     }
 
     private void configureDefaultCommands() {
@@ -176,9 +190,9 @@ public class RobotContainer {
         );
     }
 
-     /** Runs every loop cycle */
+    /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update();
+        buttonBoard.update(automationCommand.isScheduled());
     }
     
     private void bindSysIdTriggers() {

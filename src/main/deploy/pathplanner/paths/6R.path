@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.686987179487179,
-        "y": 2.415
+        "x": 3.8707500000000006,
+        "y": 2.465
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.811987179487179,
-        "y": 2.6315063509461094
+        "x": 3.785667878367166,
+        "y": 2.7000766525592352
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.9389999999999996,
-        "y": 2.7965
+        "x": 4.0365,
+        "y": 2.76725
       },
       "prevControl": {
-        "x": 3.8139999999999996,
-        "y": 2.57999364905389
+        "x": 4.26122283077145,
+        "y": 2.6577070890926002
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,7 +40,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.1,
+    "maxVelocity": 1.0,
     "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -54,8 +54,8 @@
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 4.0,
+    "velocity": 1.0,
     "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

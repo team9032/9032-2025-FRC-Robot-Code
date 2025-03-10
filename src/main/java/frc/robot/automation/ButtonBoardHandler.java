@@ -50,7 +50,6 @@ public class ButtonBoardHandler {
     private final BooleanPublisher automaticModePub = buttonTable.getBooleanTopic("automaticMode").publish();
 
     private boolean algaeMode = false;
-    private boolean automaticMode = false;
 
     private final Trigger toLSource = buttonBoardController1.button(1);
     private final Trigger toBarge = buttonBoardController1.button(4);
@@ -169,9 +168,6 @@ public class ButtonBoardHandler {
         toLevel3.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL3));
 
         algaeToggle.onTrue(Commands.runOnce(() -> algaeMode = !algaeMode));
-        
-        enableAutomaticMode.onTrue(Commands.runOnce(() -> automaticMode = true));
-        enableAutomaticMode.onFalse(Commands.runOnce(() -> automaticMode = false));
     }
 
     public Command followReefPath() {
@@ -345,10 +341,6 @@ public class ButtonBoardHandler {
         return algaeMode;
     }
 
-    public boolean inAutomaticMode() {
-        return automaticMode;
-    }
-
     public Trigger getEnableAutomaticModeTrigger() {
         return enableAutomaticMode;
     }
@@ -368,7 +360,7 @@ public class ButtonBoardHandler {
         });
     }
 
-    public void update() {
+    public void update(boolean automaticModeEnabled) {
         toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
         toBargePub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_BARGE));
         toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
@@ -393,6 +385,6 @@ public class ButtonBoardHandler {
         toLevel3Pub.set(reefLevelTarget.equals(ReefLevel.TO_LEVEL3));
 
         algaeTogglePub.set(algaeMode);
-        automaticModePub.set(automaticMode);
+        automaticModePub.set(automaticModeEnabled);
     }    
 }
