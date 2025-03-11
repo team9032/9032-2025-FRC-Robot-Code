@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
@@ -43,6 +44,8 @@ public class AimAtObject extends Command {
     @Override
     public void initialize() {
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+
+        ElasticUtil.sendInfo("Started object aiming");
     }  
 
     @Override
@@ -116,5 +119,7 @@ public class AimAtObject extends Command {
         targetCache.reset();
 
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+
+        ElasticUtil.sendInfo("Finished object aiming");
     }
 }

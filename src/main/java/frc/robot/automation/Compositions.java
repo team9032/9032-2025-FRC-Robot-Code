@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.ElasticUtil;
 
 /** Contains all command compositions that use multiple subsystems. Do not put single subsystem commands here. */
 public class Compositions {
@@ -48,16 +49,19 @@ public class Compositions {
 
     private Command getCoralSequence() {
         return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Get coral sequence started"),
             new ScheduleCommand(backgroundCoralMovement()),
             buttonBoardHandler.followSourcePath(),
             new AimAtCoral(swerve)
                 .alongWith(Commands.waitUntil(endEffector::hasCoral)),
+            ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence"),
             scoreCoralSequence()
         );
     }
 
     public Command resumeCoralSequence() {
         return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Resume coral sequence started - starting score coral sequence"),
             new ScheduleCommand(backgroundScoreSequence()),
             scoreCoralSequence()  
         );
@@ -82,6 +86,7 @@ public class Compositions {
     private Command backgroundCoralMovement() {
         return Commands.sequence(
             /* Intake sequence */
+            ElasticUtil.sendInfoCommand("Background coral movement started"),
             prepareForIntaking(),
             intake.intakeCoral(),
             indexer.spinRollers(),
@@ -101,9 +106,10 @@ public class Compositions {
 
     public Command backgroundScoreSequence() {
         return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Background score sequence started"),
             Commands.waitUntil(() -> readyForElevator),
             prepareForCoralScoring(),
-            Commands.waitUntil(() -> readyForScoring),//TODO how to do this better... need to wait until path is finished
+            Commands.waitUntil(() -> readyForScoring),
             endEffector.placeCoral(),
             arm.moveToStowPos(),
             buttonBoardHandler.clearReefTargets(),
@@ -133,10 +139,11 @@ public class Compositions {
     private Command prepareForIntaking() {
         return Commands.sequence(
             intake.moveToGround(),
-            elevator.moveToIndexerPosition()
-                .andThen(Commands.waitUntil(elevator::atSetpoint)),
-            arm.moveToIndexerPos()
-                .andThen(Commands.waitUntil(arm::atSetpoint))
+            elevator.moveToIndexerPosition(),
+            Commands.waitUntil(elevator::atSetpoint),
+            arm.moveToIndexerPos(),
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for intaking")
         );
     }
 
@@ -145,7 +152,8 @@ public class Compositions {
             buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
             Commands.waitUntil(elevator::atSetpoint),
             buttonBoardHandler.moveArmToCoralTargetLevel(arm),
-            Commands.waitUntil(arm::atSetpoint)
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for coral scoring")
         );
     }
 

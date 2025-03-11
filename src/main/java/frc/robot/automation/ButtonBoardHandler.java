@@ -21,7 +21,6 @@ public class ButtonBoardHandler {
     private final CommandXboxController buttonBoardController2 = new CommandXboxController(kButtonBoardPort2);
     private final CommandXboxController buttonBoardController3 = new CommandXboxController(kButtonBoardPort3);
 
-
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable buttonTable = inst.getTable("ButtonTable");
 
@@ -77,7 +76,7 @@ public class ButtonBoardHandler {
     private final Trigger algaeToggle = buttonBoardController1.button(9);
     private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
     private final Trigger autoIntake = buttonBoardController1.button(2);
-
+     
     private final Trigger manual1 = buttonBoardController3.button(5);
     private final Trigger manual2 = buttonBoardController3.button(4);
     private final Trigger manual3 = buttonBoardController3.button(3);
@@ -92,10 +91,6 @@ public class ButtonBoardHandler {
     private final Trigger manual14 = buttonBoardController3.button(9);
     private final Trigger manual15 = buttonBoardController3.button(8);
     
-
-
-
-    //TODO add bindings for auto intake button
     public ButtonBoardHandler() {
         bindButtons();
     }
