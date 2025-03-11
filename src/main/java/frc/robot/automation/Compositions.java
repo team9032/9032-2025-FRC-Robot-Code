@@ -23,6 +23,7 @@ public class Compositions {
     private final ButtonBoardHandler buttonBoardHandler;
 
     private final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
+    private final EventTrigger readyForIntaking = new EventTrigger("Intake");
 
     private boolean readyForScoring = false;
     private boolean readyForElevator = false;
@@ -44,18 +45,20 @@ public class Compositions {
 
     public Command noPieceSequence() {
         /* Algae mode must be scheduled seperately from coral to avoid requirement conflicts */
-        return Commands.either(Commands.none()/*new ScheduleCommand(getAlgaeSequence())*/, getCoralSequence(), buttonBoardHandler::inAlgaeMode);
+        return Commands.either(Commands.none()/*new ScheduleCommand(getAlgaeSequence())*/, getCoralSequence(true, true), buttonBoardHandler::inAlgaeMode);
     }
 
-    private Command getCoralSequence() {
+    public Command getCoralSequence(boolean goToSource, boolean continueToScoring) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Get coral sequence started"),
-            new ScheduleCommand(backgroundCoralMovement()),
-            buttonBoardHandler.followSourcePath(),
+            ElasticUtil.sendInfoCommand("Get coral sequence started - go to source is " + goToSource),
+            new ScheduleCommand(backgroundCoralMovement(goToSource)),
+            buttonBoardHandler.followSourcePath()
+                .onlyIf(() -> goToSource),
             new AimAtCoral(swerve)
                 .alongWith(Commands.waitUntil(endEffector::hasCoral)),
-            ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence"),
+            ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence is " + continueToScoring),
             scoreCoralSequence()
+                .onlyIf(() -> continueToScoring)
         );
     }
 
@@ -75,19 +78,15 @@ public class Compositions {
         );
     }
 
-    public Command autoIntake() {
-        return prepareForIntaking()
-            .andThen(
-                new AimAtCoral(swerve)
-                .alongWith(new ScheduleCommand(backgroundCoralMovement()))
-            );
-    }
-
-    private Command backgroundCoralMovement() {
+    private Command backgroundCoralMovement(boolean goingToSource) {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started"),
             prepareForIntaking(),
+            Commands.waitUntil(readyForIntaking)
+                .onlyIf(() -> goingToSource),
+            intake.moveToGround(),
+            Commands.waitUntil(intake::canRunRollers),
             intake.intakeCoral(),
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer(),
@@ -107,8 +106,13 @@ public class Compositions {
     public Command backgroundScoreSequence() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Background score sequence started"),
-            Commands.waitUntil(() -> readyForElevator),
-            prepareForCoralScoring(),
+            endEffector.holdCoral() 
+                .until(() -> readyForElevator),
+            prepareForCoralScoring()
+                .alongWith(
+                    endEffector.holdCoral()
+                        .until(() -> readyForScoring)
+                ),
             Commands.waitUntil(() -> readyForScoring),
             endEffector.placeCoral(),
             arm.moveToStowPos(),
@@ -138,7 +142,6 @@ public class Compositions {
 
     private Command prepareForIntaking() {
         return Commands.sequence(
-            intake.moveToGround(),
             elevator.moveToIndexerPosition(),
             Commands.waitUntil(elevator::atSetpoint),
             arm.moveToIndexerPos(),

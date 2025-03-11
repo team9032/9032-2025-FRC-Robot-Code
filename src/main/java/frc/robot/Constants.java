@@ -262,14 +262,16 @@ public final class Constants {
         
         public static final int kIntakeArmID = 16;
         public static final int kIntakeRollerID = 17;
-        public static final int kIntakeDistSensorID = 30;
-        public static final double kCoralDetectionDistance = 0.5; //TODO tune
 
         public static final double kEjectPower = 1.0;
         public static final double kEjectDelay = 0.5;
-        public static final double kGroundPosition = -120.0;
+
         public static final double kIntakePower = -1.0;
+
+        public static final double kGroundPosition = -120.0;
         public static final double kStowPosition = 0.0;
+
+        public static final double kRunRollersPosition = -70;
     }
 
     public static class ArmConstants {

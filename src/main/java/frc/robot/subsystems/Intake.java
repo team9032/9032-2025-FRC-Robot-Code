@@ -1,14 +1,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.playingwithfusion.TimeOfFlight;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
@@ -20,22 +18,26 @@ public class Intake extends SubsystemBase {
     private final TalonFX intakeArmMotor;
     private final TalonFX rollerMotor;
 
-    private final TimeOfFlight intakeDistanceSensor = new TimeOfFlight(kIntakeDistSensorID);
-
-    private final StatusSignal<Angle> intakeMotorPosSignal;
+    private final StatusSignal<Angle> armMotorPosSignal;
 
     public Intake() {
         intakeArmMotor = new TalonFX(kIntakeArmID);
         ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeArmConfig));
 
-        intakeMotorPosSignal = intakeArmMotor.getPosition();
-        intakeMotorPosSignal.setUpdateFrequency(100);
+        armMotorPosSignal = intakeArmMotor.getPosition();
+        armMotorPosSignal.setUpdateFrequency(100);
         intakeArmMotor.optimizeBusUtilization();
         
         rollerMotor = new TalonFX(kIntakeRollerID);
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));
         
         rollerMotor.optimizeBusUtilization();
+    }
+
+    private double getArmPosition() {
+        armMotorPosSignal.refresh();
+
+        return armMotorPosSignal.getValueAsDouble();
     }
 
     public Command returnToStowPosition() {
@@ -62,12 +64,10 @@ public class Intake extends SubsystemBase {
         );
     }
 
-    public boolean hasCoral() {
-        return intakeDistanceSensor.getRange() < kCoralDetectionDistance; //TODO tune
+    public boolean canRunRollers() {
+        return getArmPosition() < kRunRollersPosition;
     }
 
     @Override
-    public void periodic() {
-        SmartDashboard.putBoolean("Has Coral", hasCoral());
-    }
+    public void periodic() {}
 }

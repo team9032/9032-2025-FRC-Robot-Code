@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
+import frc.robot.automation.Compositions;
 import frc.robot.commands.AimAtCoral;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -66,7 +67,8 @@ public class RobotContainer {
 
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
-    private final AutomationHandler automationHandler = new AutomationHandler(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final Compositions compositions = new Compositions(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final AutomationHandler automationHandler = new AutomationHandler(compositions, arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final Command automationCommand;
 
     /* Robot Mode Triggers */
@@ -103,7 +105,7 @@ public class RobotContainer {
         buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(automationCommand);
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
-            automationHandler.autoIntake()
+            compositions.getCoralSequence(false, false)
             .until(this::driverWantsOverride)
         );  
 
@@ -130,6 +132,11 @@ public class RobotContainer {
                 () -> -driveController.getLeftX()
             )
         );  
+
+        endEffector.setDefaultCommand(
+            endEffector.holdCoral()
+            .onlyWhile(endEffector::hasCoral)
+        );
     }
 
     /** Use this method to define your button trigger->command mappings. */

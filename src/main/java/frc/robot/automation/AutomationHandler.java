@@ -24,12 +24,11 @@ public class AutomationHandler {
     private final EndEffector endEffector;
     private final Intake intake;
 
-    public AutomationHandler(Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoard) {
+    public AutomationHandler(Compositions compositions, Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoard) {
         this.indexer = indexer;
         this.endEffector = endEffector;
         this.intake = intake;
-
-        compositions = new Compositions(arm, elevator, endEffector, indexer, intake, swerve, buttonBoard);
+        this.compositions = compositions;
     }
 
     public Command automationResumeCommand() {
@@ -58,9 +57,5 @@ public class AutomationHandler {
 
         else 
             return GamePieceState.GAMEPIECES_NOT_READY;
-    }
-
-    public Command autoIntake() {
-        return compositions.autoIntake();
     }
 }
