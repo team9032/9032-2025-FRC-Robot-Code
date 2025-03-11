@@ -129,6 +129,10 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
+    public Command stopRollers() {
+        return setEndEffectorMotorsCommand(0.0);
+    }
+
     public boolean hasAlgae() {
         return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
     }

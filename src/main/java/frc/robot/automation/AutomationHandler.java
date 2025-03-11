@@ -3,7 +3,6 @@ package frc.robot.automation;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;

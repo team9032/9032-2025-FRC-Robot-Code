@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -69,7 +70,7 @@ public class RobotContainer {
     private final Command automationCommand;
 
     /* Robot Mode Triggers */
-    // ...
+    private final Trigger teleopEnabled = RobotModeTriggers.teleop();
 
     /* Teleop Triggers */
     // ...
@@ -92,6 +93,8 @@ public class RobotContainer {
             configureButtonTriggers();
 
         configureDefaultCommands();
+
+        bindRobotModeTriggers();
 
         /* Setup automation */
         automationCommand = automationHandler.automationResumeCommand()
@@ -163,6 +166,17 @@ public class RobotContainer {
     /** Runs every loop cycle */
     public void robotPeriodic() {
         buttonBoard.update(automationCommand.isScheduled());
+    }
+
+    /** Bind robot mode triggers here */
+    private void bindRobotModeTriggers() {
+        teleopEnabled.onTrue(
+            Commands.sequence(
+                intake.stopIntaking(),
+                indexer.stopRollers(),
+                endEffector.stopRollers()
+            )
+        );
     }
     
     private void bindSysIdTriggers() {

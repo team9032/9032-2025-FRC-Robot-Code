@@ -41,7 +41,9 @@ public class AimAtObject extends Command {
     }
 
     @Override
-    public void initialize() {}  
+    public void initialize() {
+        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+    }  
 
     @Override
     public void execute() {
