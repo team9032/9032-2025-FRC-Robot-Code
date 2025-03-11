@@ -24,6 +24,7 @@ public class Compositions {
     private final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
 
     private boolean readyForScoring = false;
+    private boolean readyForElevator = false;
 
     public Compositions(Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.arm = arm;
@@ -34,48 +35,79 @@ public class Compositions {
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
+
+        prepareElevatorForScoring.onTrue(
+            Commands.runOnce(() -> readyForElevator = true)  
+        );
     }
 
     public Command noPieceSequence() {
         /* Algae mode must be scheduled seperately from coral to avoid requirement conflicts */
-        return Commands.either(new ScheduleCommand(getAlgaeSequence()), getCoralSequence(), buttonBoardHandler::inAlgaeMode);
+        return Commands.either(Commands.none()/*new ScheduleCommand(getAlgaeSequence())*/, getCoralSequence(), buttonBoardHandler::inAlgaeMode);
     }
 
     private Command getCoralSequence() {
         return Commands.sequence(
             new ScheduleCommand(backgroundCoralMovement()),
             buttonBoardHandler.followSourcePath(),
-            new AimAtCoral(swerve).until(intake::hasCoral),
+            new AimAtCoral(swerve)
+                .alongWith(Commands.waitUntil(endEffector::hasCoral)),
             scoreCoralSequence()
         );
     }
 
-    public Command scoreCoralSequence() {
+    public Command resumeCoralSequence() {
+        return Commands.sequence(
+            new ScheduleCommand(backgroundScoreSequence()),
+            scoreCoralSequence()  
+        );
+    }
+
+    private Command scoreCoralSequence() {
         return Commands.sequence(
             buttonBoardHandler.followReefPath(),
             Commands.runOnce(() -> readyForScoring = true),
-            buttonBoardHandler.clearReefTargets()
+            Commands.waitUntil(() -> !readyForScoring)
         );
+    }
+
+    public Command autoIntake() {
+        return prepareForIntaking()
+            .andThen(
+                new AimAtCoral(swerve)
+                .alongWith(new ScheduleCommand(backgroundCoralMovement()))
+            );
     }
 
     private Command backgroundCoralMovement() {
         return Commands.sequence(
-            prepareForIntaking(),
             /* Intake sequence */
+            prepareForIntaking(),
             intake.intakeCoral(),
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer(),
             intake.stopIntaking(),
             indexer.stopRollers(),
             intake.returnToStowPosition(),
-            endEffector.holdCoral(),
+            Commands.parallel(
+                endEffector.holdCoral(),
+                arm.moveToStowPos()
+            ).until(() -> readyForElevator),
             /* Prepare and score when ready */
-            arm.moveToStowPos(),
-            Commands.waitUntil(prepareElevatorForScoring::getAsBoolean),
+            backgroundScoreSequence()
+        )
+        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    }
+
+    public Command backgroundScoreSequence() {
+        return Commands.sequence(
+            Commands.waitUntil(() -> readyForElevator),
             prepareForCoralScoring(),
             Commands.waitUntil(() -> readyForScoring),//TODO how to do this better... need to wait until path is finished
             endEffector.placeCoral(),
-            Commands.runOnce(() -> readyForScoring = false)
+            arm.moveToStowPos(),
+            buttonBoardHandler.clearReefTargets(),
+            Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; })
         )
         .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }
@@ -99,12 +131,12 @@ public class Compositions {
     }
 
     private Command prepareForIntaking() {
-        return Commands.parallel(
+        return Commands.sequence(
             intake.moveToGround(),
-            arm.moveToIndexerPos()
-                .andThen(Commands.waitUntil(arm::atSetpoint)),
             elevator.moveToIndexerPosition()
-                .andThen(Commands.waitUntil(elevator::atSetpoint))
+                .andThen(Commands.waitUntil(elevator::atSetpoint)),
+            arm.moveToIndexerPos()
+                .andThen(Commands.waitUntil(arm::atSetpoint))
         );
     }
 

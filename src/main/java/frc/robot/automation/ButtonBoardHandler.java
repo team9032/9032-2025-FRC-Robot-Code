@@ -360,6 +360,10 @@ public class ButtonBoardHandler {
         });
     }
 
+    public Trigger getAutoIntakeTrigger() {
+        return autoIntake;
+    }
+
     public void update(boolean automaticModeEnabled) {
         toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
         toBargePub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_BARGE));

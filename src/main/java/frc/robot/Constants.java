@@ -54,7 +54,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            4,//TODO change these
+            1,//TODO change these
             4, 
             2 * Math.PI, 
             2 * Math.PI
@@ -77,7 +77,7 @@ public final class Constants {
         public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 19.2;
-        public static final double kDrivingSpeed = 4.0;//Meters per second
+        public static final double kDrivingSpeed = 1.0;//Meters per second
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -129,7 +129,7 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackCenterCamera", new Transform3d(
-               new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875),Units.inchesToMeters(7.5)),
+               new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(6.0),Units.inchesToMeters(6.75)),
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
@@ -188,7 +188,7 @@ public final class Constants {
             .withFeedback(kElevatorFeedbackConfigs)
             .withSoftwareLimitSwitch(kElevatorSoftLimit);
 
-        public static final double kElevatorTolerance = 0.02;
+        public static final double kElevatorTolerance = 0.05;
 
         //TODO change all elevator positions once we can find them
         public static final double kElevatorTrough = 3.042;

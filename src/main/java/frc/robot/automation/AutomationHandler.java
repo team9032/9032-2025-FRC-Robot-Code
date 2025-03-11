@@ -37,9 +37,9 @@ public class AutomationHandler {
         return new SelectCommand<GamePieceState>(
             Map.ofEntries (
                 Map.entry(GamePieceState.GAMEPIECES_NOT_READY, mainCyclingCommand()),
-                Map.entry(GamePieceState.HAS_CORAL, compositions.scoreCoralSequence().andThen(mainCyclingCommand())),
+                Map.entry(GamePieceState.HAS_CORAL, compositions.resumeCoralSequence().andThen(mainCyclingCommand()))
                 /* Algae mode must be scheduled seperately from coral to avoid requirement conflicts */
-                Map.entry(GamePieceState.HAS_ALGAE, new ScheduleCommand(compositions.scoreAlgaeSequence()).andThen(mainCyclingCommand()))
+               // Map.entry(GamePieceState.HAS_ALGAE, new ScheduleCommand(compositions.scoreAlgaeSequence()).andThen(mainCyclingCommand()))
             ),
             this::getGamePieceState
         );
@@ -51,7 +51,7 @@ public class AutomationHandler {
     }
 
     private GamePieceState getGamePieceState() {
-        if (endEffector.hasCoral() || indexer.hasCoral() || intake.hasCoral())
+        if (endEffector.hasCoral())
             return GamePieceState.HAS_CORAL;
 
         else if (endEffector.hasAlgae())
@@ -59,5 +59,9 @@ public class AutomationHandler {
 
         else 
             return GamePieceState.GAMEPIECES_NOT_READY;
+    }
+
+    public Command autoIntake() {
+        return compositions.autoIntake();
     }
 }

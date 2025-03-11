@@ -67,7 +67,6 @@ public class RobotContainer {
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final AutomationHandler automationHandler = new AutomationHandler(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final Command automationCommand;
-    private final EventTrigger e = new EventTrigger("Elevator");
 
     /* Robot Mode Triggers */
     // ...
@@ -99,6 +98,11 @@ public class RobotContainer {
             .until(this::driverWantsOverride);
 
         buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(automationCommand);
+
+        buttonBoard.getAutoIntakeTrigger().onTrue(
+            automationHandler.autoIntake()
+            .until(this::driverWantsOverride)
+        );  
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -148,46 +152,12 @@ public class RobotContainer {
             .andThen(elevator.moveToLowAlgaePosition())
         );
 
-        intakeCoral.onTrue(
-            Commands.sequence(
-                elevator.moveToIndexerPosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                arm.moveToIndexerPos(),            
-                Commands.waitUntil(arm::atSetpoint),
-                intake.moveToGround(),
-                Commands.waitSeconds(0.5),
-                intake.intakeCoral(),
-                indexer.spinRollers(),
-                new AimAtCoral(krakenSwerve).alongWith(endEffector.receiveCoralFromIndexer()),
-                indexer.stopRollers(),
-                intake.stopIntaking(),
-                arm.moveToStowPos(),
-                intake.returnToStowPosition(),
-                new ScheduleCommand(endEffector.holdCoral())
-            )
-        );
-
-
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
         /* Operator Controls */
-
-
-        buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(
-            buttonBoard.followReefPath()
-        );
-
-        e.onTrue(
-            Commands.sequence(
-                buttonBoard.moveElevatorToCoralTargetLevel(elevator),
-                Commands.waitUntil(elevator::atSetpoint),
-                buttonBoard.moveArmToCoralTargetLevel(arm),
-                Commands.waitUntil(arm::atSetpoint)           
-            )
-        );
     }
 
     /** Runs every loop cycle */

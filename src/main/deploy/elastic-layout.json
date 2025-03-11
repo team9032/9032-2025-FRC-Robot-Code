@@ -3,28 +3,6 @@
   "grid_size": 32,
   "tabs": [
     {
-      "name": "Driver",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "Version Info",
-            "x": 0.0,
-            "y": 640.0,
-            "width": 512.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Version Info",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "Localization",
       "grid_layout": {
         "layouts": [],
@@ -551,6 +529,28 @@
       }
     },
     {
+      "name": "Driver",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Version Info",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Version Info",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "Button Board",
       "grid_layout": {
         "layouts": [],
@@ -839,6 +839,91 @@
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toRSource",
+            "x": 608.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toRSource",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toLSource",
+            "x": 0.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLSource",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "automaticMode",
+            "x": 128.0,
+            "y": 576.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/automaticMode",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278255370,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toBarge",
+            "x": 352.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toBarge",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901764,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toProcessor",
+            "x": 480.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toProcessor",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294704896,
               "false_color": 4278190080,
               "true_icon": "None",
               "false_icon": "None"
