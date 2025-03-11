@@ -1,12 +1,16 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
+import com.playingwithfusion.TimeOfFlight.Status;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
@@ -20,6 +24,10 @@ public class Intake extends SubsystemBase {
 
     private final StatusSignal<Angle> armMotorPosSignal;
 
+    private final TimeOfFlight obstacleSensor = new TimeOfFlight(kObstacleSensorID);
+
+    private double lastObstacleSensorDistance = kDefaultObstacleDistance;
+
     public Intake() {
         intakeArmMotor = new TalonFX(kIntakeArmID);
         ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeArmConfig));
@@ -32,6 +40,8 @@ public class Intake extends SubsystemBase {
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));
         
         rollerMotor.optimizeBusUtilization();
+        
+        obstacleSensor.setRangingMode(RangingMode.Medium, 40);
     }
 
     private double getArmPosition() {
@@ -68,6 +78,21 @@ public class Intake extends SubsystemBase {
         return getArmPosition() < kRunRollersPosition;
     }
 
+    public double getObstacleSensorDistance() {
+        /* Only return a distance if it's valid - default to last distance */
+        double distance = obstacleSensor.getStatus().equals(Status.Valid) ? obstacleSensor.getRange() / 1000.0 : lastObstacleSensorDistance;
+
+        lastObstacleSensorDistance = distance;
+
+        return distance;
+    }
+
+    public Command resetLastObstacleDistance() {
+        return Commands.runOnce(() -> lastObstacleSensorDistance = kDefaultObstacleDistance);
+    }
+
     @Override
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putNumber("Obstacle sensor distance", getObstacleSensorDistance());
+    }
 }

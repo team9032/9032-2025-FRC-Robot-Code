@@ -4,8 +4,10 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 public class AimAtCoral extends AimAtObject {
-    public AimAtCoral(KrakenSwerve swerve) {
-        super(swerve, kCoralId);
+    public AimAtCoral(KrakenSwerve swerve, DoubleSupplier obstacleDistanceSup) {
+        super(swerve, kCoralId, obstacleDistanceSup);
     }
 }

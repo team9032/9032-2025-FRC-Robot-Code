@@ -54,7 +54,8 @@ public class Compositions {
             new ScheduleCommand(backgroundCoralMovement(goToSource)),
             buttonBoardHandler.followSourcePath()
                 .onlyIf(() -> goToSource),
-            new AimAtCoral(swerve)
+            intake.resetLastObstacleDistance(),//Does not require intake subsystem
+            new AimAtCoral(swerve, intake::getObstacleSensorDistance)
                 .alongWith(Commands.waitUntil(endEffector::hasCoral)),
             ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence is " + continueToScoring),
             scoreCoralSequence()
@@ -81,7 +82,7 @@ public class Compositions {
     private Command backgroundCoralMovement(boolean goingToSource) {
         return Commands.sequence(
             /* Intake sequence */
-            ElasticUtil.sendInfoCommand("Background coral movement started"),
+            ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
             prepareForIntaking(),
             Commands.waitUntil(readyForIntaking)
                 .onlyIf(() -> goingToSource),

@@ -132,11 +132,6 @@ public class RobotContainer {
                 () -> -driveController.getLeftX()
             )
         );  
-
-        endEffector.setDefaultCommand(
-            endEffector.holdCoral()
-            .onlyWhile(endEffector::hasCoral)
-        );
     }
 
     /** Use this method to define your button trigger->command mappings. */

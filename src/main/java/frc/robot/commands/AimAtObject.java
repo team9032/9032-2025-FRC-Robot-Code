@@ -12,6 +12,7 @@ import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
 
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -27,9 +28,12 @@ public class AimAtObject extends Command {
 
     private final int objectToTrackId;    
 
-    public AimAtObject(KrakenSwerve swerve, int objectToTrackId) {
+    private final DoubleSupplier obstacleDistanceSup;
+
+    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup) {
        this.swerve = swerve; 
        this.objectToTrackId = objectToTrackId;
+       this.obstacleDistanceSup = obstacleDistanceSup;
 
        localization = swerve.getLocalization();
 
@@ -96,9 +100,12 @@ public class AimAtObject extends Command {
         if (targetToTrack == null)
             return;
 
-        /* Drive based on target yaw */
+        /* Drive based on target yaw and obstacle distance */
+        double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+            kSlowDrivingSpeed : kMaxDrivingSpeed;
+
         var speeds = new ChassisSpeeds(
-            kDrivingSpeed,
+            drivingSpeed,
             0.0, 
             rotationController.calculate(targetToTrack.yaw)
         );

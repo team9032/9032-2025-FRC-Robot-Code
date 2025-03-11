@@ -77,7 +77,10 @@ public final class Constants {
         public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 19.2;
-        public static final double kDrivingSpeed = 1.0;//Meters per second
+        public static final double kMaxDrivingSpeed = 1.0;//Meters per second
+
+        public static final double kSlowObstacleDistance = 1.20;//Meters from sensor
+        public static final double kSlowDrivingSpeed = 0.25;
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -272,6 +275,9 @@ public final class Constants {
         public static final double kStowPosition = 0.0;
 
         public static final double kRunRollersPosition = -70;
+
+        public static final int kObstacleSensorID = 36;
+        public static final double kDefaultObstacleDistance = 10.0;
     }
 
     public static class ArmConstants {
