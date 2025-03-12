@@ -177,4 +177,22 @@ public class Compositions {
                 .andThen(Commands.waitUntil(elevator::atSetpoint))
         );
     }
+
+    public Command resetStates() {
+        return Commands.sequence(
+            intake.stopIntaking(),
+            indexer.stopRollers(),
+            endEffector.stopRollers(),
+            Commands.runOnce(() -> { 
+                readyForScoring = false; 
+                readyForElevator = false; 
+                
+                if (arm.getCurrentCommand() != null)
+                    arm.getCurrentCommand().cancel();
+
+                if (elevator.getCurrentCommand() != null)
+                    elevator.getCurrentCommand().cancel();
+            })
+        );
+    }
 }

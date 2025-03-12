@@ -173,13 +173,7 @@ public class RobotContainer {
 
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
-        teleopEnabled.onTrue(
-            Commands.sequence(
-                intake.stopIntaking(),
-                indexer.stopRollers(),
-                endEffector.stopRollers()
-            )
-        );
+        teleopEnabled.onTrue(compositions.resetStates());
     }
     
     private void bindSysIdTriggers() {
