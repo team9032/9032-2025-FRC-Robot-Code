@@ -54,6 +54,7 @@ public class Compositions {
             new ScheduleCommand(backgroundCoralMovement(goToSource)),
             buttonBoardHandler.followSourcePath()
                 .onlyIf(() -> goToSource),
+            Commands.waitUntil(intake::canRunRollers),
             intake.resetLastObstacleDistance(),//Does not require intake subsystem
             new AimAtCoral(swerve, intake::getObstacleSensorDistance)
                 .alongWith(Commands.waitUntil(endEffector::hasCoral)),
@@ -100,8 +101,7 @@ public class Compositions {
             ).until(() -> readyForElevator),
             /* Prepare and score when ready */
             backgroundScoreSequence()
-        )
-        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+        );
     }
 
     public Command backgroundScoreSequence() {
@@ -119,8 +119,7 @@ public class Compositions {
             arm.moveToStowPos(),
             buttonBoardHandler.clearReefTargets(),
             Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; })
-        )
-        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+        );
     }
 
     private Command getAlgaeSequence() {

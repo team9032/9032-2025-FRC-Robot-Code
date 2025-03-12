@@ -386,4 +386,8 @@ public class ButtonBoardHandler {
         algaeTogglePub.set(algaeMode);
         automaticModePub.set(automaticModeEnabled);
     }    
+
+    public boolean hasQueues() {
+        return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
+    }
 }

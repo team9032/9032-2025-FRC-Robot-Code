@@ -102,7 +102,8 @@ public class RobotContainer {
         automationCommand = automationHandler.automationResumeCommand()
             .until(this::driverWantsOverride);
 
-        buttonBoard.getEnableAutomaticModeTrigger().toggleOnTrue(automationCommand);
+        buttonBoard.getEnableAutomaticModeTrigger()
+            .toggleOnTrue(automationCommand.onlyIf(buttonBoard::hasQueues));
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
             compositions.getCoralSequence(false, false)

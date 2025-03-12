@@ -274,7 +274,7 @@ public final class Constants {
         public static final double kGroundPosition = -120.0;
         public static final double kStowPosition = 0.0;
 
-        public static final double kRunRollersPosition = -70;
+        public static final double kRunRollersPosition = -100;
 
         public static final int kObstacleSensorID = 36;
         public static final double kDefaultObstacleDistance = 10.0;
