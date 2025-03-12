@@ -21,7 +21,7 @@ public class AlignWithPose extends Command {
 
     private final Pose2d targetPose;
 
-    private Field2d field = new Field2d();
+    //private Field2d field = new Field2d();
 
     public AlignWithPose(KrakenSwerve swerve, Pose2d targetPose) {
         TrapezoidProfile.Constraints kXYAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
@@ -35,12 +35,13 @@ public class AlignWithPose extends Command {
 
         alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kRotAlignWithPoseContraints);
         alignmentRotationPID.setTolerance(kRotAlignmentTolerance);
+        alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerve = swerve;
 
         this.targetPose = targetPose;      
 
-        SmartDashboard.putData("The field",  field);//TODO this can be removed later
+        // SmartDashboard.putData("The field",  field);//TODO this can be removed later
     }
 
     @Override
@@ -60,12 +61,12 @@ public class AlignWithPose extends Command {
     public void execute() {
         Pose2d currentPose = swerve.drivetrain.getState().Pose;
         
-        double x = 0;//alignmentXPID.calculate(currentPose.getX());//FIXME X and Y cause tweaking out
-        double y = 0;//alignmentYPID.calculate(currentPose.getY());
+        double x = alignmentXPID.calculate(currentPose.getX());
+        double y = alignmentYPID.calculate(currentPose.getY());
         double rot = -alignmentRotationPID.calculate(currentPose.getRotation().getRadians());
 
-        field.getObject("Alignment Target").setPose(targetPose);
-        field.getObject("Setpoint pose").setPose(new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position)));
+        // field.getObject("Alignment Target").setPose(targetPose);
+        // field.getObject("Setpoint pose").setPose(new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position)));
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
 
@@ -79,6 +80,6 @@ public class AlignWithPose extends Command {
 
     @Override
     public boolean isFinished() {
-        return alignmentRotationPID.atGoal(); //&& alignmentXPID.atGoal() && alignmentYPID.atGoal();
+        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
     }
 }

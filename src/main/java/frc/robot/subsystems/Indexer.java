@@ -30,6 +30,10 @@ public class Indexer extends SubsystemBase {
         return runOnce(() -> rollerMotor.set(0));
     }
 
+    public Command eject() {
+        return runOnce(() -> rollerMotor.set(-kIndexerRollerPower));
+    }
+
     public boolean hasCoral() {
         return photoelectricSensor.get();
     }

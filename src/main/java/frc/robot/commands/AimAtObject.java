@@ -55,6 +55,12 @@ public class AimAtObject extends Command {
 
     @Override
     public void execute() {
+        if (targetCache.targetExpired()) {
+            targetCache.reset();
+
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+        }
+
         double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
 
         PhotonTrackedTarget targetToTrack = getTarget();
@@ -136,7 +142,7 @@ public class AimAtObject extends Command {
 
     @Override
     public boolean isFinished() {
-        return targetCache.targetExpired();
+        return false;
     }
 
     @Override

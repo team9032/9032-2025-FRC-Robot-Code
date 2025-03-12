@@ -46,8 +46,8 @@ public final class Constants {
     }
 
     public static class PathplannerConfig {
-        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);//TODO Tune
-        public static final PIDConstants kRotationPID = new PIDConstants(5.0);
+        public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
+        public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
         public static final ApplyRobotSpeeds kClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
@@ -55,7 +55,7 @@ public final class Constants {
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             1,//TODO change these
-            4, 
+            6, 
             2 * Math.PI, 
             2 * Math.PI
         );
@@ -76,7 +76,7 @@ public final class Constants {
         public static final int kCycleAmtSinceTargetSeenCutoff = 10;
         public static final double kPitchDifferenceCutoff = 2.0;
 
-        public static final double kRotationSetpoint = 19.2;
+        public static final double kRotationSetpoint = 13.3;
         public static final double kMaxDrivingSpeed = 1.0;//Meters per second
 
         public static final double kSlowObstacleDistance = 1.20;//Meters from sensor

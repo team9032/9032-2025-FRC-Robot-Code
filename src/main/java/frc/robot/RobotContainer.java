@@ -8,6 +8,7 @@ import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.commands.AimAtCoral;
+import frc.robot.commands.AlignWithPose;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -17,6 +18,8 @@ import frc.robot.utils.GitData;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,11 +44,7 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger scoreCoral = driveController.a();
-    private final Trigger pickupCoral = driveController.y();
-    private final Trigger intakeAlgae = driveController.x();
-    private final Trigger intakeCoral = driveController.povLeft();
-
+    private final Trigger pathTest = driveController.x();
     private final Trigger algaeL1 = driveController.leftBumper();
     private final Trigger algaeL2 = driveController.rightBumper();
     private final Trigger resetPerspective = driveController.b();
@@ -138,19 +137,8 @@ public class RobotContainer {
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
         /* Driver Controls */      
-        intakeAlgae.onTrue(endEffector.pickupAlgae());
-
-        scoreCoral.onTrue(endEffector.placeCoral());
-
-        pickupCoral.onTrue(
-            Commands.sequence(
-                elevator.moveToSourcePosition(),
-                arm.moveToSourcePos(),
-                endEffector.pickupCoralFromSource(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition(),
-                new ScheduleCommand(endEffector.holdCoral())
-            )
+        pathTest.onTrue(
+            new AlignWithPose(krakenSwerve, new Pose2d(3.170, 4.113, Rotation2d.k180deg))  
         );
 
         algaeL1.onTrue(
@@ -163,7 +151,29 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        /* Operator Controls */
+        /* Manual Controls:
+         * 
+         * Manual 1 - eject coral from intake
+         * Manual 2 - eject coral from indexer
+        */
+        buttonBoard.manual1.onTrue(
+            disableAutomation()
+            .andThen(intake.ejectCoral())
+        );
+
+        buttonBoard.manual2.onTrue(
+            disableAutomation()
+            .andThen(
+                intake.moveToGround(),
+                Commands.waitUntil(intake::canRunRollers),
+                indexer.eject(),
+                intake.returnToStowPosition()
+            )
+        );
+    }
+
+    private Command disableAutomation() {
+        return Commands.runOnce(() -> automationCommand.cancel());
     }
 
     /** Runs every loop cycle */

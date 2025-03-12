@@ -77,19 +77,19 @@ public class ButtonBoardHandler {
     private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
     private final Trigger autoIntake = buttonBoardController1.button(2);
      
-    private final Trigger manual1 = buttonBoardController3.button(5);
-    private final Trigger manual2 = buttonBoardController3.button(4);
-    private final Trigger manual3 = buttonBoardController3.button(3);
-    private final Trigger manual6 = buttonBoardController3.button(11);
-    private final Trigger manual7 = buttonBoardController3.button(7);
-    private final Trigger manual8 = buttonBoardController3.button(6);
-    private final Trigger manual9 = buttonBoardController3.button(2);
-    private final Trigger manual10 = buttonBoardController3.button(1);
-    private final Trigger manual11 = buttonBoardController2.button(12);
-    private final Trigger manual12 = buttonBoardController3.button(12);
-    private final Trigger manual13 = buttonBoardController3.button(10);
-    private final Trigger manual14 = buttonBoardController3.button(9);
-    private final Trigger manual15 = buttonBoardController3.button(8);
+    public final Trigger manual1 = buttonBoardController3.button(5);
+    public final Trigger manual2 = buttonBoardController3.button(4);
+    public final Trigger manual3 = buttonBoardController3.button(3);
+    public final Trigger manual6 = buttonBoardController3.button(11);
+    public final Trigger manual7 = buttonBoardController3.button(7);
+    public final Trigger manual8 = buttonBoardController3.button(6);
+    public final Trigger manual9 = buttonBoardController3.button(2);
+    public final Trigger manual10 = buttonBoardController3.button(1);
+    public final Trigger manual11 = buttonBoardController2.button(12);
+    public final Trigger manual12 = buttonBoardController3.button(12);
+    public final Trigger manual13 = buttonBoardController3.button(10);
+    public final Trigger manual14 = buttonBoardController3.button(9);
+    public final Trigger manual15 = buttonBoardController3.button(8);
     
     public ButtonBoardHandler() {
         bindButtons();

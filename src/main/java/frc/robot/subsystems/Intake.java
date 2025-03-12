@@ -94,5 +94,6 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Obstacle sensor distance", getObstacleSensorDistance());
+        SmartDashboard.putBoolean("Can run rollers", canRunRollers());
     }
 }
