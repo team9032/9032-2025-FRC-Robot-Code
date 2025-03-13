@@ -82,6 +82,8 @@ public class RobotContainer {
     /* State Triggers */
     // ...
 
+    
+
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         /* Stop spamming the logs if a controller is unplugged */
@@ -117,6 +119,13 @@ public class RobotContainer {
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
     }
 
+    public Command followReefPathPlease() {
+        return Commands.sequence(
+            Commands.waitUntil(buttonBoard::hasQueues),
+            buttonBoard.followReefPath()
+        );
+    }
+
     private boolean driverWantsOverride() {
         return Math.abs(driveController.getRightX()) > kOverrideAutomationThreshold || 
             Math.abs(driveController.getLeftX()) > kOverrideAutomationThreshold ||    
@@ -138,7 +147,7 @@ public class RobotContainer {
     private void configureButtonTriggers() {
         /* Driver Controls */      
         pathTest.onTrue(
-            new AlignWithPose(krakenSwerve, new Pose2d(3.170, 4.113, Rotation2d.k180deg))  
+            followReefPathPlease()
         );
 
         algaeL1.onTrue(
