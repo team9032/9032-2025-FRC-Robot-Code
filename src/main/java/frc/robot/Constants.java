@@ -137,8 +137,8 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.75),Units.inchesToMeters(-14.5),Units.inchesToMeters(12.1875)),
-                new Rotation3d(0,0,Math.PI)),
+                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.75),Units.inchesToMeters(12.0)),
+                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
             new CameraConstants("FrontLeftCamera", new Transform3d(
@@ -197,7 +197,7 @@ public final class Constants {
         public static final double kElevatorTrough = 3.042;
         public static final double kElevatorL1 = 1.683;
         public static final double kElevatorL2 = 3.843;
-        public static final double kElevatorL3 = 8.6;
+        public static final double kElevatorL3 = 8.61;
         public static final double kElevatorLowAlgae = 2.8;
         public static final double kElevatorHighAlgae = 5.3;
         public static final double kElevatorIndexerPos = 1.6;
@@ -293,7 +293,7 @@ public final class Constants {
         public static final double kArmTroughPos = 200;
         public static final double kArmLevel1Pos = 242.7; //TODO change
         public static final double kArmLevel2Pos = 242.7;
-        public static final double kArmLevel3Pos = 212.0;
+        public static final double kArmLevel3Pos = 202.0;
         public static final double kArmHighAlgaePos = 190.0;
         public static final double kArmLowAlgaePos = 190.0;
         public static final double kArmProcessorPos = 0;
@@ -390,7 +390,7 @@ public final class Constants {
         public static final double kIntakeAlgaePower = -1.0;
         public static final double kHoldAlgaePower = -1.0;//TODO algae is dropped due to overheating
 
-        public static final double kCoralOuttakePower = 1.0;
+        public static final double kCoralOuttakePower = 0.5;
         public static final double kCoralOuttakeToTrough = -0.2;
         public static final double kIntakeFromSourcePower = 0.8;
         public static final double kReceiveFromIndexerPower = -0.8;

@@ -35,7 +35,7 @@ public class AutomationHandler {
         return new SelectCommand<GamePieceState>(
             Map.ofEntries (
                 Map.entry(GamePieceState.GAMEPIECES_NOT_READY, mainCyclingCommand()),
-                Map.entry(GamePieceState.HAS_CORAL, compositions.resumeCoralSequence().andThen(mainCyclingCommand()))
+                Map.entry(GamePieceState.HAS_CORAL, compositions.resumeCoralSequence())//.andThen(mainCyclingCommand()))
                 /* Algae mode must be scheduled seperately from coral to avoid requirement conflicts */
                // Map.entry(GamePieceState.HAS_ALGAE, new ScheduleCommand(compositions.scoreAlgaeSequence()).andThen(mainCyclingCommand()))
             ),
@@ -45,7 +45,7 @@ public class AutomationHandler {
 
     private Command mainCyclingCommand() {
         /* This is the main cycling command, so it's repeated */
-        return compositions.noPieceSequence().repeatedly();
+        return compositions.noPieceSequence();//.repeatedly();
     }
 
     private GamePieceState getGamePieceState() {

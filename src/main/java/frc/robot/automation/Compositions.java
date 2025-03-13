@@ -74,6 +74,7 @@ public class Compositions {
 
     private Command scoreCoralSequence() {
         return Commands.sequence(
+            Commands.waitUntil(buttonBoardHandler::hasQueues),
             buttonBoardHandler.followReefPath(),
             Commands.runOnce(() -> readyForScoring = true),
             Commands.waitUntil(() -> !readyForScoring)
