@@ -3,11 +3,12 @@
   "robotLength": 1.0,
   "holonomicMode": true,
   "pathFolders": [
-    "Ground Algae Coral Auto",
     "3 Ground Coral",
+    "Ground Algae Coral Auto",
+    "Ground Coral Auto",
     "L 2C",
     "M 3C",
-    "Ground Coral Auto",
+    "3 Coral",
     "R 3C",
     "Stubs",
     "Tuning"

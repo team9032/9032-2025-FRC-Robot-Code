@@ -22,7 +22,7 @@ public class Compositions {
 
     private final ButtonBoardHandler buttonBoardHandler;
 
-    private final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
+    public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
     private final EventTrigger readyForIntaking = new EventTrigger("Intake");
 
     private boolean readyForScoring = false;
@@ -81,7 +81,7 @@ public class Compositions {
         );
     }
 
-    private Command backgroundCoralMovement(boolean goingToSource) {
+    public Command backgroundCoralMovement(boolean goingToSource) {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),

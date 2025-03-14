@@ -7,13 +7,13 @@ package frc.robot;
 import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
+import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -89,6 +89,8 @@ public class RobotContainer {
 
         bindRobotModeTriggers();
 
+        bindAutoModeTriggers();
+
         /* Setup automation */
         automationCommand = automationHandler.automationResumeCommand()
             .until(this::driverWantsOverride);
@@ -109,7 +111,10 @@ public class RobotContainer {
         .onFalse(endEffector.outtakeProcessorAlgae());
 
         /* Allows us to choose from all autos in the deploy directory */
-        autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = new SendableChooser<>();
+        autoChooser.addOption("3 Coral Left", Autos.threeCoralLeft(elevator, arm, endEffector, krakenSwerve, intake, indexer));
+        autoChooser.setDefaultOption("Do Nothing", Commands.none());
+
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         /* Add Git Data to Elastic */
@@ -157,6 +162,7 @@ public class RobotContainer {
          * Manual 9 - algae eject
          * Manual 10 - algae low
          * Manual 11 - algae high
+         * Manual 12 - intake down
          * 
         */
         buttonBoard.manual1.onTrue(
@@ -231,6 +237,10 @@ public class RobotContainer {
                 arm.moveToHighAlgaePos()
             )
         );
+
+        buttonBoard.manual12.onTrue(
+            compositions.backgroundCoralMovement(false)  
+        );
     }
 
     private Command disableAutomation() {
@@ -245,6 +255,10 @@ public class RobotContainer {
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
         teleopEnabled.onTrue(compositions.resetStates());
+    }
+
+    private void bindAutoModeTriggers() {
+        
     }
     
     private void bindSysIdTriggers() {

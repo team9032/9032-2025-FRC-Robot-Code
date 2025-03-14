@@ -319,7 +319,7 @@ public final class Constants {
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(300)
+            .withMotionMagicCruiseVelocity(150)
             .withMotionMagicAcceleration(2000); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
