@@ -159,6 +159,6 @@ public class EndEffector extends SubsystemBase {
         SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", getSourcePhotoelectricSensor());
         SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
-        SmartDashboard.putBoolean("Has Coral Centered", hasCoralCentered());
+        SmartDashboard.putBoolean("End Effector Has Coral", hasCoral());
     }
 }

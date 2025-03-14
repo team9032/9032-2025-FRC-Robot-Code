@@ -116,7 +116,7 @@ public class Compositions {
                         .until(() -> readyForScoring)
                 ),
             Commands.waitUntil(() -> readyForScoring),
-            endEffector.placeCoral(),
+            buttonBoardHandler.scoreCoral(endEffector),
             arm.moveToStowPos(),
             buttonBoardHandler.clearReefTargets(),
             Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; })
@@ -161,12 +161,13 @@ public class Compositions {
         );
     }
 
-    private Command prepareForAlgaeIntaking() {
-        return Commands.parallel(
-            buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm)
-                .andThen(Commands.waitUntil(arm::atSetpoint)),
-            buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator)
-                .andThen(Commands.waitUntil(elevator::atSetpoint))
+    public Command prepareForAlgaeIntaking() {
+        return Commands.sequence(
+            buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
+            Commands.waitUntil(elevator::atSetpoint),
+            buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for algae intake")
         );
     }
 

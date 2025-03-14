@@ -37,7 +37,10 @@ public final class Constants {
         public static final double kOverrideAutomationThreshold = 0.1;
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
+        public static final double kSlowSpeed = kMaxSpeed * 0.1;
         public static final double kRotationRate = 4 * Math.PI;
+        public static final double kSlowRotationRate = kRotationRate * 0.1;
+
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * 0.01) 
@@ -54,7 +57,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            1,//TODO change these
+            3,//TODO change these
             6, 
             2 * Math.PI, 
             2 * Math.PI
@@ -137,7 +140,7 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.75),Units.inchesToMeters(12.0)),
+                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.75),Units.inchesToMeters(9.25)),
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
@@ -194,11 +197,11 @@ public final class Constants {
         public static final double kElevatorTolerance = 0.05;
 
         //TODO change all elevator positions once we can find them
-        public static final double kElevatorTrough = 3.042;
+        public static final double kElevatorTrough = 2.70;
         public static final double kElevatorL1 = 1.683;
         public static final double kElevatorL2 = 3.843;
-        public static final double kElevatorL3 = 8.61;
-        public static final double kElevatorLowAlgae = 2.8;
+        public static final double kElevatorL3 = 8.63;
+        public static final double kElevatorLowAlgae = 3.1;
         public static final double kElevatorHighAlgae = 5.3;
         public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
@@ -290,10 +293,10 @@ public final class Constants {
 
         public static final double kArmStowPos = 260;
         public static final double kArmIndexerPos = 90;
-        public static final double kArmTroughPos = 200;
-        public static final double kArmLevel1Pos = 242.7; //TODO change
+        public static final double kArmTroughPos = 130.0;
+        public static final double kArmLevel1Pos = 242.7; 
         public static final double kArmLevel2Pos = 242.7;
-        public static final double kArmLevel3Pos = 202.0;
+        public static final double kArmLevel3Pos = 210.0;
         public static final double kArmHighAlgaePos = 190.0;
         public static final double kArmLowAlgaePos = 190.0;
         public static final double kArmProcessorPos = 0;

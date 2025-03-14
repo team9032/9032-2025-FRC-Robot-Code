@@ -7,8 +7,6 @@ package frc.robot;
 import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
-import frc.robot.commands.AimAtCoral;
-import frc.robot.commands.AlignWithPose;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -16,16 +14,11 @@ import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.events.EventTrigger;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,10 +37,9 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger pathTest = driveController.x();
-    private final Trigger algaeL1 = driveController.leftBumper();
-    private final Trigger algaeL2 = driveController.rightBumper();
+    private final Trigger slowMode = driveController.leftBumper();
     private final Trigger resetPerspective = driveController.b();
+    private final Trigger eject = driveController.x();
 
     /* Operator Controller Buttons */
 
@@ -82,8 +74,6 @@ public class RobotContainer {
     /* State Triggers */
     // ...
 
-    
-
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         /* Stop spamming the logs if a controller is unplugged */
@@ -108,8 +98,15 @@ public class RobotContainer {
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
             compositions.getCoralSequence(false, false)
+            .onlyIf(() -> !endEffector.hasCoral())
             .until(this::driverWantsOverride)
         );  
+
+        buttonBoard.getAlgaeTrigger().whileTrue(//TODO full algae cycling
+            compositions.prepareForAlgaeIntaking()
+            .andThen(endEffector.pickupAlgae())
+        )
+        .onFalse(endEffector.outtakeProcessorAlgae());
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -117,13 +114,6 @@ public class RobotContainer {
 
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
-    }
-
-    public Command followReefPathPlease() {
-        return Commands.sequence(
-            Commands.waitUntil(buttonBoard::hasQueues),
-            buttonBoard.followReefPath()
-        );
     }
 
     private boolean driverWantsOverride() {
@@ -138,7 +128,8 @@ public class RobotContainer {
                 krakenSwerve,
                 driveController::getRightX,
                 () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX()
+                () -> -driveController.getLeftX(),
+                slowMode
             )
         );  
     }
@@ -146,24 +137,27 @@ public class RobotContainer {
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
         /* Driver Controls */      
-        pathTest.onTrue(
-            followReefPathPlease()
-        );
-
-        algaeL1.onTrue(
-            arm.moveToLowAlgaePos()
-            .andThen(elevator.moveToLowAlgaePosition())
-        );
-
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
+        eject.onTrue(
+            disableAutomation()
+            .andThen(intake.ejectCoral())
+        );
         /* Manual Controls:
          * 
          * Manual 1 - eject coral from intake
          * Manual 2 - eject coral from indexer
+         * Manual 3 - manual put arm and elevator to reef positions
+         * Manual 6 - score coral
+         * Manual 7 - return to stow positions
+         * Manual 8 - intake up
+         * Manual 9 - algae eject
+         * Manual 10 - algae low
+         * Manual 11 - algae high
+         * 
         */
         buttonBoard.manual1.onTrue(
             disableAutomation()
@@ -173,10 +167,68 @@ public class RobotContainer {
         buttonBoard.manual2.onTrue(
             disableAutomation()
             .andThen(
-                intake.moveToGround(),
-                Commands.waitUntil(intake::canRunRollers),
-                indexer.eject(),
+                intake.returnToStowPosition(),
+                Commands.waitSeconds(0.5),
+                indexer.eject()
+            )
+        );
+
+        buttonBoard.manual3.onTrue(
+            disableAutomation()
+            .andThen(
+                buttonBoard.moveElevatorToCoralTargetLevel(elevator),
+                Commands.waitUntil(elevator::atSetpoint),
+                buttonBoard.moveArmToCoralTargetLevel(arm)
+            )
+        );
+
+        buttonBoard.manual6.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                endEffector.placeCoral(),
+                arm.moveToStowPos(),
+                elevator.moveToIndexerPosition()   
+            )
+        );
+
+        buttonBoard.manual7.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                arm.moveToStowPos(),
+                elevator.moveToIndexerPosition()   
+            )
+        );
+
+        buttonBoard.manual8.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                intake.stopIntaking(),
                 intake.returnToStowPosition()
+            )
+        );
+
+        buttonBoard.manual9.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                endEffector.outtakeProcessorAlgae()
+            )
+        );
+
+        buttonBoard.manual10.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                elevator.moveToLowAlgaePosition(),
+                Commands.waitUntil(elevator::atSetpoint),
+                arm.moveToLowAlgaePos()
+            )
+        );
+
+        buttonBoard.manual11.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                elevator.moveToHighAlgaePosition(),
+                Commands.waitUntil(elevator::atSetpoint),
+                arm.moveToHighAlgaePos()
             )
         );
     }

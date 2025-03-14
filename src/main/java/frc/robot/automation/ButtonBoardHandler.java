@@ -165,6 +165,10 @@ public class ButtonBoardHandler {
         algaeToggle.onTrue(Commands.runOnce(() -> algaeMode = !algaeMode));
     }
 
+    public Command scoreCoral(EndEffector endEffector) {
+        return Commands.either(endEffector.placeCoralInTrough(), endEffector.placeCoral(), () -> reefLevelTarget.equals(ReefLevel.TO_TROUGH));
+    }
+
     public Command followReefPath() {
         return new SelectCommand<ReefPath>(
             Map.ofEntries(
@@ -389,5 +393,9 @@ public class ButtonBoardHandler {
 
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
+    }
+
+    public Trigger getAlgaeTrigger() {
+        return algaeToggle;
     }
 }
