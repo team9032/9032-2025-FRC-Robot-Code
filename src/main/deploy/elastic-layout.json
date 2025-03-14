@@ -923,9 +923,9 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 928.0,
+            "x": 1152.0,
             "y": 416.0,
-            "width": 288.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
@@ -936,9 +936,9 @@
           },
           {
             "title": "Intake Camera",
-            "x": 1216.0,
+            "x": 768.0,
             "y": 416.0,
-            "width": 320.0,
+            "width": 384.0,
             "height": 320.0,
             "type": "Camera Stream",
             "properties": {
@@ -950,9 +950,9 @@
           },
           {
             "title": "Has Coral",
-            "x": 768.0,
+            "x": 1344.0,
             "y": 416.0,
-            "width": 160.0,
+            "width": 192.0,
             "height": 192.0,
             "type": "Boolean Box",
             "properties": {

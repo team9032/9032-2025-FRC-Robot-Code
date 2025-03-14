@@ -5,7 +5,6 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -23,10 +22,11 @@ public class Compositions {
     private final ButtonBoardHandler buttonBoardHandler;
 
     public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
-    private final EventTrigger readyForIntaking = new EventTrigger("Intake");
+    private final EventTrigger sourcePathHit = new EventTrigger("Intake");
 
     private boolean readyForScoring = false;
     private boolean readyForElevator = false;
+    private boolean readyForIntaking = false;
 
     public Compositions(Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.arm = arm;
@@ -40,6 +40,10 @@ public class Compositions {
 
         prepareElevatorForScoring.onTrue(
             Commands.runOnce(() -> readyForElevator = true)  
+        );
+
+        sourcePathHit.onTrue(
+            Commands.runOnce(() -> readyForIntaking = true)
         );
     }
 
@@ -86,7 +90,7 @@ public class Compositions {
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
             prepareForIntaking(),
-            Commands.waitUntil(readyForIntaking)
+            Commands.waitUntil(() -> readyForIntaking)
                 .onlyIf(() -> goingToSource),
             intake.moveToGround(),
             Commands.waitUntil(intake::canRunRollers),
@@ -118,8 +122,7 @@ public class Compositions {
             Commands.waitUntil(() -> readyForScoring),
             buttonBoardHandler.scoreCoral(endEffector),
             arm.moveToStowPos(),
-            buttonBoardHandler.clearReefTargets(),
-            Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; })
+            Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; readyForIntaking = false; })
         );
     }
 
@@ -188,6 +191,7 @@ public class Compositions {
             Commands.runOnce(() -> { 
                 readyForScoring = false; 
                 readyForElevator = false; 
+                readyForIntaking = false;
                 
                 if (arm.getCurrentCommand() != null)
                     arm.getCurrentCommand().cancel();

@@ -37,9 +37,10 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger slowMode = driveController.leftBumper();
+    private final Trigger slowMode = driveController.leftBumper().or(driveController.rightBumper());
     private final Trigger resetPerspective = driveController.b();
     private final Trigger eject = driveController.x();
+    private final Trigger stowPosition = driveController.y();
 
     /* Operator Controller Buttons */
 
@@ -151,6 +152,19 @@ public class RobotContainer {
             disableAutomation()
             .andThen(intake.ejectCoral())
         );
+
+        stowPosition.onTrue(
+            Commands.sequence(
+                disableAutomation(),
+                arm.moveToStowPos(),
+                elevator.moveToIndexerPosition(),
+                intake.stopIntaking(),
+                endEffector.stopRollers(),
+                indexer.stopRollers(),
+                intake.returnToStowPosition()
+            )            
+        );
+
         /* Manual Controls:
          * 
          * Manual 1 - eject coral from intake
@@ -163,6 +177,7 @@ public class RobotContainer {
          * Manual 10 - algae low
          * Manual 11 - algae high
          * Manual 12 - intake down
+         * Manual 13 - source intake
          * 
         */
         buttonBoard.manual1.onTrue(
@@ -201,7 +216,11 @@ public class RobotContainer {
             Commands.sequence(
                 disableAutomation(),
                 arm.moveToStowPos(),
-                elevator.moveToIndexerPosition()   
+                elevator.moveToIndexerPosition(),
+                intake.stopIntaking(),
+                endEffector.stopRollers(),
+                indexer.stopRollers(),
+                intake.returnToStowPosition()
             )
         );
 
@@ -240,6 +259,14 @@ public class RobotContainer {
 
         buttonBoard.manual12.onTrue(
             compositions.backgroundCoralMovement(false)  
+        );
+
+        buttonBoard.manual13.onTrue(
+            Commands.sequence(
+                arm.moveToSourcePos(),
+                elevator.moveToSourcePosition(),
+                endEffector.pickupCoralFromSource()
+            )
         );
     }
 

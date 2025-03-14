@@ -21,6 +21,18 @@
           "data": {
             "pathName": "3C2"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3C3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3C4"
+          }
         }
       ]
     }

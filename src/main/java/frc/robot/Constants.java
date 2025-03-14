@@ -37,9 +37,9 @@ public final class Constants {
         public static final double kOverrideAutomationThreshold = 0.1;
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
-        public static final double kSlowSpeed = kMaxSpeed * 0.1;
+        public static final double kSlowSpeed = kMaxSpeed * 0.15;
         public static final double kRotationRate = 4 * Math.PI;
-        public static final double kSlowRotationRate = kRotationRate * 0.1;
+        public static final double kSlowRotationRate = kRotationRate * 0.15;
 
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
@@ -157,13 +157,13 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(9.3)//TODO these could be faster
+            .withMotionMagicCruiseVelocity(9.5)//TODO these could be faster
             .withMotionMagicAcceleration(40);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(4)
+            .withKP(7)
             .withKD(0.5)
             .withKV(1.16)
             .withKG(0.4)
