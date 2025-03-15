@@ -137,7 +137,7 @@ public class ButtonBoardHandler {
         TO_LEVEL3
     }
 
-    private ReefLevel reefLevelTarget = ReefLevel.NONE;
+    private ReefLevel reefLevelTarget = ReefLevel.TO_LEVEL3;
 
     private void bindButtons() {
         toLSource.onTrue(Commands.runOnce(() -> sourcePathTarget = SourcePath.TO_LSOURCE));

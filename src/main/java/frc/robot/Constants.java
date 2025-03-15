@@ -214,6 +214,9 @@ public final class Constants {
 
         public static final double kIndexerRollerPower = -1.0;
 
+        public static final double kIndexerEjectPower = 0.25;
+        public static final double kIndexerEjectWait = 1.0;
+
         public static final CurrentLimitsConfigs kIndexerRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
@@ -222,7 +225,7 @@ public final class Constants {
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
             .withCurrentLimits(kIndexerRollerCurrentLimitConfigs);
 
-        public static final int kPhotoelectricSensorID = 5; //TODO Change this   
+        public static final int kPhotoelectricSensorID = 5; //TODO doesn't exist   
     }
 
     public static final class IntakeConstants {
@@ -269,13 +272,13 @@ public final class Constants {
         public static final int kIntakeArmID = 16;
         public static final int kIntakeRollerID = 17;
 
-        public static final double kEjectPower = 1.0;
-        public static final double kEjectDelay = 0.5;
+        public static final double kEjectPower = 0.25;
+        public static final double kEjectDelay = 0.75;
 
         public static final double kIntakePower = -1.0;
 
         public static final double kGroundPosition = -120.0;
-        public static final double kStowPosition = 0.0;
+        public static final double kStowPosition = -20.0;
 
         public static final double kRunRollersPosition = -100;
 
