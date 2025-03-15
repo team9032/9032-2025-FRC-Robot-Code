@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1492500000000003,
-        "y": 4.15175
+        "x": 5.32,
+        "y": 2.98
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.46675,
-        "y": 4.4247499999999995
+        "x": 5.139750000000001,
+        "y": 3.4675000000000007
       },
       "isLocked": false,
-      "linkedName": "3C3E"
+      "linkedName": "3C1E"
+    },
+    {
+      "anchor": {
+        "x": 3.5977499999999996,
+        "y": 5.49725
+      },
+      "prevControl": {
+        "x": 4.665069409235947,
+        "y": 6.123273884263393
+      },
+      "nextControl": {
+        "x": 2.58375,
+        "y": 4.9025
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 5.2145
       },
       "prevControl": {
-        "x": 3.2467499999999996,
-        "y": 4.1907499999999995
+        "x": 2.886,
+        "y": 4.5417499999999995
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +49,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.08,
+      "maxWaypointRelativePos": 0.15,
       "constraints": {
         "maxVelocity": 0.5,
         "maxAcceleration": 6.0,
@@ -59,10 +75,10 @@
     "rotation": 125.00000000000001
   },
   "reversed": false,
-  "folder": "3 Coral Left",
+  "folder": "3 Coral Right",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": false
 }

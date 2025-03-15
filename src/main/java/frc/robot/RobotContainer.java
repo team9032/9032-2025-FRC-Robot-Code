@@ -41,6 +41,8 @@ public class RobotContainer {
     private final Trigger resetPerspective = driveController.b();
     private final Trigger eject = driveController.x();
     private final Trigger stowPosition = driveController.y();
+    private final Trigger intakeUp = driveController.rightTrigger();
+    private final Trigger intakeDown = driveController.leftTrigger();
 
     /* Operator Controller Buttons */
 
@@ -165,6 +167,21 @@ public class RobotContainer {
             )            
         );
 
+        intakeUp.onTrue(
+            disableAutomation()
+            .andThen(
+                intake.returnToStowPosition(),
+                intake.stopIntaking(), 
+                indexer.stopRollers(),
+                endEffector.stopRollers()
+            )
+        );
+
+        intakeDown.onTrue(
+            disableAutomation()
+            .andThen(compositions.backgroundCoralMovement(false))
+        );
+
         /* Manual Controls:
          * 
          * Manual 1 - eject coral from intake
@@ -228,7 +245,9 @@ public class RobotContainer {
             Commands.sequence(
                 disableAutomation(),
                 intake.stopIntaking(),
-                intake.returnToStowPosition()
+                intake.returnToStowPosition(),
+                indexer.stopRollers(),
+                endEffector.stopRollers()
             )
         );
 
@@ -258,7 +277,8 @@ public class RobotContainer {
         );
 
         buttonBoard.manual12.onTrue(
-            compositions.backgroundCoralMovement(false)  
+            disableAutomation()
+            .andThen(compositions.backgroundCoralMovement(false))
         );
 
         buttonBoard.manual13.onTrue(
