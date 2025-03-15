@@ -59,6 +59,47 @@ public class Autos {
         }
     }
 
+    public static Command threeCoralRight(Elevator elevator, Arm arm, EndEffector endEffector, KrakenSwerve swerve, Intake intake, Indexer indexer) {
+        try {
+            return Commands.sequence(
+                /* Score preload */
+                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C1"))
+                    .deadlineFor(endEffector.holdCoral())
+                        .alongWith(prepareForScore(elevator, arm)),
+                endEffector.placeCoral(),
+                /* Get coral 2 */
+                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C2"))
+                    .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
+                new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+                    .until(endEffector::hasCoral)
+                        .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
+                // /* Score coral 2 */
+                // AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C3"))
+                //         .deadlineFor(endEffector.holdCoral())
+                //             .alongWith(prepareForScore(elevator, arm)),
+                // endEffector.placeCoral(),
+                // /* Get coral 3 */
+                // AutoBuilder.followPath(PathPlannerPath.fromPathFile("3C4"))
+                //     .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
+                // new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+                //     .until(endEffector::hasCoral)
+                //         .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
+                // /* Score coral 3 */
+                // AutoBuilder.followPath(PathPlannerPath.fromPathFile("3C5"))
+                //         .deadlineFor(endEffector.holdCoral())
+                //             .alongWith(prepareForScore(elevator, arm)),
+                // endEffector.placeCoral(),
+                // /* Return to stow positions */
+                arm.moveToStowPos(),
+                elevator.moveToIndexerPosition()
+            );
+        } catch (Exception e) {
+            ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
+
+            return Commands.none();
+        }
+    }
+
     private static Command prepareForScore(Elevator elevator, Arm arm) {
         return Commands.sequence(
             Commands.waitUntil(prepareForAutoScoring),

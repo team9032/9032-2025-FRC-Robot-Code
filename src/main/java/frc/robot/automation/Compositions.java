@@ -89,7 +89,7 @@ public class Compositions {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            prepareForIntaking(),
+            prepareForIntaking(goingToSource),
             Commands.waitUntil(() -> readyForIntaking)
                 .onlyIf(() -> goingToSource),
             intake.moveToGround(),
@@ -144,8 +144,10 @@ public class Compositions {
         );
     }
 
-    private Command prepareForIntaking() {
+    private Command prepareForIntaking(boolean goingToSource) {
         return Commands.sequence(
+            intake.moveToGround()
+                .onlyIf(() -> !goingToSource),
             elevator.moveToIndexerPosition(),
             Commands.waitUntil(elevator::atSetpoint),
             arm.moveToIndexerPos(),

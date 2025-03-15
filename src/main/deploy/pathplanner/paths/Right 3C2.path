@@ -8,40 +8,40 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.139750000000001,
-        "y": 3.4675000000000007
-      },
-      "isLocked": false,
-      "linkedName": "3C1E"
-    },
-    {
-      "anchor": {
-        "x": 3.5977499999999996,
-        "y": 5.49725
-      },
-      "prevControl": {
-        "x": 4.665069409235947,
-        "y": 6.123273884263393
-      },
-      "nextControl": {
-        "x": 2.58375,
-        "y": 4.9025
+        "x": 5.89875,
+        "y": 2.3285
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.50575,
-        "y": 5.2145
+        "x": 3.6464999999999996,
+        "y": 2.026250000000001
       },
       "prevControl": {
-        "x": 2.886,
-        "y": 4.5417499999999995
+        "x": 4.8652906320304545,
+        "y": 1.8126475180977584
+      },
+      "nextControl": {
+        "x": 2.7007500000000007,
+        "y": 2.1919999999999993
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.99875,
+        "y": 1.9385000000000003
+      },
+      "prevControl": {
+        "x": 2.817750000000001,
+        "y": 2.972
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LSourceS"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -72,7 +72,7 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": 125.00000000000001
+    "rotation": -132.13759477388825
   },
   "reversed": false,
   "folder": "3 Coral Right",
