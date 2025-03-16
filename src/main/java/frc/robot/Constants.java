@@ -41,6 +41,7 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
         public static final double kSlowRotationRate = kRotationRate * 0.15;
 
+        public static final double kRumbleTime = 0.5;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * 0.01) 
@@ -140,7 +141,7 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.75),Units.inchesToMeters(9.25)),
+                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.9375),Units.inchesToMeters(8.375)),
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),

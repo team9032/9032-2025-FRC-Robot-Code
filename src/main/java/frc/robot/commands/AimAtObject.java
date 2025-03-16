@@ -31,10 +31,13 @@ public class AimAtObject extends Command {
 
     private final DoubleSupplier obstacleDistanceSup;
 
-    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup) {
+    private final boolean moveOnInit;
+
+    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
        this.swerve = swerve; 
        this.objectToTrackId = objectToTrackId;
        this.obstacleDistanceSup = obstacleDistanceSup;
+       this.moveOnInit = moveOnInit;
 
        localization = swerve.getLocalization();
 
@@ -49,6 +52,12 @@ public class AimAtObject extends Command {
     @Override
     public void initialize() {
         ElasticUtil.sendInfo("Started object aiming");
+
+        if (moveOnInit)
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
+
+        else 
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }  
 
     @Override
@@ -64,8 +73,16 @@ public class AimAtObject extends Command {
         PhotonTrackedTarget targetToTrack = getTarget();
 
         /* Wait to get a target */
-        if (!targetCache.hasTarget())
+        if (!targetCache.hasTarget()) {
+            if (moveOnInit) {
+                double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+                    kSlowDrivingSpeed : kMaxDrivingSpeed;
+
+                swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
+            }
+
             return;
+        }
 
         /* Update setpoint if we have a target */
         if(targetToTrack != null) {

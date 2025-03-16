@@ -8,36 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.89875,
-        "y": 2.3285
+        "x": 5.730122950819672,
+        "y": 2.1189549180327867
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.6464999999999996,
-        "y": 2.026250000000001
+        "x": 1.8940573770491804,
+        "y": 2.2028688524590168
       },
       "prevControl": {
-        "x": 4.8652906320304545,
-        "y": 1.8126475180977584
-      },
-      "nextControl": {
-        "x": 2.7007500000000007,
-        "y": 2.1919999999999993
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.99875,
-        "y": 1.9385000000000003
-      },
-      "prevControl": {
-        "x": 2.817750000000001,
-        "y": 2.972
+        "x": 2.4335040983606557,
+        "y": 2.238831967213115
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +33,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.15,
+      "maxWaypointRelativePos": 0.07,
       "constraints": {
         "maxVelocity": 0.5,
         "maxAcceleration": 6.0,
@@ -72,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": -132.13759477388825
+    "rotation": -122.10625595511782
   },
   "reversed": false,
   "folder": "3 Coral Right",

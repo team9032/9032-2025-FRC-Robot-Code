@@ -7,7 +7,7 @@ import static frc.robot.Constants.ObjectAimingConstants.*;
 import java.util.function.DoubleSupplier;
 
 public class AimAtAlgae extends AimAtObject {
-    public AimAtAlgae(KrakenSwerve swerve, DoubleSupplier obstacleDistanceSup) {
-        super(swerve, kAlgaeId, obstacleDistanceSup);
+    public AimAtAlgae(KrakenSwerve swerve, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
+        super(swerve, kAlgaeId, obstacleDistanceSup, moveOnInit);
     }
 }

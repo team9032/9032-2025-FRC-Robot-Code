@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.50575,
-        "y": 5.2145
+        "x": 2.349590163934426,
+        "y": 6.242725409836066
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2920555813177494,
-        "y": 5.533890395512962
+        "x": 2.1358957452521756,
+        "y": 6.562115805349028
       },
       "isLocked": false,
       "linkedName": "LSourceS"
@@ -55,7 +55,7 @@
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": 125.00000000000001
+    "rotation": 129.80557109226524
   },
   "useDefaultConstraints": false
 }

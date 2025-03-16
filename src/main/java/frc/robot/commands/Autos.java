@@ -29,7 +29,7 @@ public class Autos {
                 /* Get coral 2 */
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile("3C2"))
                     .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
                     .until(endEffector::hasCoral)
                         .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
                 /* Score coral 2 */
@@ -40,7 +40,7 @@ public class Autos {
                 /* Get coral 3 */
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile("3C4"))
                     .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
                     .until(endEffector::hasCoral)
                         .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
                 /* Score coral 3 */
@@ -50,6 +50,7 @@ public class Autos {
                 endEffector.placeCoral(),
                 /* Return to stow positions */
                 arm.moveToStowPos(),
+                Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition()
             );
         } catch (Exception e) {
@@ -70,14 +71,14 @@ public class Autos {
                 /* Get coral 2 */
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C2"))
                     .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
                     .until(endEffector::hasCoral)
                         .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
-                // /* Score coral 2 */
-                // AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C3"))
-                //         .deadlineFor(endEffector.holdCoral())
-                //             .alongWith(prepareForScore(elevator, arm)),
-                // endEffector.placeCoral(),
+                /* Score coral 2 */
+                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Right 3C3"))
+                        .deadlineFor(endEffector.holdCoral())
+                            .alongWith(prepareForScore(elevator, arm)),
+                endEffector.placeCoral(),
                 // /* Get coral 3 */
                 // AutoBuilder.followPath(PathPlannerPath.fromPathFile("3C4"))
                 //     .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
@@ -91,6 +92,7 @@ public class Autos {
                 // endEffector.placeCoral(),
                 // /* Return to stow positions */
                 arm.moveToStowPos(),
+                Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition()
             );
         } catch (Exception e) {

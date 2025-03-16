@@ -15,6 +15,7 @@ import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,8 +42,8 @@ public class RobotContainer {
     private final Trigger resetPerspective = driveController.b();
     private final Trigger eject = driveController.x();
     private final Trigger stowPosition = driveController.y();
-    private final Trigger intakeUp = driveController.rightTrigger();
-    private final Trigger intakeDown = driveController.leftTrigger();
+    private final Trigger intakeDown = driveController.rightTrigger();
+    private final Trigger intakeUp = driveController.leftTrigger();
 
     /* Operator Controller Buttons */
 
@@ -69,7 +70,7 @@ public class RobotContainer {
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
 
     /* Teleop Triggers */
-    // ...
+    private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
 
     /* Auto Triggers */
     // ...
@@ -92,7 +93,7 @@ public class RobotContainer {
 
         bindRobotModeTriggers();
 
-        bindAutoModeTriggers();
+        bindTeleopTriggers();
 
         /* Setup automation */
         automationCommand = automationHandler.automationResumeCommand()
@@ -182,6 +183,16 @@ public class RobotContainer {
             disableAutomation()
             .andThen(compositions.backgroundCoralMovement(false))
         );
+
+        // intakeDown.negate().and(() -> !endEffector.hasCoral()).onTrue(
+        //     disableAutomation()
+        //     .andThen(
+        //         intake.returnToStowPosition(),
+        //         intake.stopIntaking(), 
+        //         indexer.stopRollers(),
+        //         endEffector.stopRollers()
+        //     )
+        // );  
 
         /* Manual Controls:
          * 
@@ -305,8 +316,16 @@ public class RobotContainer {
         teleopEnabled.onTrue(compositions.resetStates());
     }
 
-    private void bindAutoModeTriggers() {
-        
+    private void bindTeleopTriggers() {
+        hasCoral.onTrue(rumble());
+    }
+
+    private Command rumble() {
+        return Commands.sequence(
+            Commands.runOnce(() -> driveController.setRumble(RumbleType.kBothRumble, 1.0)),
+            Commands.waitSeconds(kRumbleTime),
+            Commands.runOnce(() -> driveController.setRumble(RumbleType.kBothRumble, 0.0))
+        );
     }
     
     private void bindSysIdTriggers() {

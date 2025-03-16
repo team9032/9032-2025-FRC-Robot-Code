@@ -60,7 +60,7 @@ public class Compositions {
                 .onlyIf(() -> goToSource),
             Commands.waitUntil(intake::canRunRollers),
             intake.resetLastObstacleDistance(),//Does not require intake subsystem
-            new AimAtCoral(swerve, intake::getObstacleSensorDistance)
+            new AimAtCoral(swerve, intake::getObstacleSensorDistance, false)
                 .alongWith(Commands.waitUntil(endEffector::hasCoral)),
             ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence is " + continueToScoring),
             scoreCoralSequence()

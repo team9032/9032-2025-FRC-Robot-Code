@@ -12,20 +12,20 @@
         "y": 4.4247499999999995
       },
       "isLocked": false,
-      "linkedName": "3C3E"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.50575,
-        "y": 5.2145
+        "x": 2.1547500000000004,
+        "y": 5.75075
       },
       "prevControl": {
-        "x": 3.2467499999999996,
-        "y": 4.1907499999999995
+        "x": 2.89575,
+        "y": 4.726999999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LSourceS"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": 125.00000000000001
+    "rotation": 103.29857033049421
   },
   "reversed": false,
   "folder": "3 Coral Right",
