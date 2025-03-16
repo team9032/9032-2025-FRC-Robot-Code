@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.163910256410255,
-        "y": 4.159166666666667
+        "x": 6.0840000000000005,
+        "y": 4.22
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.914295168108902,
-        "y": 4.145299161761035
+        "x": 5.70612432944531,
+        "y": 4.22
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4LS"
     },
     {
       "anchor": {
-        "x": 5.720128205128204,
-        "y": 4.159166666666667
+        "x": 5.810999999999999,
+        "y": 4.22
       },
       "prevControl": {
-        "x": 5.967615578543496,
-        "y": 4.194522005725994
+        "x": 6.061,
+        "y": 4.22
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -47,8 +54,8 @@
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 4.0,
+    "velocity": 1.0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

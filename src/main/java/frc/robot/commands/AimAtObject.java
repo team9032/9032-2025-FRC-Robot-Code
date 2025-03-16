@@ -1,16 +1,19 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
 
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -26,14 +29,20 @@ public class AimAtObject extends Command {
 
     private final int objectToTrackId;    
 
-    public AimAtObject(KrakenSwerve swerve, int objectToTrackId) {
+    private final DoubleSupplier obstacleDistanceSup;
+
+    private final boolean moveOnInit;
+
+    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
        this.swerve = swerve; 
        this.objectToTrackId = objectToTrackId;
+       this.obstacleDistanceSup = obstacleDistanceSup;
+       this.moveOnInit = moveOnInit;
 
        localization = swerve.getLocalization();
 
        rotationController = new PIDController(kPRotation, 0.0, kDRotation);
-       rotationController.setSetpoint(kRotationSetpoint);
+       rotationController.enableContinuousInput(-180.0, 180.0);
 
        targetCache = new VisionTargetCache<>(kCycleAmtSinceTargetSeenCutoff);
 
@@ -41,10 +50,61 @@ public class AimAtObject extends Command {
     }
 
     @Override
-    public void initialize() {}  
+    public void initialize() {
+        ElasticUtil.sendInfo("Started object aiming");
+
+        if (moveOnInit)
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
+
+        else 
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+    }  
 
     @Override
     public void execute() {
+        if (targetCache.targetExpired()) {
+            targetCache.reset();
+
+            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+        }
+
+        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+
+        PhotonTrackedTarget targetToTrack = getTarget();
+
+        /* Wait to get a target */
+        if (!targetCache.hasTarget()) {
+            if (moveOnInit) {
+                double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+                    kSlowDrivingSpeed : kMaxDrivingSpeed;
+
+                swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
+            }
+
+            return;
+        }
+
+        /* Update setpoint if we have a target */
+        if(targetToTrack != null) {
+            double rotationSetpoint = currentYaw - (targetToTrack.yaw - kRotationSetpoint);
+
+            rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
+        }
+
+        /* Drive based on target yaw and obstacle distance */
+        double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+            kSlowDrivingSpeed : kMaxDrivingSpeed;
+
+        var speeds = new ChassisSpeeds(
+            drivingSpeed,
+            0.0, 
+            rotationController.calculate(currentYaw)
+        );
+
+        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
+    }
+
+    private PhotonTrackedTarget getTarget() {
         /* Make sure the target cache is incremented each loop */
         var previousTarget = targetCache.getAndIncrement();
 
@@ -53,7 +113,7 @@ public class AimAtObject extends Command {
         /* Remove all results without targets - exit if no results have targets */
         results.removeIf((result) -> !result.hasTargets());
         if(results.isEmpty())
-            return;
+            return null;
 
         /* Find the most recent result */
         PhotonPipelineResult latestResult = results.get(0);
@@ -67,12 +127,13 @@ public class AimAtObject extends Command {
         filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);
 
         if(filteredTargets.isEmpty())
-            return;
+            return null;
 
         PhotonTrackedTarget targetToTrack = null;
         /* Find the target that is closest to the center of the camera when there is no previous target */
-        if(!targetCache.hasTarget()) 
+        if(!targetCache.hasTarget()) {
             targetToTrack = latestResult.getBestTarget();
+        }
         /* Find the lowest pitch difference target that is within the pitch difference cutoff */
         else {            
             double lowestPitchDifference = Double.MAX_VALUE;
@@ -88,24 +149,15 @@ public class AimAtObject extends Command {
             }
         }
 
-        if (targetToTrack == null)
-            return;
+        if (targetToTrack != null)
+            targetCache.updateTarget(targetToTrack);
 
-        /* Drive based on target yaw */
-        var speeds = new ChassisSpeeds(
-            -kDrivingSpeed,
-            0.0, 
-            rotationController.calculate(targetToTrack.yaw)
-        );
-
-        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
-
-        targetCache.updateTarget(targetToTrack);
+        return targetToTrack;
     }
 
     @Override
     public boolean isFinished() {
-        return targetCache.targetExpired();
+        return false;
     }
 
     @Override
@@ -114,5 +166,7 @@ public class AimAtObject extends Command {
         targetCache.reset();
 
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+
+        ElasticUtil.sendInfo("Finished object aiming");
     }
 }

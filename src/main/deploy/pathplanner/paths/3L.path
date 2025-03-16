@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.74,
-        "y": 3.869
+        "x": 5.09,
+        "y": 5.4875
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.99,
-        "y": 3.869
+        "x": 4.840000000000001,
+        "y": 5.05448729810778
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3LS"
     },
     {
       "anchor": {
-        "x": 3.1,
-        "y": 3.879
+        "x": 4.985,
+        "y": 5.283
       },
       "prevControl": {
-        "x": 2.85,
-        "y": 3.879
+        "x": 5.235000000000001,
+        "y": 5.716012701892219
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": 180.0
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": false
 }

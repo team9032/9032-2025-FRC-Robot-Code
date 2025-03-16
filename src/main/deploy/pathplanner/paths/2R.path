@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.441474358974359,
-        "y": 5.387307692307693
+        "x": 3.52,
+        "y": 5.303
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.32967096009937,
-        "y": 5.163700894557714
+        "x": 3.77,
+        "y": 4.86998729810778
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "2RS"
     },
     {
       "anchor": {
-        "x": 5.235064102564102,
-        "y": 5.005448717948718
+        "x": 3.657,
+        "y": 5.069
       },
       "prevControl": {
-        "x": 5.336598719077463,
-        "y": 5.2339016051037826
+        "x": 3.5069999999999997,
+        "y": 5.328807621135331
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Elevator",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
-    "velocity": 4.0,
-    "rotation": 61.113418233089185
+    "velocity": 1.0,
+    "rotation": 119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

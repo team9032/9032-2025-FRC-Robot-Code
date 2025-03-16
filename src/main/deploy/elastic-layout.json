@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 32,
   "tabs": [
     {
       "name": "Localization",
@@ -513,31 +513,10 @@
             }
           },
           {
-            "title": "Auto Chooser",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Auto Chooser",
-              "period": 0.06,
-              "sort_options": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Driver",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
             "title": "Version Info",
             "x": 0.0,
-            "y": 640.0,
-            "width": 512.0,
+            "y": 576.0,
+            "width": 608.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -545,6 +524,446 @@
               "period": 0.06,
               "data_type": "string",
               "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Button Board",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "to1L",
+            "x": 192.0,
+            "y": 416.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to1L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to1R",
+            "x": 288.0,
+            "y": 416.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to1R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to2L",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to2L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to2R",
+            "x": 96.0,
+            "y": 352.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to2R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to3L",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to3L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4286578816,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to3R",
+            "x": 96.0,
+            "y": 32.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to3R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4286578816,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to4L",
+            "x": 192.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to4L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to4R",
+            "x": 288.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to4R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to5L",
+            "x": 384.0,
+            "y": 64.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to5L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901760,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to5R",
+            "x": 480.0,
+            "y": 128.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to5R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901760,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to6L",
+            "x": 384.0,
+            "y": 352.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to6L",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "to6R",
+            "x": 480.0,
+            "y": 256.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/to6R",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "algaeToggle",
+            "x": 224.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/algaeToggle",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Level 1",
+            "x": 608.0,
+            "y": 416.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toTrough",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Level 2",
+            "x": 608.0,
+            "y": 288.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel1",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967040,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Level 3",
+            "x": 608.0,
+            "y": 160.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel2",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Level 4",
+            "x": 608.0,
+            "y": 32.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLevel3",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278193919,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toRSource",
+            "x": 608.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toRSource",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toLSource",
+            "x": 0.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toLSource",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294967295,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "automaticMode",
+            "x": 128.0,
+            "y": 576.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/automaticMode",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4278255370,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toBarge",
+            "x": 352.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toBarge",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901764,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "toProcessor",
+            "x": 480.0,
+            "y": 576.0,
+            "width": 96.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toProcessor",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294704896,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Auto Chooser",
+            "x": 1408.0,
+            "y": 544.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Chooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Intake Camera",
+            "x": 736.0,
+            "y": 352.0,
+            "width": 672.0,
+            "height": 416.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/grayorangepi_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "compression": 10
+            }
+          },
+          {
+            "title": "Has Coral",
+            "x": 1408.0,
+            "y": 352.0,
+            "width": 128.0,
+            "height": 192.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/End Effector Has Coral",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4279762688,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Reef Camera",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 736.0,
+            "height": 352.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/grayorangepi_Port_1183_Input_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "compression": 24
             }
           }
         ]
