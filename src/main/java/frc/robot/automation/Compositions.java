@@ -120,6 +120,8 @@ public class Compositions {
                         .until(() -> readyForScoring)
                 ),
             Commands.waitUntil(() -> readyForScoring),
+            Commands.waitSeconds(0.33),
+             //   .deadlineFor(endEffector.holdCoral()),//TODO no wait plz???
             buttonBoardHandler.scoreCoral(endEffector),
             arm.moveToStowPos(),
             Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; readyForIntaking = false; })

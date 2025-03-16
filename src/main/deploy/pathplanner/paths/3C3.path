@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.94025,
+        "x": 2.0,
         "y": 6.2675
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.07675,
-        "y": 4.999999999999999
+        "x": 2.682499999999999,
+        "y": 6.16025
       },
       "isLocked": false,
       "linkedName": "LSourceDone"
     },
     {
       "anchor": {
-        "x": 3.1492500000000003,
-        "y": 4.15175
+        "x": 3.93,
+        "y": 5.24375
       },
       "prevControl": {
-        "x": 2.3205,
-        "y": 4.22
+        "x": 3.3632500000000003,
+        "y": 6.41775
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8248138957816357,
+      "minWaypointRelativePos": 0.7295285359801547,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.8387096774193479,
+      "waypointRelativePos": 0.9181141439205904,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -63,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "3 Coral Left",

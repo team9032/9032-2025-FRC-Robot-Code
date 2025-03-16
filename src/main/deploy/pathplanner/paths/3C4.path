@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1492500000000003,
-        "y": 4.15175
+        "x": 3.94,
+        "y": 5.24375
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.46675,
-        "y": 4.4247499999999995
+        "x": 3.6085000000000003,
+        "y": 5.8385
       },
       "isLocked": false,
       "linkedName": "3C3E"
@@ -62,7 +62,7 @@
   "folder": "3 Coral Left",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 180.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": false
 }
