@@ -22,6 +22,8 @@ public class Elevator extends SubsystemBase {
     private final Follower followerMotorControl;
     private final StatusSignal<Angle> elevatorPosSignal;
 
+    public static boolean elevatorOverSlowModeHeight;
+
     public Elevator() {
         //The leader of a follower cannot have its bus utilization optimized
         elevatorMotor = new TalonFX(kFrontElevatorID);
@@ -42,8 +44,6 @@ public class Elevator extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        elevatorPosSignal.refresh();
-
         return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
     }
 
@@ -87,8 +87,15 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorNet));
     }
 
+    public boolean getElevatorOverSlowModeHeight() {
+        return elevatorPosSignal.getValueAsDouble() > kAutoSlowModeHeight;
+    }
+
     @Override
     public void periodic() {
+        elevatorPosSignal.refresh();
+        
         SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
+        SmartDashboard.putBoolean("Elevator over slow mode height", getElevatorOverSlowModeHeight());
     }
 }

@@ -126,6 +126,13 @@ public class RobotContainer {
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
     }
 
+    private boolean isSlowModeEnabled() {
+        if (slowMode.getAsBoolean()) 
+            return true;
+        else 
+            return elevator.getElevatorOverSlowModeHeight();
+    }
+
     private boolean driverWantsOverride() {
         return Math.abs(driveController.getRightX()) > kOverrideAutomationThreshold || 
             Math.abs(driveController.getLeftX()) > kOverrideAutomationThreshold ||    
@@ -139,7 +146,7 @@ public class RobotContainer {
                 driveController::getRightX,
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
-                slowMode
+                () -> isSlowModeEnabled()
             )
         );  
     }
