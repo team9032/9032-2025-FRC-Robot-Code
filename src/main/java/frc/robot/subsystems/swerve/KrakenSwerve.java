@@ -29,6 +29,8 @@ public class KrakenSwerve extends SubsystemBase {
 
     private final Localization localization;
 
+    private boolean operatorPerspectiveSet = false;
+
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
@@ -123,6 +125,12 @@ public class KrakenSwerve extends SubsystemBase {
     @Override
     public void periodic() {
         localization.updateLocalization();
+
+        if (!operatorPerspectiveSet && DriverStation.getAlliance().isPresent()) {
+            drivetrain.setOperatorPerspectiveForward(new Rotation2d(DriverStation.Alliance.Blue.equals(DriverStation.getAlliance().get()) ? 0 : Math.PI));
+            
+            operatorPerspectiveSet = true;
+        }
     }
 
     public Localization getLocalization() {
