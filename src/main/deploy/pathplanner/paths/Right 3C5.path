@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.94025,
-        "y": 6.2675
+        "x": 3.0756326672733674,
+        "y": 2.447091744644598
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1645,
-        "y": 5.39
+        "x": 3.3758393350720417,
+        "y": 2.598739225965378
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RightC4End"
     },
     {
       "anchor": {
-        "x": 3.1492500000000003,
-        "y": 3.83
+        "x": 3.994252355687399,
+        "y": 2.7611142257591657
       },
       "prevControl": {
-        "x": 2.1492500000000003,
-        "y": 3.83
+        "x": 3.569427399748568,
+        "y": 2.4811466158241706
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8923076923076887,
+      "minWaypointRelativePos": 0.88,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "3 Coral Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 128.25442035251714
+    "rotation": -127.99873244250472
   },
   "useDefaultConstraints": false
 }
