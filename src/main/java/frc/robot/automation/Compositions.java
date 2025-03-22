@@ -5,38 +5,45 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
+import frc.robot.utils.LocalizationTrigger;
+
+import static frc.robot.Constants.AutomationConstants.kIntakeZoneRectangle;
 
 /** Contains all command compositions that use multiple subsystems. Do not put single subsystem commands here. */
 public class Compositions {
-    private final Arm arm;
-    private final Elevator elevator;
     private final EndEffector endEffector;
     private final Indexer indexer;
     private final Intake intake;
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
+    private final ElevatorAndArmHandler elevatorAndArmHandler;
 
     public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
     private final EventTrigger sourcePathHit = new EventTrigger("Intake");
 
-    private boolean readyForScoring = false;
+    private final Trigger intakeDown;
+
+    private boolean finishedReefPath = false;
     private boolean readyForElevator = false;
     private boolean readyForIntaking = false;
 
     public Compositions(Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
-        this.arm = arm;
-        this.elevator = elevator;
         this.endEffector = endEffector;
         this.indexer = indexer;
         this.intake = intake;
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
+
+        elevatorAndArmHandler = new ElevatorAndArmHandler(elevator, arm, buttonBoardHandler);
+
+        intakeDown = new LocalizationTrigger(swerve, kIntakeZoneRectangle).getTrigger();
 
         prepareElevatorForScoring.onTrue(
             Commands.runOnce(() -> readyForElevator = true)  
@@ -47,9 +54,8 @@ public class Compositions {
         );
     }
 
-    public Command noPieceSequence() {
-        /* Algae mode must be scheduled seperately from coral to avoid requirement conflicts */
-        return Commands.either(Commands.none()/*new ScheduleCommand(getAlgaeSequence())*/, getCoralSequence(true, true), buttonBoardHandler::inAlgaeMode);
+    public Command noCoralSequence() {
+        return getCoralSequence(true, true);
     }
 
     public Command getCoralSequence(boolean goToSource, boolean continueToScoring) {
@@ -80,8 +86,8 @@ public class Compositions {
         return Commands.sequence(
             Commands.waitUntil(buttonBoardHandler::hasQueues),
             buttonBoardHandler.followReefPath(),
-            Commands.runOnce(() -> readyForScoring = true),
-            Commands.waitUntil(() -> !readyForScoring)
+            Commands.runOnce(() -> finishedReefPath = true),
+            Commands.waitUntil(() -> !finishedReefPath)
         );
     }
 
@@ -89,49 +95,44 @@ public class Compositions {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            prepareForIntaking(goingToSource),
-            Commands.waitUntil(() -> readyForIntaking)
-                .onlyIf(() -> goingToSource),
-            intake.moveToGround(),
+            Commands.either(
+                Commands.waitUntil(() -> readyForIntaking)
+                    .andThen(intake.moveToGround()), 
+                elevatorAndArmHandler.prepareForCoralIntaking()
+                    .alongWith(intake.moveToGround()), 
+                () -> goingToSource),
             Commands.waitUntil(intake::canRunRollers),
             intake.intakeCoral(),
             indexer.spinRollers(),
-            endEffector.receiveCoralFromIndexer(),
+            endEffector.receiveCoralFromIndexer().asProxy(),
+            new ScheduleCommand(endEffector.holdCoral()),
             intake.stopIntaking(),
             indexer.stopRollers(),
             intake.returnToStowPosition(),
-            Commands.parallel(
-                endEffector.holdCoral(),
-                arm.moveToStowPos()
-            ).until(() -> readyForElevator),
+            elevatorAndArmHandler.prepareForCoralScoringInitial(),
+            Commands.waitUntil(() -> readyForElevator),
             /* Prepare and score when ready */
             backgroundScoreSequence()
         );
     }
 
-    public Command backgroundScoreSequence() {
+    private Command backgroundScoreSequence() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Background score sequence started"),
-            endEffector.holdCoral() 
-                .until(() -> readyForElevator),
-            prepareForCoralScoring()
-                .alongWith(
-                    endEffector.holdCoral()
-                        .until(() -> readyForScoring)
-                ),
-            Commands.waitUntil(() -> readyForScoring),
+            Commands.waitUntil(() -> readyForElevator),
+            elevatorAndArmHandler.prepareForCoralScoringFinal(),
+            Commands.waitUntil(() -> finishedReefPath),
             Commands.waitSeconds(0.33),
-             //   .deadlineFor(endEffector.holdCoral()),//TODO no wait plz???
-            buttonBoardHandler.scoreCoral(endEffector),
-            arm.moveToStowPos(),
-            Commands.runOnce(() -> { readyForScoring = false; readyForElevator = false; readyForIntaking = false; })
+            buttonBoardHandler.scoreCoral(endEffector).asProxy(),
+            Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
+            elevatorAndArmHandler.prepareForCoralIntaking()
         );
     }
 
-    private Command getAlgaeSequence() {
+    public Command getAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeIntakePath()
-                .alongWith(prepareForAlgaeIntaking()),
+                .alongWith(elevatorAndArmHandler.prepareForAlgaeIntakingFinal()),
             endEffector.pickupAlgae(),
             scoreAlgaeSequence()
         );
@@ -140,50 +141,8 @@ public class Compositions {
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeScorePath()
-                .alongWith(prepareForAlgaeScoring()),
-            buttonBoardHandler.scoreAlgae(endEffector),
-            buttonBoardHandler.clearAlgaeTargets()
-        );
-    }
-
-    private Command prepareForIntaking(boolean goingToSource) {
-        return Commands.sequence(
-            intake.moveToGround()
-                .onlyIf(() -> !goingToSource),
-            elevator.moveToIndexerPosition(),
-            Commands.waitUntil(elevator::atSetpoint),
-            arm.moveToIndexerPos(),
-            Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for intaking")
-        );
-    }
-
-    private Command prepareForCoralScoring() {
-        return Commands.sequence(
-            buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
-            Commands.waitUntil(elevator::atSetpoint),
-            buttonBoardHandler.moveArmToCoralTargetLevel(arm),
-            Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring")
-        );
-    }
-
-    public Command prepareForAlgaeIntaking() {
-        return Commands.sequence(
-            buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
-            Commands.waitUntil(elevator::atSetpoint),
-            buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
-            Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for algae intake")
-        );
-    }
-
-    private Command prepareForAlgaeScoring() {
-        return Commands.parallel(
-            buttonBoardHandler.moveArmToAlgaeScoreLevel(arm)
-                .andThen(Commands.waitUntil(arm::atSetpoint)),
-            buttonBoardHandler.moveElevatorToAlgaeScoreLevel(elevator)
-                .andThen(Commands.waitUntil(elevator::atSetpoint))
+                .alongWith(elevatorAndArmHandler.prepareForAlgaeScoring()),//TODO handle net algae
+            buttonBoardHandler.scoreAlgae(endEffector)
         );
     }
 
@@ -193,15 +152,9 @@ public class Compositions {
             indexer.stopRollers(),
             endEffector.stopRollers(),
             Commands.runOnce(() -> { 
-                readyForScoring = false; 
+                finishedReefPath = false; 
                 readyForElevator = false; 
                 readyForIntaking = false;
-                
-                if (arm.getCurrentCommand() != null)
-                    arm.getCurrentCommand().cancel();
-
-                if (elevator.getCurrentCommand() != null)
-                    elevator.getCurrentCommand().cancel();
             })
         );
     }

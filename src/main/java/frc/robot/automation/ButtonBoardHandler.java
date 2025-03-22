@@ -12,7 +12,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 
-import static frc.robot.Constants.ButtonBoardConstants.*;
+import static frc.robot.Constants.AutomationConstants.*;
 
 import java.util.Map;
 
@@ -45,10 +45,8 @@ public class ButtonBoardHandler {
     private final BooleanPublisher toLevel1Pub = buttonTable.getBooleanTopic("toLevel1").publish();
     private final BooleanPublisher toLevel2Pub = buttonTable.getBooleanTopic("toLevel2").publish();
     private final BooleanPublisher toLevel3Pub = buttonTable.getBooleanTopic("toLevel3").publish();
-    private final BooleanPublisher algaeTogglePub = buttonTable.getBooleanTopic("algaeToggle").publish();
-    private final BooleanPublisher automaticModePub = buttonTable.getBooleanTopic("automaticMode").publish();
-
-    private boolean algaeMode = false;
+    private final BooleanPublisher algaeModePub = buttonTable.getBooleanTopic("algaeToggle").publish();
+    private final BooleanPublisher coralModePub = buttonTable.getBooleanTopic("automaticMode").publish();
 
     private final Trigger toLSource = buttonBoardController1.button(1);
     private final Trigger toBarge = buttonBoardController1.button(4);
@@ -73,8 +71,8 @@ public class ButtonBoardHandler {
     private final Trigger toLevel2 = buttonBoardController2.button(8);
     private final Trigger toLevel3 = buttonBoardController2.button(10);
 
-    private final Trigger algaeToggle = buttonBoardController1.button(9);
-    private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
+    private final Trigger enableAlgaeMode = buttonBoardController1.button(9);
+    private final Trigger enableCoralMode = buttonBoardController1.button(3);
     private final Trigger autoIntake = buttonBoardController1.button(2);
      
     public final Trigger manual1 = buttonBoardController3.button(5);
@@ -119,7 +117,7 @@ public class ButtonBoardHandler {
         TO_PROCESSOR
     }
 
-    private AlgaeScorePath algaeScorePathTarget = AlgaeScorePath.NONE;
+    private AlgaeScorePath algaeScorePathTarget = AlgaeScorePath.TO_BARGE;
 
     private static enum SourcePath {
         NONE,
@@ -161,8 +159,6 @@ public class ButtonBoardHandler {
         toLevel1.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL1));
         toLevel2.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL2));
         toLevel3.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL3));
-
-        algaeToggle.onTrue(Commands.runOnce(() -> algaeMode = !algaeMode));
     }
 
     public Command scoreCoral(EndEffector endEffector) {
@@ -336,20 +332,16 @@ public class ButtonBoardHandler {
         ); 
     }
 
-    public boolean inAlgaeMode() {
-        return algaeMode;
+    public Trigger getEnableCoralModeTrigger() {
+        return enableCoralMode;
     }
 
-    public Trigger getEnableAutomaticModeTrigger() {
-        return enableAutomaticMode;
+    public Trigger getEnableAlgaeModeTrigger() {
+        return enableAlgaeMode;
     }
 
     public Command clearAlgaeTargets() {
-        return Commands.runOnce(() -> {
-            algaeMode = false;
-
-            algaeScorePathTarget = AlgaeScorePath.NONE;
-        });
+        return Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.NONE);
     }
 
     public Command clearReefTargets() {
@@ -363,7 +355,7 @@ public class ButtonBoardHandler {
         return autoIntake;
     }
 
-    public void update(boolean automaticModeEnabled) {
+    public void update(boolean coralModeEnabled, boolean algaeModeEnabled) {
         toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
         toBargePub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_BARGE));
         toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
@@ -387,15 +379,11 @@ public class ButtonBoardHandler {
         toLevel2Pub.set(reefLevelTarget.equals(ReefLevel.TO_LEVEL2));
         toLevel3Pub.set(reefLevelTarget.equals(ReefLevel.TO_LEVEL3));
 
-        algaeTogglePub.set(algaeMode);
-        automaticModePub.set(automaticModeEnabled);
+        algaeModePub.set(algaeModeEnabled);
+        coralModePub.set(coralModeEnabled);
     }    
 
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
-    }
-
-    public Trigger getAlgaeTrigger() {
-        return algaeToggle;
     }
 }

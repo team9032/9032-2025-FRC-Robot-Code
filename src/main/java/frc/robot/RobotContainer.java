@@ -63,8 +63,9 @@ public class RobotContainer {
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final Compositions compositions = new Compositions(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
-    private final AutomationHandler automationHandler = new AutomationHandler(compositions, arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
-    private final Command automationCommand;
+    private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
+    private final Command coralCyclingCommand;
+    private final Command algaeCyclingCommand;
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
@@ -96,23 +97,23 @@ public class RobotContainer {
         bindTeleopTriggers();
 
         /* Setup automation */
-        automationCommand = automationHandler.automationResumeCommand()
+        coralCyclingCommand = automationHandler.coralResumeCommand()
             .until(this::driverWantsOverride);
 
-        buttonBoard.getEnableAutomaticModeTrigger()
-            .toggleOnTrue(automationCommand.onlyIf(buttonBoard::hasQueues));
+        algaeCyclingCommand = automationHandler.algaeResumeCommand()
+            .until(this::driverWantsOverride);
+
+        buttonBoard.getEnableCoralModeTrigger()
+            .toggleOnTrue(coralCyclingCommand.onlyIf(buttonBoard::hasQueues));
+
+        buttonBoard.getEnableAlgaeModeTrigger()
+            .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
             compositions.getCoralSequence(false, false)
             .onlyIf(() -> !endEffector.hasCoral())
             .until(this::driverWantsOverride)
         );  
-
-        buttonBoard.getAlgaeTrigger().whileTrue(//TODO full algae cycling
-            compositions.prepareForAlgaeIntaking()
-            .andThen(endEffector.pickupAlgae())
-        )
-        .onFalse(endEffector.outtakeProcessorAlgae());
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
@@ -303,12 +304,12 @@ public class RobotContainer {
     }
 
     private Command disableAutomation() {
-        return Commands.runOnce(() -> automationCommand.cancel());
+        return Commands.runOnce(() -> coralCyclingCommand.cancel());
     }
 
     /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update(automationCommand.isScheduled());
+        buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
     }
 
     /** Bind robot mode triggers here */

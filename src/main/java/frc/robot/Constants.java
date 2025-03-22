@@ -19,6 +19,9 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -208,6 +211,8 @@ public final class Constants {
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 0;
+
+        public static final double kElevatorOverIndexer = 4.2;
     }
 
     public static final class IndexerConstants {
@@ -428,9 +433,12 @@ public final class Constants {
             .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
     }
 
-    public static final class ButtonBoardConstants {
+    public static final class AutomationConstants {
         public static final int kButtonBoardPort1 = 3;
         public static final int kButtonBoardPort2 = 4;
         public static final int kButtonBoardPort3 = 5;
+
+        public static final Rectangle2d kIntakeZoneRectangle = new Rectangle2d(
+            new Pose2d(2.04, 6.04, Rotation2d.fromDegrees(-55.0)), 0.8, 4.0);
     }
 }

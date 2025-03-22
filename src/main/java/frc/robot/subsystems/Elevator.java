@@ -42,9 +42,11 @@ public class Elevator extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        elevatorPosSignal.refresh();
-
         return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+    }
+
+    public boolean overIndexPosition() {
+        return elevatorPosSignal.getValueAsDouble() > kElevatorOverIndexer;
     }
 
     public Command moveToIndexerPosition() {
@@ -87,8 +89,14 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorNet));
     }
 
+    public Command moveToOverIndexerPosition() {
+        return runOnce(() -> moveElevator(kElevatorOverIndexer));
+    }
+
     @Override
     public void periodic() {
+        elevatorPosSignal.refresh();
+
         SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
     }
 }
