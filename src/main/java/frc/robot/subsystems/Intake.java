@@ -45,8 +45,6 @@ public class Intake extends SubsystemBase {
     }
 
     private double getArmPosition() {
-        armMotorPosSignal.refresh();
-
         return armMotorPosSignal.getValueAsDouble();
     }
 
@@ -66,6 +64,10 @@ public class Intake extends SubsystemBase {
         return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(kGroundPosition)));
     }
 
+    public Command moveToEndEffectorMovePosition() {
+        return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(kEndEffectorMovePosition)));
+    }
+
     public Command ejectCoral() {
         return Commands.sequence(
             runOnce(() -> rollerMotor.set(kEjectPower)),
@@ -76,6 +78,10 @@ public class Intake extends SubsystemBase {
 
     public boolean canRunRollers() {
         return getArmPosition() < kRunRollersPosition;
+    }
+
+    public boolean endEffectorCanMovePast() {
+        return getArmPosition() < kEndEffectorMovePosition;
     }
 
     public double getObstacleSensorDistance() {
@@ -93,6 +99,8 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
+        armMotorPosSignal.refresh();
+
         SmartDashboard.putNumber("Obstacle sensor distance", getObstacleSensorDistance());
         SmartDashboard.putBoolean("Can run rollers", canRunRollers());
     }

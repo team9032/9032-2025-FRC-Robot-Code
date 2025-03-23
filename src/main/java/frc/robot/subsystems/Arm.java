@@ -43,8 +43,6 @@ public class Arm extends SubsystemBase {
     }
 
     private double getRelativePosition() {
-        armPosSignal.refresh();
-
         return armPosSignal.getValueAsDouble();
     }
 
@@ -54,6 +52,10 @@ public class Arm extends SubsystemBase {
 
     public double getArmAbsolutePosition() {
         return armEncoder.get();
+    }
+
+    public boolean atIndexPosition() {
+        return MathUtil.isNear(kArmIndexerPos, getRelativePosition(), kArmPositionTolerance);
     }
 
     public Command moveToStowPos() {
@@ -102,6 +104,8 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+        armPosSignal.refresh();
+
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
         SmartDashboard.putNumber("End effector arm absolute position", getArmAbsolutePosition());
         SmartDashboard.putNumber("End effector arm relative position", getRelativePosition());

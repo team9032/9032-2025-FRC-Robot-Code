@@ -201,10 +201,10 @@ public final class Constants {
         public static final double kElevatorTolerance = 0.05;
 
         //TODO change all elevator positions once we can find them
-        public static final double kElevatorTrough = 2.70;
-        public static final double kElevatorL1 = 1.683;
-        public static final double kElevatorL2 = 3.843;
-        public static final double kElevatorL3 = 8.63;
+        public static final double kElevatorTrough = 0.4;
+        public static final double kElevatorL1 = 1.5;
+        public static final double kElevatorL2 = 3.52;
+        public static final double kElevatorL3 = 7.4;
         public static final double kElevatorLowAlgae = 3.1;
         public static final double kElevatorHighAlgae = 5.3;
         public static final double kElevatorIndexerPos = 1.6;
@@ -212,7 +212,7 @@ public final class Constants {
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 0;
 
-        public static final double kElevatorOverIndexer = 4.2;
+        public static final double kElevatorOverIndexer = 3.2;
     }
 
     public static final class IndexerConstants {
@@ -284,7 +284,8 @@ public final class Constants {
         public static final double kIntakePower = -1.0;
 
         public static final double kGroundPosition = -120.0;
-        public static final double kStowPosition = -20.0;
+        public static final double kStowPosition = -23.0;
+        public static final double kEndEffectorMovePosition = -49.0;
 
         public static final double kRunRollersPosition = -100;
 
@@ -295,24 +296,24 @@ public final class Constants {
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
 
-        public static final double kArmEncoderRange = 360.0;
+        public static final double kArmEncoderRange = 1.0;
         public static final boolean kInvertAbsEncoder = true;
         public static final int kArmEncoderPort = 2; 
-        public static final double kArmEncoderZeroPos = -16.5; 
+        public static final double kArmEncoderZeroPos = 0.447; 
 
-        public static final double kArmStowPos = 260;
-        public static final double kArmIndexerPos = 90;
-        public static final double kArmTroughPos = 130.0;
-        public static final double kArmLevel1Pos = 242.7; 
-        public static final double kArmLevel2Pos = 242.7;
-        public static final double kArmLevel3Pos = 210.0;
+        public static final double kArmStowPos = 0.205;
+        public static final double kArmIndexerPos = 0.75;
+        public static final double kArmTroughPos = 0.14;
+        public static final double kArmLevel1Pos = 0.19; 
+        public static final double kArmLevel2Pos = 0.19;
+        public static final double kArmLevel3Pos = 0.16;
         public static final double kArmHighAlgaePos = 190.0;
         public static final double kArmLowAlgaePos = 190.0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 140.0;
         public static final double kArmNetPos = 0;
 
-        public static final double kArmPositionTolerance = 0.5;
+        public static final double kArmPositionTolerance = 0.005;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
@@ -321,24 +322,24 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKP(0.7)
-            .withKD(0)
-            .withKG(0)//TODO add kG
-            .withKV(0.035)
+            .withKG(0.28)
+            .withKP(130.0)
+            .withKD(10.0)
+            .withKV(11.5)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(150)
-            .withMotionMagicAcceleration(2000); 
+            .withMotionMagicCruiseVelocity(0.9)
+            .withMotionMagicAcceleration(5.0); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(94.5 / 360.0);
+            .withSensorToMechanismRatio(94.5);
 
         public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(270.0) 
-            .withReverseSoftLimitThreshold(70.0);
+            .withForwardSoftLimitThreshold(0.86) 
+            .withReverseSoftLimitThreshold(-0.12);
 
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
@@ -400,14 +401,14 @@ public final class Constants {
         public static final double kProcessorOuttakePower = 0.5;
         public static final double kNetOuttakePower = 1.0;
         public static final double kIntakeAlgaePower = -1.0;
-        public static final double kHoldAlgaePower = -1.0;//TODO algae is dropped due to overheating
+        public static final double kHoldAlgaePower = -0.2;
 
-        public static final double kCoralOuttakePower = 0.5;
+        public static final double kCoralOuttakePower = 1.0;
         public static final double kCoralOuttakeToTrough = -0.2;
         public static final double kIntakeFromSourcePower = 0.8;
-        public static final double kReceiveFromIndexerPower = -0.8;
-        public static final double kSlowIntakeFromSourcePower = 0.1; 
-        public static final double kSlowReceiveFromIndexerPower = -0.1; 
+        public static final double kReceiveFromIndexerPower = -1.0;
+        public static final double kSlowIntakeFromSourcePower = 0.4; 
+        public static final double kSlowReceiveFromIndexerPower = -0.2; 
 
         public static final double kOuttakeWait = 0.5;
         public static final double kHasAlgaeDist = 182;
@@ -417,7 +418,7 @@ public final class Constants {
             .withSupplyCurrentLimit(40);
 
         public static final MotorOutputConfigs kMainEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake); 
 
         public static final MotorOutputConfigs kSecondaryEndEffectorOutputConfigs = new MotorOutputConfigs()

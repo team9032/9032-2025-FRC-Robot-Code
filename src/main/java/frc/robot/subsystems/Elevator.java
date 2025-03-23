@@ -46,7 +46,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean overIndexPosition() {
-        return elevatorPosSignal.getValueAsDouble() > kElevatorOverIndexer;
+        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverIndexer - kElevatorTolerance);
     }
 
     public Command moveToIndexerPosition() {

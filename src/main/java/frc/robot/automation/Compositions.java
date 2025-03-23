@@ -22,7 +22,7 @@ public class Compositions {
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
-    private final ElevatorAndArmHandler elevatorAndArmHandler;
+    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
     public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
     private final EventTrigger sourcePathHit = new EventTrigger("Intake");
@@ -41,7 +41,7 @@ public class Compositions {
 
         this.buttonBoardHandler = buttonBoardHandler;
 
-        elevatorAndArmHandler = new ElevatorAndArmHandler(elevator, arm, buttonBoardHandler);
+        elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoardHandler);
 
         intakeDown = new LocalizationTrigger(swerve, kIntakeZoneRectangle).getTrigger();
 
@@ -95,21 +95,18 @@ public class Compositions {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            Commands.either(
-                Commands.waitUntil(() -> readyForIntaking)
-                    .andThen(intake.moveToGround()), 
-                elevatorAndArmHandler.prepareForCoralIntaking()
-                    .alongWith(intake.moveToGround()), 
-                () -> goingToSource),
+            elevatorArmIntakeHandler.prepareForCoralIntaking(),
+            Commands.waitUntil(() -> readyForIntaking)
+                .onlyIf(() -> goingToSource),
+            intake.moveToGround(),
             Commands.waitUntil(intake::canRunRollers),
             intake.intakeCoral(),
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer().asProxy(),
-            new ScheduleCommand(endEffector.holdCoral()),
+            // new ScheduleCommand(endEffector.holdCoral()),
             intake.stopIntaking(),
             indexer.stopRollers(),
-            intake.returnToStowPosition(),
-            elevatorAndArmHandler.prepareForCoralScoringInitial(),
+            elevatorArmIntakeHandler.prepareForCoralScoringInitial(),
             Commands.waitUntil(() -> readyForElevator),
             /* Prepare and score when ready */
             backgroundScoreSequence()
@@ -120,19 +117,19 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Background score sequence started"),
             Commands.waitUntil(() -> readyForElevator),
-            elevatorAndArmHandler.prepareForCoralScoringFinal(),
+            elevatorArmIntakeHandler.prepareForCoralScoringFinal(),
             Commands.waitUntil(() -> finishedReefPath),
-            Commands.waitSeconds(0.33),
+            Commands.waitSeconds(10000000),
             buttonBoardHandler.scoreCoral(endEffector).asProxy(),
             Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-            elevatorAndArmHandler.prepareForCoralIntaking()
+            elevatorArmIntakeHandler.prepareForCoralIntaking()
         );
     }
 
     public Command getAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeIntakePath()
-                .alongWith(elevatorAndArmHandler.prepareForAlgaeIntakingFinal()),
+                .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()),
             endEffector.pickupAlgae(),
             scoreAlgaeSequence()
         );
@@ -141,7 +138,7 @@ public class Compositions {
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeScorePath()
-                .alongWith(elevatorAndArmHandler.prepareForAlgaeScoring()),//TODO handle net algae
+                .alongWith(elevatorArmIntakeHandler.prepareForAlgaeScoring()),//TODO handle net algae
             buttonBoardHandler.scoreAlgae(endEffector)
         );
     }
