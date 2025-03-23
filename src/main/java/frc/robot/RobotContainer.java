@@ -117,7 +117,7 @@ public class RobotContainer {
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("3 Coral Left", Autos.threeCoralLeft(elevator, arm, endEffector, krakenSwerve, intake, indexer));
-        autoChooser.addOption("1 Coral Right", Autos.threeCoralRight(elevator, arm, endEffector, krakenSwerve, intake, indexer));
+        //autoChooser.addOption("1 Coral Right", Autos.threeCoralRight(elevator, arm, endEffector, krakenSwerve, intake, indexer)); //TODO add when added
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
