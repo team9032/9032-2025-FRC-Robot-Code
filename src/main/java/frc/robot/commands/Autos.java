@@ -64,59 +64,6 @@ public class Autos {
         try {
             return Commands.sequence(
                 /* Score preload */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 3C1"))
-                    .deadlineFor(endEffector.holdCoral())
-                        .alongWith(prepareForScore(elevator, arm)),
-                endEffector.placeCoral(),
-                /* Get coral 2 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 3C2"))
-                    .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
-                    .until(endEffector::hasCoral)
-                        .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
-                /* Score coral 2 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 3C3"))
-                        .deadlineFor(endEffector.holdCoral())
-                            .alongWith(prepareForScore(elevator, arm)),
-                endEffector.placeCoral(),
-                /* Get coral 3 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 3C4"))
-                    .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
-                    .until(endEffector::hasCoral)
-                        .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
-                /* Score coral 3 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 3C5"))
-                        .deadlineFor(endEffector.holdCoral())
-                            .alongWith(prepareForScore(elevator, arm)),
-                endEffector.placeCoral(),
-                /* Get coral 4 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 4C1"))
-                    .alongWith(returnToStowAndPrepareForIntake(intake, arm, elevator)),
-                new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
-                    .until(endEffector::hasCoral)
-                        .alongWith(intakeToEndEffector(intake, indexer, endEffector, arm)),
-                /* Score coral 4 */
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Left 4C2"))
-                        .deadlineFor(endEffector.holdCoral())
-                            .alongWith(prepareForScore(elevator, arm)),
-                endEffector.placeCoral(),
-                /* Return to stow positions */
-                arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint),
-                elevator.moveToIndexerPosition()
-            );
-        } catch (Exception e) {
-            ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
-
-            return Commands.none();
-        }
-    }
-
-    public static Command oneCoralCenter(Elevator elevator, Arm arm, EndEffector endEffector, KrakenSwerve swerve, Intake intake, Indexer indexer) {
-        try {
-            return Commands.sequence(
-                /* Score preload */
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile("Center 1C1"))
                     .deadlineFor(endEffector.holdCoral())
                         .alongWith(prepareForScore(elevator, arm)),
