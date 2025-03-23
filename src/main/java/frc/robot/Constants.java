@@ -104,7 +104,23 @@ public final class Constants {
         /* Thresholds for when to reject an estimate */
         public static final double kAmbiguityThreshold = 0.2;
         public static final double kDistanceThreshold = 4.0;//Meters
-        
+
+        public static final double kAlgaeAreaMinimumThreshold = 0; //TODO: Change thresholds
+        public static final double kCoralAreaMinimumThreshold = 0; 
+
+        //maxes and mins are of bottom left coord
+        public static final double kAlgaeCornerMinimumCoord = 0; 
+        public static final double kAlgaeCornerMaximumCoord = 0; 
+
+        public static final double kCoralCornerMinimumCoord = 0; 
+        public static final double kCoralCornerMaximumCoord = 0; 
+
+        public static final double kMinAlgaeYForUpper = 0; //bottom Y
+
+        public static final double kL4YCoordThreshold = 0;
+        public static final double kL3YCoordThreshold = 0;
+        public static final double kL2YCoordThreshold = 0;
+
         public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X
             1,//Y

@@ -9,10 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.LocalizationConstants.*;
+import static frc.robot.Constants.ObjectAimingConstants.*;
 import java.util.List;
 
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
 import java.util.ArrayList;
 
@@ -72,6 +75,111 @@ public class Localization {
         }
 
         return 0.0;
+    }
+    
+    public boolean canPlaceByReefDetection(String cameraName, int level) {
+        var results = new ArrayList<PhotonPipelineResult>(getObjectTrackingResults(cameraName));
+
+        /*delete results with no objects detected */
+        results.removeIf((result) -> !result.hasTargets());
+
+        /*get latest result */
+        PhotonPipelineResult latestResult = results.get(0);
+        for(var result : results) {
+            if(result.getTimestampSeconds() > latestResult.getTimestampSeconds())
+                latestResult = result;
+        }
+        var targets = latestResult.getTargets();
+
+        /*filter bad ones out, too small, too left, too right */
+        for(PhotonTrackedTarget target : targets){
+            var targetCorners = new ArrayList<TargetCorner>(target.getDetectedCorners());
+            double area = target.getArea();
+            double leftX = targetCorners.get(0).x;
+            
+            for(TargetCorner corner : targetCorners) {
+                if(corner.x < leftX){
+                    leftX = corner.x;
+                }
+            }
+
+            if(target.getDetectedObjectClassID() == kCoralId) {
+                if(area<kCoralAreaMinimumThreshold){
+                    targets.remove(target);
+                    continue;
+                }
+                if(leftX < kCoralCornerMinimumCoord){
+                    targets.remove(target);
+                    continue;
+                }
+                if(leftX > kCoralCornerMaximumCoord){
+                    targets.remove(target);
+                    continue;
+                }
+
+            } else if(target.getDetectedObjectClassID() == kAlgaeId) {
+                if(area<kAlgaeAreaMinimumThreshold){
+                    targets.remove(target);
+                    continue;
+                }
+                if(leftX < kAlgaeCornerMinimumCoord){
+                    targets.remove(target);
+                    continue;
+                }
+                if(leftX > kAlgaeCornerMaximumCoord){
+                    targets.remove(target);
+                    continue;
+                }
+            }
+        }
+
+        /*process each, determine if can*/
+        for(PhotonTrackedTarget target : targets) { 
+            
+            var targetCorners = new ArrayList<TargetCorner>(target.getDetectedCorners());
+            double minY = targetCorners.get(0).y;
+            
+            for(TargetCorner corner : targetCorners) {
+                if(corner.y < minY){
+                    minY = corner.y;
+                }
+            }
+            if(target.getDetectedObjectClassID() == kAlgaeId) {
+                //algae here, 
+                if(minY > kMinAlgaeYForUpper) {
+                    //means it is algae above l3, 
+                    if(level == 3){
+                        return false;
+                    }
+                } else{
+                    //means it is algae on top of l2, touching l3
+                    if(level == 2 || level == 3){
+                        return false;
+                    }
+                }
+            } else if(target.getDetectedObjectClassID() == kCoralId) {
+                //coral 
+                if(minY > kL4YCoordThreshold) {
+                    if(level == 4){
+                        return false;
+                    }
+                    continue;
+                }
+                if(minY > kL3YCoordThreshold) {
+                    if(level == 3){
+                        return false;
+                    }
+                    continue;
+                }
+                if(minY > kL2YCoordThreshold) {
+                    if(level == 2){
+                        return false;
+                    }
+                    continue;
+                }
+            }
+        }
+        return true;
     }
 }
    
