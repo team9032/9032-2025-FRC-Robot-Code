@@ -44,6 +44,10 @@ public class Intake extends SubsystemBase {
         obstacleSensor.setRangingMode(RangingMode.Medium, 40);
     }
 
+    public Command holdPosition() {
+        return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(getArmPosition())));
+    }
+
     private double getArmPosition() {
         return armMotorPosSignal.getValueAsDouble();
     }

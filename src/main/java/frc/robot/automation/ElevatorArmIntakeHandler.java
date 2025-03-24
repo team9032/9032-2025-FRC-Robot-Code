@@ -22,50 +22,58 @@ public class ElevatorArmIntakeHandler {
         this.buttonBoardHandler = buttonBoardHandler;
     }
 
-    public Command moveToStowPosition() {
-        return Commands.sequence(
-            arm.moveToStowPos(),
-            elevator.moveToOverIndexerPosition(),
-            intake.returnToStowPosition(),
-            Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-            ElasticUtil.sendInfoCommand("Moved to stow position")
+    public Command moveToIndexPosition() {
+        return Commands.either(
+            Commands.sequence(
+                elevator.moveToOverIndexerPosition(),
+                intake.moveToEndEffectorMovePosition(),
+                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
+                arm.moveToIndexerPos(),
+                Commands.waitUntil(arm::atSetpoint),
+                elevator.moveToIndexerPosition(),
+                Commands.waitUntil(elevator::atSetpoint),
+                intake.returnToStowPosition(),
+                ElasticUtil.sendInfoCommand("Moved to index position")
+            ),
+            Commands.sequence(
+                elevator.moveToIndexerPosition(),
+                arm.moveToIndexerPos(),
+                Commands.waitUntil(() -> elevator.atSetpoint() && arm.atSetpoint()),
+                ElasticUtil.sendInfoCommand("Moved to index position from index position")
+            ),
+            () -> !arm.closeToIndexPosition()
+        );  
+    }
+
+    public Command moveToStowPositions() {
+        return Commands.either(
+            Commands.sequence(
+                elevator.moveToOverIndexerPosition(),
+                intake.moveToEndEffectorMovePosition(),
+                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
+                arm.moveToStowPos(),
+                Commands.waitUntil(arm::atSetpoint),
+                intake.returnToStowPosition(),
+                ElasticUtil.sendInfoCommand("Moved to stow from index")
+            ),
+            Commands.sequence(
+                elevator.moveToOverIndexerPosition(),
+                intake.returnToStowPosition(),
+                arm.moveToStowPos(),
+                Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
+                ElasticUtil.sendInfoCommand("Moved to stow")
+            ),
+            arm::closeToIndexPosition
         );
     }
 
-    public Command prepareForCoralIntaking() {
+    public Command prepareForCoralScoring() {
         return Commands.sequence(
-            intake.moveToEndEffectorMovePosition(),
-            Commands.waitUntil(intake::endEffectorCanMovePast),
-            arm.moveToIndexerPos(),
-            elevator.moveToOverIndexerPosition(),
-            Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-            elevator.moveToIndexerPosition(),
-            Commands.waitUntil(elevator::atSetpoint),
-            intake.returnToStowPosition(),
-            ElasticUtil.sendInfoCommand("Prepared for coral intaking")
-        );
-    }
-
-    public Command prepareForCoralScoringInitial() {
-        return Commands.sequence(
-            elevator.moveToOverIndexerPosition(),
-            intake.moveToEndEffectorMovePosition(),
-            Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
-            arm.moveToStowPos(),
-            Commands.waitUntil(arm::atSetpoint),
-            intake.returnToStowPosition(),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring initial")
-        );
-    }
-
-    public Command prepareForCoralScoringFinal() {
-        return Commands.sequence(
-            prepareForCoralScoringInitial()
-                .onlyIf(() -> !elevator.overIndexPosition()),
+            moveToStowPositions(),
             buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
             buttonBoardHandler.moveArmToCoralTargetLevel(arm),
             Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring final")
+            ElasticUtil.sendInfoCommand("Prepared for coral scoring")
         );
     }
 
@@ -96,6 +104,14 @@ public class ElevatorArmIntakeHandler {
             buttonBoardHandler.moveArmToAlgaeScoreLevel(arm),
             Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
             ElasticUtil.sendInfoCommand("Prepared for algae scoring")
+        );
+    }
+
+    public Command holdPositions() {
+        return Commands.sequence(
+            arm.holdPosition(),
+            elevator.holdPosition(),
+            intake.holdPosition()
         );
     }
 }

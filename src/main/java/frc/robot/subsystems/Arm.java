@@ -42,6 +42,10 @@ public class Arm extends SubsystemBase {
         armMotor.setPosition(getArmAbsolutePosition());
     }
 
+    public Command holdPosition() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(getRelativePosition())));
+    }
+
     private double getRelativePosition() {
         return armPosSignal.getValueAsDouble();
     }
@@ -54,8 +58,8 @@ public class Arm extends SubsystemBase {
         return armEncoder.get();
     }
 
-    public boolean atIndexPosition() {
-        return MathUtil.isNear(kArmIndexerPos, getRelativePosition(), kArmPositionTolerance);
+    public boolean closeToIndexPosition() {
+        return MathUtil.isNear(kArmIndexerPos, getRelativePosition(), kArmPositionTolerance * 10.0);
     }
 
     public Command moveToStowPos() {

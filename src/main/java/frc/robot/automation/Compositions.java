@@ -33,15 +33,14 @@ public class Compositions {
     private boolean readyForElevator = false;
     private boolean readyForIntaking = false;
 
-    public Compositions(Arm arm, Elevator elevator, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
+    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
         this.indexer = indexer;
         this.intake = intake;
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
-
-        elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoardHandler);
+        this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
 
         intakeDown = new LocalizationTrigger(swerve, kIntakeZoneRectangle).getTrigger();
 
@@ -95,7 +94,7 @@ public class Compositions {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            elevatorArmIntakeHandler.prepareForCoralIntaking(),
+            elevatorArmIntakeHandler.moveToIndexPosition(),
             Commands.waitUntil(() -> readyForIntaking)
                 .onlyIf(() -> goingToSource),
             intake.moveToGround(),
@@ -106,7 +105,7 @@ public class Compositions {
             // new ScheduleCommand(endEffector.holdCoral()),
             intake.stopIntaking(),
             indexer.stopRollers(),
-            elevatorArmIntakeHandler.prepareForCoralScoringInitial(),
+            elevatorArmIntakeHandler.moveToStowPositions(),
             Commands.waitUntil(() -> readyForElevator),
             /* Prepare and score when ready */
             backgroundScoreSequence()
@@ -117,12 +116,12 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Background score sequence started"),
             Commands.waitUntil(() -> readyForElevator),
-            elevatorArmIntakeHandler.prepareForCoralScoringFinal(),
+            elevatorArmIntakeHandler.prepareForCoralScoring(),
             Commands.waitUntil(() -> finishedReefPath),
             Commands.waitSeconds(10000000),
             buttonBoardHandler.scoreCoral(endEffector).asProxy(),
             Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-            elevatorArmIntakeHandler.prepareForCoralIntaking()
+            elevatorArmIntakeHandler.moveToIndexPosition()
         );
     }
 

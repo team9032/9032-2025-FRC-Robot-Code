@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
+import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -62,7 +63,8 @@ private final Trigger test = driveController.a();
 
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
-    private final Compositions compositions = new Compositions(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
+    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
     private final Command coralCyclingCommand;
     private final Command algaeCyclingCommand;
@@ -159,26 +161,19 @@ private final Trigger test = driveController.a();
         );
 
         stowPosition.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition(),
-                intake.stopIntaking(),
-                endEffector.stopRollers(),
-                indexer.stopRollers(),
-                intake.returnToStowPosition()
-            )            
+            disableAutomation()
+            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
         );
 
-        intakeUp.onTrue(
-            disableAutomation()
-            .andThen(
-                intake.returnToStowPosition(),
-                intake.stopIntaking(), 
-                indexer.stopRollers(),
-                endEffector.stopRollers()
-            )
-        );
+        // intakeUp.onTrue(
+        //     disableAutomation()
+        //     .andThen(
+        //         intake.returnToStowPosition(),
+        //         intake.stopIntaking(), 
+        //         indexer.stopRollers(),
+        //         endEffector.stopRollers()
+        //     )
+        // );
 
         intakeDown.onTrue(
             disableAutomation()
@@ -314,7 +309,10 @@ private final Trigger test = driveController.a();
 
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
-        teleopEnabled.onTrue(compositions.resetStates());
+        teleopEnabled.onTrue(
+            compositions.resetStates()
+            .andThen(elevatorArmIntakeHandler.holdPositions())
+        );
     }
 
     private void bindTeleopTriggers() {
