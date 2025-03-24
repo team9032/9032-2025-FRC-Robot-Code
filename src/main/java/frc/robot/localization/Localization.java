@@ -102,41 +102,30 @@ public class Localization {
                     leftX = corner.x;
                 }
             }
-
             if(target.getDetectedObjectClassID() == kCoralId) {
                 if(area<kCoralAreaMinimumThreshold){
-                    targets.remove(target);
                     continue;
                 }
                 if(leftX < kCoralCornerMinimumCoord){
-                    targets.remove(target);
                     continue;
                 }
                 if(leftX > kCoralCornerMaximumCoord){
-                    targets.remove(target);
                     continue;
                 }
 
             } else if(target.getDetectedObjectClassID() == kAlgaeId) {
                 if(area<kAlgaeAreaMinimumThreshold){
-                    targets.remove(target);
                     continue;
                 }
                 if(leftX < kAlgaeCornerMinimumCoord){
-                    targets.remove(target);
                     continue;
                 }
                 if(leftX > kAlgaeCornerMaximumCoord){
-                    targets.remove(target);
                     continue;
                 }
             }
-        }
 
-        /*process each, determine if can*/
-        for(PhotonTrackedTarget target : targets) { 
-            
-            var targetCorners = new ArrayList<TargetCorner>(target.getDetectedCorners());
+            /*check if this target interferes */
             double minY = targetCorners.get(0).y;
             
             for(TargetCorner corner : targetCorners) {
