@@ -82,7 +82,8 @@ public class Localization {
 
         /*delete results with no objects detected */
         results.removeIf((result) -> !result.hasTargets());
-
+        if(results.size() == 0) {return true;}
+        
         /*get latest result */
         PhotonPipelineResult latestResult = results.get(0);
         for(var result : results) {
