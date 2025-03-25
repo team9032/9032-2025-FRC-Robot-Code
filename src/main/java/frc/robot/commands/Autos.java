@@ -36,7 +36,7 @@ public class Autos {
             path6 = PathPlannerPath.fromPathFile("Left 4C1");
             path7 = PathPlannerPath.fromPathFile("Left 4C2");
 
-            if (mirrored){
+            if (mirrored) {
                 path1 = path1.mirrorPath();
                 path2 = path1.mirrorPath();
                 path3 = path1.mirrorPath();
@@ -116,8 +116,6 @@ public class Autos {
             return Commands.none();
         }
     }
-
-    //TODO add mirrored right auto
 
     private static Command prepareForScore(Elevator elevator, Arm arm) {
         return Commands.sequence(
