@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -25,6 +29,9 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
@@ -432,5 +439,21 @@ public final class Constants {
         public static final int kButtonBoardPort1 = 3;
         public static final int kButtonBoardPort2 = 4;
         public static final int kButtonBoardPort3 = 5;
+    }
+
+    public static final class LEDConstants {
+        public static final int kLEDPort = 0;
+        public static final int kLEDLength = 160;
+        public static final Distance kLedSpacing = Meters.of(1/120.0);
+
+        //Patterns
+        public static final LEDPattern rainbow = LEDPattern.rainbow(255, 128);
+        public static final LEDPattern scrollingRainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.2), kLedSpacing);
+        public static final LEDPattern baseBlueGradient = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kAqua, Color.kBlue);
+        public static final LEDPattern blueGradient = baseBlueGradient.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+        public static final LEDPattern blueBreathe = baseBlueGradient.breathe(Second.of(2));
+        public static final LEDPattern green = LEDPattern.solid(Color.kGreen);
+
+        
     }
 }
