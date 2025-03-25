@@ -90,11 +90,36 @@ public class Compositions {
         );
     }
 
+    public Command intakeCoralToEndEffector() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Started intaking"),
+            elevatorArmIntakeHandler.moveIntakeDown(),
+            intake.intakeCoral(),
+            indexer.spinRollers(),
+            endEffector.receiveCoralFromIndexer().asProxy(),
+            intake.stopIntaking(),
+            indexer.stopRollers(),
+            new ScheduleCommand(endEffector.holdCoral()),
+            elevatorArmIntakeHandler.moveToStowPositions()
+        )
+        .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
+    }
+
+    public Command cancelIntake() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Canceled intaking"),
+            elevatorArmIntakeHandler.moveIntakeUp(),
+            intake.stopIntaking(),
+            endEffector.stopRollers(),
+            indexer.stopRollers()
+        );
+    }       
+
     public Command backgroundCoralMovement(boolean goingToSource) {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            elevatorArmIntakeHandler.moveToIndexPosition(),
+            elevatorArmIntakeHandler.moveToIntakePosition(),
             Commands.waitUntil(() -> readyForIntaking)
                 .onlyIf(() -> goingToSource),
             intake.moveToGround(),
@@ -121,7 +146,7 @@ public class Compositions {
             Commands.waitSeconds(10000000),
             buttonBoardHandler.scoreCoral(endEffector).asProxy(),
             Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-            elevatorArmIntakeHandler.moveToIndexPosition()
+            elevatorArmIntakeHandler.moveToIntakePosition()
         );
     }
 

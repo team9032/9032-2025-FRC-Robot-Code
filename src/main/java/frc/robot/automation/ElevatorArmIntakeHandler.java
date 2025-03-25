@@ -22,7 +22,19 @@ public class ElevatorArmIntakeHandler {
         this.buttonBoardHandler = buttonBoardHandler;
     }
 
-    public Command moveToIndexPosition() {
+    public Command moveIntakeDown() {
+        return moveToIntakePosition()
+            .andThen(
+                intake.moveToGround(),
+                Commands.waitUntil(intake::canRunRollers)
+            );
+    }
+
+    public Command moveIntakeUp() {
+        return intake.returnToStowPosition();
+    }
+
+    public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(
                 elevator.moveToOverIndexerPosition(),
@@ -71,8 +83,9 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             moveToStowPositions(),
             buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
+            Commands.waitUntil(elevator::atSetpoint),
             buttonBoardHandler.moveArmToCoralTargetLevel(arm),
-            Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
+            Commands.waitUntil(arm::atSetpoint),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring")
         );
     }

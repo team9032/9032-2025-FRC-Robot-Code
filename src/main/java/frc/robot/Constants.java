@@ -304,8 +304,8 @@ public final class Constants {
         public static final double kArmStowPos = 0.205;
         public static final double kArmIndexerPos = 0.75;
         public static final double kArmTroughPos = 0.14;
-        public static final double kArmLevel1Pos = 0.19; 
-        public static final double kArmLevel2Pos = 0.19;
+        public static final double kArmLevel1Pos = 0.205; 
+        public static final double kArmLevel2Pos = 0.205;
         public static final double kArmLevel3Pos = 0.16;
         public static final double kArmHighAlgaePos = 190.0;
         public static final double kArmLowAlgaePos = 190.0;
@@ -408,7 +408,7 @@ public final class Constants {
         public static final double kIntakeFromSourcePower = 0.8;
         public static final double kReceiveFromIndexerPower = -1.0;
         public static final double kSlowIntakeFromSourcePower = 0.4; 
-        public static final double kSlowReceiveFromIndexerPower = -0.2; 
+        public static final double kSlowReceiveFromIndexerPower = -0.5; 
 
         public static final double kOuttakeWait = 0.5;
         public static final double kHasAlgaeDist = 182;

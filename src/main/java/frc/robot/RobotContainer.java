@@ -45,7 +45,7 @@ public class RobotContainer {
     private final Trigger stowPosition = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
-private final Trigger test = driveController.a();
+
     /* Operator Controller Buttons */
 
 
@@ -176,10 +176,13 @@ private final Trigger test = driveController.a();
         // );
 
         intakeDown.onTrue(
-            disableAutomation()
-            .andThen(compositions.backgroundCoralMovement(false))
+            compositions.intakeCoralToEndEffector()
         );
-        test.onTrue(intake.moveToGround().andThen(elevator.moveToOverIndexerPosition()));
+
+        intakeUp.onTrue(
+            compositions.cancelIntake()
+        );
+
         // intakeDown.negate().and(() -> !endEffector.hasCoral()).onTrue(
         //     disableAutomation()
         //     .andThen(
