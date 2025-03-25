@@ -93,7 +93,7 @@ public class Compositions {
     public Command intakeCoralToEndEffector() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
-            elevatorArmIntakeHandler.moveIntakeDown(),
+            elevatorArmIntakeHandler.moveToIntakePosition(true),
             intake.intakeCoral(),
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer().asProxy(),
@@ -119,7 +119,7 @@ public class Compositions {
         return Commands.sequence(
             /* Intake sequence */
             ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            elevatorArmIntakeHandler.moveToIntakePosition(),
+            elevatorArmIntakeHandler.moveToIntakePosition(false),
             Commands.waitUntil(() -> readyForIntaking)
                 .onlyIf(() -> goingToSource),
             intake.moveToGround(),
@@ -146,7 +146,7 @@ public class Compositions {
             Commands.waitSeconds(10000000),
             buttonBoardHandler.scoreCoral(endEffector).asProxy(),
             Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-            elevatorArmIntakeHandler.moveToIntakePosition()
+            elevatorArmIntakeHandler.moveToIntakePosition(false)
         );
     }
 

@@ -156,24 +156,12 @@ public class RobotContainer {
         );
 
         eject.onTrue(
-            disableAutomation()
-            .andThen(intake.ejectCoral())
+            intake.ejectCoral()
         );
 
         stowPosition.onTrue(
-            disableAutomation()
-            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
-
-        // intakeUp.onTrue(
-        //     disableAutomation()
-        //     .andThen(
-        //         intake.returnToStowPosition(),
-        //         intake.stopIntaking(), 
-        //         indexer.stopRollers(),
-        //         endEffector.stopRollers()
-        //     )
-        // );
 
         intakeDown.onTrue(
             compositions.intakeCoralToEndEffector()
@@ -182,16 +170,6 @@ public class RobotContainer {
         intakeUp.onTrue(
             compositions.cancelIntake()
         );
-
-        // intakeDown.negate().and(() -> !endEffector.hasCoral()).onTrue(
-        //     disableAutomation()
-        //     .andThen(
-        //         intake.returnToStowPosition(),
-        //         intake.stopIntaking(), 
-        //         indexer.stopRollers(),
-        //         endEffector.stopRollers()
-        //     )
-        // );  
 
         /* Manual Controls:
          * 
@@ -209,13 +187,11 @@ public class RobotContainer {
          * 
         */
         buttonBoard.manual1.onTrue(
-            disableAutomation()
-            .andThen(intake.ejectCoral())
+            intake.ejectCoral()
         );
 
         buttonBoard.manual2.onTrue(
-            disableAutomation()
-            .andThen(
+            Commands.sequence(
                 intake.returnToStowPosition(),
                 Commands.waitSeconds(0.5),
                 indexer.eject()
@@ -223,43 +199,22 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(
-            disableAutomation()
-            .andThen(
-                buttonBoard.moveElevatorToCoralTargetLevel(elevator),
-                Commands.waitUntil(elevator::atSetpoint),
-                buttonBoard.moveArmToCoralTargetLevel(arm)
-            )
+            elevatorArmIntakeHandler.prepareForCoralScoring()
         );
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                disableAutomation(),
                 endEffector.placeCoral(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition()   
+                elevatorArmIntakeHandler.moveToIntakePosition(false)
             )
         );
 
         buttonBoard.manual7.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition(),
-                intake.stopIntaking(),
-                endEffector.stopRollers(),
-                indexer.stopRollers(),
-                intake.returnToStowPosition()
-            )
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
 
         buttonBoard.manual8.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                intake.stopIntaking(),
-                intake.returnToStowPosition(),
-                indexer.stopRollers(),
-                endEffector.stopRollers()
-            )
+            compositions.cancelIntake()
         );
 
         buttonBoard.manual9.onTrue(
@@ -269,27 +224,21 @@ public class RobotContainer {
             )
         );
 
-        buttonBoard.manual10.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                elevator.moveToLowAlgaePosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                arm.moveToLowAlgaePos()
-            )
-        );
+        // buttonBoard.manual10.onTrue(
+        //     elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()
+        // );
 
-        buttonBoard.manual11.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                elevator.moveToHighAlgaePosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                arm.moveToHighAlgaePos()
-            )
-        );
+        // buttonBoard.manual11.onTrue(
+        //     Commands.sequence(
+        //         disableAutomation(),
+        //         elevator.moveToHighAlgaePosition(),
+        //         Commands.waitUntil(elevator::atSetpoint),
+        //         arm.moveToHighAlgaePos()
+        //     )
+        // );
 
         buttonBoard.manual12.onTrue(
-            disableAutomation()
-            .andThen(compositions.backgroundCoralMovement(false))
+            compositions.intakeCoralToEndEffector()
         );
 
         buttonBoard.manual13.onTrue(

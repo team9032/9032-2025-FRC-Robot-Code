@@ -22,36 +22,38 @@ public class ElevatorArmIntakeHandler {
         this.buttonBoardHandler = buttonBoardHandler;
     }
 
-    public Command moveIntakeDown() {
-        return moveToIntakePosition()
-            .andThen(
-                intake.moveToGround(),
-                Commands.waitUntil(intake::canRunRollers)
-            );
-    }
-
     public Command moveIntakeUp() {
         return intake.returnToStowPosition();
     }
 
-    public Command moveToIntakePosition() {
+    public Command moveToIntakePosition(boolean intakeDown) {
         return Commands.either(
             Commands.sequence(
                 elevator.moveToOverIndexerPosition(),
-                intake.moveToEndEffectorMovePosition(),
+                Commands.either(
+                    intake.moveToGround(),
+                    intake.moveToEndEffectorMovePosition(),
+                    () -> intakeDown
+                ),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
                 arm.moveToIndexerPos(),
                 Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition(),
                 Commands.waitUntil(elevator::atSetpoint),
-                intake.returnToStowPosition(),
-                ElasticUtil.sendInfoCommand("Moved to index position")
+                Commands.either(
+                    Commands.waitUntil(intake::canRunRollers),
+                    intake.returnToStowPosition(),
+                    () -> intakeDown
+                ),
+                ElasticUtil.sendInfoCommand("Moved to index position - intake down is " + intakeDown)
             ),
             Commands.sequence(
                 elevator.moveToIndexerPosition(),
                 arm.moveToIndexerPos(),
+                intake.moveToGround()
+                    .onlyIf(() -> intakeDown),
                 Commands.waitUntil(() -> elevator.atSetpoint() && arm.atSetpoint()),
-                ElasticUtil.sendInfoCommand("Moved to index position from index position")
+                ElasticUtil.sendInfoCommand("Moved to index position from index position - intake down is " + intakeDown)
             ),
             () -> !arm.closeToIndexPosition()
         );  
