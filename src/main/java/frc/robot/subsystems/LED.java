@@ -9,15 +9,25 @@ import static frc.robot.Constants.LEDConstants.*;
 
 public class LED extends SubsystemBase {
     public static enum State {
-        RAINBOW, BLUE_GRADIENT, BLUE_BREATHE, GREEN
+        DISABLED(kDisabledPattern),
+        ENABLED(kEnabledPattern),
+        L1(kL1Pattern),
+        L2(kL2Pattern),
+        L3(kL3Pattern),
+        L4(kL4Pattern);
+
+        public final LEDPattern statePattern;
+
+        State(LEDPattern statePattern) {
+            this.statePattern = statePattern;
+        }
     }
 
-    private State currentState = State.RAINBOW;
+    private State currentState = State.DISABLED;
     private final AddressableLED ledStrip;
     private final AddressableLEDBuffer ledBuffer;
 
     public LED() {
-
         ledStrip = new AddressableLED(kLEDPort);
         ledStrip.setLength(kLEDLength);
 
@@ -30,26 +40,6 @@ public class LED extends SubsystemBase {
         return runOnce(() -> currentState = state);
     }
 
-    private void setRainbow() {
-        applyPattern(scrollingRainbow);
-        setData();
-    }
-
-    private void setBlueGradient() {
-        applyPattern(blueGradient);
-        setData();
-    }
-
-    private void setBlueBreathe() {
-        applyPattern(blueBreathe);
-        setData();
-    }
-
-    private void setGreen() {
-        applyPattern(green);
-        setData();
-    }
-
     private void applyPattern(LEDPattern pattern) {
         pattern.applyTo(ledBuffer);
     }
@@ -60,15 +50,7 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
-        switch (currentState) {
-            case RAINBOW:
-                setRainbow();
-            case BLUE_GRADIENT:
-                setBlueGradient();
-            case BLUE_BREATHE:
-                setBlueBreathe();
-            case GREEN:
-                setGreen();
-        }
+        applyPattern(currentState.statePattern);
+        setData();
     }
 }
