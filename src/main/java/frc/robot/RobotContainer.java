@@ -100,7 +100,10 @@ public class RobotContainer {
 
         /* Setup automation */
         coralCyclingCommand = automationHandler.coralResumeCommand()
-            .until(this::driverWantsOverride);
+            .until(this::driverWantsOverride)
+            .andThen(elevatorArmIntakeHandler.moveToStowPositions()
+                .onlyIf(endEffector::hasCoral)
+            );
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride);
@@ -115,7 +118,7 @@ public class RobotContainer {
             compositions.getCoralSequence(false, false)
             .onlyIf(() -> !endEffector.hasCoral())
             .until(this::driverWantsOverride)
-        );  
+        );          
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();

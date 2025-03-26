@@ -60,7 +60,7 @@ public class Compositions {
     public Command getCoralSequence(boolean goToSource, boolean continueToScoring) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Get coral sequence started - go to source is " + goToSource),
-            new ScheduleCommand(backgroundCoralMovement(goToSource)),
+            new ScheduleCommand(intakeCoralToEndEffector()),
             buttonBoardHandler.followSourcePath()
                 .onlyIf(() -> goToSource),
             Commands.waitUntil(intake::canRunRollers),
@@ -109,33 +109,44 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Canceled intaking"),
             elevatorArmIntakeHandler.moveIntakeUp(),
-            intake.stopIntaking(),
-            endEffector.stopRollers(),
-            indexer.stopRollers()
+            intake.outtakeCoral(),
+            /* Recover from coral partially in the end effector */
+            Commands.either(
+                endEffector.receiveCoralFromIndexer().asProxy()
+                    .andThen(
+                        ElasticUtil.sendInfoCommand("Recovering from coral partially in end effector"),
+                        new ScheduleCommand(endEffector.holdCoral()),
+                        elevatorArmIntakeHandler.moveToStowPositions()
+                    ),
+                endEffector.stopRollers().asProxy(),
+                () -> !endEffector.hasCoralCentered() && endEffector.hasCoral()
+            ),
+            indexer.stopRollers(),
+            intake.stopIntaking()
         );
     }       
 
-    public Command backgroundCoralMovement(boolean goingToSource) {
-        return Commands.sequence(
-            /* Intake sequence */
-            ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-            elevatorArmIntakeHandler.moveToIntakePosition(false),
-            Commands.waitUntil(() -> readyForIntaking)
-                .onlyIf(() -> goingToSource),
-            intake.moveToGround(),
-            Commands.waitUntil(intake::canRunRollers),
-            intake.intakeCoral(),
-            indexer.spinRollers(),
-            endEffector.receiveCoralFromIndexer().asProxy(),
-            // new ScheduleCommand(endEffector.holdCoral()),
-            intake.stopIntaking(),
-            indexer.stopRollers(),
-            elevatorArmIntakeHandler.moveToStowPositions(),
-            Commands.waitUntil(() -> readyForElevator),
-            /* Prepare and score when ready */
-            backgroundScoreSequence()
-        );
-    }
+    // public Command backgroundCoralMovement(boolean goingToSource) {
+    //     return Commands.sequence(
+    //         /* Intake sequence */
+    //         ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
+    //         elevatorArmIntakeHandler.moveToIntakePosition(false),
+    //         Commands.waitUntil(() -> readyForIntaking)
+    //             .onlyIf(() -> goingToSource),
+    //         intake.moveToGround(),
+    //         Commands.waitUntil(intake::canRunRollers),
+    //         intake.intakeCoral(),
+    //         indexer.spinRollers(),
+    //         endEffector.receiveCoralFromIndexer().asProxy(),
+    //         new ScheduleCommand(endEffector.holdCoral()),
+    //         intake.stopIntaking(),
+    //         indexer.stopRollers(),
+    //         elevatorArmIntakeHandler.moveToStowPositions(),
+    //         Commands.waitUntil(() -> readyForElevator),
+    //         /* Prepare and score when ready */
+    //         backgroundScoreSequence()
+    //     );
+    // }
 
     private Command backgroundScoreSequence() {
         return Commands.sequence(

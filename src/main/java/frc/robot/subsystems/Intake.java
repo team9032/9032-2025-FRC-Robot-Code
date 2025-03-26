@@ -72,6 +72,10 @@ public class Intake extends SubsystemBase {
         return runOnce(() -> intakeArmMotor.setControl(armControlRequest.withPosition(kEndEffectorMovePosition)));
     }
 
+    public Command outtakeCoral() {
+        return runOnce(() -> rollerMotor.set(kEjectPower));
+    }
+
     public Command ejectCoral() {
         return Commands.sequence(
             runOnce(() -> rollerMotor.set(kEjectPower)),
