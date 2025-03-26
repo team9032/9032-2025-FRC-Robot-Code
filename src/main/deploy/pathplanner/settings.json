@@ -3,9 +3,8 @@
   "robotLength": 1.0,
   "holonomicMode": true,
   "pathFolders": [
-    "3 Coral Left",
-    "4 Coral Left",
     "1 Coral Center",
+    "4 Coral Left",
     "Stubs"
   ],
   "autoFolders": [],
