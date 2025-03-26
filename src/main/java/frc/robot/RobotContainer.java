@@ -45,6 +45,7 @@ public class RobotContainer {
     private final Trigger stowPosition = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
+    private final Trigger resumeAutomation = driveController.a();
 
     /* Operator Controller Buttons */
 
@@ -86,24 +87,12 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        if(kRunSysId)
-            bindSysIdTriggers();
-        
-        else    
-            configureButtonTriggers();
-
-        configureDefaultCommands();
-
-        bindRobotModeTriggers();
-
-        bindTeleopTriggers();
-
         /* Setup automation */
-        coralCyclingCommand = automationHandler.coralResumeCommand()
-            .until(this::driverWantsOverride)
-            .andThen(elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(endEffector::hasCoral)
-            );
+        coralCyclingCommand = compositions.alignToReefAndScore()//automationHandler.coralResumeCommand()
+            .until(this::driverWantsOverride);
+            // .andThen(elevatorArmIntakeHandler.moveToStowPositions()
+            //     .onlyIf(endEffector::hasCoral)
+            // );
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride);
@@ -118,7 +107,19 @@ public class RobotContainer {
             compositions.getCoralSequence(false, false)
             .onlyIf(() -> !endEffector.hasCoral())
             .until(this::driverWantsOverride)
-        );          
+        );     
+
+        if(kRunSysId)
+            bindSysIdTriggers();
+        
+        else    
+            configureButtonTriggers();
+
+        configureDefaultCommands();
+
+        bindRobotModeTriggers();
+
+        bindTeleopTriggers();     
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
@@ -172,6 +173,10 @@ public class RobotContainer {
 
         intakeUp.onTrue(
             compositions.cancelIntake()
+        );
+
+        resumeAutomation.onTrue(
+            coralCyclingCommand
         );
 
         /* Manual Controls:

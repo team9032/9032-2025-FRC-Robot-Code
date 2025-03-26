@@ -129,4 +129,8 @@ public class ElevatorArmIntakeHandler {
             intake.holdPosition()
         );
     }
+
+    public boolean elevatorAndArmAtSetpoints() {
+        return elevator.atSetpoint() && arm.atSetpoint();
+    }
 }

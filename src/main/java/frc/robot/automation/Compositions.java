@@ -30,7 +30,6 @@ public class Compositions {
     private final Trigger intakeDown;
 
     private boolean finishedReefPath = false;
-    private boolean readyForElevator = false;
     private boolean readyForIntaking = false;
 
     public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
@@ -44,13 +43,9 @@ public class Compositions {
 
         intakeDown = new LocalizationTrigger(swerve, kIntakeZoneRectangle).getTrigger();
 
-        prepareElevatorForScoring.onTrue(
-            Commands.runOnce(() -> readyForElevator = true)  
-        );
-
-        sourcePathHit.onTrue(
-            Commands.runOnce(() -> readyForIntaking = true)
-        );
+        // prepareElevatorForScoring.onTrue(
+        //     elevatorArmIntakeHandler.prepareForCoralScoring()
+        // );
     }
 
     public Command noCoralSequence() {
@@ -76,7 +71,7 @@ public class Compositions {
     public Command resumeCoralSequence() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Resume coral sequence started - starting score coral sequence"),
-            new ScheduleCommand(backgroundScoreSequence()),
+            // new ScheduleCommand(backgroundScoreSequence()),
             scoreCoralSequence()  
         );
     }
@@ -87,6 +82,16 @@ public class Compositions {
             buttonBoardHandler.followReefPath(),
             Commands.runOnce(() -> finishedReefPath = true),
             Commands.waitUntil(() -> !finishedReefPath)
+        );
+    }
+
+    public Command alignToReefAndScore() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
+            buttonBoardHandler.followReefPath(),
+            elevatorArmIntakeHandler.prepareForCoralScoring(),//not here
+            Commands.waitUntil(elevatorArmIntakeHandler::elevatorAndArmAtSetpoints),
+            endEffector.placeCoral().asProxy()
         );
     }
 
@@ -148,18 +153,18 @@ public class Compositions {
     //     );
     // }
 
-    private Command backgroundScoreSequence() {
-        return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Background score sequence started"),
-            Commands.waitUntil(() -> readyForElevator),
-            elevatorArmIntakeHandler.prepareForCoralScoring(),
-            Commands.waitUntil(() -> finishedReefPath),
-            Commands.waitSeconds(10000000),
-            buttonBoardHandler.scoreCoral(endEffector).asProxy(),
-            Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-            elevatorArmIntakeHandler.moveToIntakePosition(false)
-        );
-    }
+    // private Command backgroundScoreSequence() {
+    //     return Commands.sequence(
+    //         ElasticUtil.sendInfoCommand("Background score sequence started"),
+    //         Commands.waitUntil(() -> readyForElevator),
+    //         elevatorArmIntakeHandler.prepareForCoralScoring(),
+    //         Commands.waitUntil(() -> finishedReefPath),
+    //         Commands.waitSeconds(10000000),
+    //         buttonBoardHandler.scoreCoral(endEffector).asProxy(),
+    //         Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
+    //         elevatorArmIntakeHandler.moveToIntakePosition(false)
+    //     );
+    // }
 
     public Command getAlgaeSequence() {
         return Commands.sequence(
@@ -185,7 +190,6 @@ public class Compositions {
             endEffector.stopRollers(),
             Commands.runOnce(() -> { 
                 finishedReefPath = false; 
-                readyForElevator = false; 
                 readyForIntaking = false;
             })
         );
