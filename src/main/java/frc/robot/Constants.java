@@ -448,6 +448,8 @@ public final class Constants {
         public static final Distance kLedSpacing = Meters.of(1/120.0);
 
         //Patterns
+        public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kRed);
+
         public static final LEDPattern kBaseDisabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kRed, Color.kOrange);
         public static final LEDPattern kDisabledPattern = kBaseDisabled.breathe(Seconds.of(2));
 
@@ -469,5 +471,11 @@ public final class Constants {
         public static final LEDPattern kBaseL4 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kSteelBlue);
         public static final LEDPattern kL4Mask = LEDPattern.progressMaskLayer(() -> 1.00);
         public static final LEDPattern kL4Pattern = kBaseL4.mask(kL4Mask);
+
+        public static final LEDPattern kAlgaeBase = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kAqua, Color.kLightGreen, Color.kLightCyan);
+        public static final LEDPattern kAlgaePattern = kAlgaeBase.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+
+        public static final LEDPattern kBatteryLowBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkRed, Color.kRed);
+        public static final LEDPattern kBatteryLowPattern = kBaseEnabled.blink(Seconds.of(0.6));
     }
 }
