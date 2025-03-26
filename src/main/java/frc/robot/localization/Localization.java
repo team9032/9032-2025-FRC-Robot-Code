@@ -103,27 +103,10 @@ public class Localization {
                     leftX = corner.x;
                 }
             }
-            if(target.getDetectedObjectClassID() == kCoralId) {
-                if(area<kCoralAreaMinimumThreshold){
-                    continue;
-                }
-                if(leftX < kCoralCornerMinimumCoord){
-                    continue;
-                }
-                if(leftX > kCoralCornerMaximumCoord){
-                    continue;
-                }
-
-            } else if(target.getDetectedObjectClassID() == kAlgaeId) {
-                if(area<kAlgaeAreaMinimumThreshold){
-                    continue;
-                }
-                if(leftX < kAlgaeCornerMinimumCoord){
-                    continue;
-                }
-                if(leftX > kAlgaeCornerMaximumCoord){
-                    continue;
-                }
+            if(target.getDetectedObjectClassID() == kCoralId && (area<kCoralAreaMinimumThreshold || leftX < kCoralCornerMinimumCoord || leftX > kCoralCornerMaximumCoord)) {
+                continue;
+            } else if(target.getDetectedObjectClassID() == kAlgaeId && (area<kAlgaeAreaMinimumThreshold || leftX < kAlgaeCornerMinimumCoord || leftX > kAlgaeCornerMaximumCoord)) {
+                continue;
             }
 
             /*check if this target interferes */
