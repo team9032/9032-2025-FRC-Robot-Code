@@ -4,6 +4,7 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.subsystems.EndEffector;
 
@@ -26,8 +27,8 @@ public class AutomationHandler {
     public Command coralResumeCommand() {
         return new SelectCommand<GamePieceState>(
             Map.ofEntries(
-                Map.entry(GamePieceState.GAMEPIECES_NOT_READY, mainCoralCyclingCommand()),
-                Map.entry(GamePieceState.HAS_CORAL, compositions.resumeCoralSequence().andThen(mainCoralCyclingCommand())),
+                Map.entry(GamePieceState.GAMEPIECES_NOT_READY, compositions.driveToSource()),
+                Map.entry(GamePieceState.HAS_CORAL, compositions.alignToReefAndScore().andThen(compositions.driveToSource())),
                 Map.entry(GamePieceState.HAS_ALGAE, Commands.none())
             ),
             this::getGamePieceState
@@ -47,12 +48,13 @@ public class AutomationHandler {
 
     private Command mainCoralCyclingCommand() {
         /* This is the main cycling command, so it's repeated */
-        return compositions.noCoralSequence().repeatedly();
+        return compositions.driveToSource().asProxy()//Need to get coral
+            .andThen(new ScheduleCommand(compositions.alignToReefAndScore()));
     }
 
     private Command mainAlgaeCyclingCommand() {
         /* This is the main cycling command, so it's repeated */
-        return compositions.getAlgaeSequence().repeatedly();
+        return compositions.intakeAlgaeFromReef().repeatedly();
     }
 
     private GamePieceState getGamePieceState() {

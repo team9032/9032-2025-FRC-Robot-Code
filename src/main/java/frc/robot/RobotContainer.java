@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -88,26 +89,27 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         /* Setup automation */
-        coralCyclingCommand = compositions.alignToReefAndScore()//automationHandler.coralResumeCommand()
-            .until(this::driverWantsOverride);
-            // .andThen(elevatorArmIntakeHandler.moveToStowPositions()
-            //     .onlyIf(endEffector::hasCoral)
-            // );
+        coralCyclingCommand = automationHandler.coralResumeCommand()//automationHandler.coralResumeCommand()
+            .until(this::driverWantsOverride)
+            .andThen(new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
+                .onlyIf(endEffector::hasCoral)
+            )
+            .onlyIf(buttonBoard::hasQueues);
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride);
 
         buttonBoard.getEnableCoralModeTrigger()
-            .toggleOnTrue(coralCyclingCommand.onlyIf(buttonBoard::hasQueues));
+            .toggleOnTrue(coralCyclingCommand);
 
         buttonBoard.getEnableAlgaeModeTrigger()
             .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
-        buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.getCoralSequence(false, false)
-            .onlyIf(() -> !endEffector.hasCoral())
-            .until(this::driverWantsOverride)
-        );     
+        // buttonBoard.getAutoIntakeTrigger().onTrue(
+        //     compositions.driveToSource(false, false)
+        //     .onlyIf(() -> !endEffector.hasCoral())
+        //     .until(this::driverWantsOverride)
+        // );     
 
         if(kRunSysId)
             bindSysIdTriggers();

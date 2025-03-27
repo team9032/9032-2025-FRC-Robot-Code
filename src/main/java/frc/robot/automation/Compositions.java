@@ -5,14 +5,9 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
-import frc.robot.utils.LocalizationTrigger;
-
-import static frc.robot.Constants.AutomationConstants.kIntakeZoneRectangle;
 
 /** Contains all command compositions that use multiple subsystems. Do not put single subsystem commands here. */
 public class Compositions {
@@ -25,12 +20,6 @@ public class Compositions {
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
     public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
-    private final EventTrigger sourcePathHit = new EventTrigger("Intake");
-
-    private final Trigger intakeDown;
-
-    private boolean finishedReefPath = false;
-    private boolean readyForIntaking = false;
 
     public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
@@ -41,56 +30,24 @@ public class Compositions {
         this.buttonBoardHandler = buttonBoardHandler;
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
 
-        intakeDown = new LocalizationTrigger(swerve, kIntakeZoneRectangle).getTrigger();
-
-        // prepareElevatorForScoring.onTrue(
-        //     elevatorArmIntakeHandler.prepareForCoralScoring()
-        // );
+        prepareElevatorForScoring.onTrue(
+            elevatorArmIntakeHandler.prepareForCoralScoring()
+        );
     }
 
-    public Command noCoralSequence() {
-        return getCoralSequence(true, true);
-    }
-
-    public Command getCoralSequence(boolean goToSource, boolean continueToScoring) {
+    public Command driveToSource() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Get coral sequence started - go to source is " + goToSource),
-            new ScheduleCommand(intakeCoralToEndEffector()),
+            ElasticUtil.sendInfoCommand("Get coral sequence started"),
+            new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition(false)),
             buttonBoardHandler.followSourcePath()
-                .onlyIf(() -> goToSource),
-            Commands.waitUntil(intake::canRunRollers),
-            intake.resetLastObstacleDistance(),//Does not require intake subsystem
-            new AimAtCoral(swerve, intake::getObstacleSensorDistance, false)
-                .alongWith(Commands.waitUntil(endEffector::hasCoral)),
-            ElasticUtil.sendInfoCommand("Got coral - starting score coral sequence is " + continueToScoring),
-            scoreCoralSequence()
-                .onlyIf(() -> continueToScoring)
-        );
-    }
-
-    public Command resumeCoralSequence() {
-        return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Resume coral sequence started - starting score coral sequence"),
-            // new ScheduleCommand(backgroundScoreSequence()),
-            scoreCoralSequence()  
-        );
-    }
-
-    private Command scoreCoralSequence() {
-        return Commands.sequence(
-            Commands.waitUntil(buttonBoardHandler::hasQueues),
-            buttonBoardHandler.followReefPath(swerve),
-            Commands.runOnce(() -> finishedReefPath = true),
-            Commands.waitUntil(() -> !finishedReefPath)
         );
     }
 
     public Command alignToReefAndScore() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
-            buttonBoardHandler.followReefPath(swerve),
-            elevatorArmIntakeHandler.prepareForCoralScoring(),//not here
-            Commands.waitUntil(elevatorArmIntakeHandler::elevatorAndArmAtSetpoints),
+            buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
+            Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
             endEffector.placeCoral().asProxy()
         );
     }
@@ -131,47 +88,11 @@ public class Compositions {
         );
     }       
 
-    // public Command backgroundCoralMovement(boolean goingToSource) {
-    //     return Commands.sequence(
-    //         /* Intake sequence */
-    //         ElasticUtil.sendInfoCommand("Background coral movement started - going to source " + goingToSource),
-    //         elevatorArmIntakeHandler.moveToIntakePosition(false),
-    //         Commands.waitUntil(() -> readyForIntaking)
-    //             .onlyIf(() -> goingToSource),
-    //         intake.moveToGround(),
-    //         Commands.waitUntil(intake::canRunRollers),
-    //         intake.intakeCoral(),
-    //         indexer.spinRollers(),
-    //         endEffector.receiveCoralFromIndexer().asProxy(),
-    //         new ScheduleCommand(endEffector.holdCoral()),
-    //         intake.stopIntaking(),
-    //         indexer.stopRollers(),
-    //         elevatorArmIntakeHandler.moveToStowPositions(),
-    //         Commands.waitUntil(() -> readyForElevator),
-    //         /* Prepare and score when ready */
-    //         backgroundScoreSequence()
-    //     );
-    // }
-
-    // private Command backgroundScoreSequence() {
-    //     return Commands.sequence(
-    //         ElasticUtil.sendInfoCommand("Background score sequence started"),
-    //         Commands.waitUntil(() -> readyForElevator),
-    //         elevatorArmIntakeHandler.prepareForCoralScoring(),
-    //         Commands.waitUntil(() -> finishedReefPath),
-    //         Commands.waitSeconds(10000000),
-    //         buttonBoardHandler.scoreCoral(endEffector).asProxy(),
-    //         Commands.runOnce(() -> { finishedReefPath = false; readyForElevator = false; readyForIntaking = false; }),
-    //         elevatorArmIntakeHandler.moveToIntakePosition(false)
-    //     );
-    // }
-
-    public Command getAlgaeSequence() {
+    public Command intakeAlgaeFromReef() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeIntakePath(swerve)
                 .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()),
-            endEffector.pickupAlgae(),
-            scoreAlgaeSequence()
+            endEffector.pickupAlgae()
         );
     }
 
@@ -187,11 +108,7 @@ public class Compositions {
         return Commands.sequence(
             intake.stopIntaking(),
             indexer.stopRollers(),
-            endEffector.stopRollers(),
-            Commands.runOnce(() -> { 
-                finishedReefPath = false; 
-                readyForIntaking = false;
-            })
+            endEffector.stopRollers()
         );
     }
 }

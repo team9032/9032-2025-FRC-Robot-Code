@@ -202,9 +202,9 @@ public final class Constants {
 
         //TODO change all elevator positions once we can find them
         public static final double kElevatorTrough = 0.4;
-        public static final double kElevatorL1 = 1.5;
+        public static final double kElevatorL1 = 1.1;
         public static final double kElevatorL2 = 3.52;
-        public static final double kElevatorL3 = 7.4;
+        public static final double kElevatorL3 = 8.70;
         public static final double kElevatorLowAlgae = 3.1;
         public static final double kElevatorHighAlgae = 5.3;
         public static final double kElevatorIndexerPos = 1.6;
@@ -213,6 +213,7 @@ public final class Constants {
         public static final double kElevatorNet = 0;
 
         public static final double kElevatorOverIndexer = 3.2;
+        public static final double kElevatorStow = 1.6; 
     }
 
     public static final class IndexerConstants {
@@ -301,18 +302,19 @@ public final class Constants {
         public static final int kArmEncoderPort = 2; 
         public static final double kArmEncoderZeroPos = 0.447; 
 
-        public static final double kArmStowPos = 0.205;
+        public static final double kArmStowPos = 0.2;
         public static final double kArmIndexerPos = 0.75;
         public static final double kArmTroughPos = 0.14;
-        public static final double kArmLevel1Pos = 0.205; 
-        public static final double kArmLevel2Pos = 0.205;
-        public static final double kArmLevel3Pos = 0.16;
+        public static final double kArmLevel1Pos = kArmStowPos; 
+        public static final double kArmLevel2Pos = kArmStowPos;
+        public static final double kArmLevel3Pos = 0.045;
         public static final double kArmHighAlgaePos = 190.0;
         public static final double kArmLowAlgaePos = 190.0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 140.0;
         public static final double kArmNetPos = 0;
 
+        public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()

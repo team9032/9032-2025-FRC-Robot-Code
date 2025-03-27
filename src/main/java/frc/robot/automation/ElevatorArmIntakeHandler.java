@@ -29,6 +29,9 @@ public class ElevatorArmIntakeHandler {
     public Command moveToIntakePosition(boolean intakeDown) {
         return Commands.either(
             Commands.sequence(
+                arm.moveToStowPos(),
+                Commands.waitUntil(arm::atSetpoint)
+                    .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
                 Commands.either(
                     intake.moveToGround(),
@@ -66,14 +69,18 @@ public class ElevatorArmIntakeHandler {
                 intake.moveToEndEffectorMovePosition(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
                 arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint),
+                Commands.waitUntil(arm::overIntake),
+                elevator.moveToStowPosition(),
                 intake.returnToStowPosition(),
+                Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow from index")
             ),
             Commands.sequence(
-                elevator.moveToOverIndexerPosition(),
-                intake.returnToStowPosition(),
                 arm.moveToStowPos(),
+                Commands.waitUntil(arm::atSetpoint)
+                    .onlyIf(arm::atL3),
+                elevator.moveToStowPosition(),
+                intake.returnToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow")
             ),
@@ -92,19 +99,23 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForAlgaeIntakingInitial() {
-        return Commands.sequence(
-            elevator.moveToOverIndexerPosition(),
-            Commands.waitUntil(elevator::atSetpoint),
-            buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
-            Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for algae intaking inital")
+    public Command prepareForAlgaeIntaking() {
+        return Commands.either(
+                Commands.sequence(
+                    elevator.moveToOverIndexerPosition(),
+                    Commands.waitUntil(elevator::atSetpoint),
+                    buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
+                    Commands.waitUntil(arm::atSetpoint),
+                    ElasticUtil.sendInfoCommand("Prepared for algae intaking inital")
+                ),
+                null,
+                arm::closeToIndexPosition
         );
     }
 
     public Command prepareForAlgaeIntakingFinal() {
         return Commands.sequence(
-            prepareForAlgaeIntakingInitial()
+            prepareForAlgaeIntaking()
                 .onlyIf(() -> !elevator.overIndexPosition()),
             buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
             buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
@@ -132,5 +143,9 @@ public class ElevatorArmIntakeHandler {
 
     public boolean elevatorAndArmAtSetpoints() {
         return elevator.atSetpoint() && arm.atSetpoint();
+    }
+
+    public boolean readyForCoralScoring() {
+        return buttonBoardHandler.readyToScoreCoral(arm, elevator);
     }
 }

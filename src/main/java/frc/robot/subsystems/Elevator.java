@@ -40,9 +40,29 @@ public class Elevator extends SubsystemBase {
     private void moveElevator(double pos) {
         elevatorMotor.setControl(motionMagic.withPosition(pos));
     }
+
+    private boolean atPosition(double position) {
+        return MathUtil.isNear(position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+    }
+
+    public boolean atTrough() {
+        return atPosition(kElevatorTrough);
+    }
+
+    public boolean atL1() {
+        return atPosition(kElevatorL1);
+    }
+
+    public boolean atL2() {
+        return atPosition(kElevatorL2);
+    }
+
+    public boolean atL3() {
+        return atPosition(kElevatorL3);
+    }
     
     public boolean atSetpoint() {
-        return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+        return atPosition(motionMagic.Position);
     }
 
     public boolean overIndexPosition() {
@@ -51,6 +71,10 @@ public class Elevator extends SubsystemBase {
 
     public Command holdPosition() {
         return runOnce(() -> moveElevator(elevatorPosSignal.getValueAsDouble()));
+    }
+
+    public Command moveToStowPosition() {
+        return runOnce(() -> moveElevator(kElevatorStow));
     }
 
     public Command moveToIndexerPosition() {

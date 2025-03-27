@@ -387,4 +387,20 @@ public class ButtonBoardHandler {
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
     }
+
+    public boolean readyToScoreCoral(Arm arm, Elevator elevator) {
+        if (reefLevelTarget.equals(ReefLevel.TO_TROUGH))
+            return arm.atTrough() && elevator.atTrough();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL1))
+            return arm.atL1() && elevator.atL1();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL2))
+            return arm.atL2() && elevator.atL2();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL3))
+            return arm.atL3() && elevator.atL3();
+        
+        return false;
+    }
 }
