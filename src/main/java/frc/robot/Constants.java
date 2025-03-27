@@ -61,7 +61,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            3,//TODO change these
+            3.0,//TODO change these
             6, 
             2 * Math.PI, 
             2 * Math.PI
@@ -73,8 +73,8 @@ public final class Constants {
         public static final double kAlignmentRotkP = 10.0;
         public static final double kAlignmentRotkD = 0;
 
-        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.5);
-        public static final double kRotAlignmentTolerance = Units.degreesToRadians(1);
+        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.25);
+        public static final double kRotAlignmentTolerance = Units.degreesToRadians(2);
     }
 
     public static final class ObjectAimingConstants {
@@ -144,7 +144,7 @@ public final class Constants {
                false
             ),
             new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-12.9375),Units.inchesToMeters(8.375)),
+                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),

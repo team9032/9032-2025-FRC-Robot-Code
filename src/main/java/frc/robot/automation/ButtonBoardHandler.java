@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.AutomationConstants.*;
 
@@ -165,43 +166,43 @@ public class ButtonBoardHandler {
         return Commands.either(endEffector.placeCoralInTrough(), endEffector.placeCoral(), () -> reefLevelTarget.equals(ReefLevel.TO_TROUGH));
     }
 
-    public Command followReefPath() {
+    public Command followReefPath(KrakenSwerve swerve) {
         return new SelectCommand<ReefPath>(
             Map.ofEntries(
                 Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1L()),
-                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1R()),
-                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2L()),
-                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2R()),
-                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3L()),
-                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3R()),
-                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4L()),
-                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4R()),
-                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5L()),
-                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5R()),
-                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6L()),
-                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6R())
+                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1L(swerve)),
+                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1R(swerve)),
+                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2L(swerve)),
+                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2R(swerve)),
+                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3L(swerve)),
+                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3R(swerve)),
+                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4L(swerve)),
+                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4R(swerve)),
+                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5L(swerve)),
+                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5R(swerve)),
+                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6L(swerve)),
+                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6R(swerve))
             ),
             () -> reefPathTarget
         );
     }
 
-    public Command followAlgaeIntakePath() {
+    public Command followAlgaeIntakePath(KrakenSwerve swerve) {
         return new SelectCommand<ReefPath>(
             Map.ofEntries(
                 Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A()),
-                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A()),
-                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A()),
-                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A()),
-                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A()),
-                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A()),
-                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A()),
-                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A()),
-                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A()),
-                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A()),
-                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A()),
-                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A())
+                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A(swerve)),
+                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A(swerve)),
+                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A(swerve)),
+                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A(swerve)),
+                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A(swerve)),
+                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A(swerve)),
+                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A(swerve)),
+                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A(swerve)),
+                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A(swerve)),
+                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A(swerve)),
+                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A(swerve)),
+                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A(swerve))
             ),
             () -> reefPathTarget
         );

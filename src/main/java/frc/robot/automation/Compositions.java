@@ -79,7 +79,7 @@ public class Compositions {
     private Command scoreCoralSequence() {
         return Commands.sequence(
             Commands.waitUntil(buttonBoardHandler::hasQueues),
-            buttonBoardHandler.followReefPath(),
+            buttonBoardHandler.followReefPath(swerve),
             Commands.runOnce(() -> finishedReefPath = true),
             Commands.waitUntil(() -> !finishedReefPath)
         );
@@ -88,7 +88,7 @@ public class Compositions {
     public Command alignToReefAndScore() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
-            buttonBoardHandler.followReefPath(),
+            buttonBoardHandler.followReefPath(swerve),
             elevatorArmIntakeHandler.prepareForCoralScoring(),//not here
             Commands.waitUntil(elevatorArmIntakeHandler::elevatorAndArmAtSetpoints),
             endEffector.placeCoral().asProxy()
@@ -168,7 +168,7 @@ public class Compositions {
 
     public Command getAlgaeSequence() {
         return Commands.sequence(
-            buttonBoardHandler.followAlgaeIntakePath()
+            buttonBoardHandler.followAlgaeIntakePath(swerve)
                 .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()),
             endEffector.pickupAlgae(),
             scoreAlgaeSequence()
