@@ -513,17 +513,44 @@
             }
           },
           {
-            "title": "Version Info",
-            "x": 0.0,
-            "y": 576.0,
-            "width": 608.0,
+            "title": "End effector arm absolute position",
+            "x": 1088.0,
+            "y": 64.0,
+            "width": 320.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
+              "topic": "/SmartDashboard/End effector arm absolute position",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "End effector arm relative position",
+            "x": 1088.0,
+            "y": 192.0,
+            "width": 320.0,
+            "height": 160.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/End effector arm relative position",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Version Info",
+            "x": 0.0,
+            "y": 640.0,
+            "width": 544.0,
+            "height": 96.0,
+            "type": "Large Text Display",
+            "properties": {
               "topic": "/SmartDashboard/Version Info",
               "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
+              "data_type": "string"
             }
           }
         ]
@@ -673,7 +700,7 @@
           {
             "title": "to5L",
             "x": 384.0,
-            "y": 64.0,
+            "y": 32.0,
             "width": 96.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -733,23 +760,6 @@
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4278193919,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "algaeToggle",
-            "x": 224.0,
-            "y": 192.0,
-            "width": 128.0,
-            "height": 160.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/algaeToggle",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
               "false_color": 4278190080,
               "true_icon": "None",
               "false_icon": "None"
@@ -824,7 +834,7 @@
             }
           },
           {
-            "title": "toRSource",
+            "title": "RSource",
             "x": 608.0,
             "y": 576.0,
             "width": 96.0,
@@ -841,7 +851,7 @@
             }
           },
           {
-            "title": "toLSource",
+            "title": "LSource",
             "x": 0.0,
             "y": 576.0,
             "width": 96.0,
@@ -858,11 +868,11 @@
             }
           },
           {
-            "title": "automaticMode",
+            "title": "Automatic Mode",
             "x": 128.0,
             "y": 576.0,
             "width": 192.0,
-            "height": 128.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/ButtonTable/automaticMode",
@@ -875,7 +885,7 @@
             }
           },
           {
-            "title": "toBarge",
+            "title": "To Barge",
             "x": 352.0,
             "y": 576.0,
             "width": 96.0,
@@ -892,7 +902,7 @@
             }
           },
           {
-            "title": "toProcessor",
+            "title": "To Processor",
             "x": 480.0,
             "y": 576.0,
             "width": 96.0,
@@ -954,9 +964,9 @@
           },
           {
             "title": "Reef Camera",
-            "x": 768.0,
+            "x": 736.0,
             "y": 0.0,
-            "width": 736.0,
+            "width": 800.0,
             "height": 352.0,
             "type": "Camera Stream",
             "properties": {
@@ -964,6 +974,51 @@
               "period": 0.06,
               "rotation_turns": 0,
               "compression": 24
+            }
+          },
+          {
+            "title": "Algae Mode",
+            "x": 224.0,
+            "y": 192.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/algaeToggle",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4281709620,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 4",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Localization Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1504.0,
+            "height": 736.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Localization Field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.893,
+              "robot_length": 0.893,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
             }
           }
         ]
