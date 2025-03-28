@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -28,6 +32,9 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
@@ -442,5 +449,42 @@ public final class Constants {
 
         public static final Rectangle2d kIntakeZoneRectangle = new Rectangle2d(
             new Pose2d(2.04, 6.04, Rotation2d.fromDegrees(-55.0)), 0.8, 4.0);
+    }
+
+    public static final class LEDConstants {
+        public static final int kLEDPort = 0;
+        public static final int kLEDLength = 160;
+        public static final Distance kLedSpacing = Meters.of(1/120.0);
+
+        //Patterns
+        public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kRed);
+
+        public static final LEDPattern kBaseDisabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kRed, Color.kOrange);
+        public static final LEDPattern kDisabledPattern = kBaseDisabled.breathe(Seconds.of(2));
+
+        public static final LEDPattern kBaseEnabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kLimeGreen, Color.kDarkGreen);
+        public static final LEDPattern kEnabledPattern = kBaseEnabled.blink(Seconds.of(0.6));
+
+        public static final LEDPattern kBaseL1 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kWhiteSmoke);
+        public static final LEDPattern kL1Mask = LEDPattern.progressMaskLayer(() -> 0.35);
+        public static final LEDPattern kL1Pattern = kBaseL1.mask(kL1Mask);
+
+        public static final LEDPattern kBaseL2 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow);
+        public static final LEDPattern kL2Mask = LEDPattern.progressMaskLayer(() -> 0.60);
+        public static final LEDPattern kL2Pattern = kBaseL2.mask(kL2Mask);
+
+        public static final LEDPattern kBaseL3 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kGreen, Color.kLightSeaGreen);
+        public static final LEDPattern kL3Mask = LEDPattern.progressMaskLayer(() -> 0.75);
+        public static final LEDPattern kL3Pattern = kBaseL3.mask(kL3Mask);
+
+        public static final LEDPattern kBaseL4 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kSteelBlue);
+        public static final LEDPattern kL4Mask = LEDPattern.progressMaskLayer(() -> 1.00);
+        public static final LEDPattern kL4Pattern = kBaseL4.mask(kL4Mask);
+
+        public static final LEDPattern kAlgaeBase = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kAqua, Color.kLightGreen, Color.kLightCyan);
+        public static final LEDPattern kAlgaePattern = kAlgaeBase.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+
+        public static final LEDPattern kBatteryLowBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkRed, Color.kRed);
+        public static final LEDPattern kBatteryLowPattern = kBaseEnabled.blink(Seconds.of(0.6));
     }
 }

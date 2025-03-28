@@ -57,6 +57,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
+    private final LED led = new LED();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -276,7 +277,7 @@ public class RobotContainer {
 
     /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
+        buttonBoard.update(automationCommand.isScheduled());
     }
 
     /** Bind robot mode triggers here */
