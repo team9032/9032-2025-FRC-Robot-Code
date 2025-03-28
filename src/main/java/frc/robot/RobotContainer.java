@@ -112,11 +112,10 @@ public class RobotContainer {
         // buttonBoard.getEnableAlgaeModeTrigger()
         //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
-        // buttonBoard.getAutoIntakeTrigger().onTrue(
-        //     compositions.driveToSource(false, false)
-        //     .onlyIf(() -> !endEffector.hasCoral())
-        //     .until(this::driverWantsOverride)
-        // );     
+        buttonBoard.getAutoIntakeTrigger().onTrue(
+            compositions.autoIntake()
+            .until(this::driverWantsOverride)
+        );     
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -132,9 +131,9 @@ public class RobotContainer {
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("4 Coral Left", Autos.fourCoralLeft(elevator, arm, endEffector, krakenSwerve, intake, indexer, false));
-        autoChooser.addOption("4 Coral Right", Autos.fourCoralLeft(elevator, arm, endEffector, krakenSwerve, intake, indexer, true));
-        autoChooser.addOption("1 Coral Center", Autos.oneCoralCenter(elevator, arm, endEffector, krakenSwerve, intake, indexer));
+        autoChooser.addOption("4 Coral Left", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, false));
+        autoChooser.addOption("4 Coral Right", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, true));
+        // autoChooser.addOption("1 Coral Center", Autos.oneCoralCenter(elevator, arm, endEffector, krakenSwerve, intake, indexer));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);

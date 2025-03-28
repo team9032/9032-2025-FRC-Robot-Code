@@ -5,6 +5,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -49,6 +50,16 @@ public class Compositions {
             buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
             endEffector.placeCoral().asProxy()
+        );
+    }
+
+    public Command autoIntake() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Started auto intaking"),
+            intake.resetLastObstacleDistance(),
+            new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
+                .until(endEffector::hasCoral)
+                    .alongWith(intakeCoralToEndEffector())  
         );
     }
 

@@ -99,6 +99,16 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command prepareForAutoCoralScoring() {
+        return Commands.sequence(
+            moveToStowPositions(),
+            elevator.moveToL3Position(),
+            Commands.waitUntil(elevator::atSetpoint),
+            arm.moveToLevel3Pos(),
+            Commands.waitUntil(arm::atSetpoint)
+        );
+    }
+
     public Command prepareForAlgaeIntaking() {
         return Commands.sequence(
             moveToStowPositions(),
