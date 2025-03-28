@@ -187,26 +187,26 @@ public class ButtonBoardHandler {
         );
     }
 
-    public Command followAlgaeIntakePath(KrakenSwerve swerve) {
-        return new SelectCommand<ReefPath>(
-            Map.ofEntries(
-                Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A(swerve)),
-                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A(swerve)),
-                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A(swerve)),
-                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A(swerve)),
-                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A(swerve)),
-                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A(swerve)),
-                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A(swerve)),
-                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A(swerve)),
-                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A(swerve)),
-                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A(swerve)),
-                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A(swerve)),
-                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A(swerve))
-            ),
-            () -> reefPathTarget
-        );
-    }
+    // public Command followAlgaeIntakePath(KrakenSwerve swerve) {
+    //     return new SelectCommand<ReefPath>(
+    //         Map.ofEntries(
+    //             Map.entry(ReefPath.NONE, Commands.none()),
+    //             Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A(swerve)),
+    //             Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A(swerve)),
+    //             Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A(swerve)),
+    //             Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A(swerve)),
+    //             Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A(swerve)),
+    //             Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A(swerve)),
+    //             Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A(swerve)),
+    //             Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A(swerve)),
+    //             Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A(swerve)),
+    //             Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A(swerve)),
+    //             Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A(swerve)),
+    //             Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A(swerve))
+    //         ),
+    //         () -> reefPathTarget
+    //     );
+    // }
 
     public Command followSourcePath() {
         return new SelectCommand<SourcePath>(

@@ -37,7 +37,7 @@ public class Compositions {
 
     public Command driveToSource() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Get coral sequence started"),
+            ElasticUtil.sendInfoCommand("Drive to source started"),
             new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition(false)),
             buttonBoardHandler.followSourcePath()
         );
@@ -88,13 +88,13 @@ public class Compositions {
         );
     }       
 
-    public Command intakeAlgaeFromReef() {
-        return Commands.sequence(
-            buttonBoardHandler.followAlgaeIntakePath(swerve)
-                .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()),
-            endEffector.pickupAlgae()
-        );
-    }
+    // public Command intakeAlgaeFromReef() {
+    //     return Commands.sequence(
+    //         buttonBoardHandler.followAlgaeIntakePath(swerve)
+    //             .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntaking()),
+    //         endEffector.pickupAlgae()
+    //     );
+    // }
 
     public Command scoreAlgaeSequence() {
         return Commands.sequence(

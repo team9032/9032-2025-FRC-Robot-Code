@@ -200,17 +200,16 @@ public final class Constants {
 
         public static final double kElevatorTolerance = 0.05;
 
-        //TODO change all elevator positions once we can find them
         public static final double kElevatorTrough = 0.4;
         public static final double kElevatorL1 = 1.1;
-        public static final double kElevatorL2 = 3.52;
+        public static final double kElevatorL2 = 3.42;
         public static final double kElevatorL3 = 8.70;
-        public static final double kElevatorLowAlgae = 3.1;
-        public static final double kElevatorHighAlgae = 5.3;
+        public static final double kElevatorLowAlgae = 4.8;
+        public static final double kElevatorHighAlgae = 6.6;
         public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
-        public static final double kElevatorNet = 0;
+        public static final double kElevatorNet = 9.5;
 
         public static final double kElevatorOverIndexer = 3.2;
         public static final double kElevatorStow = 1.6; 
@@ -308,11 +307,11 @@ public final class Constants {
         public static final double kArmLevel1Pos = kArmStowPos; 
         public static final double kArmLevel2Pos = kArmStowPos;
         public static final double kArmLevel3Pos = 0.045;
-        public static final double kArmHighAlgaePos = 190.0;
-        public static final double kArmLowAlgaePos = 190.0;
+        public static final double kArmHighAlgaePos = -0.05;
+        public static final double kArmLowAlgaePos = -0.05;
         public static final double kArmProcessorPos = 0;
-        public static final double kArmSourcePos = 140.0;
-        public static final double kArmNetPos = 0;
+        public static final double kArmSourcePos = 0.0;
+        public static final double kArmNetPos = 0.1;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
@@ -400,10 +399,10 @@ public final class Constants {
         public static final int kSourcePhotoelectricSensorID = 0;        
         public static final int kIndexerPhotoelectricSensorID = 1;
 
-        public static final double kProcessorOuttakePower = 0.5;
-        public static final double kNetOuttakePower = 1.0;
-        public static final double kIntakeAlgaePower = -1.0;
-        public static final double kHoldAlgaePower = -0.2;
+        public static final double kProcessorOuttakePower = -1.0;
+        public static final double kNetOuttakePower = -1.0;
+        public static final double kIntakeAlgaePower = 1.0;
+        public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
         public static final double kCoralOuttakeToTrough = -0.2;

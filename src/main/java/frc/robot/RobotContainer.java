@@ -102,8 +102,15 @@ public class RobotContainer {
         buttonBoard.getEnableCoralModeTrigger()
             .toggleOnTrue(coralCyclingCommand);
 
-        buttonBoard.getEnableAlgaeModeTrigger()
-            .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
+        buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
+            Commands.sequence(
+                elevatorArmIntakeHandler.prepareForAlgaeIntaking(),
+                endEffector.pickupAlgae()  
+            )
+        );
+
+        // buttonBoard.getEnableAlgaeModeTrigger()
+        //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
         // buttonBoard.getAutoIntakeTrigger().onTrue(
         //     compositions.driveToSource(false, false)
@@ -234,9 +241,12 @@ public class RobotContainer {
             )
         );
 
-        // buttonBoard.manual10.onTrue(
-        //     elevatorArmIntakeHandler.prepareForAlgaeIntakingFinal()
-        // );
+        buttonBoard.manual10.onTrue(
+            Commands.sequence(
+                elevatorArmIntakeHandler.prepareForAlgaeScoring(),
+                endEffector.pickupAlgae()  
+            )
+        );
 
         // buttonBoard.manual11.onTrue(
         //     Commands.sequence(

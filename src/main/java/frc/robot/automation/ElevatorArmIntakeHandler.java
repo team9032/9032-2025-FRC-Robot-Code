@@ -100,28 +100,14 @@ public class ElevatorArmIntakeHandler {
     }
 
     public Command prepareForAlgaeIntaking() {
-        return Commands.either(
-                Commands.sequence(
-                    elevator.moveToOverIndexerPosition(),
-                    Commands.waitUntil(elevator::atSetpoint),
-                    buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
-                    Commands.waitUntil(arm::atSetpoint),
-                    ElasticUtil.sendInfoCommand("Prepared for algae intaking inital")
-                ),
-                null,
-                arm::closeToIndexPosition
-        );
-    }
-
-    public Command prepareForAlgaeIntakingFinal() {
         return Commands.sequence(
-            prepareForAlgaeIntaking()
-                .onlyIf(() -> !elevator.overIndexPosition()),
-            buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
+            moveToStowPositions(),
             buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
-            Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-            ElasticUtil.sendInfoCommand("Prepared for algae intaking final")
-        );
+            buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            ElasticUtil.sendInfoCommand("Prepared for algae intaking")
+
+        );          
     }
 
     public Command prepareForAlgaeScoring() {

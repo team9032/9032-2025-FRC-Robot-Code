@@ -54,7 +54,7 @@ public class AutomationHandler {
 
     private Command mainAlgaeCyclingCommand() {
         /* This is the main cycling command, so it's repeated */
-        return compositions.intakeAlgaeFromReef().repeatedly();
+        return Commands.none();//compositions.intakeAlgaeFromReef().repeatedly();
     }
 
     private GamePieceState getGamePieceState() {
