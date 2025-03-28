@@ -98,7 +98,7 @@ public final class Constants {
         public static final int kAlgaeId = 0;
     }
 
-    public static final class LocalizationConstants {//TODO all under need to be tuned 
+    public static final class LocalizationConstants {
         /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityMultiplier = 40;
         public static final double kNoisyDistanceMeters = 2.5;
@@ -161,7 +161,7 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(9.5)//TODO these could be faster
+            .withMotionMagicCruiseVelocity(9.5)
             .withMotionMagicAcceleration(40);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;

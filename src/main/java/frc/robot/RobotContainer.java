@@ -113,7 +113,7 @@ public class RobotContainer {
         //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.autoIntake()
+            compositions.autoIntake(true)
             .until(this::driverWantsOverride)
         );     
 
@@ -177,7 +177,7 @@ public class RobotContainer {
         );
 
         intakeDown.onTrue(
-            compositions.intakeCoralToEndEffector()
+            compositions.intakeCoralToEndEffector(true)
         );
 
         intakeUp.onTrue(
@@ -258,7 +258,7 @@ public class RobotContainer {
         // );
 
         buttonBoard.manual12.onTrue(
-            compositions.intakeCoralToEndEffector()
+            compositions.intakeCoralToEndEffector(true)
         );
 
         buttonBoard.manual13.onTrue(

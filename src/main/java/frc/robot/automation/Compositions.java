@@ -53,17 +53,17 @@ public class Compositions {
         );
     }
 
-    public Command autoIntake() {
+    public Command autoIntake(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started auto intaking"),
             intake.resetLastObstacleDistance(),
             new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
                 .until(endEffector::hasCoral)
-                    .alongWith(intakeCoralToEndEffector())  
+                    .alongWith(intakeCoralToEndEffector(moveToStow))  
         );
     }
 
-    public Command intakeCoralToEndEffector() {
+    public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
             elevatorArmIntakeHandler.moveToIntakePosition(true),
@@ -74,6 +74,7 @@ public class Compositions {
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
             elevatorArmIntakeHandler.moveToStowPositions()
+                .onlyIf(() -> moveToStow)
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }

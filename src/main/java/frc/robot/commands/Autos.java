@@ -60,7 +60,7 @@ public class Autos {
             /* Get coral 2 */
             AutoBuilder.followPath(path2)
                 .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(),
+            compositions.autoIntake(false),
             /* Score coral 2 */
             AutoBuilder.followPath(path3)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -69,7 +69,7 @@ public class Autos {
             /* Get coral 3 */
             AutoBuilder.followPath(path4)
                 .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(),
+            compositions.autoIntake(false),
             /* Score coral 3 */
             AutoBuilder.followPath(path5)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -78,7 +78,7 @@ public class Autos {
             /* Get coral 4 */
             AutoBuilder.followPath(path6)
                 .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(),
+            compositions.autoIntake(false),
             /* Score coral 4 */
             AutoBuilder.followPath(path7)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -111,6 +111,7 @@ public class Autos {
 
     private static Command prepareForScore(ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
         return Commands.sequence(
+            elevatorArmIntakeHandler.moveToStowPositions(),
             Commands.waitUntil(prepareForAutoScoring),
             elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
