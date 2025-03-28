@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.LEDConstants.*;
 
 public class LED extends SubsystemBase {
     public static enum State {
-        LOW_BATTERY(kBootingUp),
+        LOW_BATTERY(kBatteryLowPattern),
         BOOTING(kBootingUp),
         DISABLED(kDisabledPattern),
         ENABLED(kEnabledPattern),
@@ -26,12 +27,13 @@ public class LED extends SubsystemBase {
         }
     }
 
-    private State currentState = State.DISABLED;
+    private State currentState = State.BOOTING;//Default to booting - gets changed to disable when booted
+
     private final AddressableLED ledStrip;
     private final AddressableLEDBuffer ledBuffer;
 
     public LED() {
-        ledStrip = new AddressableLED(kLEDPort);
+        ledStrip = new AddressableLED(kLEDPort);//TODO need port
         ledStrip.setLength(kLEDLength);
 
         ledBuffer = new AddressableLEDBuffer(kLEDLength);
@@ -39,9 +41,13 @@ public class LED extends SubsystemBase {
         ledStrip.start();
     }
 
-    public Command setState(State state) {
-        return runOnce(() -> currentState = state)
+    public Command setStateCommand(State state) {
+        return Commands.runOnce(() -> setState(state))//The use of Commands.runOnce ensures that this command does not require this subsystem
             .ignoringDisable(true);
+    }
+
+    public void setState(State state) {
+        currentState = state;
     }
 
     private void applyPattern(LEDPattern pattern) {

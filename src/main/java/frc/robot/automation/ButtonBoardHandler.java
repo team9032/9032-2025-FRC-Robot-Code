@@ -3,7 +3,6 @@ package frc.robot.automation;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
@@ -14,11 +13,11 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.State;
 
 import static frc.robot.Constants.AutomationConstants.*;
 
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 public class ButtonBoardHandler {
     private final CommandXboxController buttonBoardController1 = new CommandXboxController(kButtonBoardPort1);
@@ -97,6 +96,7 @@ public class ButtonBoardHandler {
     
     public ButtonBoardHandler(LED led) {
         this.led = led;
+
         bindButtons();
     }
 
@@ -388,7 +388,41 @@ public class ButtonBoardHandler {
 
         algaeModePub.set(algaeModeEnabled);
         coralModePub.set(coralModeEnabled);
+
+        if (coralModeEnabled)
+            updateCoralLEDs();
+
+        else if (algaeModeEnabled)
+            led.setState(State.ALGAE);
     }    
+
+    private void updateCoralLEDs() {
+        switch (reefLevelTarget) {
+            case NONE:
+            led.setState(State.ENABLED);
+                break;
+
+            case TO_LEVEL1:
+            led.setState(State.L2);
+                break;
+
+            case TO_LEVEL2:
+            led.setState(State.L3);
+                break;
+
+            case TO_LEVEL3:
+            led.setState(State.L4);
+                break;
+
+            case TO_TROUGH:
+            led.setState(State.L1);
+                break;
+
+            default:
+            led.setState(State.ENABLED);
+                break;
+        }
+    }
 
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;

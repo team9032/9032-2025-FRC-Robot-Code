@@ -42,6 +42,8 @@ public final class Constants {
     public static class DriverConstants {
         public static final boolean kRunSysId = false;
 
+        public static final double kLowStartingBatteryVoltage = 12.2;
+
         public static final int kDriveControllerPort = 0;
 
         public static final double kOverrideAutomationThreshold = 0.1;

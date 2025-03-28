@@ -11,11 +11,13 @@ import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,7 +67,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Automation */
-    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler(led);
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
@@ -74,15 +76,11 @@ public class RobotContainer {
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
+    private final Trigger disabled = RobotModeTriggers.disabled();
+    private final Trigger enabled = RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop());
 
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
-
-    /* Auto Triggers */
-    // ...
-
-    /* State Triggers */
-    // ...
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -92,8 +90,10 @@ public class RobotContainer {
         /* Setup automation */
         coralCyclingCommand = automationHandler.coralResumeCommand()//automationHandler.coralResumeCommand()
             .until(this::driverWantsOverride)
-            .andThen(new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
-                .onlyIf(endEffector::hasCoral)
+            .andThen(
+                new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
+                    .onlyIf(endEffector::hasCoral),
+                led.setStateCommand(State.ENABLED)
             )
             .onlyIf(buttonBoard::hasQueues);
 
@@ -128,7 +128,7 @@ public class RobotContainer {
 
         bindRobotModeTriggers();
 
-        bindTeleopTriggers();     
+        bindTeleopTriggers();   
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
@@ -141,6 +141,13 @@ public class RobotContainer {
 
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
+
+        /* Switch LEDs to disabled or low battery */
+        if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
+            led.setState(State.LOW_BATTERY); 
+
+        else
+            led.setState(State.DISABLED); 
     }
 
     private boolean driverWantsOverride() {
@@ -277,7 +284,7 @@ public class RobotContainer {
 
     /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update(automationCommand.isScheduled());
+        buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
     }
 
     /** Bind robot mode triggers here */
@@ -285,6 +292,14 @@ public class RobotContainer {
         teleopEnabled.onTrue(
             compositions.resetStates()
             .andThen(elevatorArmIntakeHandler.holdPositions())
+        );
+
+        enabled.onTrue(
+            led.setStateCommand(State.ENABLED)
+        );
+
+        disabled.onTrue(
+            led.setStateCommand(State.DISABLED)
         );
     }
 
