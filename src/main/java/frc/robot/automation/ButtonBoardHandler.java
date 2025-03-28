@@ -3,6 +3,7 @@ package frc.robot.automation;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
@@ -11,10 +12,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.LED;
 
 import static frc.robot.Constants.ButtonBoardConstants.*;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 public class ButtonBoardHandler {
     private final CommandXboxController buttonBoardController1 = new CommandXboxController(kButtonBoardPort1);
@@ -90,8 +93,11 @@ public class ButtonBoardHandler {
     public final Trigger manual13 = buttonBoardController3.button(10);
     public final Trigger manual14 = buttonBoardController3.button(9);
     public final Trigger manual15 = buttonBoardController3.button(8);
+
+    public LED led = new LED();
     
-    public ButtonBoardHandler() {
+    public ButtonBoardHandler(LED led) {
+        this.led = led;
         bindButtons();
     }
 
@@ -389,6 +395,36 @@ public class ButtonBoardHandler {
 
         algaeTogglePub.set(algaeMode);
         automaticModePub.set(automaticModeEnabled);
+
+        //Set LEDs
+        if (automaticModeEnabled) {
+            switch (reefLevelTarget) {
+                case TO_TROUGH:
+                    led.setState(LED.State.L1);
+                    break;
+                
+                case TO_LEVEL1:
+                    led.setState(LED.State.L2);
+                    break;
+
+                case TO_LEVEL2:
+                    led.setState(LED.State.L3);
+                    break;
+                
+                case TO_LEVEL3:
+                    led.setState(LED.State.L4);
+                    break;
+
+                default:
+                    break;
+            }
+        } else if (getAlgaeTrigger().getAsBoolean()) {
+            led.setState(LED.State.ALGAE);
+        } else if (DriverStation.isEnabled()) {
+            led.setState(LED.State.ENABLED);
+        } else {
+            led.setState(LED.State.DISABLED);
+        }
     }    
 
     public boolean hasQueues() {

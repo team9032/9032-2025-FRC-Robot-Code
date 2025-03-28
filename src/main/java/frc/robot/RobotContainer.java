@@ -54,6 +54,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
+    private final LED led = new LED();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -61,7 +62,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Automation */
-    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler(led);
     private final Compositions compositions = new Compositions(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final Command automationCommand;
@@ -309,6 +310,9 @@ public class RobotContainer {
     /** Runs every loop cycle */
     public void robotPeriodic() {
         buttonBoard.update(automationCommand.isScheduled());
+        if (automationCommand.isScheduled()) {
+            
+        }
     }
 
     /** Bind robot mode triggers here */
