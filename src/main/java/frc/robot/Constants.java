@@ -93,10 +93,10 @@ public final class Constants {
         public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 13.3;
-        public static final double kMaxDrivingSpeed = 1.0;//Meters per second
+        public static final double kMaxDrivingSpeed = 2.0;//Meters per second
 
-        public static final double kSlowObstacleDistance = 1.20;//Meters from sensor
-        public static final double kSlowDrivingSpeed = 0.25;
+        public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
+        public static final double kSlowDrivingSpeed = 0.5;
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -157,11 +157,11 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            new CameraConstants("FrontLeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
-            )
+            // new CameraConstants("FrontLeftCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //     false
+            // )
         };
     }
 
@@ -465,7 +465,7 @@ public final class Constants {
         public static final LEDPattern kDisabledPattern = kBaseDisabled.breathe(Seconds.of(2));
 
         public static final LEDPattern kBaseEnabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kLimeGreen, Color.kDarkGreen);
-        public static final LEDPattern kEnabledPattern = kBaseEnabled.blink(Seconds.of(0.6));
+        public static final LEDPattern kEnabledPattern = kBaseEnabled.blink(Seconds.of(0.3));
 
         public static final LEDPattern kBaseL1 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kWhiteSmoke);
         public static final LEDPattern kL1Mask = LEDPattern.progressMaskLayer(() -> 0.35);

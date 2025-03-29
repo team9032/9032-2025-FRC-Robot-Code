@@ -92,7 +92,7 @@ public class ButtonBoardHandler {
     public final Trigger manual14 = buttonBoardController3.button(9);
     public final Trigger manual15 = buttonBoardController3.button(8);
 
-    public LED led = new LED();
+    private final LED led;
     
     public ButtonBoardHandler(LED led) {
         this.led = led;

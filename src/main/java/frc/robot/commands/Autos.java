@@ -38,10 +38,10 @@ public class Autos {
 
             if (mirrored) {
                 path1 = path1.mirrorPath();
-                path2 = path1.mirrorPath();
-                path3 = path1.mirrorPath();
-                path4 = path1.mirrorPath();
-                path5 = path1.mirrorPath();
+                path2 = path2.mirrorPath();
+                path3 = path3.mirrorPath();
+                path4 = path4.mirrorPath();
+                path5 = path5.mirrorPath();
                 path6 = path6.mirrorPath();
                 path7 = path7.mirrorPath();
             }
