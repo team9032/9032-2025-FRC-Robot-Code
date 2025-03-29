@@ -111,7 +111,8 @@ public class ElevatorArmIntakeHandler {
 
     public Command prepareForAlgaeIntaking() {
         return Commands.sequence(
-            moveToStowPositions(),
+            moveToStowPositions()
+                .onlyIf(arm::closeToIndexPosition),
             buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
             buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
