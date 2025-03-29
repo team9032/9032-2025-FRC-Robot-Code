@@ -20,8 +20,8 @@
         "y": 5.243108165711411
       },
       "prevControl": {
-        "x": 5.234262985182907,
-        "y": 5.955223550326797
+        "x": 5.414327087747009,
+        "y": 6.1091335694958495
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8,
+      "minWaypointRelativePos": 0.7394540942928045,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 6.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -48,13 +48,13 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.85,
+      "waypointRelativePos": 0.9558312655086838,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 1.0,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

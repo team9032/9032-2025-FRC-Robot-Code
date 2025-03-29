@@ -32,7 +32,9 @@ public class Compositions {
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
 
         prepareElevatorForScoring.onTrue(
-            elevatorArmIntakeHandler.prepareForCoralScoring()
+            Commands.waitSeconds(0.25)
+                .onlyIf(buttonBoardHandler::l4Selected)
+            .andThen(elevatorArmIntakeHandler.prepareForCoralScoring())
         );
     }
 
@@ -49,6 +51,8 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
             buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
+            Commands.waitSeconds(0.5)//TODO fix?
+                .onlyIf(buttonBoardHandler::l4Selected),
             endEffector.placeCoral().asProxy()
         );
     }

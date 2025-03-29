@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.3136270491803277,
-        "y": 5.751229508196721
+        "x": 2.0865,
+        "y": 6.365
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8290983606557374,
-        "y": 5.727254098360657
+        "x": 2.6019713114754097,
+        "y": 6.341024590163936
       },
       "isLocked": false,
-      "linkedName": "LeftC2End"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.85,
+      "waypointRelativePos": 0.9062034739454067,
       "endWaypointRelativePos": null,
       "command": null
     }

@@ -443,4 +443,8 @@ public class ButtonBoardHandler {
         
         return false;
     }
+
+    public boolean l4Selected() {
+        return reefLevelTarget.equals(ReefLevel.TO_LEVEL3);
+    }
 }

@@ -56,6 +56,7 @@ public class Autos {
             AutoBuilder.followPath(path1)
                 .deadlineFor(endEffector.holdCoral().asProxy())
                     .alongWith(prepareForScore(elevatorArmIntakeHandler)),
+            Commands.waitSeconds(0.5),//TODO no.
             endEffector.placeCoral().asProxy(),
             /* Get coral 2 */
             AutoBuilder.followPath(path2)

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.349590163934426,
-        "y": 6.242725409836066
+        "x": 2.6520000000000006,
+        "y": 5.92625
       },
       "prevControl": {
-        "x": 2.910511383360422,
-        "y": 5.899417280388782
+        "x": 2.727800914319236,
+        "y": 5.688018554996684
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftC4End"
+      "linkedName": "autosource"
     }
   ],
   "rotationTargets": [],
@@ -33,10 +33,10 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.08,
+      "maxWaypointRelativePos": 0.06848635235732044,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 6.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 1.0,
-    "rotation": 129.80557109226524
+    "rotation": 110.5560452195835
   },
   "reversed": false,
   "folder": "4 Coral Left",

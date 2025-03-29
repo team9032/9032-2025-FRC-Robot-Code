@@ -71,7 +71,7 @@ public final class Constants {
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             3.0,//TODO change these
-            6, 
+            4.0, 
             2 * Math.PI, 
             2 * Math.PI
         );
@@ -93,7 +93,7 @@ public final class Constants {
         public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 13.3;
-        public static final double kMaxDrivingSpeed = 2.0;//Meters per second
+        public static final double kMaxDrivingSpeed = 1.0;//Meters per second
 
         public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
         public static final double kSlowDrivingSpeed = 0.5;
