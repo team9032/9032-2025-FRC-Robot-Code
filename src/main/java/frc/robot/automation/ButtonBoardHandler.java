@@ -132,7 +132,7 @@ public class ButtonBoardHandler {
         TO_RSOURCE
     }
 
-    private SourcePath sourcePathTarget = SourcePath.NONE;
+    private SourcePath sourcePathTarget = SourcePath.TO_LSOURCE;
 
     private static enum ReefLevel {
         NONE,

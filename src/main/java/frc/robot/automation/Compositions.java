@@ -42,6 +42,7 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Drive to source started"),
             new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition(false)),
+            Commands.waitSeconds(0.25),//TODO no
             buttonBoardHandler.followSourcePath()
         );
     }

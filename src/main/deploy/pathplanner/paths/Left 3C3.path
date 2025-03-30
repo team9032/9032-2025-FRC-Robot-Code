@@ -20,8 +20,8 @@
         "y": 5.168444679287582
       },
       "prevControl": {
-        "x": 3.474036126547585,
-        "y": 6.0436663280428435
+        "x": 3.3325819672066395,
+        "y": 6.290676229511341
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.9062034739454067,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }

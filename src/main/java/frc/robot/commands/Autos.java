@@ -66,6 +66,7 @@ public class Autos {
             AutoBuilder.followPath(path3)
                 .deadlineFor(endEffector.holdCoral().asProxy())
                     .alongWith(prepareForScore(elevatorArmIntakeHandler)),
+            Commands.waitSeconds(0.5),//TODO no.
             endEffector.placeCoral().asProxy(),
             /* Get coral 3 */
             AutoBuilder.followPath(path4)
@@ -113,7 +114,7 @@ public class Autos {
     private static Command prepareForScore(ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
         return Commands.sequence(
             elevatorArmIntakeHandler.moveToStowPositions(),
-            Commands.waitUntil(prepareForAutoScoring),
+            Commands.waitUntil(prepareForAutoScoring),//TODO this is a race condition
             elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
         );
