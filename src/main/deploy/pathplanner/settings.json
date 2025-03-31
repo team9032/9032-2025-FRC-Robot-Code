@@ -3,16 +3,9 @@
   "robotLength": 0.932,
   "holonomicMode": true,
   "pathFolders": [
-    "3 Coral Left",
-    "3 Ground Coral",
-    "Ground Algae Coral Auto",
-    "Ground Coral Auto",
-    "L 2C",
-    "M 3C",
-    "3 Coral Right",
-    "R 3C",
-    "Stubs",
-    "Tuning"
+    "1 Coral Center",
+    "4 Coral Left",
+    "Stubs"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.1,
@@ -42,6 +35,6 @@
   "robotFeatures": [
     "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.4,\"y\":-0.1},\"size\":{\"width\":0.6,\"length\":0.2},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}",
     "{\"name\":\"Elevator\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.0,\"y\":0.17},\"size\":{\"width\":0.2,\"length\":0.8},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":true}}",
-    "{\"name\":\"End Effector\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":-0.469,\"y\":-0.0254},\"radius\":0.02,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"End Effector\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":-0.469,\"y\":-0.0762},\"radius\":0.02,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
 }

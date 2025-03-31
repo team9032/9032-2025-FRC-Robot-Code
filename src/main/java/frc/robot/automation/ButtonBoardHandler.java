@@ -12,6 +12,8 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.State;
 
 import static frc.robot.Constants.AutomationConstants.*;
 
@@ -89,8 +91,12 @@ public class ButtonBoardHandler {
     public final Trigger manual13 = buttonBoardController3.button(10);
     public final Trigger manual14 = buttonBoardController3.button(9);
     public final Trigger manual15 = buttonBoardController3.button(8);
+
+    private final LED led;
     
-    public ButtonBoardHandler() {
+    public ButtonBoardHandler(LED led) {
+        this.led = led;
+
         bindButtons();
     }
 
@@ -126,7 +132,7 @@ public class ButtonBoardHandler {
         TO_RSOURCE
     }
 
-    private SourcePath sourcePathTarget = SourcePath.NONE;
+    private SourcePath sourcePathTarget = SourcePath.TO_LSOURCE;
 
     private static enum ReefLevel {
         NONE,
@@ -382,7 +388,41 @@ public class ButtonBoardHandler {
 
         algaeModePub.set(algaeModeEnabled);
         coralModePub.set(coralModeEnabled);
+
+        if (coralModeEnabled)
+            updateCoralLEDs();
+
+        else if (algaeModeEnabled)
+            led.setState(State.ALGAE);
     }    
+
+    private void updateCoralLEDs() {
+        switch (reefLevelTarget) {
+            case NONE:
+            led.setState(State.ENABLED);
+                break;
+
+            case TO_LEVEL1:
+            led.setState(State.L2);
+                break;
+
+            case TO_LEVEL2:
+            led.setState(State.L3);
+                break;
+
+            case TO_LEVEL3:
+            led.setState(State.L4);
+                break;
+
+            case TO_TROUGH:
+            led.setState(State.L1);
+                break;
+
+            default:
+            led.setState(State.ENABLED);
+                break;
+        }
+    }
 
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
@@ -402,5 +442,9 @@ public class ButtonBoardHandler {
             return arm.atL3() && elevator.atL3();
         
         return false;
+    }
+
+    public boolean l4Selected() {
+        return reefLevelTarget.equals(ReefLevel.TO_LEVEL3);
     }
 }
