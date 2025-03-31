@@ -5,6 +5,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import frc.robot.commands.AimAtCoral;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -31,7 +32,9 @@ public class Compositions {
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
 
         prepareElevatorForScoring.onTrue(
-            elevatorArmIntakeHandler.prepareForCoralScoring()
+            Commands.waitSeconds(0.25)
+                .onlyIf(buttonBoardHandler::l4Selected)
+            .andThen(elevatorArmIntakeHandler.prepareForCoralScoring())
         );
     }
 
@@ -39,6 +42,7 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Drive to source started"),
             new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition(false)),
+            Commands.waitSeconds(0.25),//TODO no
             buttonBoardHandler.followSourcePath()
         );
     }
@@ -48,11 +52,23 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
             buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
+            Commands.waitSeconds(0.5)//TODO fix?
+                .onlyIf(buttonBoardHandler::l4Selected),
             endEffector.placeCoral().asProxy()
         );
     }
 
-    public Command intakeCoralToEndEffector() {
+    public Command autoIntake(boolean moveToStow) {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Started auto intaking"),
+            intake.resetLastObstacleDistance(),
+            new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
+                .until(endEffector::hasCoral)
+                    .alongWith(intakeCoralToEndEffector(moveToStow))  
+        );
+    }
+
+    public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
             elevatorArmIntakeHandler.moveToIntakePosition(true),
@@ -63,6 +79,7 @@ public class Compositions {
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
             elevatorArmIntakeHandler.moveToStowPositions()
+                .onlyIf(() -> moveToStow)
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }

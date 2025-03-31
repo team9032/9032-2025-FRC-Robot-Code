@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -28,12 +32,17 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
     public static class DriverConstants {
         public static final boolean kRunSysId = false;
+
+        public static final double kLowStartingBatteryVoltage = 12.2;
 
         public static final int kDriveControllerPort = 0;
 
@@ -62,7 +71,7 @@ public final class Constants {
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
             3.0,//TODO change these
-            6, 
+            4.0, 
             2 * Math.PI, 
             2 * Math.PI
         );
@@ -86,8 +95,8 @@ public final class Constants {
         public static final double kRotationSetpoint = 13.3;
         public static final double kMaxDrivingSpeed = 1.0;//Meters per second
 
-        public static final double kSlowObstacleDistance = 1.20;//Meters from sensor
-        public static final double kSlowDrivingSpeed = 0.25;
+        public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
+        public static final double kSlowDrivingSpeed = 0.5;
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -98,7 +107,7 @@ public final class Constants {
         public static final int kAlgaeId = 0;
     }
 
-    public static final class LocalizationConstants {//TODO all under need to be tuned 
+    public static final class LocalizationConstants {
         /* Constants for the confidence calculator */
         public static final double kPoseAmbiguityMultiplier = 40;
         public static final double kNoisyDistanceMeters = 2.5;
@@ -148,11 +157,11 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            new CameraConstants("FrontLeftCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
-            )
+            // new CameraConstants("FrontLeftCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //     false
+            // )
         };
     }
 
@@ -161,7 +170,7 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(9.5)//TODO these could be faster
+            .withMotionMagicCruiseVelocity(9.5)
             .withMotionMagicAcceleration(40);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
@@ -204,8 +213,8 @@ public final class Constants {
         public static final double kElevatorL1 = 1.1;
         public static final double kElevatorL2 = 3.42;
         public static final double kElevatorL3 = 8.70;
-        public static final double kElevatorLowAlgae = 4.8;
-        public static final double kElevatorHighAlgae = 6.6;
+        public static final double kElevatorLowAlgae = 2.4;
+        public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
@@ -307,8 +316,8 @@ public final class Constants {
         public static final double kArmLevel1Pos = kArmStowPos; 
         public static final double kArmLevel2Pos = kArmStowPos;
         public static final double kArmLevel3Pos = 0.045;
-        public static final double kArmHighAlgaePos = -0.05;
-        public static final double kArmLowAlgaePos = -0.05;
+        public static final double kArmHighAlgaePos = 0.06;
+        public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
         public static final double kArmNetPos = 0.1;
@@ -401,7 +410,7 @@ public final class Constants {
 
         public static final double kProcessorOuttakePower = -1.0;
         public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaePower = 1.0;
+        public static final double kIntakeAlgaePower = 0.3;
         public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
@@ -442,5 +451,42 @@ public final class Constants {
 
         public static final Rectangle2d kIntakeZoneRectangle = new Rectangle2d(
             new Pose2d(2.04, 6.04, Rotation2d.fromDegrees(-55.0)), 0.8, 4.0);
+    }
+
+    public static final class LEDConstants {
+        public static final int kLEDPort = 0;
+        public static final int kLEDLength = 160;
+        public static final Distance kLedSpacing = Meters.of(1/120.0);
+
+        //Patterns
+        public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kRed);
+
+        public static final LEDPattern kBaseDisabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kRed, Color.kOrange);
+        public static final LEDPattern kDisabledPattern = kBaseDisabled.breathe(Seconds.of(2));
+
+        public static final LEDPattern kBaseEnabled = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kLimeGreen, Color.kDarkGreen);
+        public static final LEDPattern kEnabledPattern = kBaseEnabled.blink(Seconds.of(0.3));
+
+        public static final LEDPattern kBaseL1 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kWhiteSmoke);
+        public static final LEDPattern kL1Mask = LEDPattern.progressMaskLayer(() -> 0.35);
+        public static final LEDPattern kL1Pattern = kBaseL1.mask(kL1Mask);
+
+        public static final LEDPattern kBaseL2 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow);
+        public static final LEDPattern kL2Mask = LEDPattern.progressMaskLayer(() -> 0.60);
+        public static final LEDPattern kL2Pattern = kBaseL2.mask(kL2Mask);
+
+        public static final LEDPattern kBaseL3 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kGreen, Color.kLightSeaGreen);
+        public static final LEDPattern kL3Mask = LEDPattern.progressMaskLayer(() -> 0.75);
+        public static final LEDPattern kL3Pattern = kBaseL3.mask(kL3Mask);
+
+        public static final LEDPattern kBaseL4 = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kSteelBlue);
+        public static final LEDPattern kL4Mask = LEDPattern.progressMaskLayer(() -> 1.00);
+        public static final LEDPattern kL4Pattern = kBaseL4.mask(kL4Mask);
+
+        public static final LEDPattern kAlgaeBase = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kAqua, Color.kLightGreen, Color.kLightCyan);
+        public static final LEDPattern kAlgaePattern = kAlgaeBase.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+
+        public static final LEDPattern kBatteryLowBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkRed, Color.kRed);
+        public static final LEDPattern kBatteryLowPattern = kBaseEnabled.blink(Seconds.of(0.6));
     }
 }

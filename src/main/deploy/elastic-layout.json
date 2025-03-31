@@ -411,7 +411,7 @@
       }
     },
     {
-      "name": "Swerve",
+      "name": "Debug",
       "grid_layout": {
         "layouts": [],
         "containers": [
@@ -529,9 +529,9 @@
           {
             "title": "End effector arm relative position",
             "x": 1088.0,
-            "y": 192.0,
+            "y": 224.0,
             "width": 320.0,
-            "height": 160.0,
+            "height": 128.0,
             "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/End effector arm relative position",
@@ -551,6 +551,71 @@
               "topic": "/SmartDashboard/Version Info",
               "period": 0.06,
               "data_type": "string"
+            }
+          },
+          {
+            "title": "Has Algae",
+            "x": 64.0,
+            "y": 32.0,
+            "width": 288.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Has Algae",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Obstacle sensor distance",
+            "x": 928.0,
+            "y": 416.0,
+            "width": 480.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Obstacle sensor distance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "End Effector Photoelectric Sensor (first from indexer)",
+            "x": 32.0,
+            "y": 320.0,
+            "width": 448.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/End Effector Photoelectric Sensor (first from indexer)",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "End Effector Photoelectric Sensor (first from source)",
+            "x": 32.0,
+            "y": 448.0,
+            "width": 448.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/End Effector Photoelectric Sensor (first from source)",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
@@ -963,20 +1028,6 @@
             }
           },
           {
-            "title": "Reef Camera",
-            "x": 736.0,
-            "y": 0.0,
-            "width": 800.0,
-            "height": 352.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/grayorangepi_Port_1183_Input_MJPEG_Server",
-              "period": 0.06,
-              "rotation_turns": 0,
-              "compression": 24
-            }
-          },
-          {
             "title": "Algae Mode",
             "x": 224.0,
             "y": 192.0,
@@ -992,12 +1043,26 @@
               "true_icon": "None",
               "false_icon": "None"
             }
+          },
+          {
+            "title": "Ground Camera",
+            "x": 736.0,
+            "y": 0.0,
+            "width": 800.0,
+            "height": 352.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/blueorangepi_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "compression": 14
+            }
           }
         ]
       }
     },
     {
-      "name": "Tab 4",
+      "name": "Big Localization",
       "grid_layout": {
         "layouts": [],
         "containers": [
@@ -1005,7 +1070,7 @@
             "title": "Localization Field",
             "x": 0.0,
             "y": 0.0,
-            "width": 1504.0,
+            "width": 1536.0,
             "height": 736.0,
             "type": "Field",
             "properties": {
