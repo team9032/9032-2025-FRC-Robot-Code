@@ -7,19 +7,23 @@ package frc.robot;
 import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
+import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.GitData;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,6 +48,7 @@ public class RobotContainer {
     private final Trigger stowPosition = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
+    private final Trigger resumeAutomation = driveController.a();
 
     /* Operator Controller Buttons */
 
@@ -54,6 +59,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
+    private final LED led = new LED();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -61,27 +67,56 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Automation */
-    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
-    private final Compositions compositions = new Compositions(arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
-    private final AutomationHandler automationHandler = new AutomationHandler(compositions, arm, elevator, endEffector, indexer, intake, krakenSwerve, buttonBoard);
-    private final Command automationCommand;
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler(led);
+    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
+    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
+    private final Command coralCyclingCommand;
+    private final Command algaeCyclingCommand;
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
+    private final Trigger disabled = RobotModeTriggers.disabled();
+    private final Trigger enabled = RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop());
 
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
-
-    /* Auto Triggers */
-    // ...
-
-    /* State Triggers */
-    // ...
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        /* Setup automation */
+        coralCyclingCommand = automationHandler.coralResumeCommand()//automationHandler.coralResumeCommand()
+            .until(this::driverWantsOverride)
+            .andThen(
+                new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
+                    .onlyIf(endEffector::hasCoral),
+                led.setStateCommand(State.ENABLED)
+            )
+            .onlyIf(buttonBoard::hasQueues);
+
+        algaeCyclingCommand = automationHandler.algaeResumeCommand()
+            .until(this::driverWantsOverride);
+
+        buttonBoard.getEnableCoralModeTrigger()
+            .toggleOnTrue(coralCyclingCommand);
+
+        buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
+            Commands.sequence(
+                elevatorArmIntakeHandler.prepareForAlgaeIntaking(),
+                endEffector.pickupAlgae()  
+            )
+        );
+
+        // buttonBoard.getEnableAlgaeModeTrigger()
+        //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
+
+        buttonBoard.getAutoIntakeTrigger().onTrue(
+            compositions.autoIntake(true)
+            .until(this::driverWantsOverride)
+        );     
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -93,37 +128,26 @@ public class RobotContainer {
 
         bindRobotModeTriggers();
 
-        bindTeleopTriggers();
-
-        /* Setup automation */
-        automationCommand = automationHandler.automationResumeCommand()
-            .until(this::driverWantsOverride);
-
-        buttonBoard.getEnableAutomaticModeTrigger()
-            .toggleOnTrue(automationCommand.onlyIf(buttonBoard::hasQueues));
-
-        buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.getCoralSequence(false, false)
-            .onlyIf(() -> !endEffector.hasCoral())
-            .until(this::driverWantsOverride)
-        );  
-
-        buttonBoard.getAlgaeTrigger().whileTrue(//TODO full algae cycling
-            compositions.prepareForAlgaeIntaking()
-            .andThen(endEffector.pickupAlgae())
-        )
-        .onFalse(endEffector.outtakeProcessorAlgae());
+        bindTeleopTriggers();   
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("3 Coral Left", Autos.threeCoralLeft(elevator, arm, endEffector, krakenSwerve, intake, indexer));
-        autoChooser.addOption("1 Coral Right", Autos.threeCoralRight(elevator, arm, endEffector, krakenSwerve, intake, indexer));
+        autoChooser.addOption("4 Coral Left", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, false));
+        autoChooser.addOption("4 Coral Right", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, true));
+        // autoChooser.addOption("1 Coral Center", Autos.oneCoralCenter(elevator, arm, endEffector, krakenSwerve, intake, indexer));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
+
+        /* Switch LEDs to disabled or low battery */
+        if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
+            led.setState(State.LOW_BATTERY); 
+
+        else
+            led.setState(State.DISABLED); 
     }
 
     private boolean driverWantsOverride() {
@@ -153,46 +177,24 @@ public class RobotContainer {
         );
 
         eject.onTrue(
-            disableAutomation()
-            .andThen(intake.ejectCoral())
+            intake.ejectCoral()
         );
 
         stowPosition.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition(),
-                intake.stopIntaking(),
-                endEffector.stopRollers(),
-                indexer.stopRollers(),
-                intake.returnToStowPosition()
-            )            
-        );
-
-        intakeUp.onTrue(
-            disableAutomation()
-            .andThen(
-                intake.returnToStowPosition(),
-                intake.stopIntaking(), 
-                indexer.stopRollers(),
-                endEffector.stopRollers()
-            )
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
 
         intakeDown.onTrue(
-            disableAutomation()
-            .andThen(compositions.backgroundCoralMovement(false))
+            compositions.intakeCoralToEndEffector(true)
         );
 
-        // intakeDown.negate().and(() -> !endEffector.hasCoral()).onTrue(
-        //     disableAutomation()
-        //     .andThen(
-        //         intake.returnToStowPosition(),
-        //         intake.stopIntaking(), 
-        //         indexer.stopRollers(),
-        //         endEffector.stopRollers()
-        //     )
-        // );  
+        intakeUp.onTrue(
+            compositions.cancelIntake()
+        );
+
+        resumeAutomation.onTrue(
+            coralCyclingCommand
+        );
 
         /* Manual Controls:
          * 
@@ -210,13 +212,11 @@ public class RobotContainer {
          * 
         */
         buttonBoard.manual1.onTrue(
-            disableAutomation()
-            .andThen(intake.ejectCoral())
+            intake.ejectCoral()
         );
 
         buttonBoard.manual2.onTrue(
-            disableAutomation()
-            .andThen(
+            Commands.sequence(
                 intake.returnToStowPosition(),
                 Commands.waitSeconds(0.5),
                 indexer.eject()
@@ -224,43 +224,22 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(
-            disableAutomation()
-            .andThen(
-                buttonBoard.moveElevatorToCoralTargetLevel(elevator),
-                Commands.waitUntil(elevator::atSetpoint),
-                buttonBoard.moveArmToCoralTargetLevel(arm)
-            )
+            elevatorArmIntakeHandler.prepareForCoralScoring()
         );
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                disableAutomation(),
                 endEffector.placeCoral(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition()   
+                elevatorArmIntakeHandler.moveToIntakePosition(false)
             )
         );
 
         buttonBoard.manual7.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                arm.moveToStowPos(),
-                elevator.moveToIndexerPosition(),
-                intake.stopIntaking(),
-                endEffector.stopRollers(),
-                indexer.stopRollers(),
-                intake.returnToStowPosition()
-            )
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
 
         buttonBoard.manual8.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                intake.stopIntaking(),
-                intake.returnToStowPosition(),
-                indexer.stopRollers(),
-                endEffector.stopRollers()
-            )
+            compositions.cancelIntake()
         );
 
         buttonBoard.manual9.onTrue(
@@ -272,25 +251,22 @@ public class RobotContainer {
 
         buttonBoard.manual10.onTrue(
             Commands.sequence(
-                disableAutomation(),
-                elevator.moveToLowAlgaePosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                arm.moveToLowAlgaePos()
+                elevatorArmIntakeHandler.prepareForAlgaeScoring(),
+                endEffector.pickupAlgae()  
             )
         );
 
-        buttonBoard.manual11.onTrue(
-            Commands.sequence(
-                disableAutomation(),
-                elevator.moveToHighAlgaePosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                arm.moveToHighAlgaePos()
-            )
-        );
+        // buttonBoard.manual11.onTrue(
+        //     Commands.sequence(
+        //         disableAutomation(),
+        //         elevator.moveToHighAlgaePosition(),
+        //         Commands.waitUntil(elevator::atSetpoint),
+        //         arm.moveToHighAlgaePos()
+        //     )
+        // );
 
         buttonBoard.manual12.onTrue(
-            disableAutomation()
-            .andThen(compositions.backgroundCoralMovement(false))
+            compositions.intakeCoralToEndEffector(true)
         );
 
         buttonBoard.manual13.onTrue(
@@ -303,17 +279,28 @@ public class RobotContainer {
     }
 
     private Command disableAutomation() {
-        return Commands.runOnce(() -> automationCommand.cancel());
+        return Commands.runOnce(() -> coralCyclingCommand.cancel());
     }
 
     /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update(automationCommand.isScheduled());
+        buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
     }
 
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
-        teleopEnabled.onTrue(compositions.resetStates());
+        teleopEnabled.onTrue(
+            compositions.resetStates()
+            .andThen(elevatorArmIntakeHandler.holdPositions())
+        );
+
+        enabled.onTrue(
+            led.setStateCommand(State.ENABLED)
+        );
+
+        disabled.onTrue(
+            led.setStateCommand(State.DISABLED)
+        );
     }
 
     private void bindTeleopTriggers() {

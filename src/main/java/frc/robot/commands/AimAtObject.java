@@ -167,6 +167,6 @@ public class AimAtObject extends Command {
 
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
 
-        ElasticUtil.sendInfo("Finished object aiming");
+        ElasticUtil.sendInfo("Finished object aiming - interrupted " + interrupted);
     }
 }

@@ -40,11 +40,41 @@ public class Elevator extends SubsystemBase {
     private void moveElevator(double pos) {
         elevatorMotor.setControl(motionMagic.withPosition(pos));
     }
+
+    private boolean atPosition(double position) {
+        return MathUtil.isNear(position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+    }
+
+    public boolean atTrough() {
+        return atPosition(kElevatorTrough);
+    }
+
+    public boolean atL1() {
+        return atPosition(kElevatorL1);
+    }
+
+    public boolean atL2() {
+        return atPosition(kElevatorL2);
+    }
+
+    public boolean atL3() {
+        return atPosition(kElevatorL3);
+    }
     
     public boolean atSetpoint() {
-        elevatorPosSignal.refresh();
+        return atPosition(motionMagic.Position);
+    }
 
-        return MathUtil.isNear(motionMagic.Position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+    public boolean overIndexPosition() {
+        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverIndexer - kElevatorTolerance);
+    }
+
+    public Command holdPosition() {
+        return runOnce(() -> moveElevator(elevatorPosSignal.getValueAsDouble()));
+    }
+
+    public Command moveToStowPosition() {
+        return runOnce(() -> moveElevator(kElevatorStow));
     }
 
     public Command moveToIndexerPosition() {
@@ -87,8 +117,14 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorNet));
     }
 
+    public Command moveToOverIndexerPosition() {
+        return runOnce(() -> moveElevator(kElevatorOverIndexer));
+    }
+
     @Override
     public void periodic() {
+        elevatorPosSignal.refresh();
+
         SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
     }
 }

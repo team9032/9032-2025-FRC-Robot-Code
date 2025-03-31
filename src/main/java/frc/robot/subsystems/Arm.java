@@ -42,18 +42,48 @@ public class Arm extends SubsystemBase {
         armMotor.setPosition(getArmAbsolutePosition());
     }
 
-    private double getRelativePosition() {
-        armPosSignal.refresh();
+    public Command holdPosition() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(getRelativePosition())));
+    }
 
+    public boolean atTrough() {
+        return atPosition(kArmTroughPos);
+    }
+
+    public boolean atL1() {
+        return atPosition(kArmLevel1Pos);
+    }
+
+    public boolean atL2() {
+        return atPosition(kArmLevel2Pos);
+    }
+
+    public boolean atL3() {
+        return atPosition(kArmLevel3Pos);
+    }
+
+    private double getRelativePosition() {
         return armPosSignal.getValueAsDouble();
     }
 
+    private boolean atPosition(double position) {
+        return MathUtil.isNear(position, getRelativePosition(), kArmPositionTolerance);
+    }
+
     public boolean atSetpoint() {
-        return MathUtil.isNear(armRequest.Position, getRelativePosition(), kArmPositionTolerance);
+        return atPosition(armRequest.Position);
     }
 
     public double getArmAbsolutePosition() {
         return armEncoder.get();
+    }
+
+    public boolean overIntake() {
+        return getRelativePosition() <= kArmOverIntakePos;
+    }
+
+    public boolean closeToIndexPosition() {
+        return MathUtil.isNear(kArmIndexerPos, getRelativePosition(), kArmPositionTolerance * 10.0);
     }
 
     public Command moveToStowPos() {
@@ -102,6 +132,8 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+        armPosSignal.refresh();
+
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
         SmartDashboard.putNumber("End effector arm absolute position", getArmAbsolutePosition());
         SmartDashboard.putNumber("End effector arm relative position", getRelativePosition());

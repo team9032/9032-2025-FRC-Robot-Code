@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.State;
 
-import static frc.robot.Constants.ButtonBoardConstants.*;
+import static frc.robot.Constants.AutomationConstants.*;
 
 import java.util.Map;
 
@@ -45,10 +48,8 @@ public class ButtonBoardHandler {
     private final BooleanPublisher toLevel1Pub = buttonTable.getBooleanTopic("toLevel1").publish();
     private final BooleanPublisher toLevel2Pub = buttonTable.getBooleanTopic("toLevel2").publish();
     private final BooleanPublisher toLevel3Pub = buttonTable.getBooleanTopic("toLevel3").publish();
-    private final BooleanPublisher algaeTogglePub = buttonTable.getBooleanTopic("algaeToggle").publish();
-    private final BooleanPublisher automaticModePub = buttonTable.getBooleanTopic("automaticMode").publish();
-
-    private boolean algaeMode = false;
+    private final BooleanPublisher algaeModePub = buttonTable.getBooleanTopic("algaeToggle").publish();
+    private final BooleanPublisher coralModePub = buttonTable.getBooleanTopic("automaticMode").publish();
 
     private final Trigger toLSource = buttonBoardController1.button(1);
     private final Trigger toBarge = buttonBoardController1.button(4);
@@ -73,8 +74,8 @@ public class ButtonBoardHandler {
     private final Trigger toLevel2 = buttonBoardController2.button(8);
     private final Trigger toLevel3 = buttonBoardController2.button(10);
 
-    private final Trigger algaeToggle = buttonBoardController1.button(9);
-    private final Trigger enableAutomaticMode = buttonBoardController1.button(3);
+    private final Trigger enableAlgaeMode = buttonBoardController1.button(9);
+    private final Trigger enableCoralMode = buttonBoardController1.button(3);
     private final Trigger autoIntake = buttonBoardController1.button(2);
      
     public final Trigger manual1 = buttonBoardController3.button(5);
@@ -90,8 +91,12 @@ public class ButtonBoardHandler {
     public final Trigger manual13 = buttonBoardController3.button(10);
     public final Trigger manual14 = buttonBoardController3.button(9);
     public final Trigger manual15 = buttonBoardController3.button(8);
+
+    private final LED led;
     
-    public ButtonBoardHandler() {
+    public ButtonBoardHandler(LED led) {
+        this.led = led;
+
         bindButtons();
     }
 
@@ -119,7 +124,7 @@ public class ButtonBoardHandler {
         TO_PROCESSOR
     }
 
-    private AlgaeScorePath algaeScorePathTarget = AlgaeScorePath.NONE;
+    private AlgaeScorePath algaeScorePathTarget = AlgaeScorePath.TO_BARGE;
 
     private static enum SourcePath {
         NONE,
@@ -127,7 +132,7 @@ public class ButtonBoardHandler {
         TO_RSOURCE
     }
 
-    private SourcePath sourcePathTarget = SourcePath.NONE;
+    private SourcePath sourcePathTarget = SourcePath.TO_LSOURCE;
 
     private static enum ReefLevel {
         NONE,
@@ -161,55 +166,53 @@ public class ButtonBoardHandler {
         toLevel1.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL1));
         toLevel2.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL2));
         toLevel3.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL3));
-
-        algaeToggle.onTrue(Commands.runOnce(() -> algaeMode = !algaeMode));
     }
 
     public Command scoreCoral(EndEffector endEffector) {
         return Commands.either(endEffector.placeCoralInTrough(), endEffector.placeCoral(), () -> reefLevelTarget.equals(ReefLevel.TO_TROUGH));
     }
 
-    public Command followReefPath() {
+    public Command followReefPath(KrakenSwerve swerve) {
         return new SelectCommand<ReefPath>(
             Map.ofEntries(
                 Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1L()),
-                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1R()),
-                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2L()),
-                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2R()),
-                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3L()),
-                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3R()),
-                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4L()),
-                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4R()),
-                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5L()),
-                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5R()),
-                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6L()),
-                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6R())
+                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1L(swerve)),
+                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1R(swerve)),
+                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2L(swerve)),
+                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2R(swerve)),
+                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3L(swerve)),
+                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3R(swerve)),
+                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4L(swerve)),
+                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4R(swerve)),
+                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5L(swerve)),
+                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5R(swerve)),
+                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6L(swerve)),
+                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6R(swerve))
             ),
             () -> reefPathTarget
         );
     }
 
-    public Command followAlgaeIntakePath() {
-        return new SelectCommand<ReefPath>(
-            Map.ofEntries(
-                Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A()),
-                Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A()),
-                Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A()),
-                Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A()),
-                Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A()),
-                Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A()),
-                Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A()),
-                Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A()),
-                Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A()),
-                Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A()),
-                Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A()),
-                Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A())
-            ),
-            () -> reefPathTarget
-        );
-    }
+    // public Command followAlgaeIntakePath(KrakenSwerve swerve) {
+    //     return new SelectCommand<ReefPath>(
+    //         Map.ofEntries(
+    //             Map.entry(ReefPath.NONE, Commands.none()),
+    //             Map.entry(ReefPath.TO_1L, PathfindingHandler.pathTo1A(swerve)),
+    //             Map.entry(ReefPath.TO_1R, PathfindingHandler.pathTo1A(swerve)),
+    //             Map.entry(ReefPath.TO_2L, PathfindingHandler.pathTo2A(swerve)),
+    //             Map.entry(ReefPath.TO_2R, PathfindingHandler.pathTo2A(swerve)),
+    //             Map.entry(ReefPath.TO_3L, PathfindingHandler.pathTo3A(swerve)),
+    //             Map.entry(ReefPath.TO_3R, PathfindingHandler.pathTo3A(swerve)),
+    //             Map.entry(ReefPath.TO_4L, PathfindingHandler.pathTo4A(swerve)),
+    //             Map.entry(ReefPath.TO_4R, PathfindingHandler.pathTo4A(swerve)),
+    //             Map.entry(ReefPath.TO_5L, PathfindingHandler.pathTo5A(swerve)),
+    //             Map.entry(ReefPath.TO_5R, PathfindingHandler.pathTo5A(swerve)),
+    //             Map.entry(ReefPath.TO_6L, PathfindingHandler.pathTo6A(swerve)),
+    //             Map.entry(ReefPath.TO_6R, PathfindingHandler.pathTo6A(swerve))
+    //         ),
+    //         () -> reefPathTarget
+    //     );
+    // }
 
     public Command followSourcePath() {
         return new SelectCommand<SourcePath>(
@@ -336,20 +339,16 @@ public class ButtonBoardHandler {
         ); 
     }
 
-    public boolean inAlgaeMode() {
-        return algaeMode;
+    public Trigger getEnableCoralModeTrigger() {
+        return enableCoralMode;
     }
 
-    public Trigger getEnableAutomaticModeTrigger() {
-        return enableAutomaticMode;
+    public Trigger getEnableAlgaeModeTrigger() {
+        return enableAlgaeMode;
     }
 
     public Command clearAlgaeTargets() {
-        return Commands.runOnce(() -> {
-            algaeMode = false;
-
-            algaeScorePathTarget = AlgaeScorePath.NONE;
-        });
+        return Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.NONE);
     }
 
     public Command clearReefTargets() {
@@ -363,7 +362,7 @@ public class ButtonBoardHandler {
         return autoIntake;
     }
 
-    public void update(boolean automaticModeEnabled) {
+    public void update(boolean coralModeEnabled, boolean algaeModeEnabled) {
         toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
         toBargePub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_BARGE));
         toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
@@ -387,15 +386,65 @@ public class ButtonBoardHandler {
         toLevel2Pub.set(reefLevelTarget.equals(ReefLevel.TO_LEVEL2));
         toLevel3Pub.set(reefLevelTarget.equals(ReefLevel.TO_LEVEL3));
 
-        algaeTogglePub.set(algaeMode);
-        automaticModePub.set(automaticModeEnabled);
+        algaeModePub.set(algaeModeEnabled);
+        coralModePub.set(coralModeEnabled);
+
+        if (coralModeEnabled)
+            updateCoralLEDs();
+
+        else if (algaeModeEnabled)
+            led.setState(State.ALGAE);
     }    
+
+    private void updateCoralLEDs() {
+        switch (reefLevelTarget) {
+            case NONE:
+            led.setState(State.ENABLED);
+                break;
+
+            case TO_LEVEL1:
+            led.setState(State.L2);
+                break;
+
+            case TO_LEVEL2:
+            led.setState(State.L3);
+                break;
+
+            case TO_LEVEL3:
+            led.setState(State.L4);
+                break;
+
+            case TO_TROUGH:
+            led.setState(State.L1);
+                break;
+
+            default:
+            led.setState(State.ENABLED);
+                break;
+        }
+    }
 
     public boolean hasQueues() {
         return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
     }
 
-    public Trigger getAlgaeTrigger() {
-        return algaeToggle;
+    public boolean readyToScoreCoral(Arm arm, Elevator elevator) {
+        if (reefLevelTarget.equals(ReefLevel.TO_TROUGH))
+            return arm.atTrough() && elevator.atTrough();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL1))
+            return arm.atL1() && elevator.atL1();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL2))
+            return arm.atL2() && elevator.atL2();
+
+        else if (reefLevelTarget.equals(ReefLevel.TO_LEVEL3))
+            return arm.atL3() && elevator.atL3();
+        
+        return false;
+    }
+
+    public boolean l4Selected() {
+        return reefLevelTarget.equals(ReefLevel.TO_LEVEL3);
     }
 }

@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 3.6471259781100507,
+        "y": 5.003507238578072
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.20775,
-        "y": 8.1005
+        "x": 3.350207705122142,
+        "y": 5.473688510614175
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LeftC5End"
     },
     {
       "anchor": {
-        "x": 5.31375,
-        "y": 7.0
+        "x": 2.3136270491803277,
+        "y": 5.751229508196721
       },
       "prevControl": {
-        "x": 4.943420254122528,
-        "y": 7.856355579953986
+        "x": 2.5704285501549506,
+        "y": 5.618573283319102
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LeftC2End"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -0.7778875714991357
+    "rotation": 110.5560452195835
   },
   "reversed": false,
-  "folder": "Tuning",
+  "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }
