@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -127,7 +128,9 @@ public class KrakenSwerve extends SubsystemBase {
         localization.updateLocalization();
 
         if (!operatorPerspectiveSet && DriverStation.getAlliance().isPresent()) {
-            drivetrain.setOperatorPerspectiveForward(new Rotation2d(DriverStation.Alliance.Blue.equals(DriverStation.getAlliance().get()) ? 0 : Math.PI));
+            boolean isBlue = DriverStation.Alliance.Blue.equals(DriverStation.getAlliance().get());
+
+            drivetrain.setOperatorPerspectiveForward(isBlue ? Rotation2d.kZero : Rotation2d.k180deg);
             
             operatorPerspectiveSet = true;
         }
