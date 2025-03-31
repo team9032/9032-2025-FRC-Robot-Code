@@ -160,7 +160,8 @@ public final class Constants {
         public static final int kFrontElevatorID = 13; 
         public static final int kBackElevatorID = 14; 
 
-        public static final double kAutoSlowModeHeight = 4.0; //TODO tune
+        public static final double kAutoSlowModeHeight = 7.0; //TODO tune
+        public static final double kElevatorSwerveSpeedFactor = 0.39; //TODO very much tune
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(9.5)//TODO these could be faster
@@ -187,7 +188,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(9.5) 
-            .withReverseSoftLimitThreshold(0.05);
+            .withReverseSoftLimitThreshold(0.05);   
 
         public static final TalonFXConfiguration kElevatorConfig = new TalonFXConfiguration()
             .withMotorOutput(
