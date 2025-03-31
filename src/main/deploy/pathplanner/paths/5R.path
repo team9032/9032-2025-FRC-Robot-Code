@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.206,
-        "y": 2.504
+        "x": 5.183971803601073,
+        "y": 2.544943869920778
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.013607233689016,
-        "y": 2.83723404625935
+        "x": 4.983971803601073,
+        "y": 2.8913540314345534
       },
       "isLocked": false,
       "linkedName": "5RS"
     },
     {
       "anchor": {
-        "x": 5.04,
-        "y": 2.815
+        "x": 5.001981879671528,
+        "y": 2.8561009142348475
       },
       "prevControl": {
-        "x": 5.171700568808163,
-        "y": 2.5868879234385407
+        "x": 5.126981879671528,
+        "y": 2.6395945632887376
       },
       "nextControl": null,
       "isLocked": false,
@@ -55,7 +55,7 @@
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": -59.74356283647078
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": false
 }
