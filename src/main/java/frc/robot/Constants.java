@@ -213,8 +213,8 @@ public final class Constants {
         public static final double kElevatorL1 = 1.1;
         public static final double kElevatorL2 = 3.42;
         public static final double kElevatorL3 = 8.70;
-        public static final double kElevatorLowAlgae = 4.8;
-        public static final double kElevatorHighAlgae = 6.6;
+        public static final double kElevatorLowAlgae = 2.4;
+        public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
@@ -316,8 +316,8 @@ public final class Constants {
         public static final double kArmLevel1Pos = kArmStowPos; 
         public static final double kArmLevel2Pos = kArmStowPos;
         public static final double kArmLevel3Pos = 0.045;
-        public static final double kArmHighAlgaePos = -0.05;
-        public static final double kArmLowAlgaePos = -0.05;
+        public static final double kArmHighAlgaePos = 0.06;
+        public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
         public static final double kArmNetPos = 0.1;
@@ -410,7 +410,7 @@ public final class Constants {
 
         public static final double kProcessorOuttakePower = -1.0;
         public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaePower = 1.0;
+        public static final double kIntakeAlgaePower = 0.3;
         public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
