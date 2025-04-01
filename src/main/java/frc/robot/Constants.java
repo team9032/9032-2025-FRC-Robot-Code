@@ -239,8 +239,6 @@ public final class Constants {
         public static final TalonFXConfiguration kIndexerRollerConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
             .withCurrentLimits(kIndexerRollerCurrentLimitConfigs);
-
-        public static final int kPhotoelectricSensorID = 5; //TODO doesn't exist   
     }
 
     public static final class IntakeConstants {
