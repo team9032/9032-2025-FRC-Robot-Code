@@ -91,12 +91,8 @@ public class ButtonBoardHandler {
     public final Trigger manual13 = buttonBoardController3.button(10);
     public final Trigger manual14 = buttonBoardController3.button(9);
     public final Trigger manual15 = buttonBoardController3.button(8);
-
-    private final LED led;
     
-    public ButtonBoardHandler(LED led) {
-        this.led = led;
-
+    public ButtonBoardHandler() {
         bindButtons();
     }
 
@@ -388,15 +384,9 @@ public class ButtonBoardHandler {
 
         algaeModePub.set(algaeModeEnabled);
         coralModePub.set(coralModeEnabled);
-
-        if (coralModeEnabled)
-            updateCoralLEDs();
-
-        else if (algaeModeEnabled)
-            led.setState(State.ALGAE);
     }    
 
-    private void updateCoralLEDs() {
+    public void setCoralAimingLEDs(LED led) {
         switch (reefLevelTarget) {
             case NONE:
             led.setState(State.ENABLED);

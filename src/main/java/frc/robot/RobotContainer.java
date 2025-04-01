@@ -57,12 +57,12 @@ public class RobotContainer {
 
 
     /* Subsystems */
+    private final LED led = new LED();
     private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
-    private final LED led = new LED();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -70,7 +70,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Automation */
-    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler(led);
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
@@ -84,6 +84,7 @@ public class RobotContainer {
 
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
+    private final Trigger coralCyclingCommandScheduled;
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -101,7 +102,6 @@ public class RobotContainer {
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
                     .onlyIf(endEffector::hasCoral)
             )
-            .finallyDo(() -> led.setState(State.ENABLED))
             .onlyIf(buttonBoard::hasQueues);
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
@@ -124,6 +124,9 @@ public class RobotContainer {
             compositions.autoIntake(true)
             .until(this::driverWantsOverride)
         );     
+
+        /* Bind Triggers */
+        coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -314,6 +317,15 @@ public class RobotContainer {
 
     private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
+
+        coralCyclingCommandScheduled.onTrue(Commands.runOnce(() -> buttonBoard.setCoralAimingLEDs(led)));
+        coralCyclingCommandScheduled.onFalse(
+            Commands.either(
+                led.setStateCommand(State.ENABLED), 
+                led.setStateCommand(State.DISABLED),
+                enabled
+            )
+        );
     }
 
     private Command rumble() {
