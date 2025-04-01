@@ -169,8 +169,8 @@ public final class Constants {
         public static final int kFrontElevatorID = 13; 
         public static final int kBackElevatorID = 14; 
 
-        public static final double kAutoSlowModeHeight = 7.0; //TODO tune
-        public static final double kElevatorSwerveSpeedFactor = 0.39; //TODO very much tune
+        public static final double kSwerveElevatorSlowModeHeight = 7.0; //TODO tune
+        public static final double kSwerveElevatorSpeedFactor = 0.39; //TODO very much tune
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(9.5)

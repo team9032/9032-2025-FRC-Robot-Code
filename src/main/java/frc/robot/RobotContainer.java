@@ -154,7 +154,7 @@ public class RobotContainer {
         if (slowMode.getAsBoolean()) {
             return kSlowSpeed;
         } else {
-            return elevator.getElevatorSwerveSpeedFactor();
+            return elevator.getSwerveSpeedFactor();
         }
     }
 

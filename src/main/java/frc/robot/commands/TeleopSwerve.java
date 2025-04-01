@@ -13,7 +13,7 @@ public class TeleopSwerve extends Command {
     private final DoubleSupplier rotSup;
     private final DoubleSupplier translationSup;
     private final DoubleSupplier strafeSup;
-    private final DoubleSupplier elevatorSlownessFactorSup;
+    private final DoubleSupplier swerveSlownessFactorSup;
 
     public TeleopSwerve(KrakenSwerve swerve, DoubleSupplier rotSup, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier elevatorSlownessFactorSup) {
         this.swerve = swerve;
@@ -21,17 +21,17 @@ public class TeleopSwerve extends Command {
         this.rotSup = rotSup;
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
-        this.elevatorSlownessFactorSup = elevatorSlownessFactorSup;
+        this.swerveSlownessFactorSup = elevatorSlownessFactorSup;
 
         addRequirements(swerve);
     }
 
     @Override
     public void execute() { 
-        boolean slowMode = (elevatorSlownessFactorSup.getAsDouble() == kSlowSpeed);
+        boolean slowMode = (swerveSlownessFactorSup.getAsDouble() == kSlowSpeed);
 
-        double maxSpeed = slowMode ? kSlowSpeed : kMaxSpeed * elevatorSlownessFactorSup.getAsDouble();
-        double rotationRate = slowMode ? kSlowRotationRate : kRotationRate * elevatorSlownessFactorSup.getAsDouble();
+        double maxSpeed = slowMode ? kSlowSpeed : kMaxSpeed * swerveSlownessFactorSup.getAsDouble();
+        double rotationRate = slowMode ? kSlowRotationRate : kRotationRate * swerveSlownessFactorSup.getAsDouble();
 
         /* Curve inputs to allow for more control closer to the lower range of the joystick */
         double translationVal = applyInputCurve(translationSup.getAsDouble());

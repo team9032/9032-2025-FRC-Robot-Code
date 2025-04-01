@@ -123,11 +123,11 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorOverIndexer));
     }
 
-    public double getElevatorSwerveSpeedFactor() {
-        if (elevatorPosSignal.getValueAsDouble() < kAutoSlowModeHeight) {
+    public double getSwerveSpeedFactor() {
+        if (elevatorPosSignal.getValueAsDouble() < kSwerveElevatorSlowModeHeight) {
             return 0;
         } else {
-            return ((-elevatorPosSignal.getValueAsDouble() + kElevatorSoftLimit.ForwardSoftLimitThreshold + kAutoSlowModeHeight) * kElevatorSwerveSpeedFactor) - 1.535; //arbitrary constant b/c thats how the math works, dont forget to change when tuning!!!!!!!!!!!!
+            return ((-elevatorPosSignal.getValueAsDouble() + kElevatorSoftLimit.ForwardSoftLimitThreshold + kSwerveElevatorSlowModeHeight) * kSwerveElevatorSpeedFactor) - 1.535; //arbitrary constant b/c thats how the math works, dont forget to change when tuning!!!!!!!!!!!!
         }
     }
 
@@ -136,6 +136,6 @@ public class Elevator extends SubsystemBase {
         elevatorPosSignal.refresh();
         
         SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
-        SmartDashboard.putNumber("Swerve speed factor", getElevatorSwerveSpeedFactor());
+        SmartDashboard.putNumber("Swerve speed factor", getSwerveSpeedFactor());
     }
 }
