@@ -28,10 +28,8 @@ public class TeleopSwerve extends Command {
 
     @Override
     public void execute() { 
-        boolean slowMode = (swerveSlownessFactorSup.getAsDouble() == kSlowSpeed);
-
-        double maxSpeed = slowMode ? kSlowSpeed : kMaxSpeed * swerveSlownessFactorSup.getAsDouble();
-        double rotationRate = slowMode ? kSlowRotationRate : kRotationRate * swerveSlownessFactorSup.getAsDouble();
+        double maxSpeed = kMaxSpeed * swerveSlownessFactorSup.getAsDouble();
+        double rotationRate = kRotationRate * swerveSlownessFactorSup.getAsDouble();
 
         /* Curve inputs to allow for more control closer to the lower range of the joystick */
         double translationVal = applyInputCurve(translationSup.getAsDouble());
