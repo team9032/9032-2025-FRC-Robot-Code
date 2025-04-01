@@ -41,7 +41,7 @@ public class Compositions {
     public Command driveToSource() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Drive to source started"),
-            new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition(false)),
+            new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition()),
             Commands.waitSeconds(0.25),//TODO no
             buttonBoardHandler.followSourcePath()
         );
@@ -71,7 +71,7 @@ public class Compositions {
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
-            elevatorArmIntakeHandler.moveToIntakePosition(true),
+            elevatorArmIntakeHandler.moveToIntakePosition(),
             intake.intakeCoral(),
             indexer.spinRollers(),
             endEffector.receiveCoralFromIndexer().asProxy(),
@@ -121,7 +121,7 @@ public class Compositions {
         );
     }
 
-    public Command resetStates() {
+    public Command stopRollers() {
         return Commands.sequence(
             intake.stopIntaking(),
             indexer.stopRollers(),

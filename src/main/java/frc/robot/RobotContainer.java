@@ -31,6 +31,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import static frc.robot.Constants.DriverConstants.*;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -54,12 +57,12 @@ public class RobotContainer {
 
 
     /* Subsystems */
+    private final LED led = new LED();
     private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
-    private final LED led = new LED();
     // private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
@@ -67,7 +70,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     /* Automation */
-    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler(led);
+    private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
@@ -81,19 +84,23 @@ public class RobotContainer {
 
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
+    private final Trigger coralCyclingCommandScheduled;
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
+        /* Warm up PathPlanner */
+        PathfindingCommand.warmupCommand().schedule();
+        FollowPathCommand.warmupCommand().schedule();
+
         /* Setup automation */
-        coralCyclingCommand = automationHandler.coralResumeCommand()//automationHandler.coralResumeCommand()
+        coralCyclingCommand = automationHandler.coralResumeCommand()
             .until(this::driverWantsOverride)
             .andThen(
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
-                    .onlyIf(endEffector::hasCoral),
-                led.setStateCommand(State.ENABLED)
+                    .onlyIf(endEffector::hasCoral)
             )
             .onlyIf(buttonBoard::hasQueues);
 
@@ -117,6 +124,9 @@ public class RobotContainer {
             compositions.autoIntake(true)
             .until(this::driverWantsOverride)
         );     
+
+        /* Bind Triggers */
+        coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -181,7 +191,8 @@ public class RobotContainer {
         );
 
         stowPosition.onTrue(
-            elevatorArmIntakeHandler.moveToStowPositions()
+            compositions.stopRollers()
+            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
         );
 
         intakeDown.onTrue(
@@ -190,9 +201,10 @@ public class RobotContainer {
 
         intakeUp.onTrue(
             compositions.cancelIntake()
+                .onlyIf(() -> !endEffector.hasCoral())
         );
 
-        resumeAutomation.onTrue(
+        resumeAutomation.and(endEffector::hasCoral).onTrue(//Prevent shooting coral out of the end effector
             coralCyclingCommand
         );
 
@@ -230,7 +242,7 @@ public class RobotContainer {
         buttonBoard.manual6.onTrue(
             Commands.sequence(
                 endEffector.placeCoral(),
-                elevatorArmIntakeHandler.moveToIntakePosition(false)
+                elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );
 
@@ -290,7 +302,7 @@ public class RobotContainer {
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
         teleopEnabled.onTrue(
-            compositions.resetStates()
+            compositions.stopRollers()
             .andThen(elevatorArmIntakeHandler.holdPositions())
         );
 
@@ -305,6 +317,15 @@ public class RobotContainer {
 
     private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
+
+        coralCyclingCommandScheduled.onTrue(Commands.runOnce(() -> buttonBoard.setCoralAimingLEDs(led)));
+        coralCyclingCommandScheduled.onFalse(
+            Commands.either(
+                led.setStateCommand(State.ENABLED), 
+                led.setStateCommand(State.DISABLED),
+                enabled
+            )
+        );
     }
 
     private Command rumble() {
