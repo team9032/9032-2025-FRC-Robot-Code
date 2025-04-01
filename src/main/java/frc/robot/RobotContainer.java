@@ -88,7 +88,7 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         /* Setup automation */
-        coralCyclingCommand = automationHandler.coralResumeCommand()//automationHandler.coralResumeCommand()
+        coralCyclingCommand = automationHandler.coralResumeCommand()
             .until(this::driverWantsOverride)
             .andThen(
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
@@ -181,7 +181,8 @@ public class RobotContainer {
         );
 
         stowPosition.onTrue(
-            elevatorArmIntakeHandler.moveToStowPositions()
+            compositions.stopRollers()
+            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
         );
 
         intakeDown.onTrue(
@@ -190,9 +191,10 @@ public class RobotContainer {
 
         intakeUp.onTrue(
             compositions.cancelIntake()
+                .onlyIf(() -> !endEffector.hasCoral())
         );
 
-        resumeAutomation.onTrue(
+        resumeAutomation.and(endEffector::hasCoral).onTrue(//Prevent shooting coral out of the end effector
             coralCyclingCommand
         );
 
@@ -230,7 +232,7 @@ public class RobotContainer {
         buttonBoard.manual6.onTrue(
             Commands.sequence(
                 endEffector.placeCoral(),
-                elevatorArmIntakeHandler.moveToIntakePosition(false)
+                elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );
 
@@ -290,7 +292,7 @@ public class RobotContainer {
     /** Bind robot mode triggers here */
     private void bindRobotModeTriggers() {
         teleopEnabled.onTrue(
-            compositions.resetStates()
+            compositions.stopRollers()
             .andThen(elevatorArmIntakeHandler.holdPositions())
         );
 

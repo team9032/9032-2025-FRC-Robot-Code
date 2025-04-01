@@ -33,7 +33,7 @@ public class LED extends SubsystemBase {
     private final AddressableLEDBuffer ledBuffer;
 
     public LED() {
-        ledStrip = new AddressableLED(kLEDPort);//TODO need port
+        ledStrip = new AddressableLED(kLEDPort);
         ledStrip.setLength(kLEDLength);
 
         ledBuffer = new AddressableLEDBuffer(kLEDLength);

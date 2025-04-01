@@ -220,7 +220,7 @@ public final class Constants {
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 9.5;
 
-        public static final double kElevatorOverIndexer = 3.2;
+        public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorStow = 1.6; 
     }
 
@@ -294,7 +294,7 @@ public final class Constants {
 
         public static final double kGroundPosition = -120.0;
         public static final double kStowPosition = -23.0;
-        public static final double kEndEffectorMovePosition = -49.0;
+        public static final double kEndEffectorMovePosition = -90.0;
 
         public static final double kRunRollersPosition = -100;
 
@@ -487,6 +487,6 @@ public final class Constants {
         public static final LEDPattern kAlgaePattern = kAlgaeBase.scrollAtRelativeSpeed(Percent.per(Second).of(25));
 
         public static final LEDPattern kBatteryLowBase = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkRed, Color.kRed);
-        public static final LEDPattern kBatteryLowPattern = kBaseEnabled.blink(Seconds.of(0.6));
+        public static final LEDPattern kBatteryLowPattern = kBatteryLowBase.blink(Seconds.of(0.6));
     }
 }
