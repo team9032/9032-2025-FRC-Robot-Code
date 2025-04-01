@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +29,8 @@ public class KrakenSwerve extends SubsystemBase {
     private final SwerveSysId sysId;
 
     private final Localization localization;
+
+    private boolean operatorPerspectiveSet = false;
 
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
@@ -123,6 +126,14 @@ public class KrakenSwerve extends SubsystemBase {
     @Override
     public void periodic() {
         localization.updateLocalization();
+
+        if (!operatorPerspectiveSet && DriverStation.getAlliance().isPresent()) {
+            boolean isBlue = DriverStation.Alliance.Blue.equals(DriverStation.getAlliance().get());
+
+            drivetrain.setOperatorPerspectiveForward(isBlue ? Rotation2d.kZero : Rotation2d.k180deg);
+            
+            operatorPerspectiveSet = true;
+        }
     }
 
     public Localization getLocalization() {
