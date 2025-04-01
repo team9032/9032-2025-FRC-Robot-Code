@@ -60,7 +60,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 2 */
             AutoBuilder.followPath(path2)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
+                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
             compositions.autoIntake(false),
             /* Score coral 2 */
             AutoBuilder.followPath(path3)
@@ -70,7 +70,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 3 */
             AutoBuilder.followPath(path4)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
+                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
             compositions.autoIntake(false),
             /* Score coral 3 */
             AutoBuilder.followPath(path5)
@@ -79,7 +79,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 4 */
             AutoBuilder.followPath(path6)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
+                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
             compositions.autoIntake(false),
             /* Score coral 4 */
             AutoBuilder.followPath(path7)

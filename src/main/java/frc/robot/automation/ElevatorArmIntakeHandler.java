@@ -26,37 +26,27 @@ public class ElevatorArmIntakeHandler {
         return intake.returnToStowPosition();
     }
 
-    public Command moveToIntakePosition(boolean intakeDown) {
+    public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(
                 arm.moveToStowPos(),
                 Commands.waitUntil(arm::atSetpoint)
                     .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
-                Commands.either(
-                    intake.moveToGround(),
-                    intake.moveToEndEffectorMovePosition(),
-                    () -> intakeDown
-                ),
+                intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
                 arm.moveToIndexerPos(),
                 Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition(),
-                Commands.waitUntil(elevator::atSetpoint),
-                Commands.either(
-                    Commands.waitUntil(intake::canRunRollers),
-                    intake.returnToStowPosition(),
-                    () -> intakeDown
-                ),
-                ElasticUtil.sendInfoCommand("Moved to index position - intake down is " + intakeDown)
+                Commands.waitUntil(() -> elevator.atSetpoint() && intake.canRunRollers()),
+                ElasticUtil.sendInfoCommand("Moved to index position")
             ),
             Commands.sequence(
                 elevator.moveToIndexerPosition(),
                 arm.moveToIndexerPos(),
-                intake.moveToGround()
-                    .onlyIf(() -> intakeDown),
+                intake.moveToGround(),
                 Commands.waitUntil(() -> elevator.atSetpoint() && arm.atSetpoint()),
-                ElasticUtil.sendInfoCommand("Moved to index position from index position - intake down is " + intakeDown)
+                ElasticUtil.sendInfoCommand("Moved to index position from index position")
             ),
             () -> !arm.closeToIndexPosition()
         );  
@@ -66,12 +56,11 @@ public class ElevatorArmIntakeHandler {
         return Commands.either(
             Commands.sequence(
                 elevator.moveToOverIndexerPosition(),
-                intake.moveToEndEffectorMovePosition(),
+                intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
                 arm.moveToStowPos(),
                 Commands.waitUntil(arm::overIntake),
                 elevator.moveToStowPosition(),
-                intake.returnToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow from index")
             ),
@@ -80,7 +69,6 @@ public class ElevatorArmIntakeHandler {
                 Commands.waitUntil(arm::atSetpoint)
                     .onlyIf(arm::atL3),
                 elevator.moveToStowPosition(),
-                intake.returnToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow")
             ),
