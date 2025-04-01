@@ -31,6 +31,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import static frc.robot.Constants.DriverConstants.*;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -87,14 +90,18 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
+        /* Warm up PathPlanner */
+        PathfindingCommand.warmupCommand().schedule();
+        FollowPathCommand.warmupCommand().schedule();
+
         /* Setup automation */
         coralCyclingCommand = automationHandler.coralResumeCommand()
             .until(this::driverWantsOverride)
             .andThen(
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
-                    .onlyIf(endEffector::hasCoral),
-                led.setStateCommand(State.ENABLED)
+                    .onlyIf(endEffector::hasCoral)
             )
+            .finallyDo(() -> led.setState(State.ENABLED))
             .onlyIf(buttonBoard::hasQueues);
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
