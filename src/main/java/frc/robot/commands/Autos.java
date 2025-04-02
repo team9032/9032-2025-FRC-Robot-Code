@@ -119,7 +119,7 @@ public class Autos {
 
     private static Command intake(ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions) {
         return Commands.sequence(
-            elevatorArmIntakeHandler.moveToIntakePosition(true),
+            elevatorArmIntakeHandler.moveToIntakePosition(),
             compositions.intakeCoralToEndEffector(false)
         );
     }
