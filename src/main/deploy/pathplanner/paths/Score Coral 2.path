@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0865,
-        "y": 6.365
+        "x": 0.975,
+        "y": 5.7410000000000005
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6019713114754097,
-        "y": 6.341024590163936
+        "x": 1.4904713114754098,
+        "y": 5.717024590163937
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3C2E"
     },
     {
       "anchor": {
-        "x": 3.9304841138685047,
-        "y": 5.168444679287582
+        "x": 3.6337479902239824,
+        "y": 5.017229490549197
       },
       "prevControl": {
-        "x": 3.3325819672066395,
-        "y": 6.290676229511341
+        "x": 3.035845843562117,
+        "y": 6.139461040772956
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.85,
+      "minWaypointRelativePos": 0.9010088272383314,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
@@ -69,7 +69,7 @@
   "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 110.5560452195835
+    "rotation": -145.30484646876604
   },
   "useDefaultConstraints": false
 }

@@ -3,36 +3,36 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.989,
-        "y": 6.56975
+        "x": 1.2187499999957847,
+        "y": 2.0164999999950406
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.576397540983607,
-        "y": 5.778561475409836
+        "x": 1.6867500000000002,
+        "y": 2.913499999999999
       },
       "isLocked": false,
-      "linkedName": "LeftC4End"
+      "linkedName": "4C1E"
     },
     {
       "anchor": {
-        "x": 3.6471259781100507,
-        "y": 5.003507238578072
+        "x": 3.1984188883024327,
+        "y": 4.115293155247901
       },
       "prevControl": {
-        "x": 3.1855648528827882,
-        "y": 5.802954558270352
+        "x": 2.2488874608139606,
+        "y": 4.115293155247901
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftC5End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.820843672456575,
+      "minWaypointRelativePos": 0.9010088272383329,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
@@ -48,14 +48,14 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.9081885856079376,
+      "waypointRelativePos": 0.9514501891551024,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 4.1,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 129.80557109226524
+    "rotation": -124.91940201245774
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
