@@ -28,13 +28,13 @@ public class Autos {
         PathPlannerPath path7;
 
         try {
-            path1 = PathPlannerPath.fromPathFile("Left 3C1");
-            path2 = PathPlannerPath.fromPathFile("Left 3C2");
-            path3 = PathPlannerPath.fromPathFile("Left 3C3");
-            path4 = PathPlannerPath.fromPathFile("Left 3C4");
-            path5 = PathPlannerPath.fromPathFile("Left 3C5");
-            path6 = PathPlannerPath.fromPathFile("Left 4C1");
-            path7 = PathPlannerPath.fromPathFile("Left 4C2");
+            path1 = PathPlannerPath.fromPathFile("Score Coral 1");
+            path2 = PathPlannerPath.fromPathFile("Get Coral 2");
+            path3 = PathPlannerPath.fromPathFile("Score Coral 2");
+            path4 = PathPlannerPath.fromPathFile("Get Coral 3");
+            path5 = PathPlannerPath.fromPathFile("Score Coral 3");
+            path6 = PathPlannerPath.fromPathFile("Get Coral 4");
+            path7 = PathPlannerPath.fromPathFile("Score Coral 4");
 
             if (mirrored) {
                 path1 = path1.mirrorPath();
@@ -60,8 +60,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 2 */
             AutoBuilder.followPath(path2)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(false),
+                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
             /* Score coral 2 */
             AutoBuilder.followPath(path3)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -70,8 +69,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 3 */
             AutoBuilder.followPath(path4)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(false),
+                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
             /* Score coral 3 */
             AutoBuilder.followPath(path5)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -79,8 +77,7 @@ public class Autos {
             endEffector.placeCoral().asProxy(),
             /* Get coral 4 */
             AutoBuilder.followPath(path6)
-                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition(true)),
-            compositions.autoIntake(false),
+                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
             /* Score coral 4 */
             AutoBuilder.followPath(path7)
                 .deadlineFor(endEffector.holdCoral().asProxy())
@@ -117,6 +114,13 @@ public class Autos {
             Commands.waitUntil(prepareForAutoScoring),//TODO this is a race condition
             elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
+        );
+    }
+
+    private static Command intake(ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions) {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.moveToIntakePosition(true),
+            compositions.intakeCoralToEndEffector(false)
         );
     }
 }

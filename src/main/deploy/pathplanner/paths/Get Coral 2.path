@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 0.975,
-        "y": 5.7410000000000005
+        "x": 1.4722500000000003,
+        "y": 5.789750000000001
       },
       "prevControl": {
-        "x": 2.01825,
-        "y": 6.72575
+        "x": 2.3497500000000002,
+        "y": 5.897
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,18 +30,18 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.554330708661413,
-      "rotationDegrees": -144.27564087370675
+      "waypointRelativePos": 0.8373443983402373,
+      "rotationDegrees": -176.43914842862628
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.1,
+      "maxWaypointRelativePos": 0.08,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 6.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -61,7 +61,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -145.30484646876604
+    "rotation": -177.6140559696112
   },
   "reversed": false,
   "folder": "4 Coral Left",

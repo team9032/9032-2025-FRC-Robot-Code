@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1992500000000001,
-        "y": 3.8202499999999993
+        "x": 1.4917500000000001,
+        "y": 4.103
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.77449999999433,
-        "y": 3.9274999999967175
+        "x": 1.9305,
+        "y": 4.132249999999999
       },
       "isLocked": false,
       "linkedName": "3C4E"
@@ -20,15 +20,20 @@
         "y": 4.113718133517741
       },
       "prevControl": {
-        "x": 2.1742499999943306,
-        "y": 3.9859999999967175
+        "x": 2.242460419916216,
+        "y": 4.113718133517741
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "3C5E"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7626556016597443,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -48,7 +53,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.9081885856079376,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -69,7 +74,7 @@
   "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.67640822143817
+    "rotation": -141.51980175165696
   },
   "useDefaultConstraints": false
 }
