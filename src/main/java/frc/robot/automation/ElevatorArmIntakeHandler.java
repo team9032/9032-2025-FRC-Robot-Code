@@ -26,6 +26,10 @@ public class ElevatorArmIntakeHandler {
         return intake.returnToStowPosition();
     }
 
+    public Command moveIntakeDown() {
+        return intake.moveToGround();
+    }
+
     public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(

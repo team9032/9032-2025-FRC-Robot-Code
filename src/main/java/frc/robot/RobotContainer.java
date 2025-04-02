@@ -196,12 +196,19 @@ public class RobotContainer {
         );
 
         intakeDown.onTrue(
-            compositions.intakeCoralToEndEffector(true)
+            Commands.either(
+                elevatorArmIntakeHandler.moveIntakeDown(), 
+                compositions.intakeCoralToEndEffector(true),
+                endEffector::hasCoral
+            )
         );
 
         intakeUp.onTrue(
-            compositions.cancelIntake()
-                .onlyIf(() -> !endEffector.hasCoral())
+            Commands.either(
+                elevatorArmIntakeHandler.moveIntakeUp(), 
+                compositions.cancelIntake(),
+                endEffector::hasCoral
+            )
         );
 
         resumeAutomation.and(endEffector::hasCoral).onTrue(//Prevent shooting coral out of the end effector
