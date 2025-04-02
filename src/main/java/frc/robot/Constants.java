@@ -34,6 +34,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -210,8 +211,8 @@ public final class Constants {
         public static final double kElevatorTolerance = 0.05;
 
         public static final double kElevatorTrough = 0.4;
-        public static final double kElevatorL1 = 1.1;
-        public static final double kElevatorL2 = 3.42;
+        public static final double kElevatorL1 = 1;
+        public static final double kElevatorL2 = 3.2;
         public static final double kElevatorL3 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
@@ -458,6 +459,10 @@ public final class Constants {
 
         //Patterns
         public static final LEDPattern kError = LEDPattern.solid(Color.kDarkRed);
+
+        public static final LEDPattern kCoralBlockingAlignment = LEDPattern.gradient(GradientType.kContinuous, Color.kBrown, Color.kRed, Color.kLawnGreen)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .blink(Seconds.of(0.1));
 
         public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple);
 

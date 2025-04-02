@@ -141,10 +141,10 @@ public class ButtonBoardHandler {
     private ReefLevel reefLevelTarget = ReefLevel.TO_LEVEL3;
 
     private void bindButtons() {
-        toLSource.onTrue(Commands.runOnce(() -> sourcePathTarget = SourcePath.TO_LSOURCE));
-        toBarge.onTrue(Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.TO_BARGE));
-        toRSource.onTrue(Commands.runOnce(() -> sourcePathTarget = SourcePath.TO_RSOURCE));
-        toProcessor.onTrue(Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.TO_PROCESSOR));
+        toLSource.onTrue(Commands.runOnce(() -> sourcePathTarget = SourcePath.TO_LSOURCE).ignoringDisable(true));
+        toBarge.onTrue(Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.TO_BARGE).ignoringDisable(true));
+        toRSource.onTrue(Commands.runOnce(() -> sourcePathTarget = SourcePath.TO_RSOURCE).ignoringDisable(true));
+        toProcessor.onTrue(Commands.runOnce(() -> algaeScorePathTarget = AlgaeScorePath.TO_PROCESSOR).ignoringDisable(true));
         to1L.onTrue(Commands.runOnce(() -> reefPathTarget = ReefPath.TO_1L).ignoringDisable(true));
         to1R.onTrue(Commands.runOnce(() -> reefPathTarget = ReefPath.TO_1R).ignoringDisable(true));
         to2L.onTrue(Commands.runOnce(() -> reefPathTarget = ReefPath.TO_2L).ignoringDisable(true));
@@ -158,10 +158,10 @@ public class ButtonBoardHandler {
         to6L.onTrue(Commands.runOnce(() -> reefPathTarget = ReefPath.TO_6L).ignoringDisable(true));
         to6R.onTrue(Commands.runOnce(() -> reefPathTarget = ReefPath.TO_6R).ignoringDisable(true));
 
-        toTrough.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_TROUGH));
-        toLevel1.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL1));
-        toLevel2.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL2));
-        toLevel3.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL3));
+        toTrough.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_TROUGH).ignoringDisable(true));
+        toLevel1.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL1).ignoringDisable(true));
+        toLevel2.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL2).ignoringDisable(true));
+        toLevel3.onTrue(Commands.runOnce(() -> reefLevelTarget = ReefLevel.TO_LEVEL3).ignoringDisable(true));
     }
 
     public Command scoreCoral(EndEffector endEffector) {
@@ -250,18 +250,18 @@ public class ButtonBoardHandler {
         return new SelectCommand<ReefPath>(
             Map.ofEntries (
                 Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, arm.moveToLowAlgaePos()),
-                Map.entry(ReefPath.TO_1R, arm.moveToLowAlgaePos()),
-                Map.entry(ReefPath.TO_2L, arm.moveToHighAlgaePos()),
-                Map.entry(ReefPath.TO_2R, arm.moveToHighAlgaePos()),
+                Map.entry(ReefPath.TO_1L, arm.moveToHighAlgaePos()),
+                Map.entry(ReefPath.TO_1R, arm.moveToHighAlgaePos()),
+                Map.entry(ReefPath.TO_2L, arm.moveToLowAlgaePos()),
+                Map.entry(ReefPath.TO_2R, arm.moveToLowAlgaePos()),
                 Map.entry(ReefPath.TO_3L, arm.moveToHighAlgaePos()),
                 Map.entry(ReefPath.TO_3R, arm.moveToHighAlgaePos()),
                 Map.entry(ReefPath.TO_4L, arm.moveToLowAlgaePos()),
                 Map.entry(ReefPath.TO_4R, arm.moveToLowAlgaePos()),
-                Map.entry(ReefPath.TO_5L, arm.moveToLowAlgaePos()),
-                Map.entry(ReefPath.TO_5R, arm.moveToLowAlgaePos()),
-                Map.entry(ReefPath.TO_6L, arm.moveToHighAlgaePos()),
-                Map.entry(ReefPath.TO_6R, arm.moveToHighAlgaePos())
+                Map.entry(ReefPath.TO_5L, arm.moveToHighAlgaePos()),
+                Map.entry(ReefPath.TO_5R, arm.moveToHighAlgaePos()),
+                Map.entry(ReefPath.TO_6L, arm.moveToLowAlgaePos()),
+                Map.entry(ReefPath.TO_6R, arm.moveToLowAlgaePos())
             ),
             () -> reefPathTarget
         );
@@ -436,5 +436,11 @@ public class ButtonBoardHandler {
 
     public boolean l4Selected() {
         return reefLevelTarget.equals(ReefLevel.TO_LEVEL3);
+    }
+
+    public boolean backReefSegmentsSelected() {
+        return reefPathTarget.equals(ReefPath.TO_3L) || reefPathTarget.equals(ReefPath.TO_3R) || 
+            reefPathTarget.equals(ReefPath.TO_4L) || reefPathTarget.equals(ReefPath.TO_4R) || 
+            reefPathTarget.equals(ReefPath.TO_5L) || reefPathTarget.equals(ReefPath.TO_5R);
     }
 }

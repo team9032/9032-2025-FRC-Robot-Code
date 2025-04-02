@@ -20,7 +20,8 @@ public class LED extends SubsystemBase {
         L3(kL3Pattern),
         L4(kL4Pattern),
         ALGAE(kAlgaePattern),
-        ERROR(kError);
+        ERROR(kError),
+        CORAL_BLOCKING_ALIGNMENT(kCoralBlockingAlignment);
 
         public final LEDPattern statePattern;
 
