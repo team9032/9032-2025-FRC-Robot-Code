@@ -16,7 +16,7 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
 public class Autos {
-    private static final Trigger prepareForAutoScoring = new EventTrigger("ElevatorAuto");
+    private static final Trigger moveToScoringPosition = new EventTrigger("ElevatorAuto");
 
     public static Command fourCoralLeft(Intake intake, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions, boolean mirrored) {
         PathPlannerPath score1;
@@ -53,74 +53,61 @@ public class Autos {
 
         return Commands.sequence(
             /* Score preload */
-            AutoBuilder.followPath(score1)
-                .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(prepareForScore(elevatorArmIntakeHandler)),
-            Commands.waitSeconds(0.5),//TODO no.
-            endEffector.placeCoral().asProxy(),
-            /* Get coral 2 */
-            AutoBuilder.followPath(get2)
-                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
-            /* Score coral 2 */
-            AutoBuilder.followPath(score2)
-                .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(prepareForScore(elevatorArmIntakeHandler)),
-            Commands.waitSeconds(0.5),//TODO no.
-            endEffector.placeCoral().asProxy(),
-            /* Get coral 3 */
-            AutoBuilder.followPath(get3)
-                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
-            /* Score coral 3 */
-            AutoBuilder.followPath(score3)
-                .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(prepareForScore(elevatorArmIntakeHandler)),
-            endEffector.placeCoral().asProxy(),
-            /* Get coral 4 */
-            AutoBuilder.followPath(get4)
-                .alongWith(intake(elevatorArmIntakeHandler, compositions)),
-            /* Score coral 4 */
-            AutoBuilder.followPath(score4)
-                .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(prepareForScore(elevatorArmIntakeHandler)),
-            endEffector.placeCoral().asProxy(),
+            scorePreloadCoral(score1, elevatorArmIntakeHandler, endEffector),
+            /* Get and score coral 2 */
+            getAndScoreCoral(get2, score2, elevatorArmIntakeHandler, compositions, endEffector),
+            /* Get and score coral 3 */
+            getAndScoreCoral(get3, score3, elevatorArmIntakeHandler, compositions, endEffector),
+            /* Get and score coral 4 */
+            getAndScoreCoral(get4, score4, elevatorArmIntakeHandler, compositions, endEffector),
             /* Return to stow positions */
             elevatorArmIntakeHandler.moveToStowPositions()
         );
     }
 
-    // public static Command oneCoralCenter(Elevator elevator, Arm arm, EndEffector endEffector, KrakenSwerve swerve, Intake intake, Indexer indexer) {
-    //     try {
-    //         return Commands.sequence(
-    //             /* Score preload */
-    //             AutoBuilder.followPath(PathPlannerPath.fromPathFile("Center 1C1"))
-    //                 .deadlineFor(endEffector.holdCoral())
-    //                     .alongWith(prepareForScore(elevator, arm)),
-    //             endEffector.placeCoral(),
-    //             /* Return to stow positions */
-    //             arm.moveToStowPos(),
-    //             Commands.waitUntil(arm::atSetpoint),
-    //             elevator.moveToIndexerPosition()
-    //         );
-    //     } catch (Exception e) {
-    //         ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
+    public static Command oneCoralCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions) {
+        PathPlannerPath score; 
 
-    //         return Commands.none();
-    //     }
-    // }
+        try {
+            score = PathPlannerPath.fromPathFile("Score Center");
+        } catch (Exception e) {
+            ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
 
-    private static Command prepareForScore(ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
-        return Commands.sequence(
-            elevatorArmIntakeHandler.moveToStowPositions(),
-            Commands.waitUntil(prepareForAutoScoring),//TODO this is a race condition
-            elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
-        );
+            return Commands.none();
+        }
+
+        return scorePreloadCoral(score, elevatorArmIntakeHandler, endEffector);
     }
 
-    private static Command intake(ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions) {
+    private static Command getAndScoreCoral(PathPlannerPath getCoralPath, PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
+        return 
+            /* Follow get coral and score coral paths */
+            Commands.sequence(
+                AutoBuilder.followPath(getCoralPath),
+                AutoBuilder.followPath(scoreCoralPath)
+            )
+            /* At the same time, intake coral and prepare for scoring */
+            .alongWith(
+                Commands.sequence(
+                    compositions.intakeCoralToEndEffector(true),
+                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition),//TODO this is a race condition if the path triggers before it hits stow
+                    ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
+                )
+            )
+            /* Score the coral when the paths finish and everything is at setpoint */
+            .andThen(
+                Commands.waitSeconds(0.5),//TODO no.
+                endEffector.placeCoral().asProxy()
+            );
+    }
+
+    private static Command scorePreloadCoral(PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector) {
         return Commands.sequence(
-            elevatorArmIntakeHandler.moveToIntakePosition(),
-            compositions.intakeCoralToEndEffector(false)
+            AutoBuilder.followPath(scoreCoralPath)
+                .deadlineFor(endEffector.holdCoral().asProxy())
+                    .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition)),
+            Commands.waitSeconds(0.5),//TODO no.
+            endEffector.placeCoral().asProxy()
         );
     }
 }
