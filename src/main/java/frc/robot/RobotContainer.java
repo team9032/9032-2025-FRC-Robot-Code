@@ -112,6 +112,7 @@ public class RobotContainer {
 
         buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
             Commands.sequence(
+                compositions.stopRollers(),
                 elevatorArmIntakeHandler.prepareForAlgaeIntaking(),
                 endEffector.pickupAlgae()  
             )
@@ -263,8 +264,8 @@ public class RobotContainer {
 
         buttonBoard.manual9.onTrue(
             Commands.sequence(
-                disableAutomation(),
-                endEffector.outtakeProcessorAlgae()
+                endEffector.outtakeProcessorAlgae(),
+                elevatorArmIntakeHandler.moveToStowPositions()
             )
         );
 

@@ -272,18 +272,18 @@ public class ButtonBoardHandler {
         return new SelectCommand<ReefPath>(
             Map.ofEntries (
                 Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, elevator.moveToLowAlgaePosition()),
-                Map.entry(ReefPath.TO_1R, elevator.moveToLowAlgaePosition()),
-                Map.entry(ReefPath.TO_2L, elevator.moveToHighAlgaePosition()),
-                Map.entry(ReefPath.TO_2R, elevator.moveToHighAlgaePosition()),
+                Map.entry(ReefPath.TO_1L, elevator.moveToHighAlgaePosition()),
+                Map.entry(ReefPath.TO_1R, elevator.moveToHighAlgaePosition()),
+                Map.entry(ReefPath.TO_2L, elevator.moveToLowAlgaePosition()),
+                Map.entry(ReefPath.TO_2R, elevator.moveToLowAlgaePosition()),
                 Map.entry(ReefPath.TO_3L, elevator.moveToHighAlgaePosition()),
                 Map.entry(ReefPath.TO_3R, elevator.moveToHighAlgaePosition()),
                 Map.entry(ReefPath.TO_4L, elevator.moveToLowAlgaePosition()),
                 Map.entry(ReefPath.TO_4R, elevator.moveToLowAlgaePosition()),
-                Map.entry(ReefPath.TO_5L, elevator.moveToLowAlgaePosition()),
-                Map.entry(ReefPath.TO_5R, elevator.moveToLowAlgaePosition()),
-                Map.entry(ReefPath.TO_6L, elevator.moveToHighAlgaePosition()),
-                Map.entry(ReefPath.TO_6R, elevator.moveToHighAlgaePosition())
+                Map.entry(ReefPath.TO_5L, elevator.moveToHighAlgaePosition()),
+                Map.entry(ReefPath.TO_5R, elevator.moveToHighAlgaePosition()),
+                Map.entry(ReefPath.TO_6L, elevator.moveToLowAlgaePosition()),
+                Map.entry(ReefPath.TO_6R, elevator.moveToLowAlgaePosition())
             ),
             () -> reefPathTarget
         );

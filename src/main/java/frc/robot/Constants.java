@@ -319,7 +319,7 @@ public final class Constants {
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
-        public static final double kArmNetPos = 0.1;
+        public static final double kArmNetPos = 0.15;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
