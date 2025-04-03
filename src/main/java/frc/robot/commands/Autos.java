@@ -96,7 +96,6 @@ public class Autos {
             )
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
-                Commands.waitSeconds(0.5),//TODO no.
                 endEffector.placeCoral().asProxy()
             );
     }
@@ -106,7 +105,6 @@ public class Autos {
             AutoBuilder.followPath(scoreCoralPath)
                 .deadlineFor(endEffector.holdCoral().asProxy())
                     .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition)),
-            Commands.waitSeconds(0.5),//TODO no.
             endEffector.placeCoral().asProxy()
         );
     }
