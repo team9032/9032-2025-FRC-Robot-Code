@@ -89,6 +89,7 @@ public final class Constants {
 
     public static final class ObjectAimingConstants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
+        public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
         public static final int kCycleAmtSinceTargetSeenCutoff = 10;
         public static final double kPitchDifferenceCutoff = 2.0;
@@ -158,11 +159,11 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            // new CameraConstants("FrontLeftCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-            //     false
-            // )
+            new CameraConstants("GroundCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+                false
+            )
         };
     }
 

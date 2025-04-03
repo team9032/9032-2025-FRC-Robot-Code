@@ -8,6 +8,7 @@ import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
+import frc.robot.automation.GroundCoralTracking;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -76,6 +77,7 @@ public class RobotContainer {
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
     private final Command coralCyclingCommand;
     private final Command algaeCyclingCommand;
+    private final GroundCoralTracking groundCoralTracking = new GroundCoralTracking(krakenSwerve.getLocalization(), buttonBoard);
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
@@ -85,6 +87,7 @@ public class RobotContainer {
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
     private final Trigger coralCyclingCommandScheduled;
+    private final Trigger groundCoralOnFarReef = new Trigger(groundCoralTracking::coralBlockingAlignmentOnFarReef);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -305,6 +308,8 @@ public class RobotContainer {
     /** Runs every loop cycle */
     public void robotPeriodic() {
         buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
+        
+        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     }
 
     /** Bind robot mode triggers here */
@@ -332,6 +337,13 @@ public class RobotContainer {
                 led.setStateCommand(State.ENABLED), 
                 led.setStateCommand(State.DISABLED),
                 enabled
+            )
+        );
+
+        groundCoralOnFarReef.and(coralCyclingCommandScheduled).onTrue(
+            rumble()
+            .alongWith(
+                led.setStateCommand(State.CORAL_BLOCKING_ALIGNMENT)
             )
         );
     }
