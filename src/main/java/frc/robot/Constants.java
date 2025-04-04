@@ -162,7 +162,7 @@ public final class Constants {
             new CameraConstants("GroundCamera", new Transform3d(
                 new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
+                true
             )
         };
     }
@@ -221,6 +221,7 @@ public final class Constants {
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 9.5;
+        public static final double kElevatorAlgaeGround = 0.9;
 
         public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorStow = 1.6; 
@@ -321,6 +322,7 @@ public final class Constants {
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
         public static final double kArmNetPos = 0.15;
+        public static final double kArmAlgaeGroundPos = -0.06;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
@@ -410,7 +412,8 @@ public final class Constants {
 
         public static final double kProcessorOuttakePower = -1.0;
         public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaePower = 0.3;
+        public static final double kIntakeAlgaeSlowPower = 0.3;
+        public static final double kIntakeAlgaePower = 1.0;
         public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
@@ -421,7 +424,8 @@ public final class Constants {
         public static final double kSlowReceiveFromIndexerPower = -0.5; 
 
         public static final double kOuttakeWait = 0.5;
-        public static final double kHasAlgaeDist = 182;
+        public static final double kHasAlgaeDist = 175;
+        public static final double kHasAlgaeNearbyDist = 230;
 
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)

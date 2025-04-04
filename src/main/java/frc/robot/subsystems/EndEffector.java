@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.Status;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,7 +31,7 @@ public class EndEffector extends SubsystemBase {
         ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kMainEndEffectorConfig));
         ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kSecondaryEndEffectorConfig));
 
-        algaeDistSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 200);
+        algaeDistSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 50);
         algaeDistSensor.setRangeOfInterest(8, 8, 12, 12);
     }
 
@@ -40,6 +41,11 @@ public class EndEffector extends SubsystemBase {
 
     private Command setEndEffectorSecondaryMotor(double power) {
         return runOnce(() -> endEffectorSecondaryMotor.set(power));
+    }
+
+    private void setEndEffectorMotorsAlgae(double power) {
+        endEffectorMainMotor.set(power);
+        endEffectorSecondaryMotor.set(-power);
     }
 
     private void setEndEffectorMotors(double power) {
@@ -77,7 +83,7 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-    public Command holdCoral() { //TODO Add to from compositions
+    public Command holdCoral() { 
         return run(() -> {
             if (!getSourcePhotoelectricSensor()) {
                 setEndEffectorMotors(kSlowReceiveFromIndexerPower);
@@ -88,6 +94,16 @@ public class EndEffector extends SubsystemBase {
             
             else if (hasCoralCentered())
                 setEndEffectorMotors(0.0);
+        });
+    }
+
+    public Command holdAlgae() {
+        return run(() -> {
+            if (hasAlgaeNearby() && !hasAlgae())
+                setEndEffectorMotorsAlgae(kIntakeAlgaeSlowPower);
+
+            else    
+                setEndEffectorMotorsAlgae(kHoldAlgaePower);
         });
     }
 
@@ -105,9 +121,8 @@ public class EndEffector extends SubsystemBase {
         return Commands.sequence(
             setEndEffectorMainMotor(kIntakeAlgaePower),
             setEndEffectorSecondaryMotor(-kIntakeAlgaePower), 
-            Commands.waitUntil(this::hasAlgae), 
-            setEndEffectorMainMotor(kHoldAlgaePower),
-            setEndEffectorSecondaryMotor(-kHoldAlgaePower)
+            Commands.waitUntil(this::hasAlgaeNearby),
+            holdAlgae()
         );
     }
 
@@ -134,7 +149,23 @@ public class EndEffector extends SubsystemBase {
     }
 
     public boolean hasAlgae() {
-        return algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
+        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
+            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
+
+            return hasAlgae;
+        }//TODO find a way to prevent flickering
+
+        return false;
+    }
+
+    public boolean hasAlgaeNearby() {
+        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
+            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeNearbyDist && !hasCoral() && algaeDistSensor.getRange() != 0;
+
+            return hasAlgae;
+        }//TODO find a way to prevent flickering
+
+        return false;
     }
 
     public boolean hasCoralCentered() {

@@ -116,7 +116,7 @@ public class RobotContainer {
         buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
             Commands.sequence(
                 compositions.stopRollers(),
-                elevatorArmIntakeHandler.prepareForAlgaeIntaking(),
+                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(),
                 endEffector.pickupAlgae()  
             )
         );
@@ -228,8 +228,8 @@ public class RobotContainer {
          * Manual 7 - return to stow positions
          * Manual 8 - intake up
          * Manual 9 - algae eject
-         * Manual 10 - algae low
-         * Manual 11 - algae high
+         * Manual 10 - algae score pos
+         * Manual 11 - algae ground intake
          * Manual 12 - intake down
          * Manual 13 - source intake
          * 
@@ -279,14 +279,12 @@ public class RobotContainer {
             )
         );
 
-        // buttonBoard.manual11.onTrue(
-        //     Commands.sequence(
-        //         disableAutomation(),
-        //         elevator.moveToHighAlgaePosition(),
-        //         Commands.waitUntil(elevator::atSetpoint),
-        //         arm.moveToHighAlgaePos()
-        //     )
-        // );
+        buttonBoard.manual11.onTrue(
+            Commands.sequence(
+                elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
+                endEffector.pickupAlgae()
+            )
+        );
 
         buttonBoard.manual12.onTrue(
             compositions.intakeCoralToEndEffector(true)
@@ -299,10 +297,6 @@ public class RobotContainer {
                 endEffector.pickupCoralFromSource()
             )
         );
-    }
-
-    private Command disableAutomation() {
-        return Commands.runOnce(() -> coralCyclingCommand.cancel());
     }
 
     /** Runs every loop cycle */

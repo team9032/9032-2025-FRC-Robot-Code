@@ -101,15 +101,26 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForAlgaeIntaking() {
+    public Command prepareForAlgaeReefIntaking() {
         return Commands.sequence(
             moveToStowPositions()
                 .onlyIf(arm::closeToIndexPosition),
             buttonBoardHandler.moveArmToAlgaeIntakeTargetLevel(arm),
             buttonBoardHandler.moveElevatorToAlgaeIntakeTargetLevel(elevator),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for algae intaking")
+            ElasticUtil.sendInfoCommand("Prepared for algae reef intaking")
 
+        );          
+    }
+
+    public Command prepareForAlgaeGroundIntaking() {
+        return Commands.sequence(
+            moveToStowPositions()
+                .onlyIf(arm::closeToIndexPosition),
+            arm.moveToAlgaeGroundPos(),
+            elevator.moveToAlgaeGroundPosition(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            ElasticUtil.sendInfoCommand("Prepared for algae ground intaking")
         );          
     }
 
