@@ -424,7 +424,9 @@ public final class Constants {
         public static final double kSlowIntakeFromSourcePower = 0.4; 
         public static final double kSlowReceiveFromIndexerPower = -0.5; 
 
-        public static final double kOuttakeWait = 0.5;
+        public static final double kCoralOuttakeWait = 0.25;
+        public static final double kAlgaeOuttakeWait = 0.5;
+
         public static final double kHasAlgaeDist = 175;
         public static final double kHasAlgaeNearbyDist = 230;
 

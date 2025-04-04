@@ -1,12 +1,10 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.subsystems.EndEffector;
@@ -16,8 +14,6 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
 public class Autos {
-    private static final Trigger moveToScoringPosition = new EventTrigger("ElevatorAuto");
-
     public static Command fourCoralLeft(Intake intake, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions, boolean mirrored) {
         PathPlannerPath score1;
         PathPlannerPath get2;
@@ -59,7 +55,7 @@ public class Autos {
             /* Get and score coral 3 */
             getAndScoreCoral(get3, score3, elevatorArmIntakeHandler, compositions, endEffector),
             /* Get and score coral 4 */
-            getAndScoreCoral(get4, score4, elevatorArmIntakeHandler, compositions, endEffector),
+            //getAndScoreCoral(get4, score4, elevatorArmIntakeHandler, compositions, endEffector),
             /* Return to stow positions */
             elevatorArmIntakeHandler.moveToStowPositions()
         );
@@ -91,7 +87,7 @@ public class Autos {
                 Commands.sequence(
                     elevatorArmIntakeHandler.moveIntakeDown(),//Make sure the intake is down in time
                     compositions.intakeCoralToEndEffector(true),
-                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition),//TODO this is a race condition if the path triggers before it hits stow
+                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
                     ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
                 )
             )
@@ -106,7 +102,7 @@ public class Autos {
         return Commands.sequence(
             AutoBuilder.followPath(scoreCoralPath)
                 .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition)),
+                    .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring()),
             Commands.waitSeconds(0.25),//TODO d
             endEffector.placeCoral().asProxy()
         );

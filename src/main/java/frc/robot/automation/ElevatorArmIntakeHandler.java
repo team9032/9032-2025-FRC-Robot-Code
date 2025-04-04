@@ -1,7 +1,5 @@
 package frc.robot.automation;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Arm;
@@ -40,7 +38,7 @@ public class ElevatorArmIntakeHandler {
                     .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
                 intake.moveToGround(),
-                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
+                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
                 arm.moveToIndexerPos(),
                 Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition(),
@@ -93,10 +91,9 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForAutoCoralScoring(BooleanSupplier moveToScorePositionsSup) {
+    public Command prepareForAutoCoralScoring() {
         return Commands.sequence(
             moveToStowPositions(),
-            Commands.waitUntil(moveToScorePositionsSup),
             elevator.moveToL3Position(),
             Commands.waitUntil(elevator::atSetpoint),
             arm.moveToLevel3Pos(),

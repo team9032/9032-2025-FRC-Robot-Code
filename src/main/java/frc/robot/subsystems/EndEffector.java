@@ -60,7 +60,7 @@ public class EndEffector extends SubsystemBase {
     public Command placeCoral() {
         return Commands.sequence(
             setEndEffectorMotorsCommand(kCoralOuttakePower),
-            Commands.waitSeconds(kOuttakeWait),
+            Commands.waitSeconds(kCoralOuttakeWait),
             setEndEffectorMotorsCommand(0.0)
         );
     }
@@ -68,7 +68,7 @@ public class EndEffector extends SubsystemBase {
     public Command placeCoralInTrough() {
         return Commands.sequence(
             setEndEffectorMainMotor(kCoralOuttakeToTrough),
-            Commands.waitSeconds(kOuttakeWait),
+            Commands.waitSeconds(kCoralOuttakeWait),
             setEndEffectorMotorsCommand(0.0)
         );
     }
@@ -130,7 +130,7 @@ public class EndEffector extends SubsystemBase {
         return Commands.sequence(
             setEndEffectorMainMotor(kProcessorOuttakePower), 
             setEndEffectorSecondaryMotor(-kProcessorOuttakePower),
-            Commands.waitSeconds(kOuttakeWait),
+            Commands.waitSeconds(kAlgaeOuttakeWait),
             setEndEffectorMotorsCommand(0.0)
         );
     }
@@ -139,7 +139,7 @@ public class EndEffector extends SubsystemBase {
         return Commands.sequence(
             setEndEffectorMainMotor(kNetOuttakePower),
             setEndEffectorSecondaryMotor(-kNetOuttakePower),
-            Commands.waitSeconds(kOuttakeWait),
+            Commands.waitSeconds(kAlgaeOuttakeWait),
             setEndEffectorMotorsCommand(0.0)
         );
     }
