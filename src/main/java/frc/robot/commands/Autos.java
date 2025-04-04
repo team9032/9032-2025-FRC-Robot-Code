@@ -89,6 +89,7 @@ public class Autos {
             /* At the same time, intake coral and prepare for scoring */
             .alongWith(
                 Commands.sequence(
+                    elevatorArmIntakeHandler.moveIntakeDown(),//Make sure the intake is down in time
                     compositions.intakeCoralToEndEffector(true),
                     elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition),//TODO this is a race condition if the path triggers before it hits stow
                     ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
@@ -96,6 +97,7 @@ public class Autos {
             )
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
+                Commands.waitSeconds(0.25),//TODO d
                 endEffector.placeCoral().asProxy()
             );
     }
@@ -105,6 +107,7 @@ public class Autos {
             AutoBuilder.followPath(scoreCoralPath)
                 .deadlineFor(endEffector.holdCoral().asProxy())
                     .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(moveToScoringPosition)),
+            Commands.waitSeconds(0.25),//TODO d
             endEffector.placeCoral().asProxy()
         );
     }
