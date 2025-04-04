@@ -34,6 +34,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -88,6 +89,7 @@ public final class Constants {
 
     public static final class ObjectAimingConstants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
+        public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
         public static final int kCycleAmtSinceTargetSeenCutoff = 10;
         public static final double kPitchDifferenceCutoff = 2.0;
@@ -157,11 +159,11 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            // new CameraConstants("FrontLeftCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-            //     false
-            // )
+            new CameraConstants("GroundCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+                true
+            )
         };
     }
 
@@ -210,8 +212,8 @@ public final class Constants {
         public static final double kElevatorTolerance = 0.05;
 
         public static final double kElevatorTrough = 0.4;
-        public static final double kElevatorL1 = 1.1;
-        public static final double kElevatorL2 = 3.42;
+        public static final double kElevatorL1 = 1;
+        public static final double kElevatorL2 = 3.2;
         public static final double kElevatorL3 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
@@ -219,6 +221,7 @@ public final class Constants {
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 9.5;
+        public static final double kElevatorAlgaeGround = 0.9;
 
         public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorStow = 1.6; 
@@ -318,7 +321,8 @@ public final class Constants {
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
-        public static final double kArmNetPos = 0.1;
+        public static final double kArmNetPos = 0.15;
+        public static final double kArmAlgaeGroundPos = -0.06;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
@@ -408,7 +412,8 @@ public final class Constants {
 
         public static final double kProcessorOuttakePower = -1.0;
         public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaePower = 0.3;
+        public static final double kIntakeAlgaeSlowPower = 0.3;
+        public static final double kIntakeAlgaePower = 1.0;
         public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
@@ -419,7 +424,8 @@ public final class Constants {
         public static final double kSlowReceiveFromIndexerPower = -0.5; 
 
         public static final double kOuttakeWait = 0.5;
-        public static final double kHasAlgaeDist = 182;
+        public static final double kHasAlgaeDist = 175;
+        public static final double kHasAlgaeNearbyDist = 230;
 
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
@@ -458,6 +464,10 @@ public final class Constants {
 
         //Patterns
         public static final LEDPattern kError = LEDPattern.solid(Color.kDarkRed);
+
+        public static final LEDPattern kCoralBlockingAlignment = LEDPattern.gradient(GradientType.kContinuous, Color.kBrown, Color.kRed, Color.kLawnGreen)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .blink(Seconds.of(0.1));
 
         public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple);
 

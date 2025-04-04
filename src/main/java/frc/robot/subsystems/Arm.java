@@ -130,6 +130,10 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmProcessorPos)));
     }
 
+    public Command moveToAlgaeGroundPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeGroundPos)));
+    }
+
     @Override
     public void periodic() {
         armPosSignal.refresh();
