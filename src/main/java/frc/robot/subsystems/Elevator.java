@@ -121,6 +121,10 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorOverIndexer));
     }
 
+    public Command moveToAlgaeGroundPosition() {
+        return runOnce(() -> moveElevator(kElevatorAlgaeGround));
+    }
+
     @Override
     public void periodic() {
         elevatorPosSignal.refresh();
