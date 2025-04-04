@@ -3,58 +3,40 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.2285860655703456,
-        "y": 6.710245901636056
+        "x": 7.198928827852621,
+        "y": 3.9973519207801838
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.085020784850738,
-        "y": 7.143010709363717
+        "x": 7.198928827852621,
+        "y": 4.377351920780184
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.198048935739132,
-        "y": 5.080131706511684
+        "x": 5.755088265516372,
+        "y": 4.264774852846798
       },
       "prevControl": {
-        "x": 5.556048935739132,
-        "y": 5.700205895621343
+        "x": 6.588088265516372,
+        "y": 4.264774852846798
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "3C1E"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 59.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7394540942928045,
+      "minWaypointRelativePos": 0.7672456575682384,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 4.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5617825793382872,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 4.0,
+        "maxAcceleration": 6.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -66,13 +48,13 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 0.9558312655086838,
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -80,14 +62,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 59.99999999999999
+    "velocity": 0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "4 Coral Left",
+  "folder": "1 Coral Center",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 52.6506509553593
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }

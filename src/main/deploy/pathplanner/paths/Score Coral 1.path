@@ -3,40 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.196941965599445,
-        "y": 5.078253956112207
+        "x": 7.0005,
+        "y": 5.507000000000001
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.622960012378254,
-        "y": 5.7833354324007
+        "x": 6.4155,
+        "y": 5.653250000000001
       },
       "isLocked": false,
-      "linkedName": "3C1E"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.6520000000000006,
-        "y": 5.92625
+        "x": 5.243734625856524,
+        "y": 5.054610566684994
       },
       "prevControl": {
-        "x": 3.0475942622950827,
-        "y": 5.914262295081966
+        "x": 5.6017346258565235,
+        "y": 5.674684755794653
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "autosource"
+      "linkedName": "3C1E"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 59.99999999999999
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.09,
+      "minWaypointRelativePos": 0.8484848484848447,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 6.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -45,9 +50,16 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ElevatorAuto",
+      "waypointRelativePos": 0.9558312655086838,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -55,14 +67,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
-    "rotation": 110.5560452195835
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 52.6506509553593
   },
   "useDefaultConstraints": false
 }

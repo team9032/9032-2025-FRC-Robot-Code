@@ -38,7 +38,7 @@ public class ElevatorArmIntakeHandler {
                     .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
                 intake.moveToGround(),
-                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
+                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
                 arm.moveToIndexerPos(),
                 Commands.waitUntil(arm::atSetpoint),
                 elevator.moveToIndexerPosition(),

@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.240737049831283,
+        "y": 5.054333758317251
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.666755096610093,
+        "y": 5.759415234605744
+      },
+      "isLocked": false,
+      "linkedName": "3C1E"
+    },
+    {
+      "anchor": {
+        "x": 1.6003547113345065,
+        "y": 5.752683377672616
+      },
+      "prevControl": {
+        "x": 2.477854711334512,
+        "y": 5.859933377672616
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "3C2E"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8373443983402373,
+      "rotationDegrees": -176.43914842862628
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.10223325062034637,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.8645161290322577,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -177.6140559696112
+  },
+  "reversed": false,
+  "folder": "4 Coral Left",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "useDefaultConstraints": false
+}

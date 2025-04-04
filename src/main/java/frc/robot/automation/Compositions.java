@@ -52,7 +52,7 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
             buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
-            Commands.waitSeconds(0.5)//TODO fix?
+            Commands.waitSeconds(0.25)//TODO fix?
                 .onlyIf(buttonBoardHandler::l4Selected),
             endEffector.placeCoral().asProxy()
         );

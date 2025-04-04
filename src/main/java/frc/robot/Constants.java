@@ -19,7 +19,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-
+//TODO import harshil.pande.TigerConstants;
+//TODO import evilharshel.pandez.EvilTiggerConstantz.*;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -423,7 +424,9 @@ public final class Constants {
         public static final double kSlowIntakeFromSourcePower = 0.4; 
         public static final double kSlowReceiveFromIndexerPower = -0.5; 
 
-        public static final double kOuttakeWait = 0.5;
+        public static final double kCoralOuttakeWait = 0.25;
+        public static final double kAlgaeOuttakeWait = 0.5;
+
         public static final double kHasAlgaeDist = 175;
         public static final double kHasAlgaeNearbyDist = 230;
 
