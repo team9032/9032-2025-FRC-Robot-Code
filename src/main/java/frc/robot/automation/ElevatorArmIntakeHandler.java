@@ -82,7 +82,8 @@ public class ElevatorArmIntakeHandler {
 
     public Command prepareForCoralScoring() {
         return Commands.sequence(
-            moveToStowPositions(),
+            moveToStowPositions()
+                .onlyIf(buttonBoardHandler::l1NotSelected),
             buttonBoardHandler.moveElevatorToCoralTargetLevel(elevator),
             Commands.waitUntil(elevator::atSetpoint),
             buttonBoardHandler.moveArmToCoralTargetLevel(arm),

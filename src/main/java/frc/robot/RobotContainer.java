@@ -252,7 +252,7 @@ public class RobotContainer {
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                endEffector.placeCoral(),
+                buttonBoard.scoreCoral(endEffector),
                 elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );
