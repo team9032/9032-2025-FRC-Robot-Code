@@ -53,6 +53,7 @@ public class RobotContainer {
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
     private final Trigger resumeAutomation = driveController.a();
+    private final Trigger pulseIntake = driveController.povRight();
 
     /* Operator Controller Buttons */
 
@@ -218,6 +219,8 @@ public class RobotContainer {
         resumeAutomation.and(endEffector::hasCoral).onTrue(//Prevent shooting coral out of the end effector
             coralCyclingCommand
         );
+
+        pulseIntake.onTrue(compositions.pulseIntake());
 
         /* Manual Controls:
          * 
