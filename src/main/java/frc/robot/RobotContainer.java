@@ -10,6 +10,7 @@ import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.GroundCoralTracking;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
@@ -205,6 +206,11 @@ public class RobotContainer {
                 compositions.intakeCoralToEndEffector(true),
                 endEffector::hasCoral
             )
+        );
+
+        intakeDown.whileTrue(
+            new DriverAssistedAutoIntake(() -> -driveController.getLeftY(), krakenSwerve)
+                .onlyIf(() -> !endEffector.hasCoral())
         );
 
         intakeUp.onTrue(
