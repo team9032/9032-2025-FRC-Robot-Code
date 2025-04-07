@@ -71,23 +71,9 @@ public class Compositions {
     public Command pulseIntake() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Pulsing intake"),
-            elevatorArmIntakeHandler.moveToIntakePosition(),
-            intake.intakeCoral(),
-            indexer.spinRollers(),
-            endEffector.receiveCoralFromIndexer().asProxy()
-                .alongWith(
-                    /* Pulse */
-                    Commands.sequence(
-                        intake.moveToEndEffectorMovePosition(),
-                        Commands.waitSeconds(0.1),
-                        intake.moveToGround()
-                    )
-                ),
-            intake.stopIntaking(),
-            indexer.stopRollers(),
-            new ScheduleCommand(endEffector.holdCoral()),
-            elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(buttonBoardHandler::l1NotSelected)
+            cancelIntake(),
+            Commands.waitSeconds(0.25),
+            intakeCoralToEndEffector(true)
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
