@@ -54,7 +54,7 @@ public class Compositions {
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
             Commands.waitSeconds(0.25)//TODO fix?
                 .onlyIf(buttonBoardHandler::l4Selected),
-            endEffector.placeCoral().asProxy()
+            buttonBoardHandler.scoreCoral(endEffector).asProxy()
         );
     }
 
@@ -68,6 +68,16 @@ public class Compositions {
         );
     }
 
+    public Command pulseIntake() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Pulsing intake"),
+            cancelIntake(),
+            Commands.waitSeconds(0.25),
+            intakeCoralToEndEffector(true)
+        )
+        .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
+    }
+
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
@@ -79,7 +89,7 @@ public class Compositions {
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
             elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(() -> moveToStow)
+                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected())
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }

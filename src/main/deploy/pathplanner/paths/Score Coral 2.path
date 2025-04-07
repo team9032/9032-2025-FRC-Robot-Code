@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6003547113345065,
-        "y": 5.752683377672616
+        "x": 1.319922899435503,
+        "y": 5.686294200234762
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.115826022809916,
-        "y": 5.728707967836552
+        "x": 1.8353942109109127,
+        "y": 5.6623187903986985
       },
       "isLocked": false,
       "linkedName": "3C2E"
@@ -20,8 +20,8 @@
         "y": 5.030593543631423
       },
       "prevControl": {
-        "x": 3.053047648874681,
-        "y": 6.131805590412317
+        "x": 3.188832720518489,
+        "y": 5.8966189474158615
       },
       "nextControl": null,
       "isLocked": false,
@@ -69,7 +69,7 @@
   "folder": "4 Coral Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -177.6140559696112
+    "rotation": 145.30660400420982
   },
   "useDefaultConstraints": false
 }

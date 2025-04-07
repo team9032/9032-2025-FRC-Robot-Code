@@ -53,6 +53,7 @@ public class RobotContainer {
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
     private final Trigger resumeAutomation = driveController.a();
+    private final Trigger pulseIntake = driveController.povRight();
 
     /* Operator Controller Buttons */
 
@@ -219,6 +220,8 @@ public class RobotContainer {
             coralCyclingCommand
         );
 
+        pulseIntake.onTrue(compositions.pulseIntake());
+
         /* Manual Controls:
          * 
          * Manual 1 - eject coral from intake
@@ -252,7 +255,7 @@ public class RobotContainer {
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                endEffector.placeCoral(),
+                buttonBoard.scoreCoral(endEffector),
                 elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );

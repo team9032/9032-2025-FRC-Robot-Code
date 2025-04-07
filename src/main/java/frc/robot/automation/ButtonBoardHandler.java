@@ -438,6 +438,10 @@ public class ButtonBoardHandler {
         return reefLevelTarget.equals(ReefLevel.TO_LEVEL3);
     }
 
+    public boolean l1NotSelected() {
+        return !reefLevelTarget.equals(ReefLevel.TO_TROUGH);
+    }
+
     public boolean backReefSegmentsSelected() {
         return reefPathTarget.equals(ReefPath.TO_3L) || reefPathTarget.equals(ReefPath.TO_3R) || 
             reefPathTarget.equals(ReefPath.TO_4L) || reefPathTarget.equals(ReefPath.TO_4R) || 
