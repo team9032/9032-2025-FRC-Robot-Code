@@ -173,25 +173,25 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(9.5)
-            .withMotionMagicAcceleration(40);
+            .withMotionMagicExpo_kV(0.2)
+            .withMotionMagicExpo_kA(0.16);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(7)
-            .withKD(0.5)
-            .withKV(1.16)
-            .withKG(0.4)
+            .withKP(15)
+            .withKD(0)
+            .withKV(0.6)
+            .withKG(0.45)
             .withGravityType(kElevatorGravityType);
         //FIXME hi HARSHIL PANDENATOR
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimit(60)
             .withStatorCurrentLimit(120);
 
         public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(9.0);
+            .withSensorToMechanismRatio(5.0);
 
         public static final SoftwareLimitSwitchConfigs kElevatorSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
