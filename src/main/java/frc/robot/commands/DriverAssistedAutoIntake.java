@@ -1,17 +1,13 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
+import frc.robot.localization.TrackedObject;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
@@ -24,7 +20,7 @@ public class DriverAssistedAutoIntake extends Command {
 
     private final PIDController rotationController;
 
-    private PhotonTrackedTarget lastCoralTarget;
+    private TrackedObject lastCoralTarget;
 
     public DriverAssistedAutoIntake(DoubleSupplier xSpeedSupplier, KrakenSwerve swerve) {
         this.swerve = swerve;
@@ -49,9 +45,9 @@ public class DriverAssistedAutoIntake extends Command {
 
         /* Update setpoint if we have a target */
         if (coralTarget != null) {
-            double rotationSetpoint = currentYaw - (coralTarget.yaw - kRotationSetpoint);
+            double rotationSetpoint = coralTarget.objectYawInFieldSpace() - kRotationSetpoint;
 
-            rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
+            rotationController.setSetpoint(rotationSetpoint);//MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
         /* Drive based on desired speed and the rotation PID's output */
@@ -64,14 +60,17 @@ public class DriverAssistedAutoIntake extends Command {
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
-    private PhotonTrackedTarget getCoralTarget() {
-        PhotonTrackedTarget coralTarget;
+    private TrackedObject getCoralTarget() {
+        TrackedObject coralTarget;
 
-        var result = getLatestPipelineResult();
-
+        var coralTargets = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
+        
         /* Remove targets that are not coral  */
-        var coralTargets = result.getTargets();
-        coralTargets.removeIf((target) -> target.getDetectedObjectClassID() != kCoralId);
+        coralTargets.removeIf((target) -> !target.isCoral());
+
+        /* Exit if no targets exist */
+        if (coralTargets.isEmpty())
+            return null;
 
         /* Find the target that is closest if there is no last target */
         if(lastCoralTarget == null)
@@ -83,8 +82,8 @@ public class DriverAssistedAutoIntake extends Command {
 
             coralTarget = getClosestCoral(coralTargets);
 
-            for(PhotonTrackedTarget target : coralTargets) {
-                double yawDifference = Math.abs(target.getYaw() - lastCoralTarget.getYaw());
+            for(TrackedObject target : coralTargets) {
+                double yawDifference = Math.abs(target.objectYawInFieldSpace() - lastCoralTarget.objectYawInFieldSpace());
 
                 if(yawDifference < lowestYawDifference) {
                     lowestYawDifference = yawDifference;
@@ -99,32 +98,16 @@ public class DriverAssistedAutoIntake extends Command {
         return coralTarget;
     }
 
-    private PhotonTrackedTarget getClosestCoral(List<PhotonTrackedTarget> coralTargets) {
-        PhotonTrackedTarget closetCoral = coralTargets.get(0);
+    private TrackedObject getClosestCoral(List<TrackedObject> coralTargets) {
+        TrackedObject closetCoral = coralTargets.get(0);
 
         for(var target : coralTargets) {
-            if(target.getPitch() < closetCoral.getPitch()) {
+            if(target.objectPitchInCameraSpace() < closetCoral.objectPitchInCameraSpace()) {
                 closetCoral = target;
             } 
         }
 
         return closetCoral;
-    }
-
-    private PhotonPipelineResult getLatestPipelineResult() {
-        var results = new ArrayList<>(localization.getObjectTrackingResults(kObjectTrackingCameraName));
-
-        /* Remove all results without targets */
-        results.removeIf((result) -> !result.hasTargets());
-
-        /* Find the most recent result */
-        PhotonPipelineResult latestResult = results.get(0);
-        for(var result : results) {
-            if(result.getTimestampSeconds() > latestResult.getTimestampSeconds())
-                latestResult = result;
-        }
-
-        return latestResult;        
     }
 
     @Override

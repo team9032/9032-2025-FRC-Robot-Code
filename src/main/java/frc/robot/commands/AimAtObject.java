@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
+import frc.robot.localization.TrackedObject;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.VisionTargetCache;
@@ -23,7 +24,7 @@ public class AimAtObject extends Command {
     
     private final Localization localization;
 
-    private final VisionTargetCache<PhotonTrackedTarget> targetCache;
+    private final VisionTargetCache<TrackedObject> targetCache;
     
     private final PIDController rotationController;
 
@@ -70,7 +71,7 @@ public class AimAtObject extends Command {
 
         double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
 
-        PhotonTrackedTarget targetToTrack = getTarget();
+        PhotonTrackedTarget targetToTrack = null;getTarget();
 
         /* Wait to get a target */
         if (!targetCache.hasTarget()) {
@@ -104,49 +105,36 @@ public class AimAtObject extends Command {
         swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
-    private PhotonTrackedTarget getTarget() {
+    private TrackedObject getTarget() {//TODO this code is super broken now 
         /* Make sure the target cache is incremented each loop */
         var previousTarget = targetCache.getAndIncrement();
 
-        var results = new ArrayList<>(localization.getObjectTrackingResults(kObjectTrackingCameraName));
+        var results = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
 
-        /* Remove all results without targets - exit if no results have targets */
-        results.removeIf((result) -> !result.hasTargets());
+        /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
+        results.removeIf((target) -> !target.isCoral());//TODO fix
+
         if(results.isEmpty())
             return null;
 
-        /* Find the most recent result */
-        PhotonPipelineResult latestResult = results.get(0);
-        for(var result : results) {
-            if(result.getTimestampSeconds() > latestResult.getTimestampSeconds())
-                latestResult = result;
-        }
-
-        /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
-        var filteredTargets = latestResult.getTargets();
-        filteredTargets.removeIf((target) -> target.getDetectedObjectClassID() != objectToTrackId);
-
-        if(filteredTargets.isEmpty())
-            return null;
-
-        PhotonTrackedTarget targetToTrack = null;
+        TrackedObject targetToTrack = null;
         /* Find the target that is closest to the center of the camera when there is no previous target */
         if(!targetCache.hasTarget()) {
-            targetToTrack = latestResult.getBestTarget();
+            targetToTrack = null; //latestResult.getBestTarget();
         }
         /* Find the lowest pitch difference target that is within the pitch difference cutoff */
         else {            
             double lowestPitchDifference = Double.MAX_VALUE;
 
-            for(PhotonTrackedTarget target : filteredTargets) {
-                double pitchDifference = Math.abs(target.getPitch() - previousTarget.getPitch());
+            // for(PhotonTrackedTarget target : filteredTargets) {
+            //     double pitchDifference = Math.abs(target.getPitch() - previousTarget.getPitch());
 
-                if(pitchDifference < kPitchDifferenceCutoff && pitchDifference < lowestPitchDifference) {
-                    lowestPitchDifference = target.getPitch();
+            //     if(pitchDifference < kPitchDifferenceCutoff && pitchDifference < lowestPitchDifference) {
+            //         lowestPitchDifference = target.getPitch();
 
-                    targetToTrack = target;
-                }
-            }
+            //         targetToTrack = target;
+            //     }
+            // }
         }
 
         if (targetToTrack != null)

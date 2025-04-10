@@ -1,5 +1,6 @@
 package frc.robot.localization;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.Utils;
@@ -15,8 +17,10 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,23 +30,25 @@ public class LocalizationCamera {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
-    private final boolean isObjectTracking;
+    private final CameraConstants constants;
+
+    private final List<TrackedObject> trackedObjects = new ArrayList<>();
 
     public LocalizationCamera(CameraConstants constants, AprilTagFieldLayout layout) {
         camera = new PhotonCamera(constants.name());
+
+        this.constants = constants;
 
         poseEstimator = new PhotonPoseEstimator(
             layout, 
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,  
             constants.robotToCameraTransform()
         );
-
-        this.isObjectTracking = constants.isObjectTracking();
     }
 
     public void addResultsToDrivetrain(SwerveDrivetrain<?, ?, ?> drivetrain, Field2d localizationField) {
         /* This method should not run during object tracking */
-        if (isObjectTracking) 
+        if (constants.isObjectTracking()) 
             return;
 
         var results = camera.getAllUnreadResults();
@@ -150,13 +156,66 @@ public class LocalizationCamera {
         }
     }
 
-    /** Returns all object tracking pipeline results. Do not call this during localization (or an empty list will be returned). */
-    public List<PhotonPipelineResult> getObjectTrackingResults() {
-        /* This method should not run during localization - return an empty list */
-        if (!isObjectTracking)
-            return List.of();
+    /** Updates the object tracking pipeline. Will only have an effect if the camera is on object tracking mode. */
+    public void updateObjectTrackingResults(Pose2d currentEstimatedPose, Field2d field) {
+        /* This method should not run during localization */
+        if (!constants.isObjectTracking())
+            return;
 
-        return camera.getAllUnreadResults();
+        trackedObjects.clear();//TODO persist objects
+
+        var result = getLatestPipelineResult();
+        var cameraTransform = constants.robotToCameraTransform();
+
+        for (var target : result.getTargets()) {
+            /* Finds the distance from the camera to the object - no offsets are applied */
+            double cameraToTargetDistance = PhotonUtils.calculateDistanceToTargetMeters(
+                cameraTransform.getZ(), 
+                0.0, //TODO height
+                cameraTransform.getRotation().getY(), 
+                target.getPitch()
+            );
+            
+            /* Finds the translation (x, y) from the camera to the target using distance - no offsets */
+            var objectTranslationCamera = PhotonUtils.estimateCameraToTargetTranslation(cameraToTargetDistance, Rotation2d.fromDegrees(target.getYaw()));
+
+            /* Finds the translation (x, y) in robot space using camera offsets */
+            var objectTranslationRobot = objectTranslationCamera.minus(cameraTransform.getTranslation().toTranslation2d());
+
+            /* Finds the translation (x, y) in field space by offseting by the robot's rotation and translation in the field */
+            var objectTranslationField = objectTranslationRobot.rotateBy(currentEstimatedPose.getRotation())
+                .plus(currentEstimatedPose.getTranslation());
+
+            /* Create a pose estimate assuming the rotation is 0 */
+            Pose2d objectPoseField = new Pose2d(objectTranslationField, Rotation2d.kZero);
+
+            /* Estimate the yaw in field space for use with auto aiming */
+            double objectYawInRobotSpace = target.getYaw() - Units.radiansToDegrees(cameraTransform.getRotation().getZ());//TODO add or subtract?
+            double objectYawInFieldSpace = currentEstimatedPose.getRotation().getDegrees() - objectYawInRobotSpace;
+
+            trackedObjects.add(new TrackedObject(objectPoseField, objectYawInFieldSpace, target.getPitch(), target.objDetectId, getName())); 
+            field.getObject(getName() + " Coral").setPose(objectPoseField);//TODO label coral
+        }
+    }
+
+    private PhotonPipelineResult getLatestPipelineResult() {
+        var results = new ArrayList<>(camera.getAllUnreadResults());
+
+        /* Remove all results without targets */
+        results.removeIf((result) -> !result.hasTargets());
+
+        /* Find the most recent result */
+        PhotonPipelineResult latestResult = results.get(0);
+        for(var result : results) {
+            if(result.getTimestampSeconds() > latestResult.getTimestampSeconds())
+                latestResult = result;
+        }
+
+        return latestResult;        
+    }
+
+    public List<TrackedObject> getLatestTrackedObjects() {
+        return new ArrayList<>(trackedObjects);
     }
 
     public String getName() {

@@ -137,14 +137,9 @@ public final class Constants {
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontCenterCamera", new Transform3d(
                 new Translation3d(0, 0, 0), //TODO find offsets for this camera
-                new Rotation3d(0, 0,  -(Math.PI / 4.0))),
+                new Rotation3d(0, 0,  0)),
                 true
             ),
-            // new CameraConstants("FrontRightCamera", new Transform3d(
-            //     new Translation3d(kXandYCoord, -kXandYCoord, kCameraHeight), 
-            //     new Rotation3d(0, kCameraPitch,  -(Math.PI / 4.0))),
-            //    false
-            // ),
             new CameraConstants("BackLeftCamera", new Transform3d(
                new Translation3d(Units.inchesToMeters(3.5625), Units.inchesToMeters(14.25), Units.inchesToMeters(7.8125)), 
                new Rotation3d(0,0, Units.degreesToRadians(150))),
@@ -162,8 +157,8 @@ public final class Constants {
             ),
             new CameraConstants("GroundCamera", new Transform3d(
                 new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                true
+                new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
+                true//TODO find offsets for this camera
             )
         };
     }

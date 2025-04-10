@@ -12,8 +12,6 @@ import static frc.robot.Constants.LocalizationConstants.*;
 import java.util.List;
 
 import org.photonvision.PhotonUtils;
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import java.util.ArrayList;
 
 public class Localization {
@@ -41,21 +39,31 @@ public class Localization {
         SmartDashboard.putData("Localization Field", field);
     }
 
-    /** Gets the unread results for each camera, then adds each result to its own photonPoseEstimator, 
-     *  then adds the result of the photonPoseEstimator to the swerve one. Call this method once every loop. */
+    /** For pose estimation, gets the unread results for each camera, then adds each result to its own photonPoseEstimator, 
+     *  then adds the result of the photonPoseEstimator to the swerve one. 
+     *  For object tracking, gets the latest object tracking results from each camera, estimates the objects position on the field, and updates the list of tracked objects.
+     *  Call this method once every loop. */
     public void updateLocalization() {
+        /* Update all pose estimation cameras */
         for (LocalizationCamera camera : cameras) {
             camera.addResultsToDrivetrain(drivetrain, field);
         }
 
-        field.setRobotPose(drivetrain.getState().Pose);
+        var currentPose = drivetrain.getState().Pose;
+
+        /* Update all object tracking cameras */
+        for (LocalizationCamera camera : cameras) {
+            camera.updateObjectTrackingResults(currentPose, field);
+        }
+
+        field.setRobotPose(currentPose);
     } 
-    
+
     /** Gets object tracking results from a camera. If the camera is not in object tracking mode, this will be empty. */
-    public List<PhotonPipelineResult> getObjectTrackingResults(String cameraName) {
-        for(LocalizationCamera camera : cameras) {
-            if(camera.getName().equals(cameraName)) 
-                return camera.getObjectTrackingResults();
+    public List<TrackedObject> getTrackedObjectsFromCamera(String cameraName) {
+        for (LocalizationCamera camera : cameras) {
+            if (camera.getName().equals(cameraName))
+                return camera.getLatestTrackedObjects();
         }
 
         return List.of();

@@ -125,10 +125,10 @@ public class RobotContainer {
         // buttonBoard.getEnableAlgaeModeTrigger()
         //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
-        buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.autoIntake(true)
-            .until(this::driverWantsOverride)
-        );     
+        // buttonBoard.getAutoIntakeTrigger().onTrue(
+        //     compositions.autoIntake(true)
+        //     .until(this::driverWantsOverride)
+        // );     
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
@@ -209,7 +209,7 @@ public class RobotContainer {
         );
 
         intakeDown.whileTrue(
-            new DriverAssistedAutoIntake(() -> -driveController.getLeftY(), krakenSwerve)
+            new DriverAssistedAutoIntake(this::getLeftStickMagnitude, krakenSwerve)
                 .onlyIf(() -> !endEffector.hasCoral())
         );
 
@@ -303,6 +303,10 @@ public class RobotContainer {
                 endEffector.pickupCoralFromSource()
             )
         );
+    }
+
+    private double getLeftStickMagnitude() {
+        return Math.sqrt(Math.pow(driveController.getLeftY(), 2) + Math.pow(driveController.getLeftX(), 2));
     }
 
     /** Runs every loop cycle */
