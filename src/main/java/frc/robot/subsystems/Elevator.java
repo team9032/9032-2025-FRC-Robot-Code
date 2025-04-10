@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.subsystems.Elevator;
 import frc.robot.utils.ElasticUtil;
@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
     private final TalonFX elevatorMotor;
     private final TalonFX elevatorMotorFollower;
 
-    private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+    private final MotionMagicExpoVoltage motionMagic = new MotionMagicExpoVoltage(0);
     private final Follower followerMotorControl;
     private final StatusSignal<Angle> elevatorPosSignal;
 
