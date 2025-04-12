@@ -4,7 +4,6 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.subsystems.EndEffector;
 
@@ -40,7 +39,7 @@ public class AutomationHandler {
             Map.ofEntries(
                 Map.entry(GamePieceState.GAMEPIECES_NOT_READY, compositions.intakeAlgaeFromReef()),
                 Map.entry(GamePieceState.HAS_CORAL, Commands.none()),
-                Map.entry(GamePieceState.HAS_ALGAE, Commands.none())
+                Map.entry(GamePieceState.HAS_ALGAE, compositions.scoreAlgaeSequence().asProxy())
             ),
             this::getGamePieceState
         );

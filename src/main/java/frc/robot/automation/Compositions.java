@@ -39,7 +39,8 @@ public class Compositions {
         );
 
         prepareElevatorForAlgaeScoring.onTrue(
-            elevatorArmIntakeHandler.prepareForAlgaeReefIntaking()  
+            elevatorArmIntakeHandler.prepareForAlgaeReefIntaking() 
+                .onlyIf(() -> !buttonBoardHandler.lowAlgaeSelected()) 
         );
     }
 
@@ -126,7 +127,11 @@ public class Compositions {
             /* Also moves to algae intake position */
             buttonBoardHandler.followAlgaeIntakePath(swerve)
             .alongWith(
-                elevatorArmIntakeHandler.moveToStowPositions().asProxy(),
+                Commands.either(
+                    elevatorArmIntakeHandler.prepareForAlgaeReefIntaking().asProxy(), 
+                    elevatorArmIntakeHandler.moveToStowPositions().asProxy(), 
+                    buttonBoardHandler::lowAlgaeSelected
+                ),
                 endEffector.pickupAlgae()
             )
         );

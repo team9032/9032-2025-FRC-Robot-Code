@@ -18,6 +18,8 @@ public class GroundCoralTracking {
             var coralTargets = localization.getTrackedObjectsFromCamera(kGroundCoralTrackingCameraName);
 
             coralTargets.removeIf((target) -> !target.isCoral());
+            /* Remove coral if it is too high */
+            coralTargets.removeIf((target) -> target.objectPitchInCameraSpace() > 0);
 
             if (!coralTargets.isEmpty())
                 return true;

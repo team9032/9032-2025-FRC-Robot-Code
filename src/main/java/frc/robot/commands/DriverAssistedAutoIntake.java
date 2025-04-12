@@ -55,13 +55,13 @@ public class DriverAssistedAutoIntake extends Command {
         }
 
         /* Invert if the driver is driving away from the coral */
-        double desiredDriverAngle = swerve.drivetrain.getOperatorForwardDirection().getDegrees() + Units.radiansToDegrees(Math.atan2(ySpeedSupplier.getAsDouble(), xSpeedSupplier.getAsDouble())) + 90;
-        desiredDriverAngle = MathUtil.inputModulus(desiredDriverAngle, -180, 180);
+        // double desiredDriverAngle = swerve.drivetrain.getOperatorForwardDirection().getDegrees() + Units.radiansToDegrees(Math.atan2(ySpeedSupplier.getAsDouble(), xSpeedSupplier.getAsDouble())) + 90;
+        // desiredDriverAngle = MathUtil.inputModulus(desiredDriverAngle, -180, 180);
 
-        boolean shouldInvert = true;
-        /* If the desired angle is pointed towards the front in the range (-90, 90) with 0 being front, don't invert */
-        if(currentYaw - 90 < desiredDriverAngle && desiredDriverAngle < currentYaw + 90) 
-            shouldInvert = false;
+        boolean shouldInvert = false;//true;
+        // /* If the desired angle is pointed towards the front in the range (-90, 90) with 0 being front, don't invert */
+        // if(currentYaw - 90 < desiredDriverAngle && desiredDriverAngle < currentYaw + 90) 
+        //     shouldInvert = false;
 
         double magnitude = Math.sqrt(Math.pow(xSpeedSupplier.getAsDouble(), 2) + Math.pow(ySpeedSupplier.getAsDouble(), 2));
 

@@ -1,10 +1,12 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.subsystems.EndEffector;
@@ -14,6 +16,11 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
 public class Autos {
+    private static final Trigger moveElevatorTrigger = new EventTrigger("ElevatorAuto")
+        .onTrue(Commands.runOnce(() -> shouldMoveElevator = true));
+
+    private static boolean shouldMoveElevator = false;
+
     public static Command fourCoralLeft(Intake intake, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions, boolean mirrored) {
         PathPlannerPath score1;
         PathPlannerPath get2;
@@ -87,24 +94,26 @@ public class Autos {
                 Commands.sequence(
                     elevatorArmIntakeHandler.moveIntakeDown(),//Make sure the intake is down in time
                     compositions.intakeCoralToEndEffector(true),
-                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(),
+                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator),
                     ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
                 )
             )
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
                 Commands.waitSeconds(0.25),//TODO d
-                endEffector.placeCoral().asProxy()
+                endEffector.placeCoral().asProxy(),
+                Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
 
     private static Command scorePreloadCoral(PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector) {
         return Commands.sequence(
             AutoBuilder.followPath(scoreCoralPath)
-                .deadlineFor(endEffector.holdCoral().asProxy())
-                    .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring()),
+                .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator))
+                    .deadlineFor(endEffector.holdCoral().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
-            endEffector.placeCoral().asProxy()
+            endEffector.placeCoral().asProxy(),
+            Commands.runOnce(() -> shouldMoveElevator = false)
         );
     }
 }

@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.953846153846158,
       "endWaypointRelativePos": null,
       "command": null
     }

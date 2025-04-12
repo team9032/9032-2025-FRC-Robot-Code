@@ -289,6 +289,12 @@ public class ButtonBoardHandler {
         );
     }
 
+    public boolean lowAlgaeSelected() {
+        return reefPathTarget.equals(ReefPath.TO_2L) || reefPathTarget.equals(ReefPath.TO_2R) 
+            || reefPathTarget.equals(ReefPath.TO_4L) || reefPathTarget.equals(ReefPath.TO_4R) 
+            || reefPathTarget.equals(ReefPath.TO_6L) || reefPathTarget.equals(ReefPath.TO_6R);
+    }
+
     public Command moveElevatorToCoralTargetLevel(Elevator elevator) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (

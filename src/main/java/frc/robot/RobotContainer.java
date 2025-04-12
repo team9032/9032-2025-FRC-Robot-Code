@@ -196,6 +196,9 @@ public class RobotContainer {
 
         stowPosition.onTrue(
             elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(compositions.stopRollers()
+                .onlyIf(() -> !endEffector.hasAlgae())
+            )
         );
 
         intakeDown.onTrue(
@@ -269,6 +272,9 @@ public class RobotContainer {
 
         buttonBoard.manual7.onTrue(
             elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(compositions.stopRollers()
+                .onlyIf(() -> !endEffector.hasAlgae())
+            )
         );
 
         buttonBoard.manual8.onTrue(
