@@ -72,7 +72,7 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Pulsing intake"),
             cancelIntake(),
-            Commands.waitSeconds(0.25),
+            Commands.waitSeconds(0.08),
             intakeCoralToEndEffector(true)
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());

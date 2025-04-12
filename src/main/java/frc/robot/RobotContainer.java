@@ -10,6 +10,7 @@ import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.GroundCoralTracking;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
@@ -125,10 +126,10 @@ public class RobotContainer {
         // buttonBoard.getEnableAlgaeModeTrigger()
         //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
 
-        buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.autoIntake(true)
-            .until(this::driverWantsOverride)
-        );     
+        // buttonBoard.getAutoIntakeTrigger().onTrue(
+        //     compositions.autoIntake(true)
+        //     .until(this::driverWantsOverride)
+        // );     
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
@@ -206,6 +207,15 @@ public class RobotContainer {
                 compositions.intakeCoralToEndEffector(true),
                 endEffector::hasCoral
             )
+        );
+
+        intakeDown.whileTrue(
+            new DriverAssistedAutoIntake(
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                krakenSwerve
+            )
+            .onlyIf(() -> !endEffector.hasCoral())
         );
 
         intakeUp.onTrue(
