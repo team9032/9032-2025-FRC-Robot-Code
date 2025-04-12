@@ -210,8 +210,12 @@ public class RobotContainer {
         );
 
         intakeDown.whileTrue(
-            new DriverAssistedAutoIntake(this::getLeftStickMagnitude, krakenSwerve)
-                .onlyIf(() -> !endEffector.hasCoral())
+            new DriverAssistedAutoIntake(
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                krakenSwerve
+            )
+            .onlyIf(() -> !endEffector.hasCoral())
         );
 
         intakeUp.onTrue(
@@ -306,10 +310,6 @@ public class RobotContainer {
                 endEffector.pickupCoralFromSource()
             )
         );
-    }
-
-    private double getLeftStickMagnitude() {
-        return Math.sqrt(Math.pow(driveController.getLeftY(), 2) + Math.pow(driveController.getLeftX(), 2));
     }
 
     /** Runs every loop cycle */

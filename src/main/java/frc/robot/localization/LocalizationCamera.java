@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -165,17 +164,25 @@ public class LocalizationCamera {
         trackedObjects.clear();//TODO persist objects
 
         var result = getLatestPipelineResult();
+
+        if (result == null)
+            return;
+
         var cameraTransform = constants.robotToCameraTransform();
 
         for (var target : result.getTargets()) {
             /* Finds the distance from the camera to the object - no offsets are applied */
-            double cameraToTargetDistance = PhotonUtils.calculateDistanceToTargetMeters(
+            double cameraToTargetDistance = 2;/*PhotonUtils.calculateDistanceToTargetMeters(
                 cameraTransform.getZ(), 
                 0.0, //TODO height
-                cameraTransform.getRotation().getY(), 
+                -cameraTransform.getRotation().getY(), 
                 target.getPitch()
-            );
-            
+            );*/
+//TODO this code really doesn't work
+            /* Estimate the yaw in field space for use with auto aiming */
+            double objectYawInRobotSpace = target.getYaw(); //- Units.radiansToDegrees(cameraTransform.getRotation().getZ());//TODO add or subtract?
+            double objectYawInFieldSpace = currentEstimatedPose.getRotation().getDegrees() - objectYawInRobotSpace;
+
             /* Finds the translation (x, y) from the camera to the target using distance - no offsets */
             var objectTranslationCamera = PhotonUtils.estimateCameraToTargetTranslation(cameraToTargetDistance, Rotation2d.fromDegrees(target.getYaw()));
 
@@ -183,18 +190,14 @@ public class LocalizationCamera {
             var objectTranslationRobot = objectTranslationCamera.minus(cameraTransform.getTranslation().toTranslation2d());
 
             /* Finds the translation (x, y) in field space by offseting by the robot's rotation and translation in the field */
-            var objectTranslationField = objectTranslationRobot.rotateBy(currentEstimatedPose.getRotation())
+            var objectTranslationField = objectTranslationRobot.rotateBy(currentEstimatedPose.getRotation())//(Rotation2d.fromDegrees(objectYawInFieldSpace))
                 .plus(currentEstimatedPose.getTranslation());
 
             /* Create a pose estimate assuming the rotation is 0 */
             Pose2d objectPoseField = new Pose2d(objectTranslationField, Rotation2d.kZero);
 
-            /* Estimate the yaw in field space for use with auto aiming */
-            double objectYawInRobotSpace = target.getYaw() - Units.radiansToDegrees(cameraTransform.getRotation().getZ());//TODO add or subtract?
-            double objectYawInFieldSpace = currentEstimatedPose.getRotation().getDegrees() - objectYawInRobotSpace;
-
             trackedObjects.add(new TrackedObject(objectPoseField, objectYawInFieldSpace, target.getPitch(), target.objDetectId, getName())); 
-            field.getObject(getName() + " Coral").setPose(objectPoseField);//TODO label coral
+            // field.getObject(getName() + " Coral").setPose(objectPoseField);//TODO label coral
         }
     }
 
@@ -203,6 +206,9 @@ public class LocalizationCamera {
 
         /* Remove all results without targets */
         results.removeIf((result) -> !result.hasTargets());
+
+        if (results.isEmpty())
+            return null;
 
         /* Find the most recent result */
         PhotonPipelineResult latestResult = results.get(0);

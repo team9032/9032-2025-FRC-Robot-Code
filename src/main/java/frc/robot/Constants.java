@@ -3,6 +3,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.DriverConstants.kMaxSpeed;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -72,10 +74,10 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            3.0,//TODO change these
-            4.0, 
-            2 * Math.PI, 
-            2 * Math.PI
+            4.0,
+            4.5, 
+            3 * Math.PI, 
+            3 * Math.PI
         );
 
         public static final double kAlignmentXYkP = 2;//TODO Tune better
@@ -96,7 +98,7 @@ public final class Constants {
         public static final double kPitchDifferenceCutoff = 2.0;
 
         public static final double kRotationSetpoint = 13.3;
-        public static final double kMaxDrivingSpeed = 1.0;//Meters per second
+        public static final double kMaxDrivingSpeed = kMaxSpeed;//Meters per second
 
         public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
         public static final double kSlowDrivingSpeed = 0.5;
@@ -136,8 +138,8 @@ public final class Constants {
 
         public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
             new CameraConstants("FrontCenterCamera", new Transform3d(
-                new Translation3d(0, 0, 0), //TODO find offsets for this camera
-                new Rotation3d(0, 0,  0)),
+                new Translation3d(Units.inchesToMeters(8), Units.inchesToMeters(-5.5), Units.inchesToMeters(31.125)), 
+                new Rotation3d(0, Units.degreesToRadians(30), 0)),
                 true
             ),
             new CameraConstants("BackLeftCamera", new Transform3d(

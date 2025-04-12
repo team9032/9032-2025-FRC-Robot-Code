@@ -3,8 +3,10 @@ package frc.robot.commands;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.localization.TrackedObject;
@@ -16,15 +18,17 @@ import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
 public class DriverAssistedAutoIntake extends Command {
     private final KrakenSwerve swerve;
     private final DoubleSupplier xSpeedSupplier;
+    private final DoubleSupplier ySpeedSupplier;
     private final Localization localization;
 
     private final PIDController rotationController;
 
     private TrackedObject lastCoralTarget;
 
-    public DriverAssistedAutoIntake(DoubleSupplier xSpeedSupplier, KrakenSwerve swerve) {
+    public DriverAssistedAutoIntake(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, KrakenSwerve swerve) {
         this.swerve = swerve;
         this.xSpeedSupplier = xSpeedSupplier;
+        this.ySpeedSupplier = ySpeedSupplier;
         
         localization = swerve.getLocalization();
 
@@ -45,14 +49,25 @@ public class DriverAssistedAutoIntake extends Command {
 
         /* Update setpoint if we have a target */
         if (coralTarget != null) {
-            double rotationSetpoint = coralTarget.objectYawInFieldSpace() - kRotationSetpoint;
+            double rotationSetpoint = coralTarget.objectYawInFieldSpace() + kRotationSetpoint;
 
-            rotationController.setSetpoint(rotationSetpoint);//MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
+            rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
-        /* Drive based on desired speed and the rotation PID's output */
+        /* Invert if the driver is driving away from the coral */
+        double desiredDriverAngle = swerve.drivetrain.getOperatorForwardDirection().getDegrees() + Units.radiansToDegrees(Math.atan2(ySpeedSupplier.getAsDouble(), xSpeedSupplier.getAsDouble())) + 90;
+        desiredDriverAngle = MathUtil.inputModulus(desiredDriverAngle, -180, 180);
+
+        boolean shouldInvert = true;
+        /* If the desired angle is pointed towards the front in the range (-90, 90) with 0 being front, don't invert */
+        if(currentYaw - 90 < desiredDriverAngle && desiredDriverAngle < currentYaw + 90) 
+            shouldInvert = false;
+
+        double magnitude = Math.sqrt(Math.pow(xSpeedSupplier.getAsDouble(), 2) + Math.pow(ySpeedSupplier.getAsDouble(), 2));
+
+        /* Drive based on desired speed (inverted if needed) and the rotation PID's output */
         var speeds = new ChassisSpeeds(
-            xSpeedSupplier.getAsDouble(),
+            magnitude * kMaxDrivingSpeed * (shouldInvert ? -1 : 1),
             0.0,
             rotationController.calculate(currentYaw)
         );
