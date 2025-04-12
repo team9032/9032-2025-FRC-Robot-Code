@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.755758683830716,
+        "y": 4.215491086866892
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.003361655811625,
+        "y": 4.180954609538989
+      },
+      "isLocked": false,
+      "linkedName": "Score Center End"
+    },
+    {
+      "anchor": {
+        "x": 6.124481870251053,
+        "y": 4.047013623769246
+      },
+      "prevControl": {
+        "x": 5.863931386410271,
+        "y": 4.218899690614762
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Pull Away 1 End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.1,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "1 Coral Center",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

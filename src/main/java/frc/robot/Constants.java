@@ -223,6 +223,7 @@ public final class Constants {
 
         public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorStow = 1.6; 
+        public static final double kElevatorCloseToNet = 9.2;
     }
 
     public static final class IndexerConstants {

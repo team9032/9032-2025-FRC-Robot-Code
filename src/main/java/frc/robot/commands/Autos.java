@@ -68,18 +68,61 @@ public class Autos {
         );
     }
 
-    public static Command oneCoralCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions) {
-        PathPlannerPath score; 
+    public static Command oneCoralTwoAlgaeCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions) {
+        PathPlannerPath scoreCoral; 
+        PathPlannerPath pullAway1; 
+        PathPlannerPath scoreAlgae1; 
+        PathPlannerPath getAlgae2; 
+        PathPlannerPath scoreAlgae2;
 
         try {
-            score = PathPlannerPath.fromPathFile("Score Center");
+            scoreCoral = PathPlannerPath.fromPathFile("Score Center");
+            pullAway1 = PathPlannerPath.fromPathFile("Pull Away 1");
+            scoreAlgae1 = PathPlannerPath.fromPathFile("Get And Score Algae 1");
+            getAlgae2 = PathPlannerPath.fromPathFile("Get Algae 2");
+            scoreAlgae2 = PathPlannerPath.fromPathFile("Score Algae 2");
+
         } catch (Exception e) {
             ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
 
             return Commands.none();
         }
 
-        return scorePreloadCoral(score, elevatorArmIntakeHandler, endEffector);
+        return scorePreloadCoral(scoreCoral, elevatorArmIntakeHandler, endEffector)
+            .andThen(getAndScoreAlgaeFromCoral(scoreAlgae1, pullAway1, elevatorArmIntakeHandler, compositions, endEffector),
+                getAndScoreAlgaeFromBarge(getAlgae2, scoreAlgae2, elevatorArmIntakeHandler, compositions, endEffector));
+    }
+
+    private static Command getAndScoreAlgaeFromCoral(PathPlannerPath getAndScoreAlgaePath, PathPlannerPath pullAwayPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
+        return 
+            /* Follow get algae and score algae paths */
+            Commands.sequence(
+                elevatorArmIntakeHandler.moveToStowPositions(),
+                AutoBuilder.followPath(pullAwayPath),
+                elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(),
+                AutoBuilder.followPath(getAndScoreAlgaePath)
+                    .alongWith(endEffector.pickupAlgae().asProxy()),
+                /* Score the algae when the paths finish and everything is at setpoint */
+                elevatorArmIntakeHandler.prepareForAlgaeScoringAuto(),
+                endEffector.outtakeNetAlgae().asProxy()
+            );
+    }
+
+    private static Command getAndScoreAlgaeFromBarge(PathPlannerPath getPath, PathPlannerPath scorePath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
+        return 
+            /* Follow get algae and score algae paths */
+            Commands.sequence(
+                elevatorArmIntakeHandler.moveToStowPositions(),
+                AutoBuilder.followPath(getPath)
+                    .alongWith(
+                        elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(),
+                        endEffector.pickupAlgae().asProxy()
+                    ),
+                AutoBuilder.followPath(scorePath),
+                /* Score the algae when the paths finish and everything is at setpoint */
+                elevatorArmIntakeHandler.prepareForAlgaeScoringAuto(),
+                endEffector.outtakeNetAlgae().asProxy()
+            );
     }
 
     private static Command getAndScoreCoral(PathPlannerPath getCoralPath, PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
