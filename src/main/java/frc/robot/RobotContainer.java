@@ -110,21 +110,14 @@ public class RobotContainer {
             .onlyIf(buttonBoard::hasQueues);
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
-            .until(this::driverWantsOverride);
+            .until(this::driverWantsOverride)
+            .andThen(compositions.stopRollers().asProxy());
 
         buttonBoard.getEnableCoralModeTrigger()
             .toggleOnTrue(coralCyclingCommand);
 
-        buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
-            Commands.sequence(
-                compositions.stopRollers(),
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(),
-                endEffector.pickupAlgae()  
-            )
-        );
-
-        // buttonBoard.getEnableAlgaeModeTrigger()
-        //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
+        buttonBoard.getEnableAlgaeModeTrigger()
+            .onTrue(algaeCyclingCommand);
 
         // buttonBoard.getAutoIntakeTrigger().onTrue(
         //     compositions.autoIntake(true)
@@ -197,8 +190,7 @@ public class RobotContainer {
         );
 
         stowPosition.onTrue(
-            compositions.stopRollers()
-            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
 
         intakeDown.onTrue(
@@ -222,7 +214,7 @@ public class RobotContainer {
             Commands.either(
                 elevatorArmIntakeHandler.moveIntakeUp(), 
                 compositions.cancelIntake(),
-                endEffector::hasCoral
+                () -> endEffector.hasCoral() || endEffector.hasAlgae()
             )
         );
 

@@ -109,27 +109,27 @@ public class PathfindingHandler {
         return pathTo("6R");
     }
 
-    // public static Command pathTo1A(KrakenSwerve swerve) {
-    //     return pathTo("1A");
-    // }
+    public static Command pathTo1A(KrakenSwerve swerve) {
+        return pathTo("1A");
+    }
 
-    // public static Command pathTo2A(KrakenSwerve swerve) {
-    //     return pathTo("2A");
-    // }
+    public static Command pathTo2A(KrakenSwerve swerve) {
+        return Commands.none();//pathTo("2A");
+    }
 
-    // public static Command pathTo3A(KrakenSwerve swerve) {
-    //     return pathTo("3A");
-    // }
+    public static Command pathTo3A(KrakenSwerve swerve) {
+        return Commands.none();//pathTo("3A");
+    }
 
-    // public static Command pathTo4A(KrakenSwerve swerve) {
-    //     return pathTo("4A");
-    // }
+    public static Command pathTo4A(KrakenSwerve swerve) {
+        return Commands.none();//pathTo("4A");
+    }
 
-    // public static Command pathTo5A(KrakenSwerve swerve) {
-    //     return pathTo("5A");
-    // }
+    public static Command pathTo5A(KrakenSwerve swerve) {
+        return Commands.none();//pathTo("5A");
+    }
 
-    // public static Command pathTo6A(KrakenSwerve swerve) {
-    //     return pathTo("6A");
-    // } 
+    public static Command pathTo6A(KrakenSwerve swerve) {
+        return Commands.none();//pathTo("6A");
+    } 
 }

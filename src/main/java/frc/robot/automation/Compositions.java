@@ -20,7 +20,8 @@ public class Compositions {
     private final ButtonBoardHandler buttonBoardHandler;
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
-    public final EventTrigger prepareElevatorForScoring = new EventTrigger("Elevator");
+    public final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
+    public final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
 
     public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
@@ -31,10 +32,14 @@ public class Compositions {
         this.buttonBoardHandler = buttonBoardHandler;
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
 
-        prepareElevatorForScoring.onTrue(
+        prepareElevatorForCoralScoring.onTrue(
             Commands.waitSeconds(0.25)
                 .onlyIf(buttonBoardHandler::l4Selected)
             .andThen(elevatorArmIntakeHandler.prepareForCoralScoring())
+        );
+
+        prepareElevatorForAlgaeScoring.onTrue(
+            elevatorArmIntakeHandler.prepareForAlgaeReefIntaking()  
         );
     }
 
@@ -115,18 +120,22 @@ public class Compositions {
         );
     }       
 
-    // public Command intakeAlgaeFromReef() {
-    //     return Commands.sequence(
-    //         buttonBoardHandler.followAlgaeIntakePath(swerve)
-    //             .alongWith(elevatorArmIntakeHandler.prepareForAlgaeIntaking()),
-    //         endEffector.pickupAlgae()
-    //     );
-    // }
+    public Command intakeAlgaeFromReef() {
+        return Commands.sequence(
+            Commands.print("Intaking algae from reef"),
+            /* Also moves to algae intake position */
+            buttonBoardHandler.followAlgaeIntakePath(swerve)
+            .alongWith(
+                elevatorArmIntakeHandler.moveToStowPositions().asProxy(),
+                endEffector.pickupAlgae()
+            )
+        );
+    }
 
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
-            buttonBoardHandler.followAlgaeScorePath()
-                .alongWith(elevatorArmIntakeHandler.prepareForAlgaeScoring()),//TODO handle net algae
+            buttonBoardHandler.followAlgaeScorePath(),
+            elevatorArmIntakeHandler.prepareForAlgaeScoring(),//TODO handle net algae
             buttonBoardHandler.scoreAlgae(endEffector)
         );
     }
