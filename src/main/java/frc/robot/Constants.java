@@ -428,6 +428,8 @@ public final class Constants {
         public static final double kHasAlgaeDist = 175;
         public static final double kHasAlgaeNearbyDist = 230;
 
+        public static final int kCycleAmountForTOFToExpire = 5;
+
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
@@ -492,7 +494,7 @@ public final class Constants {
         public static final LEDPattern kL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kAqua, Color.kLightGreen, Color.kLightCyan)
+        public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kDarkBlue, Color.kPurple, Color.kDarkViolet)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
         public static final LEDPattern kBatteryLowPattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkRed, Color.kOrange)

@@ -89,6 +89,7 @@ public class RobotContainer {
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
     private final Trigger coralCyclingCommandScheduled;
+    private final Trigger algaeCyclingCommandScheduled;
     private final Trigger groundCoralOnFarReef = new Trigger(groundCoralTracking::coralBlockingAlignmentOnFarReef);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
@@ -111,7 +112,10 @@ public class RobotContainer {
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride)
-            .andThen(compositions.stopRollers().asProxy());
+            .andThen(
+                compositions.stopRollers().asProxy()
+                    .onlyIf(() -> !endEffector.hasAlgae())
+            );
 
         buttonBoard.getEnableCoralModeTrigger()
             .toggleOnTrue(coralCyclingCommand);
@@ -126,6 +130,7 @@ public class RobotContainer {
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
+        algaeCyclingCommandScheduled = new Trigger(algaeCyclingCommand::isScheduled);
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -332,6 +337,15 @@ public class RobotContainer {
 
         coralCyclingCommandScheduled.onTrue(Commands.runOnce(() -> buttonBoard.setCoralAimingLEDs(led)));
         coralCyclingCommandScheduled.onFalse(
+            Commands.either(
+                led.setStateCommand(State.ENABLED), 
+                led.setStateCommand(State.DISABLED),
+                enabled
+            )
+        );
+
+        algaeCyclingCommandScheduled.onTrue(led.setStateCommand(State.ALGAE));
+        algaeCyclingCommandScheduled.onFalse(
             Commands.either(
                 led.setStateCommand(State.ENABLED), 
                 led.setStateCommand(State.DISABLED),

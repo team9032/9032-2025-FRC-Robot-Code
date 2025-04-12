@@ -22,6 +22,9 @@ public class EndEffector extends SubsystemBase {
     private final DigitalInput sourcePhotoelectricSensor = new DigitalInput(kSourcePhotoelectricSensorID); 
     private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); 
 
+    private boolean lastHasAlgae = false;
+    private int loopCyclesSinceTOFReading = 0;
+
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
         endEffectorSecondaryMotor = new TalonFX(kSecondaryEndEffectorID);
@@ -150,13 +153,7 @@ public class EndEffector extends SubsystemBase {
     }
 
     public boolean hasAlgae() {
-        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
-            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
-
-            return hasAlgae;
-        }//TODO find a way to prevent flickering
-
-        return false;
+        return lastHasAlgae;
     }
 
     public boolean hasAlgaeNearby() {
@@ -164,7 +161,7 @@ public class EndEffector extends SubsystemBase {
             boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeNearbyDist && !hasCoral() && algaeDistSensor.getRange() != 0;
 
             return hasAlgae;
-        }//TODO find a way to prevent flickering
+        }
 
         return false;
     }
@@ -192,5 +189,22 @@ public class EndEffector extends SubsystemBase {
         SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
         SmartDashboard.putBoolean("End Effector Has Coral", hasCoral());
+
+        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
+            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
+
+            lastHasAlgae = hasAlgae;
+            loopCyclesSinceTOFReading = 0;
+        }
+
+        else {
+            loopCyclesSinceTOFReading++;
+
+            if (loopCyclesSinceTOFReading > kCycleAmountForTOFToExpire) {
+                loopCyclesSinceTOFReading = 0;
+
+                lastHasAlgae = false;
+            }
+        }
     }
 }
