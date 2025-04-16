@@ -25,6 +25,30 @@ public class PathfindingHandler {
         }
     }
 
+    private static Command pathToReef(String pathName) {
+        try {
+            PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
+
+            PathPlannerPath pathWithUpdatedConstraints = new PathPlannerPath(
+                pathToFollow.getWaypoints(), 
+                null, 
+                null, 
+                null, 
+                pathToFollow.getEventMarkers(), 
+                kDynamicPathConstraints, 
+                pathToFollow.getIdealStartingState(), 
+                pathToFollow.getGoalEndState(),
+                false
+            );
+
+            return AutoBuilder.pathfindThenFollowPath(pathToFollow, kDynamicPathConstraints);
+        } catch (Exception e) {
+            ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
+
+            return Commands.none();
+        }
+    }
+
     // private static Command pathToReef(KrakenSwerve swerve, String pathName) {
     //     try {
     //         PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);

@@ -140,7 +140,7 @@ public class Compositions {
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeScorePath(),
-            elevatorArmIntakeHandler.prepareForAlgaeScoring(),//TODO handle net algae
+            elevatorArmIntakeHandler.prepareForAlgaeScoring(),
             buttonBoardHandler.scoreAlgae(endEffector)
         );
     }

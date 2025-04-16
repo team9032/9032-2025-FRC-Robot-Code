@@ -140,7 +140,7 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
-    public Command prepareForAlgaeScoring() {
+    public Command prepareForAlgaeScoring() {//TODO handle processor
         return Commands.sequence(
             buttonBoardHandler.moveElevatorToAlgaeScoreLevel(elevator),
             Commands.waitUntil(elevator::closeToNetPosition),
