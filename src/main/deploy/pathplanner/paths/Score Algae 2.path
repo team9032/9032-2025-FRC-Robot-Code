@@ -3,37 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.937750000000001,
-        "y": 0.8269999999999993
+        "x": 5.134548870278998,
+        "y": 5.250158570777146
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.937750000000001,
-        "y": 0.5769999999999993
+        "x": 6.242189133809823,
+        "y": 5.562433363771802
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Get Algae 2 End"
     },
     {
       "anchor": {
-        "x": 5.937750000000001,
-        "y": 0.5832499999999993
+        "x": 7.566,
+        "y": 5.80925
       },
       "prevControl": {
-        "x": 5.937750000000001,
-        "y": 0.8332499999999993
+        "x": 6.903000000002773,
+        "y": 5.789750000005579
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6879668049792496,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 3.5,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Stubs",
+  "folder": "1 Coral Center",
   "idealStartingState": {
-    "velocity": 1.0,
-    "rotation": 90.0
+    "velocity": 0,
+    "rotation": 63.035347352294934
   },
   "useDefaultConstraints": false
 }

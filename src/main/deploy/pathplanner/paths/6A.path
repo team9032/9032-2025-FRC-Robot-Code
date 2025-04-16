@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.937750000000001,
-        "y": 0.8269999999999993
+        "x": 3.6900630325327337,
+        "y": 2.6049222250530364
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.937750000000001,
-        "y": 0.5769999999999993
+        "x": 3.8150630325327337,
+        "y": 2.8214285759991458
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.937750000000001,
-        "y": 0.5832499999999993
+        "x": 3.811414086366571,
+        "y": 2.8151554402394674
       },
       "prevControl": {
-        "x": 5.937750000000001,
-        "y": 0.8332499999999993
+        "x": 3.686414086366571,
+        "y": 2.5986490892933576
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,9 +31,16 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ElevatorAlgae",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -41,14 +48,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 90.0
+    "velocity": 0.0,
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "Stubs",
   "idealStartingState": {
     "velocity": 1.0,
-    "rotation": 90.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": false
 }

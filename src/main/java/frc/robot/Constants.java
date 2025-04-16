@@ -223,6 +223,7 @@ public final class Constants {
 
         public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorStow = 1.6; 
+        public static final double kElevatorCloseToNet = 9.2;
     }
 
     public static final class IndexerConstants {
@@ -319,7 +320,7 @@ public final class Constants {
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmSourcePos = 0.0;
-        public static final double kArmNetPos = 0.15;
+        public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
 
         public static final double kArmOverIntakePos = 0.5;
@@ -428,6 +429,8 @@ public final class Constants {
         public static final double kHasAlgaeDist = 175;
         public static final double kHasAlgaeNearbyDist = 230;
 
+        public static final int kCycleAmountForTOFToExpire = 5;
+
         public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
@@ -492,7 +495,7 @@ public final class Constants {
         public static final LEDPattern kL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kAqua, Color.kLightGreen, Color.kLightCyan)
+        public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kDarkBlue, Color.kPurple, Color.kDarkViolet)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
         public static final LEDPattern kBatteryLowPattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkRed, Color.kOrange)

@@ -16,27 +16,27 @@
     },
     {
       "anchor": {
-        "x": 5.755088265516372,
-        "y": 4.264774852846798
+        "x": 5.755758683830716,
+        "y": 4.215491086866892
       },
       "prevControl": {
-        "x": 6.588088265516372,
-        "y": 4.264774852846798
+        "x": 6.588758683830716,
+        "y": 4.215491086866892
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Score Center End"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7672456575682384,
+      "minWaypointRelativePos": 0.9121588089330052,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 6.0,
+        "maxAcceleration": 4.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "ElevatorAuto",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.951861042183622,
       "endWaypointRelativePos": null,
       "command": null
     }

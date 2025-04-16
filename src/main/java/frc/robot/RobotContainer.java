@@ -89,6 +89,7 @@ public class RobotContainer {
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
     private final Trigger coralCyclingCommandScheduled;
+    private final Trigger algaeCyclingCommandScheduled;
     private final Trigger groundCoralOnFarReef = new Trigger(groundCoralTracking::coralBlockingAlignmentOnFarReef);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
@@ -110,21 +111,17 @@ public class RobotContainer {
             .onlyIf(buttonBoard::hasQueues);
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
-            .until(this::driverWantsOverride);
+            .until(this::driverWantsOverride)
+            .andThen(
+                compositions.stopRollers().asProxy()
+                    .onlyIf(() -> !endEffector.hasAlgae())
+            );
 
         buttonBoard.getEnableCoralModeTrigger()
             .toggleOnTrue(coralCyclingCommand);
 
-        buttonBoard.getEnableAlgaeModeTrigger().onTrue(//TODO auto algae
-            Commands.sequence(
-                compositions.stopRollers(),
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(),
-                endEffector.pickupAlgae()  
-            )
-        );
-
-        // buttonBoard.getEnableAlgaeModeTrigger()
-        //     .toggleOnTrue(algaeCyclingCommand.onlyIf(buttonBoard::hasQueues));
+        buttonBoard.getEnableAlgaeModeTrigger()
+            .onTrue(algaeCyclingCommand);
 
         // buttonBoard.getAutoIntakeTrigger().onTrue(
         //     compositions.autoIntake(true)
@@ -133,6 +130,7 @@ public class RobotContainer {
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
+        algaeCyclingCommandScheduled = new Trigger(algaeCyclingCommand::isScheduled);
 
         if(kRunSysId)
             bindSysIdTriggers();
@@ -150,7 +148,7 @@ public class RobotContainer {
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("4 Coral Left", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, false));
         autoChooser.addOption("4 Coral Right", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, true));
-        autoChooser.addOption("1 Coral Center", Autos.oneCoralCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions));
+        autoChooser.addOption("1 Coral Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -197,8 +195,10 @@ public class RobotContainer {
         );
 
         stowPosition.onTrue(
-            compositions.stopRollers()
-            .andThen(elevatorArmIntakeHandler.moveToStowPositions())
+            elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(compositions.stopRollers()
+                .onlyIf(() -> !endEffector.hasAlgae())
+            )
         );
 
         intakeDown.onTrue(
@@ -222,7 +222,7 @@ public class RobotContainer {
             Commands.either(
                 elevatorArmIntakeHandler.moveIntakeUp(), 
                 compositions.cancelIntake(),
-                endEffector::hasCoral
+                () -> endEffector.hasCoral() || endEffector.hasAlgae()
             )
         );
 
@@ -272,6 +272,9 @@ public class RobotContainer {
 
         buttonBoard.manual7.onTrue(
             elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(compositions.stopRollers()
+                .onlyIf(() -> !endEffector.hasAlgae())
+            )
         );
 
         buttonBoard.manual8.onTrue(
@@ -340,6 +343,15 @@ public class RobotContainer {
 
         coralCyclingCommandScheduled.onTrue(Commands.runOnce(() -> buttonBoard.setCoralAimingLEDs(led)));
         coralCyclingCommandScheduled.onFalse(
+            Commands.either(
+                led.setStateCommand(State.ENABLED), 
+                led.setStateCommand(State.DISABLED),
+                enabled
+            )
+        );
+
+        algaeCyclingCommandScheduled.onTrue(led.setStateCommand(State.ALGAE));
+        algaeCyclingCommandScheduled.onFalse(
             Commands.either(
                 led.setStateCommand(State.ENABLED), 
                 led.setStateCommand(State.DISABLED),

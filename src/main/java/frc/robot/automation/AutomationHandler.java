@@ -4,7 +4,6 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.subsystems.EndEffector;
 
@@ -38,23 +37,12 @@ public class AutomationHandler {
     public Command algaeResumeCommand() {
         return new SelectCommand<GamePieceState>(
             Map.ofEntries(
-                Map.entry(GamePieceState.GAMEPIECES_NOT_READY, mainAlgaeCyclingCommand()),
+                Map.entry(GamePieceState.GAMEPIECES_NOT_READY, compositions.intakeAlgaeFromReef()),
                 Map.entry(GamePieceState.HAS_CORAL, Commands.none()),
-                Map.entry(GamePieceState.HAS_ALGAE, compositions.scoreAlgaeSequence().andThen(mainAlgaeCyclingCommand()))
+                Map.entry(GamePieceState.HAS_ALGAE, compositions.scoreAlgaeSequence().asProxy())
             ),
             this::getGamePieceState
         );
-    }
-
-    private Command mainCoralCyclingCommand() {
-        /* This is the main cycling command, so it's repeated */
-        return compositions.driveToSource().asProxy()//Need to get coral
-            .andThen(new ScheduleCommand(compositions.alignToReefAndScore()));
-    }
-
-    private Command mainAlgaeCyclingCommand() {
-        /* This is the main cycling command, so it's repeated */
-        return Commands.none();//compositions.intakeAlgaeFromReef().repeatedly();
     }
 
     private GamePieceState getGamePieceState() {

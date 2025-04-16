@@ -69,6 +69,10 @@ public class Elevator extends SubsystemBase {
         return elevatorPosSignal.getValueAsDouble() > (kElevatorOverIndexer - kElevatorTolerance);
     }
 
+    public boolean closeToNetPosition() {
+        return elevatorPosSignal.getValueAsDouble() > kElevatorCloseToNet;
+    }
+
     public Command holdPosition() {
         return runOnce(() -> moveElevator(elevatorPosSignal.getValueAsDouble()));
     }

@@ -1,5 +1,7 @@
 package frc.robot.automation;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Arm;
@@ -92,9 +94,10 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForAutoCoralScoring() {
+    public Command prepareForAutoCoralScoring(BooleanSupplier moveElevatorTrigger) {
         return Commands.sequence(
             moveToStowPositions(),
+            Commands.waitUntil(moveElevatorTrigger),
             elevator.moveToL3Position(),
             Commands.waitUntil(elevator::atSetpoint),
             arm.moveToLevel3Pos(),
@@ -114,6 +117,18 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
+    public Command prepareForAlgaeReefIntakingAuto() {
+        return Commands.sequence(
+            moveToStowPositions()
+                .onlyIf(arm::closeToIndexPosition),
+            arm.moveToLowAlgaePos(),
+            elevator.moveToLowAlgaePosition(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            ElasticUtil.sendInfoCommand("Prepared for algae reef intaking in auto")
+
+        );          
+    }
+
     public Command prepareForAlgaeGroundIntaking() {
         return Commands.sequence(
             moveToStowPositions()
@@ -128,8 +143,19 @@ public class ElevatorArmIntakeHandler {
     public Command prepareForAlgaeScoring() {
         return Commands.sequence(
             buttonBoardHandler.moveElevatorToAlgaeScoreLevel(elevator),
+            Commands.waitUntil(elevator::closeToNetPosition),
             buttonBoardHandler.moveArmToAlgaeScoreLevel(arm),
-            Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for algae scoring")
+        );
+    }
+
+    public Command prepareForAlgaeScoringAuto() {
+        return Commands.sequence(
+            elevator.moveToNetPosition(),
+            Commands.waitUntil(elevator::closeToNetPosition),
+            arm.moveToNetPos(),
+            Commands.waitUntil(arm::atSetpoint),
             ElasticUtil.sendInfoCommand("Prepared for algae scoring")
         );
     }

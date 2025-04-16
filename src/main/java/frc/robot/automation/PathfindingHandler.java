@@ -5,11 +5,8 @@ import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.AlignWithPose;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
@@ -28,22 +25,22 @@ public class PathfindingHandler {
         }
     }
 
-    private static Command pathToReef(KrakenSwerve swerve, String pathName) {
-        try {
-            PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
+    // private static Command pathToReef(KrakenSwerve swerve, String pathName) {
+    //     try {
+    //         PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
 
-            if (AutoBuilder.shouldFlip())
-                pathToFollow = pathToFollow.flipPath();
+    //         if (AutoBuilder.shouldFlip())
+    //             pathToFollow = pathToFollow.flipPath();
 
-            Translation2d endTrans = pathToFollow.getWaypoints().get(1).anchor();
+    //         Translation2d endTrans = pathToFollow.getWaypoints().get(1).anchor();
 
-            return new AlignWithPose(swerve, new Pose2d(endTrans, pathToFollow.getGoalEndState().rotation()));
-        } catch (Exception e) {
-            ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
+    //         return new AlignWithPose(swerve, new Pose2d(endTrans, pathToFollow.getGoalEndState().rotation()));
+    //     } catch (Exception e) {
+    //         ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
 
-            return Commands.none();
-        }
-    }
+    //         return Commands.none();
+    //     }
+    // }
 
     public static Command pathToLSource() {
         return pathTo("LSource");
@@ -109,27 +106,27 @@ public class PathfindingHandler {
         return pathTo("6R");
     }
 
-    // public static Command pathTo1A(KrakenSwerve swerve) {
-    //     return pathTo("1A");
-    // }
+    public static Command pathTo1A(KrakenSwerve swerve) {
+        return pathTo("1A");
+    }
 
-    // public static Command pathTo2A(KrakenSwerve swerve) {
-    //     return pathTo("2A");
-    // }
+    public static Command pathTo2A(KrakenSwerve swerve) {
+        return pathTo("2A");
+    }
 
-    // public static Command pathTo3A(KrakenSwerve swerve) {
-    //     return pathTo("3A");
-    // }
+    public static Command pathTo3A(KrakenSwerve swerve) {
+        return pathTo("3A");
+    }
 
-    // public static Command pathTo4A(KrakenSwerve swerve) {
-    //     return pathTo("4A");
-    // }
+    public static Command pathTo4A(KrakenSwerve swerve) {
+        return pathTo("4A");
+    }
 
-    // public static Command pathTo5A(KrakenSwerve swerve) {
-    //     return pathTo("5A");
-    // }
+    public static Command pathTo5A(KrakenSwerve swerve) {
+        return pathTo("5A");
+    }
 
-    // public static Command pathTo6A(KrakenSwerve swerve) {
-    //     return pathTo("6A");
-    // } 
+    public static Command pathTo6A(KrakenSwerve swerve) {
+        return pathTo("6A");
+    } 
 }

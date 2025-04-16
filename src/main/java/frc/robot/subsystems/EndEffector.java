@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
@@ -20,6 +21,9 @@ public class EndEffector extends SubsystemBase {
     private final DigitalInput indexerPhotoelectricSensor = new DigitalInput(kIndexerPhotoelectricSensorID); 
     private final DigitalInput sourcePhotoelectricSensor = new DigitalInput(kSourcePhotoelectricSensorID); 
     private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); 
+
+    private boolean lastHasAlgae = false;
+    private int loopCyclesSinceTOFReading = 0;
 
     public EndEffector() {
         endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
@@ -122,7 +126,7 @@ public class EndEffector extends SubsystemBase {
             setEndEffectorMainMotor(kIntakeAlgaePower),
             setEndEffectorSecondaryMotor(-kIntakeAlgaePower), 
             Commands.waitUntil(this::hasAlgaeNearby),
-            holdAlgae()
+            new ScheduleCommand(holdAlgae())
         );
     }
 
@@ -149,13 +153,7 @@ public class EndEffector extends SubsystemBase {
     }
 
     public boolean hasAlgae() {
-        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
-            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
-
-            return hasAlgae;
-        }//TODO find a way to prevent flickering
-
-        return false;
+        return lastHasAlgae;
     }
 
     public boolean hasAlgaeNearby() {
@@ -163,7 +161,7 @@ public class EndEffector extends SubsystemBase {
             boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeNearbyDist && !hasCoral() && algaeDistSensor.getRange() != 0;
 
             return hasAlgae;
-        }//TODO find a way to prevent flickering
+        }
 
         return false;
     }
@@ -191,5 +189,22 @@ public class EndEffector extends SubsystemBase {
         SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
         SmartDashboard.putBoolean("End Effector Has Coral", hasCoral());
+
+        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
+            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
+
+            lastHasAlgae = hasAlgae;
+            loopCyclesSinceTOFReading = 0;
+        }
+
+        else {
+            loopCyclesSinceTOFReading++;
+
+            if (loopCyclesSinceTOFReading > kCycleAmountForTOFToExpire) {
+                loopCyclesSinceTOFReading = 0;
+
+                lastHasAlgae = false;
+            }
+        }
     }
 }
