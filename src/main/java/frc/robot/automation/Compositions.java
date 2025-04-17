@@ -95,7 +95,9 @@ public class Compositions {
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
             elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected())
+                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected()),
+            elevatorArmIntakeHandler.prepareForL1Scoring()
+                .onlyIf(() -> !buttonBoardHandler.l1NotSelected())
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }

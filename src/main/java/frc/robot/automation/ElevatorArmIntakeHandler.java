@@ -164,6 +164,16 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command prepareForL1Scoring() {
+        return Commands.sequence(
+            elevator.moveToTroughPosition(),
+            Commands.waitUntil(elevator::atSetpoint),
+            arm.moveToTroughPos(),
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for L1 scoring")
+        );
+    }
+
     public Command holdPositions() {
         return Commands.sequence(
             arm.holdPosition(),
