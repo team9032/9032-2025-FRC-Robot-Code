@@ -83,7 +83,7 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean closeToIndexPosition() {
-        return MathUtil.isNear(kArmIndexerPos, getRelativePosition(), kArmPositionTolerance * 10.0);
+        return getRelativePosition() > kArmIndexerPos - (kArmPositionTolerance * 10.0);
     }
 
     public Command moveToStowPos() {

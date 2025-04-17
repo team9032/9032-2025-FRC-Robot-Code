@@ -117,15 +117,19 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
-    public Command prepareForAlgaeReefIntakingAuto() {
+    public Command prepareForAlgaeReefIntakingAuto(boolean highAlgae) {
         return Commands.sequence(
             moveToStowPositions()
                 .onlyIf(arm::closeToIndexPosition),
-            arm.moveToLowAlgaePos(),
-            elevator.moveToLowAlgaePosition(),
+            Commands.either(
+                arm.moveToHighAlgaePos() 
+                    .andThen(elevator.moveToHighAlgaePosition()),
+                arm.moveToLowAlgaePos() 
+                    .andThen(elevator.moveToLowAlgaePosition()), 
+                () -> highAlgae
+            ),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Prepared for algae reef intaking in auto")
-
         );          
     }
 
