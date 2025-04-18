@@ -35,9 +35,15 @@ public class ElevatorArmIntakeHandler {
     public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(
+                    /* Don't deep climb the reef */
+                    elevator.moveToL3Position()
+                    .andThen(
+                        Commands.waitUntil(elevator::atSetpoint),
+                        arm.moveToStowPos(),
+                        Commands.waitUntil(arm::atSetpoint)
+                    )
+                    .onlyIf(arm::closeToL4),
                 arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint)
-                    .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
                 intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
@@ -71,9 +77,15 @@ public class ElevatorArmIntakeHandler {
                 ElasticUtil.sendInfoCommand("Moved to stow from index")
             ),
             Commands.sequence(
+                    /* Don't deep climb the reef */
+                    elevator.moveToL3Position()
+                        .andThen(
+                            Commands.waitUntil(elevator::atSetpoint),
+                            arm.moveToStowPos(),
+                            Commands.waitUntil(arm::atSetpoint)
+                        )
+                    .onlyIf(arm::closeToL4),
                 arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint)
-                    .onlyIf(arm::atL3),
                 elevator.moveToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow")

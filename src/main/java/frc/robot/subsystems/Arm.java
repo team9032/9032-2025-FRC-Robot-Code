@@ -86,6 +86,10 @@ public class Arm extends SubsystemBase {
         return getRelativePosition() > kArmIndexerPos - (kArmPositionTolerance * 10.0);
     }
 
+    public boolean closeToL4() {
+        return MathUtil.isNear(kArmLevel3Pos, getRelativePosition(), kArmPositionTolerance * 10.0);
+    }
+
     public Command moveToStowPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmStowPos)));
     }
