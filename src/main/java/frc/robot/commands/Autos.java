@@ -112,7 +112,8 @@ public class Autos {
                             .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoringAuto())
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
-                endEffector.outtakeNetAlgae().asProxy()
+                endEffector.outtakeNetAlgae().asProxy(),
+                Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
 
@@ -132,7 +133,8 @@ public class Autos {
                         elevatorArmIntakeHandler.prepareForAlgaeScoringAuto()
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
-                endEffector.outtakeNetAlgae().asProxy()
+                endEffector.outtakeNetAlgae().asProxy(),
+                Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
 
