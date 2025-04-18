@@ -42,7 +42,7 @@ public class ElevatorArmIntakeHandler {
                         arm.moveToStowPos(),
                         Commands.waitUntil(arm::atSetpoint)
                     )
-                    .onlyIf(arm::closeToL4),
+                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
                 arm.moveToStowPos(),
                 elevator.moveToOverIndexerPosition(),
                 intake.moveToGround(),
@@ -84,7 +84,7 @@ public class ElevatorArmIntakeHandler {
                             arm.moveToStowPos(),
                             Commands.waitUntil(arm::atSetpoint)
                         )
-                    .onlyIf(arm::closeToL4),
+                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
                 arm.moveToStowPos(),
                 elevator.moveToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),

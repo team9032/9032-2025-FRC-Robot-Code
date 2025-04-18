@@ -222,6 +222,7 @@ public final class Constants {
         public static final double kElevatorAlgaeGround = 0.9;
 
         public static final double kElevatorOverIndexer = 2.7;
+        public static final double kElevatorOverHighAlgae = 4.5;
         public static final double kElevatorStow = 1.6; 
         public static final double kElevatorCloseToNet = 9.2;
     }

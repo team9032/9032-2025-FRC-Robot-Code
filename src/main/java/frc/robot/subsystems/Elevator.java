@@ -129,6 +129,10 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorAlgaeGround));
     }
 
+    public boolean overHighAlgae() {
+        return elevatorPosSignal.getValueAsDouble() > kElevatorOverHighAlgae;
+    }
+
     @Override
     public void periodic() {
         elevatorPosSignal.refresh();
