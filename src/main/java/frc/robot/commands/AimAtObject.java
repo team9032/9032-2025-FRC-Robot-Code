@@ -11,7 +11,7 @@ import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.VisionTargetCache;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
+import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
 
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
@@ -55,10 +55,10 @@ public class AimAtObject extends Command {
         ElasticUtil.sendInfo("Started object aiming");
 
         if (moveOnInit)
-            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
+            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
 
         else 
-            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }  
 
     @Override
@@ -66,7 +66,7 @@ public class AimAtObject extends Command {
         if (targetCache.targetExpired()) {
             targetCache.reset();
 
-            swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
         }
 
         double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
@@ -79,7 +79,7 @@ public class AimAtObject extends Command {
                 double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
                     kSlowDrivingSpeed : kMaxDrivingSpeed;
 
-                swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
+                swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
             }
 
             return;
@@ -102,7 +102,7 @@ public class AimAtObject extends Command {
             rotationController.calculate(currentYaw)
         );
 
-        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
+        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
     private TrackedObject getTarget() {//TODO this code is super broken now 
@@ -153,7 +153,7 @@ public class AimAtObject extends Command {
         rotationController.reset();
         targetCache.reset();
 
-        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
 
         ElasticUtil.sendInfo("Finished object aiming - interrupted " + interrupted);
     }

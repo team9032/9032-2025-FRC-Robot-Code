@@ -12,7 +12,7 @@ import frc.robot.localization.TrackedObject;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
+import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
 
 public class DriverAssistedAutoIntake extends Command {
     private final KrakenSwerve swerve;
@@ -67,7 +67,7 @@ public class DriverAssistedAutoIntake extends Command {
             rotationController.calculate(currentYaw)
         );
 
-        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
+        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
     private TrackedObject getCoralTarget() {

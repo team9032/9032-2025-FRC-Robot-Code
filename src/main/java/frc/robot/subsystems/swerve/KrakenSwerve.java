@@ -94,7 +94,7 @@ public class KrakenSwerve extends SubsystemBase {
 
     private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
         drivetrain.setControl(
-            kClosedLoopDriveRequest.withSpeeds(setpoint)
+            kRobotRelativeClosedLoopDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
         );

@@ -69,7 +69,7 @@ public final class Constants {
         public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
-        public static final ApplyRobotSpeeds kClosedLoopDriveRequest = new ApplyRobotSpeeds()
+        public static final ApplyRobotSpeeds kRobotRelativeClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
@@ -79,6 +79,10 @@ public final class Constants {
             3 * Math.PI, 
             3 * Math.PI
         );
+
+        public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final double kAlignmentXYkP = 2;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
