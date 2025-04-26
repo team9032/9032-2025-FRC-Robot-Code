@@ -6,7 +6,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.localization.TrackedObject;
@@ -39,7 +38,12 @@ public class DriverAssistedAutoIntake extends Command {
     }
 
     @Override
-    public void initialize() {}
+    public void initialize() {
+        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+
+        /* Prevent rotating on init if no target is seen */
+        rotationController.setSetpoint(currentYaw);
+    }
 
     @Override
     public void execute() {
@@ -54,20 +58,11 @@ public class DriverAssistedAutoIntake extends Command {
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
-        /* Invert if the driver is driving away from the coral */
-        // double desiredDriverAngle = swerve.drivetrain.getOperatorForwardDirection().getDegrees() + Units.radiansToDegrees(Math.atan2(ySpeedSupplier.getAsDouble(), xSpeedSupplier.getAsDouble())) + 90;
-        // desiredDriverAngle = MathUtil.inputModulus(desiredDriverAngle, -180, 180);
-
-        boolean shouldInvert = false;//true;
-        // /* If the desired angle is pointed towards the front in the range (-90, 90) with 0 being front, don't invert */
-        // if(currentYaw - 90 < desiredDriverAngle && desiredDriverAngle < currentYaw + 90) 
-        //     shouldInvert = false;
-
         double magnitude = Math.sqrt(Math.pow(xSpeedSupplier.getAsDouble(), 2) + Math.pow(ySpeedSupplier.getAsDouble(), 2));
 
-        /* Drive based on desired speed (inverted if needed) and the rotation PID's output */
+        /* Drive based on desired speed and the rotation PID's output */
         var speeds = new ChassisSpeeds(
-            magnitude * kMaxDrivingSpeed * (shouldInvert ? -1 : 1),
+            magnitude * kMaxDrivingSpeed,
             0.0,
             rotationController.calculate(currentYaw)
         );

@@ -35,9 +35,15 @@ public class ElevatorArmIntakeHandler {
     public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(
+                    /* Don't deep climb the reef */
+                    elevator.moveToL3Position()
+                    .andThen(
+                        Commands.waitUntil(elevator::atSetpoint),
+                        arm.moveToStowPos(),
+                        Commands.waitUntil(arm::atSetpoint)
+                    )
+                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
                 arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint)
-                    .onlyIf(arm::atL3),
                 elevator.moveToOverIndexerPosition(),
                 intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
@@ -71,9 +77,15 @@ public class ElevatorArmIntakeHandler {
                 ElasticUtil.sendInfoCommand("Moved to stow from index")
             ),
             Commands.sequence(
+                    /* Don't deep climb the reef */
+                    elevator.moveToL3Position()
+                        .andThen(
+                            Commands.waitUntil(elevator::atSetpoint),
+                            arm.moveToStowPos(),
+                            Commands.waitUntil(arm::atSetpoint)
+                        )
+                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
                 arm.moveToStowPos(),
-                Commands.waitUntil(arm::atSetpoint)
-                    .onlyIf(arm::atL3),
                 elevator.moveToStowPosition(),
                 Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
                 ElasticUtil.sendInfoCommand("Moved to stow")
@@ -117,15 +129,19 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
-    public Command prepareForAlgaeReefIntakingAuto() {
+    public Command prepareForAlgaeReefIntakingAuto(boolean highAlgae) {
         return Commands.sequence(
             moveToStowPositions()
                 .onlyIf(arm::closeToIndexPosition),
-            arm.moveToLowAlgaePos(),
-            elevator.moveToLowAlgaePosition(),
+            Commands.either(
+                arm.moveToHighAlgaePos() 
+                    .andThen(elevator.moveToHighAlgaePosition()),
+                arm.moveToLowAlgaePos() 
+                    .andThen(elevator.moveToLowAlgaePosition()), 
+                () -> highAlgae
+            ),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Prepared for algae reef intaking in auto")
-
         );          
     }
 
@@ -140,7 +156,7 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
-    public Command prepareForAlgaeScoring() {
+    public Command prepareForAlgaeScoring() {//TODO handle processor
         return Commands.sequence(
             buttonBoardHandler.moveElevatorToAlgaeScoreLevel(elevator),
             Commands.waitUntil(elevator::closeToNetPosition),
@@ -157,6 +173,16 @@ public class ElevatorArmIntakeHandler {
             arm.moveToNetPos(),
             Commands.waitUntil(arm::atSetpoint),
             ElasticUtil.sendInfoCommand("Prepared for algae scoring")
+        );
+    }
+
+    public Command prepareForL1Scoring() {
+        return Commands.sequence(
+            elevator.moveToTroughPosition(),
+            Commands.waitUntil(elevator::atSetpoint),
+            arm.moveToTroughPos(),
+            Commands.waitUntil(arm::atSetpoint),
+            ElasticUtil.sendInfoCommand("Prepared for L1 scoring")
         );
     }
 

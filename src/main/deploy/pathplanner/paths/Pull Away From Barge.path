@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.755758683830716,
-        "y": 4.215491086866892
+        "x": 7.6,
+        "y": 5.80925
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.003361655811625,
-        "y": 4.180954609538989
+        "x": 6.409533130007002,
+        "y": 5.8387418477717254
       },
       "isLocked": false,
-      "linkedName": "Score Center End"
+      "linkedName": "Score Algae 2 End"
     },
     {
       "anchor": {
-        "x": 6.124481870251053,
-        "y": 4.047013623769246
+        "x": 6.19125,
+        "y": 5.84825
       },
       "prevControl": {
-        "x": 5.863931386410271,
-        "y": 4.218899690614762
+        "x": 6.526643331979712,
+        "y": 5.83660734048139
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Pull Away 1 End"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.1,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

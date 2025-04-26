@@ -74,6 +74,7 @@ public class Autos {
         PathPlannerPath scoreAlgae1; 
         PathPlannerPath getAlgae2; 
         PathPlannerPath scoreAlgae2;
+        PathPlannerPath pullAwayFromBarge;
 
         try {
             scoreCoral = PathPlannerPath.fromPathFile("Score Center");
@@ -81,47 +82,59 @@ public class Autos {
             scoreAlgae1 = PathPlannerPath.fromPathFile("Get And Score Algae 1");
             getAlgae2 = PathPlannerPath.fromPathFile("Get Algae 2");
             scoreAlgae2 = PathPlannerPath.fromPathFile("Score Algae 2");
-
+            pullAwayFromBarge = PathPlannerPath.fromPathFile("Pull Away From Barge");
         } catch (Exception e) {
             ElasticUtil.sendError("Could not load auto path!", "Auto will not work!");
 
             return Commands.none();
         }
 
-        return scorePreloadCoral(scoreCoral, elevatorArmIntakeHandler, endEffector)
-            .andThen(getAndScoreAlgaeFromCoral(scoreAlgae1, pullAway1, elevatorArmIntakeHandler, compositions, endEffector),
-                getAndScoreAlgaeFromBarge(getAlgae2, scoreAlgae2, elevatorArmIntakeHandler, compositions, endEffector));
+        return Commands.sequence( 
+            scorePreloadCoral(scoreCoral, elevatorArmIntakeHandler, endEffector),
+            getAndScoreAlgaeFromCoral(scoreAlgae1, pullAway1, elevatorArmIntakeHandler, compositions, endEffector),
+            getAndScoreAlgaeFromBarge(getAlgae2, scoreAlgae2, elevatorArmIntakeHandler, compositions, endEffector, true),
+            AutoBuilder.followPath(pullAwayFromBarge)
+                .alongWith(elevatorArmIntakeHandler.moveToStowPositions())
+        );
     }
 
     private static Command getAndScoreAlgaeFromCoral(PathPlannerPath getAndScoreAlgaePath, PathPlannerPath pullAwayPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
         return 
             /* Follow get algae and score algae paths */
             Commands.sequence(
-                elevatorArmIntakeHandler.moveToStowPositions(),
-                AutoBuilder.followPath(pullAwayPath),
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(),
+                AutoBuilder.followPath(pullAwayPath)
+                    .alongWith(elevatorArmIntakeHandler.moveToStowPositions()),
+                elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(false),
                 AutoBuilder.followPath(getAndScoreAlgaePath)
-                    .alongWith(endEffector.pickupAlgae().asProxy()),
+                    .alongWith(
+                        endEffector.pickupAlgae().asProxy(),
+                        Commands.waitUntil(moveElevatorTrigger)
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoringAuto())
+                    ),
                 /* Score the algae when the paths finish and everything is at setpoint */
-                elevatorArmIntakeHandler.prepareForAlgaeScoringAuto(),
-                endEffector.outtakeNetAlgae().asProxy()
+                endEffector.outtakeNetAlgae().asProxy(),
+                Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
 
-    private static Command getAndScoreAlgaeFromBarge(PathPlannerPath getPath, PathPlannerPath scorePath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector) {
+    private static Command getAndScoreAlgaeFromBarge(PathPlannerPath getPath, PathPlannerPath scorePath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, Compositions compositions, EndEffector endEffector, boolean highAlgae) {
         return 
             /* Follow get algae and score algae paths */
             Commands.sequence(
-                elevatorArmIntakeHandler.moveToStowPositions(),
                 AutoBuilder.followPath(getPath)
                     .alongWith(
-                        elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(),
+                        elevatorArmIntakeHandler.moveToStowPositions()
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(highAlgae)),
                         endEffector.pickupAlgae().asProxy()
                     ),
-                AutoBuilder.followPath(scorePath),
+                AutoBuilder.followPath(scorePath)
+                    .alongWith(
+                        Commands.waitUntil(moveElevatorTrigger),
+                        elevatorArmIntakeHandler.prepareForAlgaeScoringAuto()
+                    ),
                 /* Score the algae when the paths finish and everything is at setpoint */
-                elevatorArmIntakeHandler.prepareForAlgaeScoringAuto(),
-                endEffector.outtakeNetAlgae().asProxy()
+                endEffector.outtakeNetAlgae().asProxy(),
+                Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
 

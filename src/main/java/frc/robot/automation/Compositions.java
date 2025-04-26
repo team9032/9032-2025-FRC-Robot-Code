@@ -95,7 +95,9 @@ public class Compositions {
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
             elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected())
+                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected()),
+            elevatorArmIntakeHandler.prepareForL1Scoring()
+                .onlyIf(() -> !buttonBoardHandler.l1NotSelected())
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
@@ -140,7 +142,7 @@ public class Compositions {
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
             buttonBoardHandler.followAlgaeScorePath(),
-            elevatorArmIntakeHandler.prepareForAlgaeScoring(),//TODO handle net algae
+            elevatorArmIntakeHandler.prepareForAlgaeScoring(),
             buttonBoardHandler.scoreAlgae(endEffector)
         );
     }
