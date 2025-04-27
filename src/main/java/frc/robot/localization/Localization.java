@@ -4,6 +4,9 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +26,8 @@ public class Localization {
     private final List<ObjectTrackingCamera> objectTrackingCameras = new ArrayList<>();
 
     private final List<TrackedObject> trackedObjects = new ArrayList<>();
+
+    private final StructArrayPublisher<Pose2d> trackedObjectPublisher;
 
     public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
@@ -44,6 +49,10 @@ public class Localization {
         }
 
         SmartDashboard.putData("Localization Field", field);
+
+        trackedObjectPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("Tracked Objects", Pose2d.struct)
+            .publish();
     }
 
     /** For pose estimation, gets the unread results for each camera, then adds each result to its own photonPoseEstimator, 
@@ -57,6 +66,7 @@ public class Localization {
         }
 
         var currentPose = drivetrain.getState().Pose;
+        field.setRobotPose(currentPose);
 
         /* Update all object tracking cameras */
         for (ObjectTrackingCamera camera : objectTrackingCameras) {
@@ -65,9 +75,15 @@ public class Localization {
 
         /* Remove any old objects */
         double currentTime = Utils.getCurrentTimeSeconds();
-        trackedObjects.removeIf((object) -> currentTime - object.getTimestamp() > 0.5);//TODO constant 
+        trackedObjects.removeIf((object) -> currentTime - object.getTimestamp() > kObjectExpireTime);
 
-        field.setRobotPose(currentPose);
+        /* Publish each object's pose */
+        trackedObjectPublisher.set((Pose2d[]) 
+            trackedObjects
+                .stream()
+                .map((object) -> object.getFieldPosition())
+                .toArray()
+        );
 
         if (!trackedObjects.isEmpty()) {
             var object = trackedObjects.get(0);

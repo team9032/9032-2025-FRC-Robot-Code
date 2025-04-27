@@ -1,13 +1,13 @@
-package frc.robot.commands;
+// package frc.robot.commands;
 
-import frc.robot.subsystems.swerve.KrakenSwerve;
+// import frc.robot.subsystems.swerve.KrakenSwerve;
 
-import static frc.robot.Constants.ObjectAimingConstants.*;
+// import static frc.robot.Constants.ObjectAimingConstants.*;
 
-import java.util.function.DoubleSupplier;
+// import java.util.function.DoubleSupplier;
 
-public class AimAtCoral extends AimAtObject {
-    public AimAtCoral(KrakenSwerve swerve, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
-        super(swerve, kCoralId, obstacleDistanceSup, moveOnInit);
-    }
-}
+// public class AimAtCoral extends AimAtObject {
+//     public AimAtCoral(KrakenSwerve swerve, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
+//         super(swerve, kCoralId, obstacleDistanceSup, moveOnInit);
+//     }
+// }

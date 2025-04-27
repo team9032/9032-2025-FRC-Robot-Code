@@ -125,6 +125,10 @@ public final class Constants {
         /* Thresholds for when to reject an estimate */
         public static final double kAmbiguityThreshold = 0.2;
         public static final double kDistanceThreshold = 4.0;//Meters
+
+        /* Object tracking constants */
+        public static final double kObjectExpireTime = 0.5;//Seconds
+        public static final double kSameObjectDistance = Units.inchesToMeters(6);
         
         public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X

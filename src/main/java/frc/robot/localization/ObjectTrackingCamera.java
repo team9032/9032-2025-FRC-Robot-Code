@@ -1,5 +1,7 @@
 package frc.robot.localization;
 
+import static frc.robot.Constants.LocalizationConstants.kSameObjectDistance;
+
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
@@ -28,7 +30,7 @@ public class ObjectTrackingCamera {
         this.constants = constants;
     }
 
-    /** Adds new detected objected to the list and updates previous detections if they have changed */
+    /** Adds new detected objects to the list and updates previous detections if they have changed */
     public void addResultsToObjectList(SwerveDrivetrain<?, ?, ?> drivetrain, List<TrackedObject> objectList) {
         var results = camera.getAllUnreadResults();
 
@@ -49,23 +51,29 @@ public class ObjectTrackingCamera {
 
         double targetYaw = Units.degreesToRadians(target.getYaw());
 
+        /* Find the distance from the camera's lense to the object using target pitch and yaw */
         double cameraToTargetDistance =
             (-robotToCamera.getZ())
                 / Math.tan(-robotToCamera.getRotation().getY() - Units.degreesToRadians(target.getPitch()))
                 / Math.cos(-targetYaw);
         
-        Pose2d fieldToCamera = poseAtDetectionTime.transformBy(
+        /* Find the camera's pose in field space using camera offsets and the robot's pose */
+        Pose2d cameraInFieldSpace = poseAtDetectionTime.transformBy(
             new Transform2d(robotToCamera.getX(), robotToCamera.getY(), robotToCamera.getRotation().toRotation2d())   
         );
 
+        /* Find the target's pose in field space by projecting outwards from the camera's pose in field space */
         Pose2d targetPoseInField =
-            fieldToCamera
+            cameraInFieldSpace
+                /* Rotate by the target yaw */
                 .transformBy(new Transform2d(Translation2d.kZero, new Rotation2d(-targetYaw)))
+                /* Project outwards using the camera to target distance */
                 .transformBy(new Transform2d(new Translation2d(cameraToTargetDistance, 0), Rotation2d.kZero));
 
         boolean updatedObject = false;
         for (var object : objectList) {
-            if (object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < Units.inchesToMeters(6)) {//TODO make constant
+            /* If an object is close to a previous detection, update the previous detection */
+            if (object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance) {
                 object.update(targetPoseInField, target, getName(), timestamp);
 
                 updatedObject = true;
@@ -74,6 +82,7 @@ public class ObjectTrackingCamera {
             }
         }
 
+        /* If a previous detection was not updated, create a new detection with a unique id */
         if (!updatedObject) {
             targetIdCounter++;
 
