@@ -10,11 +10,12 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.LocalizationConstants.*;
 import java.util.List;
-
+import java.util.Optional;
 import java.util.ArrayList;
 
 public class Localization {
@@ -94,17 +95,33 @@ public class Localization {
         }
     } 
 
-    public List<TrackedObject> getTrackedCoral() {
-        return trackedObjects
-            .stream()
-            .filter((object) -> object.isCoral())
-            .toList();
-    }
+    /** Finds the nearest object of the given type. If no objects of that type are detected, this returns an empty optional. */
+    public Optional<TrackedObject> getNearestObjectOfType(ObjectType objectType) {
+        var trackedObjects = getTrackedObjectsOfType(objectType);
+        if (trackedObjects.isEmpty())
+            return Optional.empty();
 
-    public List<TrackedObject> getTrackedAlgae() {
+        var currentTranslation = drivetrain.getState().Pose.getTranslation(); 
+
+        double closestDistance = Double.MAX_VALUE;
+        TrackedObject closestObject = trackedObjects.get(0);
+        for (var object : trackedObjects) {
+            double distance = object.getFieldPosition().getTranslation().getDistance(currentTranslation);
+
+            if (distance < closestDistance) {
+                closestObject = object;
+
+                closestDistance = distance;
+            }
+        }
+
+        return Optional.of(closestObject);
+    } 
+
+    public List<TrackedObject> getTrackedObjectsOfType(ObjectType objectType) {
         return trackedObjects
             .stream()
-            .filter((object) -> object.isAlgae())
+            .filter((object) -> object.getObjectType().equals(objectType))
             .toList();
     }
 
@@ -112,6 +129,13 @@ public class Localization {
         return trackedObjects
             .stream()
             .filter((object) -> object.getCameraName().equals(cameraName))
+            .toList();
+    }
+
+    public List<TrackedObject> getTrackedObjectsFromCameraWithType(String cameraName, ObjectType objectType) {
+        return trackedObjects
+            .stream()
+            .filter((object) -> object.getCameraName().equals(cameraName) && object.getObjectType().equals(objectType))
             .toList();
     }
 }

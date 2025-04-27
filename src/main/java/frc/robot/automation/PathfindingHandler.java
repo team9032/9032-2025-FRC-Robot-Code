@@ -2,11 +2,17 @@ package frc.robot.automation;
 
 import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
@@ -41,6 +47,31 @@ public class PathfindingHandler {
     //         return Commands.none();
     //     }
     // }
+
+    private static Command pathToNearestCoralUndefered(KrakenSwerve swerve) {
+        var optionalCoral = swerve.getLocalization().getNearestObjectOfType(ObjectType.CORAL);
+
+        if (optionalCoral.isPresent()) {
+            var robotTranslation = swerve.drivetrain.getState().Pose.getTranslation();
+            var coralTranslation = optionalCoral.get().getFieldPosition().getTranslation();
+
+            /* Find the angle that points the robot towards the coral */
+            var rotationSetpoint = robotTranslation.minus(coralTranslation).getAngle();
+
+            var targetPose = new Pose2d(coralTranslation, rotationSetpoint)
+                /* Apply the intake's offset */
+                .transformBy(new Transform2d(2, 0, Rotation2d.kZero));//TODO have constants for intake offset
+
+            return AutoBuilder.pathfindToPose(targetPose, kDynamicPathConstraints);
+        }
+
+        else    
+            return Commands.none();
+    }
+
+    public static Command pathToNearestCoral(KrakenSwerve swerve) {
+        return Commands.defer(() -> pathToNearestCoralUndefered(swerve), Set.of(swerve));
+    }
 
     public static Command pathToLSource() {
         return pathTo("LSource");

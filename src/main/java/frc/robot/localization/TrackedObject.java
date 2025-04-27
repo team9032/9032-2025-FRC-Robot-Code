@@ -12,8 +12,26 @@ public class TrackedObject {
     private PhotonTrackedTarget photonVisionData;
     private String cameraName;
     private double timestamp;
+    private ObjectType objectType;
 
     private final int trackingId;
+
+    public static enum ObjectType {
+        CORAL,
+        ALGAE,
+        UNKNOWN;
+
+        public static ObjectType fromClassId(int classId) {
+            if (classId == kCoralId)
+                return ObjectType.CORAL;
+        
+            else if (classId == kAlgaeId)
+                return ObjectType.ALGAE;
+
+            else 
+                return ObjectType.UNKNOWN;
+        }
+    }
 
     public TrackedObject(Pose2d fieldPosition, PhotonTrackedTarget photonVisionData, String cameraName, double timestamp, int trackingId) {
         this.fieldPosition = fieldPosition;
@@ -22,14 +40,12 @@ public class TrackedObject {
         this.timestamp = timestamp;
 
         this.trackingId = trackingId;
+
+        objectType = ObjectType.fromClassId(photonVisionData.getDetectedObjectClassID());
     }
 
-    public boolean isAlgae() {
-        return photonVisionData.getDetectedObjectClassID() == kAlgaeId;
-    }
-
-    public boolean isCoral() {
-        return photonVisionData.getDetectedObjectClassID()  == kCoralId;
+    public ObjectType getObjectType() {
+        return objectType;
     }
 
     public void update(Pose2d fieldPosition, PhotonTrackedTarget photonVisionData, String cameraName, double timestamp) {

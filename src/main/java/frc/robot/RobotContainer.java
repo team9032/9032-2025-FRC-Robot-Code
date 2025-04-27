@@ -9,6 +9,7 @@ import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.GroundCoralTracking;
+import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
@@ -123,10 +124,10 @@ public class RobotContainer {
         buttonBoard.getEnableAlgaeModeTrigger()
             .onTrue(algaeCyclingCommand);
 
-        // buttonBoard.getAutoIntakeTrigger().onTrue(
-        //     compositions.autoIntake(true)
-        //     .until(this::driverWantsOverride)
-        // );     
+        buttonBoard.getAutoIntakeTrigger().onTrue(
+            PathfindingHandler.pathToNearestCoral(krakenSwerve)
+            .until(this::driverWantsOverride)
+        );     
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);

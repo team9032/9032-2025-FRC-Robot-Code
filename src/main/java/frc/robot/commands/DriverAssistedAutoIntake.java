@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.localization.TrackedObject;
+import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
@@ -73,11 +74,7 @@ public class DriverAssistedAutoIntake extends Command {
     private TrackedObject getCoralTarget() {
         TrackedObject coralTarget;
 
-        var coralTargets = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
-        
-        /* Remove targets that are not coral  */
-        coralTargets.removeIf((target) -> !target.isCoral());
-
+        var coralTargets = localization.getTrackedObjectsFromCameraWithType(kObjectTrackingCameraName, ObjectType.CORAL);
         /* Exit if no targets exist */
         if (coralTargets.isEmpty())
             return null;

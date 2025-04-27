@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.localization.TrackedObject.ObjectType;
 
 public class ObjectTrackingCamera {
     private static int targetIdCounter = 0;
@@ -72,10 +73,14 @@ public class ObjectTrackingCamera {
 
         boolean updatedObject = false;
         for (var object : objectList) {
-            /* If an object is close to a previous detection, update the previous detection */
-            if (object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance) {
-                object.update(targetPoseInField, target, getName(), timestamp);
+            boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance;
+            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(target.getDetectedObjectClassID()));
 
+            /* If an object is close to a previous detection with the same object type, assume it's the same object 
+                and update the previous detection */
+            if (withinSameDistance && sameType) {
+                object.update(targetPoseInField, target, getName(), timestamp);
+ 
                 updatedObject = true;
 
                 break;
