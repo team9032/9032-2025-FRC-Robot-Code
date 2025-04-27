@@ -1,160 +1,160 @@
-package frc.robot.commands;
+// package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.localization.Localization;
-import frc.robot.localization.TrackedObject;
-import frc.robot.subsystems.swerve.KrakenSwerve;
-import frc.robot.utils.ElasticUtil;
-import frc.robot.utils.VisionTargetCache;
+// import edu.wpi.first.math.MathUtil;
+// import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.kinematics.ChassisSpeeds;
+// import edu.wpi.first.wpilibj2.command.Command;
+// import frc.robot.localization.Localization;
+// import frc.robot.localization.TrackedObject;
+// import frc.robot.subsystems.swerve.KrakenSwerve;
+// import frc.robot.utils.ElasticUtil;
+// import frc.robot.utils.VisionTargetCache;
 
-import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
+// import static frc.robot.Constants.ObjectAimingConstants.*;
+// import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
 
-import java.util.ArrayList;
-import java.util.function.DoubleSupplier;
+// import java.util.ArrayList;
+// import java.util.function.DoubleSupplier;
 
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
+// import org.photonvision.targeting.PhotonPipelineResult;
+// import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class AimAtObject extends Command {
-    private final KrakenSwerve swerve;
+// public class AimAtObject extends Command {
+//     private final KrakenSwerve swerve;
     
-    private final Localization localization;
+//     private final Localization localization;
 
-    private final VisionTargetCache<TrackedObject> targetCache;
+//     private final VisionTargetCache<TrackedObject> targetCache;
     
-    private final PIDController rotationController;
+//     private final PIDController rotationController;
 
-    private final int objectToTrackId;    
+//     private final int objectToTrackId;    
 
-    private final DoubleSupplier obstacleDistanceSup;
+//     private final DoubleSupplier obstacleDistanceSup;
 
-    private final boolean moveOnInit;
+//     private final boolean moveOnInit;
 
-    public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
-       this.swerve = swerve; 
-       this.objectToTrackId = objectToTrackId;
-       this.obstacleDistanceSup = obstacleDistanceSup;
-       this.moveOnInit = moveOnInit;
+//     public AimAtObject(KrakenSwerve swerve, int objectToTrackId, DoubleSupplier obstacleDistanceSup, boolean moveOnInit) {
+//        this.swerve = swerve; 
+//        this.objectToTrackId = objectToTrackId;
+//        this.obstacleDistanceSup = obstacleDistanceSup;
+//        this.moveOnInit = moveOnInit;
 
-       localization = swerve.getLocalization();
+//        localization = swerve.getLocalization();
 
-       rotationController = new PIDController(kPRotation, 0.0, kDRotation);
-       rotationController.enableContinuousInput(-180.0, 180.0);
+//        rotationController = new PIDController(kPRotation, 0.0, kDRotation);
+//        rotationController.enableContinuousInput(-180.0, 180.0);
 
-       targetCache = new VisionTargetCache<>(kCycleAmtSinceTargetSeenCutoff);
+//        targetCache = new VisionTargetCache<>(kCycleAmtSinceTargetSeenCutoff);
 
-       addRequirements(swerve);
-    }
+//        addRequirements(swerve);
+//     }
 
-    @Override
-    public void initialize() {
-        ElasticUtil.sendInfo("Started object aiming");
+//     @Override
+//     public void initialize() {
+//         ElasticUtil.sendInfo("Started object aiming");
 
-        if (moveOnInit)
-            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
+//         if (moveOnInit)
+//             swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kMaxDrivingSpeed, 0.0, 0.0)));
 
-        else 
-            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
-    }  
+//         else 
+//             swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+//     }  
 
-    @Override
-    public void execute() {
-        if (targetCache.targetExpired()) {
-            targetCache.reset();
+//     @Override
+//     public void execute() {
+//         if (targetCache.targetExpired()) {
+//             targetCache.reset();
 
-            swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
-        }
+//             swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+//         }
 
-        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+//         double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
 
-        PhotonTrackedTarget targetToTrack = null;getTarget();
+//         PhotonTrackedTarget targetToTrack = null;getTarget();
 
-        /* Wait to get a target */
-        if (!targetCache.hasTarget()) {
-            if (moveOnInit) {
-                double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
-                    kSlowDrivingSpeed : kMaxDrivingSpeed;
+//         /* Wait to get a target */
+//         if (!targetCache.hasTarget()) {
+//             if (moveOnInit) {
+//                 double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+//                     kSlowDrivingSpeed : kMaxDrivingSpeed;
 
-                swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
-            }
+//                 swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(drivingSpeed, 0.0, 0.0)));
+//             }
 
-            return;
-        }
+//             return;
+//         }
 
-        /* Update setpoint if we have a target */
-        if(targetToTrack != null) {
-            double rotationSetpoint = currentYaw - (targetToTrack.yaw - kRotationSetpoint);
+//         /* Update setpoint if we have a target */
+//         if(targetToTrack != null) {
+//             double rotationSetpoint = currentYaw - (targetToTrack.yaw - kRotationSetpoint);
 
-            rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
-        }
+//             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
+//         }
 
-        /* Drive based on target yaw and obstacle distance */
-        double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
-            kSlowDrivingSpeed : kMaxDrivingSpeed;
+//         /* Drive based on target yaw and obstacle distance */
+//         double drivingSpeed = obstacleDistanceSup.getAsDouble() < kSlowObstacleDistance ?
+//             kSlowDrivingSpeed : kMaxDrivingSpeed;
 
-        var speeds = new ChassisSpeeds(
-            drivingSpeed,
-            0.0, 
-            rotationController.calculate(currentYaw)
-        );
+//         var speeds = new ChassisSpeeds(
+//             drivingSpeed,
+//             0.0, 
+//             rotationController.calculate(currentYaw)
+//         );
 
-        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
-    }
+//         swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
+//     }
 
-    private TrackedObject getTarget() {//TODO this code is super broken now 
-        /* Make sure the target cache is incremented each loop */
-        var previousTarget = targetCache.getAndIncrement();
+//     private TrackedObject getTarget() {//TODO this code is super broken now 
+//         /* Make sure the target cache is incremented each loop */
+//         var previousTarget = targetCache.getAndIncrement();
 
-        var results = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
+//         var results = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
 
-        /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
-        results.removeIf((target) -> !target.isCoral());//TODO fix
+//         /* Remove targets that do not match the id we are tracking - exit if the result has no targets we want */
+//         results.removeIf((target) -> !target.isCoral());//TODO fix
 
-        if(results.isEmpty())
-            return null;
+//         if(results.isEmpty())
+//             return null;
 
-        TrackedObject targetToTrack = null;
-        /* Find the target that is closest to the center of the camera when there is no previous target */
-        if(!targetCache.hasTarget()) {
-            targetToTrack = null; //latestResult.getBestTarget();
-        }
-        /* Find the lowest pitch difference target that is within the pitch difference cutoff */
-        else {            
-            double lowestPitchDifference = Double.MAX_VALUE;
+//         TrackedObject targetToTrack = null;
+//         /* Find the target that is closest to the center of the camera when there is no previous target */
+//         if(!targetCache.hasTarget()) {
+//             targetToTrack = null; //latestResult.getBestTarget();
+//         }
+//         /* Find the lowest pitch difference target that is within the pitch difference cutoff */
+//         else {            
+//             double lowestPitchDifference = Double.MAX_VALUE;
 
-            // for(PhotonTrackedTarget target : filteredTargets) {
-            //     double pitchDifference = Math.abs(target.getPitch() - previousTarget.getPitch());
+//             // for(PhotonTrackedTarget target : filteredTargets) {
+//             //     double pitchDifference = Math.abs(target.getPitch() - previousTarget.getPitch());
 
-            //     if(pitchDifference < kPitchDifferenceCutoff && pitchDifference < lowestPitchDifference) {
-            //         lowestPitchDifference = target.getPitch();
+//             //     if(pitchDifference < kPitchDifferenceCutoff && pitchDifference < lowestPitchDifference) {
+//             //         lowestPitchDifference = target.getPitch();
 
-            //         targetToTrack = target;
-            //     }
-            // }
-        }
+//             //         targetToTrack = target;
+//             //     }
+//             // }
+//         }
 
-        if (targetToTrack != null)
-            targetCache.updateTarget(targetToTrack);
+//         if (targetToTrack != null)
+//             targetCache.updateTarget(targetToTrack);
 
-        return targetToTrack;
-    }
+//         return targetToTrack;
+//     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+//     @Override
+//     public boolean isFinished() {
+//         return false;
+//     }
 
-    @Override
-    public void end(boolean interrupted) {
-        rotationController.reset();
-        targetCache.reset();
+//     @Override
+//     public void end(boolean interrupted) {
+//         rotationController.reset();
+//         targetCache.reset();
 
-        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+//         swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
 
-        ElasticUtil.sendInfo("Finished object aiming - interrupted " + interrupted);
-    }
-}
+//         ElasticUtil.sendInfo("Finished object aiming - interrupted " + interrupted);
+//     }
+// }

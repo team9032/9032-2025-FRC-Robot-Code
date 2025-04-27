@@ -19,7 +19,7 @@ public class GroundCoralTracking {
 
             coralTargets.removeIf((target) -> !target.isCoral());
             /* Remove coral if it is too high */
-            coralTargets.removeIf((target) -> target.objectPitchInCameraSpace() > 0);
+            coralTargets.removeIf((target) -> target.getPhotonVisionData().getPitch() > 0);
 
             if (!coralTargets.isEmpty())
                 return true;

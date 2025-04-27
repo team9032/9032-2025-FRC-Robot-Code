@@ -1,5 +1,6 @@
 package frc.robot.localization;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -11,7 +12,6 @@ import frc.robot.utils.ElasticUtil;
 import static frc.robot.Constants.LocalizationConstants.*;
 import java.util.List;
 
-import org.photonvision.PhotonUtils;
 import java.util.ArrayList;
 
 public class Localization {
@@ -19,7 +19,10 @@ public class Localization {
 
     private final Field2d field;
 
-    private final List<LocalizationCamera> cameras = new ArrayList<>();
+    private final List<LocalizationCamera> localizationCameras = new ArrayList<>();
+    private final List<ObjectTrackingCamera> objectTrackingCameras = new ArrayList<>();
+
+    private final List<TrackedObject> trackedObjects = new ArrayList<>();
 
     public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
@@ -29,8 +32,12 @@ public class Localization {
         try {
             AprilTagFieldLayout layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
 
-            for (int i = 0; i < kCameraConstants.length; i++) {
-                cameras.add(new LocalizationCamera(kCameraConstants[i], layout)); 
+            for (var constants : kCameraConstants) {
+                if (constants.isObjectTracking())
+                    objectTrackingCameras.add(new ObjectTrackingCamera(constants));
+
+                else
+                    localizationCameras.add(new LocalizationCamera(constants, layout)); 
             }
         } catch(Exception e) {
             ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will commit die!");
@@ -45,41 +52,51 @@ public class Localization {
      *  Call this method once every loop. */
     public void updateLocalization() {
         /* Update all pose estimation cameras */
-        for (LocalizationCamera camera : cameras) {
+        for (LocalizationCamera camera : localizationCameras) {
             camera.addResultsToDrivetrain(drivetrain, field);
         }
 
         var currentPose = drivetrain.getState().Pose;
 
         /* Update all object tracking cameras */
-        for (LocalizationCamera camera : cameras) {
-            camera.updateObjectTrackingResults(currentPose, field);
+        for (ObjectTrackingCamera camera : objectTrackingCameras) {
+            camera.addResultsToObjectList(drivetrain, trackedObjects);
         }
+
+        /* Remove any old objects */
+        double currentTime = Utils.getCurrentTimeSeconds();
+        trackedObjects.removeIf((object) -> currentTime - object.getTimestamp() > 0.5);//TODO constant 
 
         field.setRobotPose(currentPose);
+
+        if (!trackedObjects.isEmpty()) {
+            var object = trackedObjects.get(0);
+
+            field.getObject(object.getCameraName() + " target").setPose(object.getFieldPosition());//TODO find a better way to visualize
+
+            SmartDashboard.putString("object 0", object.getTrackingId() + " " + object.getCameraName() + " " + object.getFieldPosition());//TODO find a better way to show
+        }
     } 
 
-    /** Gets object tracking results from a camera. If the camera is not in object tracking mode, this will be empty. */
-    public List<TrackedObject> getTrackedObjectsFromCamera(String cameraName) {
-        for (LocalizationCamera camera : cameras) {
-            if (camera.getName().equals(cameraName))
-                return camera.getLatestTrackedObjects();
-        }
-
-        return List.of();
+    public List<TrackedObject> getTrackedCoral() {
+        return trackedObjects
+            .stream()
+            .filter((object) -> object.isCoral())
+            .toList();
     }
 
-    /** Given a target's pitch in radians, finds the distance from the target to the robot */
-    public double findDistanceToTarget(String cameraName, double targetPitch, double targetHeight) {
-        for(var constants : kCameraConstants) {
-            if(constants.name().equals(cameraName)) {
-                var transform = constants.robotToCameraTransform();
+    public List<TrackedObject> getTrackedAlgae() {
+        return trackedObjects
+            .stream()
+            .filter((object) -> object.isAlgae())
+            .toList();
+    }
 
-                return PhotonUtils.calculateDistanceToTargetMeters(transform.getZ(), targetHeight, transform.getRotation().getY(), targetPitch);
-            }
-        }
-
-        return 0.0;
+    public List<TrackedObject> getTrackedObjectsFromCamera(String cameraName) {
+        return trackedObjects
+            .stream()
+            .filter((object) -> object.getCameraName().equals(cameraName))
+            .toList();
     }
 }
    

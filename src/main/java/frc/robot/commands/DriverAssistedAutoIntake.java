@@ -53,7 +53,7 @@ public class DriverAssistedAutoIntake extends Command {
 
         /* Update setpoint if we have a target */
         if (coralTarget != null) {
-            double rotationSetpoint = coralTarget.objectYawInFieldSpace() + kRotationSetpoint;
+            double rotationSetpoint = currentYaw - (coralTarget.getPhotonVisionData().yaw - kRotationSetpoint);
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
@@ -93,7 +93,7 @@ public class DriverAssistedAutoIntake extends Command {
             coralTarget = getClosestCoral(coralTargets);
 
             for(TrackedObject target : coralTargets) {
-                double yawDifference = Math.abs(target.objectYawInFieldSpace() - lastCoralTarget.objectYawInFieldSpace());
+                double yawDifference = Math.abs(target.getPhotonVisionData().getYaw() - lastCoralTarget.getPhotonVisionData().getYaw());
 
                 if(yawDifference < lowestYawDifference) {
                     lowestYawDifference = yawDifference;
@@ -112,7 +112,7 @@ public class DriverAssistedAutoIntake extends Command {
         TrackedObject closetCoral = coralTargets.get(0);
 
         for(var target : coralTargets) {
-            if(target.objectPitchInCameraSpace() < closetCoral.objectPitchInCameraSpace()) {
+            if(target.getPhotonVisionData().getPitch() < closetCoral.getPhotonVisionData().getPitch()) {
                 closetCoral = target;
             } 
         }
