@@ -5,6 +5,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -29,6 +30,9 @@ public class Localization {
     private final List<TrackedObject> trackedObjects = new ArrayList<>();
 
     private final StructArrayPublisher<Pose2d> trackedObjectPublisher;
+
+    private Pose2d predictedPose;
+    private Pose2d currentPose;
 
     public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
@@ -66,9 +70,6 @@ public class Localization {
             camera.addResultsToDrivetrain(drivetrain, field);
         }
 
-        var currentPose = drivetrain.getState().Pose;
-        field.setRobotPose(currentPose);
-
         /* Update all object tracking cameras */
         for (ObjectTrackingCamera camera : objectTrackingCameras) {
             camera.addResultsToObjectList(drivetrain, trackedObjects);
@@ -86,14 +87,34 @@ public class Localization {
                 .toArray()
         );
 
-        if (!trackedObjects.isEmpty()) {
+        /* Update and publish the current pose estimate */
+        var swerveStateCapture = drivetrain.getState();
+
+        currentPose = swerveStateCapture.Pose;
+        field.setRobotPose(currentPose);
+
+        if (!trackedObjects.isEmpty()) {//TODO find a better way to visualize and remove this
             var object = trackedObjects.get(0);
 
-            field.getObject(object.getCameraName() + " target").setPose(object.getFieldPosition());//TODO find a better way to visualize
+            field.getObject(object.getCameraName() + " target").setPose(object.getFieldPosition());
 
-            SmartDashboard.putString("object 0", object.getTrackingId() + " " + object.getCameraName() + " " + object.getFieldPosition());//TODO find a better way to show
+            SmartDashboard.putString("object 0", object.getTrackingId() + " " + object.getCameraName() + " " + object.getFieldPosition());
         }
+
+        /* Predict where the robot will be */
+        ChassisSpeeds velocity = swerveStateCapture.Speeds;
+        predictedPose = currentPose.exp(velocity.toTwist2d(kPoseLookaheadTime));
     } 
+
+    /** Gets the current pose */
+    public Pose2d getCurrentPose() {
+        return currentPose;
+    }
+
+    /** Gets the pose that the robot will likely be at in the near future based on the current velocity */
+    public Pose2d getPredictedPose() {
+        return predictedPose;
+    }
 
     /** Finds the nearest object of the given type. If no objects of that type are detected, this returns an empty optional. */
     public Optional<TrackedObject> getNearestObjectOfType(ObjectType objectType) {

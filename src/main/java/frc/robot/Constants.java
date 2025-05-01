@@ -129,6 +129,8 @@ public final class Constants {
         /* Object tracking constants */
         public static final double kObjectExpireTime = 0.5;//Seconds
         public static final double kSameObjectDistance = Units.inchesToMeters(6);
+
+        public static final double kPoseLookaheadTime = 0.15;//Seconds
         
         public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X

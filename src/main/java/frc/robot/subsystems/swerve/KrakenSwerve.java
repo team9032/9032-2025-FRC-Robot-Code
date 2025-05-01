@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -24,7 +25,7 @@ import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
-    public final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
+    private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
     
     private final SwerveSysId sysId;
 
@@ -38,12 +39,14 @@ public class KrakenSwerve extends SubsystemBase {
             kDrivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
         );
 
+        localization = new Localization(drivetrain);
+
         try {
             var pathplannerConfig = RobotConfig.fromGUISettings();
 
             /* Configure PathPlanner */
             AutoBuilder.configure(
-                () -> drivetrain.getState().Pose, 
+                () -> localization.getCurrentPose(), 
                 drivetrain::resetPose, 
                 () -> drivetrain.getState().Speeds, 
                 this::drivePathPlanner, 
@@ -60,8 +63,6 @@ public class KrakenSwerve extends SubsystemBase {
             ElasticUtil.sendError("Failed to load PathPlanner config", "Auto will commit die!");
         }
         
-        localization = new Localization(drivetrain);
-
         /* Allow drive motor constants to be updated from the dashboard */
         SmartDashboard.putNumber("Drive kP", 0.0);
         SmartDashboard.putNumber("Drive kI", 0.0);
@@ -82,6 +83,10 @@ public class KrakenSwerve extends SubsystemBase {
     /** Sets the current robot's rotation as the operator perspective */
     public Command resetPerspective() {
         return runOnce(() -> drivetrain.setOperatorPerspectiveForward(drivetrain.getState().Pose.getRotation()));
+    }
+
+    public void setControl(SwerveRequest request) {
+        drivetrain.setControl(request);
     }
 
     public Command runSysIdDynamic(Direction direction) {

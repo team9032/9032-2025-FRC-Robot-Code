@@ -40,7 +40,7 @@ public class DriverAssistedAutoIntake extends Command {
 
     @Override
     public void initialize() {
-        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
 
         /* Prevent rotating on init if no target is seen */
         rotationController.setSetpoint(currentYaw);
@@ -48,7 +48,7 @@ public class DriverAssistedAutoIntake extends Command {
 
     @Override
     public void execute() {
-        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
 
         var coralTarget = getCoralTarget();
 
@@ -68,7 +68,7 @@ public class DriverAssistedAutoIntake extends Command {
             rotationController.calculate(currentYaw)
         );
 
-        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
+        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
     private TrackedObject getCoralTarget() {

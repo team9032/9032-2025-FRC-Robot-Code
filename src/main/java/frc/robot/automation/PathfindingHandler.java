@@ -52,7 +52,7 @@ public class PathfindingHandler {
         var optionalCoral = swerve.getLocalization().getNearestObjectOfType(ObjectType.CORAL);
 
         if (optionalCoral.isPresent()) {
-            var robotTranslation = swerve.drivetrain.getState().Pose.getTranslation();
+            var robotTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
             var coralTranslation = optionalCoral.get().getFieldPosition().getTranslation();
 
             /* Find the angle that points the robot towards the coral */

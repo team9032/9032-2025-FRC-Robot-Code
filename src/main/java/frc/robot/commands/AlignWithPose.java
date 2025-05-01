@@ -40,7 +40,7 @@ public class AlignWithPose extends Command {
 
     @Override
     public void initialize() {
-        Pose2d currentPose = swerve.drivetrain.getState().Pose;
+        Pose2d currentPose = swerve.getLocalization().getCurrentPose();
 
         alignmentXPID.reset(currentPose.getX());
         alignmentYPID.reset(currentPose.getY());
@@ -53,13 +53,13 @@ public class AlignWithPose extends Command {
 
     @Override
     public void execute() {
-        Pose2d currentPose = swerve.drivetrain.getState().Pose;
+        Pose2d currentPose = swerve.getLocalization().getCurrentPose();
         
         double x = alignmentXPID.calculate(currentPose.getX()) + alignmentXPID.getSetpoint().velocity;
         double y = alignmentYPID.calculate(currentPose.getY()) + alignmentYPID.getSetpoint().velocity;
         double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
 
-        swerve.drivetrain.setControl(
+        swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
                 .withVelocityX(x)
                 .withVelocityY(y)
@@ -69,7 +69,7 @@ public class AlignWithPose extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerve.drivetrain.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 
     @Override

@@ -44,6 +44,14 @@ public class TrackedObject {
         objectType = ObjectType.fromClassId(photonVisionData.getDetectedObjectClassID());
     }
 
+    public boolean isCoral() {
+        return objectType.equals(ObjectType.CORAL);
+    }
+
+    public boolean isAlgae() {
+        return objectType.equals(ObjectType.ALGAE);
+    }
+
     public ObjectType getObjectType() {
         return objectType;
     }

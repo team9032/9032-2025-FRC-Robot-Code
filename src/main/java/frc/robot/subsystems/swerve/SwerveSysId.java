@@ -41,7 +41,7 @@ public class SwerveSysId {
                 state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
             ),
             new SysIdRoutine.Mechanism(
-                output -> swerve.drivetrain.setControl(translationCharacterization.withVolts(output)),
+                output -> swerve.setControl(translationCharacterization.withVolts(output)),
                 null,
                 swerve
             )
@@ -56,7 +56,7 @@ public class SwerveSysId {
                 state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
             ),
             new SysIdRoutine.Mechanism(
-                volts -> swerve.drivetrain.setControl(steerCharacterization.withVolts(volts)),
+                volts -> swerve.setControl(steerCharacterization.withVolts(volts)),
                 null,
                 swerve
             )
@@ -75,7 +75,7 @@ public class SwerveSysId {
             new SysIdRoutine.Mechanism(
                 output -> {
                     /* Output is actually radians per second, but SysId only supports "volts" */
-                    swerve.drivetrain.setControl(rotationCharacterization.withRotationalRate(output.in(Volts)));
+                    swerve.setControl(rotationCharacterization.withRotationalRate(output.in(Volts)));
                     /* Log the requested output for SysId */
                     SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
                 },
