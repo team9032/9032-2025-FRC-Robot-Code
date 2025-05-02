@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
+import frc.robot.automation.PathfindingHandler;
+import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -170,6 +172,24 @@ public class Autos {
             Commands.waitSeconds(0.25),//TODO d
             endEffector.placeCoral().asProxy(),
             Commands.runOnce(() -> shouldMoveElevator = false)
+        );
+    }
+
+    public static Command dynamicCoralAuto(KrakenSwerve swerve, Compositions compositions) {
+        return Commands.sequence(
+            /* Score preload and move to source area */
+            compositions.alignToReefAndScoreInAuto(ReefPath.TO_4L),
+            PathfindingHandler.pathToLSource(),
+            /* Get coral 2 */
+            PathfindingHandler.pathToNearestCoral(swerve)
+                .alongWith(compositions.intakeCoralToEndEffector(true)),
+            /* Score coral 2 */
+            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2L),
+            /* Get coral 3 */
+            PathfindingHandler.pathToNearestCoral(swerve)
+                .alongWith(compositions.intakeCoralToEndEffector(true)),
+            /* Score coral 3 */
+            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2R)
         );
     }
 }

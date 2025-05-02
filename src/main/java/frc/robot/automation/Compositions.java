@@ -5,6 +5,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -19,8 +20,8 @@ public class Compositions {
     private final ButtonBoardHandler buttonBoardHandler;
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
-    public final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
-    public final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
+    private final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
+    private final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
 
     public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
@@ -54,12 +55,23 @@ public class Compositions {
 
     public Command alignToReefAndScore() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
             buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
             Commands.waitSeconds(0.25)//TODO fix?
                 .onlyIf(buttonBoardHandler::l4Selected),
             buttonBoardHandler.scoreCoral(endEffector).asProxy()
+        );
+    }
+
+    public Command alignToReefAndScoreInAuto(ReefPath reefPath) {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoring in auto"),
+            PathfindingHandler.pathToReefSide(() -> reefPath),//This will trigger the elevator and arm
+            Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
+            Commands.waitSeconds(0.25)//TODO fix?
+                .onlyIf(buttonBoardHandler::l4Selected),
+            endEffector.placeCoral().asProxy()
         );
     }
 
