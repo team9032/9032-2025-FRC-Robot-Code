@@ -2,23 +2,30 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.PathplannerConfig.*;
 
-public class AlignWithPose extends Command {
+import java.util.function.Supplier;
+
+public class DriveToMovingPose extends Command {
     private final ProfiledPIDController alignmentXPID;
     private final ProfiledPIDController alignmentYPID;
     private final ProfiledPIDController alignmentRotationPID;
 
     private final KrakenSwerve swerve;
 
-    private final Pose2d targetPose;
+    private final Supplier<Pose2d> targetPoseSup;
 
-    public AlignWithPose(KrakenSwerve swerve, Pose2d targetPose) {
+    private final StructPublisher<Pose2d> setpointPublisher;
+
+    public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
         TrapezoidProfile.Constraints kXAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
         TrapezoidProfile.Constraints kYAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
         TrapezoidProfile.Constraints kRotAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxAngularVelocityRadPerSec(), kDynamicPathConstraints.maxAngularAccelerationRadPerSecSq());
@@ -35,7 +42,11 @@ public class AlignWithPose extends Command {
 
         this.swerve = swerve;
 
-        this.targetPose = targetPose;      
+        this.targetPoseSup = targetPoseSup;      
+
+        setpointPublisher = NetworkTableInstance.getDefault()
+            .getStructTopic("Drive to moving pose setpoint", Pose2d.struct)
+            .publish();
     }
 
     @Override
@@ -46,15 +57,15 @@ public class AlignWithPose extends Command {
         alignmentYPID.reset(currentPose.getY());
         alignmentRotationPID.reset(currentPose.getRotation().getRadians());
 
-        alignmentXPID.setGoal(targetPose.getX()); 
-        alignmentYPID.setGoal(targetPose.getY()); 
-        alignmentRotationPID.setGoal(targetPose.getRotation().getRadians());
+        updateControllerGoals();
     }
 
     @Override
     public void execute() {
+        updateControllerGoals();
+
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
-        
+
         double x = alignmentXPID.calculate(currentPose.getX()) + alignmentXPID.getSetpoint().velocity;
         double y = alignmentYPID.calculate(currentPose.getY()) + alignmentYPID.getSetpoint().velocity;
         double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
@@ -65,6 +76,17 @@ public class AlignWithPose extends Command {
                 .withVelocityY(y)
                 .withRotationalRate(rot)
         );
+
+        /* Publish the motion profile's setpoint for tuning and debugging purposes */
+        setpointPublisher.set(
+            new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position))
+        );
+    }
+
+    private void updateControllerGoals() {
+        alignmentXPID.setGoal(targetPoseSup.get().getX()); 
+        alignmentYPID.setGoal(targetPoseSup.get().getY()); 
+        alignmentRotationPID.setGoal(targetPoseSup.get().getRotation().getRadians());
     }
 
     @Override

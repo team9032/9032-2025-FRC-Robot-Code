@@ -1,17 +1,15 @@
 package frc.robot.automation;
 
 import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
-
-import java.util.Set;
+import static frc.robot.Constants.ObjectAimingConstants.kIntakeOffset;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.DriveToMovingPose;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -48,7 +46,7 @@ public class PathfindingHandler {
     //     }
     // }
 
-    private static Command pathToNearestCoralUndefered(KrakenSwerve swerve) {
+    private static Pose2d getCoralAlignmentPose(KrakenSwerve swerve) {
         var optionalCoral = swerve.getLocalization().getNearestObjectOfType(ObjectType.CORAL);
 
         if (optionalCoral.isPresent()) {
@@ -59,18 +57,19 @@ public class PathfindingHandler {
             var rotationSetpoint = robotTranslation.minus(coralTranslation).getAngle();
 
             var targetPose = new Pose2d(coralTranslation, rotationSetpoint)
-                /* Apply the intake's offset */
-                .transformBy(new Transform2d(2, 0, Rotation2d.kZero));//TODO have constants for intake offset
+                /* Apply the intake's offset  */
+                .transformBy(kIntakeOffset);
 
-            return AutoBuilder.pathfindToPose(targetPose, kDynamicPathConstraints);
+            return targetPose;
         }
 
+        /* If no coral is seen, maintain the current pose */
         else    
-            return Commands.none();
+            return swerve.getLocalization().getCurrentPose();
     }
 
     public static Command pathToNearestCoral(KrakenSwerve swerve) {
-        return Commands.defer(() -> pathToNearestCoralUndefered(swerve), Set.of(swerve));
+        return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
     }
 
     public static Command pathToLSource() {

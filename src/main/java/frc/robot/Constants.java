@@ -29,6 +29,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -114,6 +115,9 @@ public final class Constants {
         /* Class Ids */
         public static final int kCoralId = 1;
         public static final int kAlgaeId = 0;
+
+        /* Intake offset */
+        public static final Transform2d kIntakeOffset = new Transform2d(2, 0, Rotation2d.kZero);//TODO find
     }
 
     public static final class LocalizationConstants {
