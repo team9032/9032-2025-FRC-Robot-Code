@@ -12,6 +12,7 @@ import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.playingwithfusion.TimeOfFlight.Status;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import static frc.robot.Constants.IntakeConstants.*;
@@ -103,6 +104,11 @@ public class Intake extends SubsystemBase {
 
     public Command resetLastObstacleDistance() {
         return Commands.runOnce(() -> lastObstacleSensorDistance = kDefaultObstacleDistance);
+    }
+
+    public Command coast() {
+        return runOnce(() -> intakeArmMotor.setControl(new CoastOut()))
+            .ignoringDisable(true);
     }
 
     @Override

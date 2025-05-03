@@ -158,6 +158,9 @@ public class RobotContainer {
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
 
+        /* Add coast button */
+        SmartDashboard.putData(elevatorArmIntakeHandler.coastAll().withName("Coast All"));
+
         /* Switch LEDs to disabled or low battery */
         if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
             led.setState(State.LOW_BATTERY); 

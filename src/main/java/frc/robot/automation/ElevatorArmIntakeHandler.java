@@ -201,4 +201,13 @@ public class ElevatorArmIntakeHandler {
     public boolean readyForCoralScoring() {
         return buttonBoardHandler.readyToScoreCoral(arm, elevator);
     }
+
+    public Command coastAll() {
+        return Commands.sequence(
+            arm.coast(),
+            elevator.coast(),
+            intake.coast()  
+        )
+        .ignoringDisable(true);
+    }
 }

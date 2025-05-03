@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -131,6 +132,11 @@ public class Elevator extends SubsystemBase {
 
     public boolean overHighAlgae() {
         return elevatorPosSignal.getValueAsDouble() > kElevatorOverHighAlgae;
+    }
+
+    public Command coast() {
+        return runOnce(() -> elevatorMotor.setControl(new CoastOut()))
+            .ignoringDisable(true);
     }
 
     @Override

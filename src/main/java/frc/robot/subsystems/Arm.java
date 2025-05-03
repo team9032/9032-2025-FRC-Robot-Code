@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -136,6 +137,11 @@ public class Arm extends SubsystemBase {
 
     public Command moveToAlgaeGroundPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeGroundPos)));
+    }
+
+    public Command coast() {
+        return runOnce(() -> armMotor.setControl(new CoastOut()))
+            .ignoringDisable(true);
     }
 
     @Override
