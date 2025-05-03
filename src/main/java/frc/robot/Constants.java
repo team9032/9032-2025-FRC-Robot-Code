@@ -31,6 +31,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -64,6 +65,8 @@ public final class Constants {
             .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+        public static final double kCloseDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
     public static class PathplannerConfig {
@@ -177,6 +180,9 @@ public final class Constants {
                 true//TODO find offsets for this camera
             )
         };
+
+        /* Field constants */
+        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
     }
 
     public static class ElevatorConfigs {
