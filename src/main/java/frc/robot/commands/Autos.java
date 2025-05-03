@@ -12,8 +12,6 @@ import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.PathfindingHandler;
 import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
@@ -23,7 +21,7 @@ public class Autos {
 
     private static boolean shouldMoveElevator = false;
 
-    public static Command fourCoralLeft(Intake intake, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions, boolean mirrored) {
+    public static Command fourCoralLeft(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Compositions compositions, boolean mirrored) {
         PathPlannerPath score1;
         PathPlannerPath get2;
         PathPlannerPath score2;
@@ -70,7 +68,7 @@ public class Autos {
         );
     }
 
-    public static Command oneCoralTwoAlgaeCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions) {
+    public static Command oneCoralTwoAlgaeCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Compositions compositions) {
         PathPlannerPath scoreCoral; 
         PathPlannerPath pullAway1; 
         PathPlannerPath scoreAlgae1; 
@@ -175,11 +173,12 @@ public class Autos {
         );
     }
 
-    public static Command dynamicCoralAuto(KrakenSwerve swerve, Compositions compositions) {
+    public static Command dynamicCoralAuto(KrakenSwerve swerve, Compositions compositions, ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
         return Commands.sequence(
-            /* Score preload and move to source area */
+            /* Score preload, and move to source area while preparing for intaking */
             compositions.alignToReefAndScoreInAuto(ReefPath.TO_4L),
-            PathfindingHandler.pathToLSource(),
+            PathfindingHandler.pathToLSource()
+                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
             /* Get coral 2 */
             PathfindingHandler.pathToNearestCoral(swerve)
                 .alongWith(compositions.intakeCoralToEndEffector(true)),
@@ -189,7 +188,9 @@ public class Autos {
             PathfindingHandler.pathToNearestCoral(swerve)
                 .alongWith(compositions.intakeCoralToEndEffector(true)),
             /* Score coral 3 */
-            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2R)
+            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2R),
+            /* Stow */
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
     }
 }

@@ -69,8 +69,7 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Aligning to reef and scoring in auto"),
             PathfindingHandler.pathToReefSide(() -> reefPath),//This will trigger the elevator and arm
             Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
-            Commands.waitSeconds(0.25)//TODO fix?
-                .onlyIf(buttonBoardHandler::l4Selected),
+            Commands.waitSeconds(0.25),//TODO fix?
             endEffector.placeCoral().asProxy()
         );
     }

@@ -147,10 +147,10 @@ public class RobotContainer {
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, false));
-        autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, true));
-        autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions));
-        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(krakenSwerve, compositions));
+        autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, false));
+        autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, true));
+        autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions));
+        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(krakenSwerve, compositions, elevatorArmIntakeHandler));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
