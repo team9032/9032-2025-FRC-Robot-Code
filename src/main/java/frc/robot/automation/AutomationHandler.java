@@ -27,7 +27,7 @@ public class AutomationHandler {
         return new SelectCommand<GamePieceState>(
             Map.ofEntries(
                 Map.entry(GamePieceState.GAMEPIECES_NOT_READY, compositions.driveToSource()),
-                Map.entry(GamePieceState.HAS_CORAL, compositions.alignToReefAndScore().andThen(compositions.driveToSource())),
+                Map.entry(GamePieceState.HAS_CORAL, compositions.alignToReefAndScoreFromButtonBoard().andThen(compositions.driveToSource())),
                 Map.entry(GamePieceState.HAS_ALGAE, Commands.none())
             ),
             this::getGamePieceState

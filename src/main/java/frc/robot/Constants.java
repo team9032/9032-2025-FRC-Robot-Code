@@ -182,7 +182,7 @@ public final class Constants {
         };
 
         /* Field constants */
-        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
+        public static final Translation2d  kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
     }
 
     public static class ElevatorConfigs {
@@ -229,10 +229,10 @@ public final class Constants {
 
         public static final double kElevatorTolerance = 0.05;
 
-        public static final double kElevatorTrough = 2.9;
-        public static final double kElevatorL1 = 1;
-        public static final double kElevatorL2 = 3.2;
-        public static final double kElevatorL3 = 8.70;
+        public static final double kElevatorL1 = 2.9;
+        public static final double kElevatorL2 = 1;
+        public static final double kElevatorL3 = 3.2;
+        public static final double kElevatorL4 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorIndexerPos = 1.6;
@@ -333,10 +333,10 @@ public final class Constants {
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmIndexerPos = 0.75;
-        public static final double kArmTroughPos = 0.85;
-        public static final double kArmLevel1Pos = kArmStowPos; 
-        public static final double kArmLevel2Pos = kArmStowPos;
-        public static final double kArmLevel3Pos = 0.045;
+        public static final double kArmL1Pos = 0.85;
+        public static final double kArmL2Pos = kArmStowPos; 
+        public static final double kArmL3Pos = kArmStowPos;
+        public static final double kArmL4Pos = 0.045;
         public static final double kArmHighAlgaePos = 0.06;
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;

@@ -14,7 +14,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefPath;
+import frc.robot.automation.ButtonBoardHandler.SourcePath;
 import frc.robot.commands.DriveToMovingPose;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -34,23 +36,6 @@ public class PathfindingHandler {
             return Commands.none();
         }
     }
-
-    // private static Command pathToReef(KrakenSwerve swerve, String pathName) {
-    //     try {
-    //         PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
-
-    //         if (AutoBuilder.shouldFlip())
-    //             pathToFollow = pathToFollow.flipPath();
-
-    //         Translation2d endTrans = pathToFollow.getWaypoints().get(1).anchor();
-
-    //         return new AlignWithPose(swerve, new Pose2d(endTrans, pathToFollow.getGoalEndState().rotation()));
-    //     } catch (Exception e) {
-    //         ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
-
-    //         return Commands.none();
-    //     }
-    // }
 
     private static Pose2d getCoralAlignmentPose(KrakenSwerve swerve) {
         var optionalCoral = swerve.getLocalization().getNearestObjectOfType(ObjectType.CORAL);
@@ -78,20 +63,26 @@ public class PathfindingHandler {
         return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
     }
 
-    public static Command pathToLSource() {
-        return pathTo("LSource");
+    public static Command pathToSource(Supplier<SourcePath> sourcePathSup) {
+        return new SelectCommand<SourcePath>(
+            Map.ofEntries(
+                Map.entry(SourcePath.NONE, Commands.none()),
+                Map.entry(SourcePath.TO_LSOURCE, pathTo("LSource")),
+                Map.entry(SourcePath.TO_RSOURCE, pathTo("RSource"))
+            ),
+            sourcePathSup
+        );
     }
 
-    public static Command pathToBarge() {
-        return pathTo("Barge");
-    }
-
-    public static Command pathToRSource() {
-        return pathTo("RSource");
-    }
-
-    public static Command pathToProcessor() {
-        return pathTo("Processor");
+    public static Command followAlgaeScorePath(Supplier<AlgaeScorePath> algaeScorePathSup) {
+        return new SelectCommand<AlgaeScorePath>(
+            Map.ofEntries(
+                Map.entry(AlgaeScorePath.NONE, Commands.none()),
+                Map.entry(AlgaeScorePath.TO_NET, pathTo("Barge")),
+                Map.entry(AlgaeScorePath.TO_PROCESSOR, pathTo("Processor"))
+            ),
+            algaeScorePathSup
+        );
     }
 
     public static Command pathToReefSide(Supplier<ReefPath> reefPathSup) {

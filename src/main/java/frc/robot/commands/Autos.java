@@ -10,7 +10,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.PathfindingHandler;
+import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.automation.ButtonBoardHandler.ReefPath;
+import frc.robot.automation.ButtonBoardHandler.SourcePath;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -104,12 +107,12 @@ public class Autos {
             Commands.sequence(
                 AutoBuilder.followPath(pullAwayPath)
                     .alongWith(elevatorArmIntakeHandler.moveToStowPositions()),
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(false),
+                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> true),
                 AutoBuilder.followPath(getAndScoreAlgaePath)
                     .alongWith(
                         endEffector.pickupAlgae().asProxy(),
                         Commands.waitUntil(moveElevatorTrigger)
-                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoringAuto())
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET))
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),
@@ -124,13 +127,13 @@ public class Autos {
                 AutoBuilder.followPath(getPath)
                     .alongWith(
                         elevatorArmIntakeHandler.moveToStowPositions()
-                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(highAlgae)),
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> !highAlgae)),
                         endEffector.pickupAlgae().asProxy()
                     ),
                 AutoBuilder.followPath(scorePath)
                     .alongWith(
                         Commands.waitUntil(moveElevatorTrigger),
-                        elevatorArmIntakeHandler.prepareForAlgaeScoringAuto()
+                        elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET)
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),
@@ -157,7 +160,7 @@ public class Autos {
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
                 Commands.waitSeconds(0.25),//TODO d
-                endEffector.placeCoral().asProxy(),
+                endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
                 Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
@@ -168,27 +171,25 @@ public class Autos {
                 .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator))
                     .deadlineFor(endEffector.holdCoral().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
-            endEffector.placeCoral().asProxy(),
+            endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
             Commands.runOnce(() -> shouldMoveElevator = false)
         );
     }
 
-    public static Command dynamicCoralAuto(KrakenSwerve swerve, Compositions compositions, ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
+    public static Command dynamicCoralAuto(Compositions compositions, ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
         return Commands.sequence(
             /* Score preload, and move to source area while preparing for intaking */
-            compositions.alignToReefAndScoreInAuto(ReefPath.TO_4L),
-            PathfindingHandler.pathToLSource()
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_4L, ReefLevel.L4),
+            PathfindingHandler.pathToSource(() -> SourcePath.TO_LSOURCE)
                 .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
             /* Get coral 2 */
-            PathfindingHandler.pathToNearestCoral(swerve)
-                .alongWith(compositions.intakeCoralToEndEffector(true)),
+            compositions.intakeNearestCoral(true),
             /* Score coral 2 */
-            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2L),
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2L, ReefLevel.L4),
             /* Get coral 3 */
-            PathfindingHandler.pathToNearestCoral(swerve)
-                .alongWith(compositions.intakeCoralToEndEffector(true)),
+            compositions.intakeNearestCoral(true),
             /* Score coral 3 */
-            compositions.alignToReefAndScoreInAuto(ReefPath.TO_2R),
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2R, ReefLevel.L4),
             /* Stow */
             elevatorArmIntakeHandler.moveToStowPositions()
         );

@@ -9,7 +9,6 @@ import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.GroundCoralTracking;
-import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
@@ -75,7 +74,7 @@ public class RobotContainer {
 
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
-    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
+    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
     private final Command coralCyclingCommand;
@@ -125,7 +124,7 @@ public class RobotContainer {
             .onTrue(algaeCyclingCommand);
 
         buttonBoard.getAutoIntakeTrigger().onTrue(
-            PathfindingHandler.pathToNearestCoral(krakenSwerve)
+            compositions.intakeNearestCoral(true)
             .until(this::driverWantsOverride)
         );     
 
@@ -150,7 +149,7 @@ public class RobotContainer {
         autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, false));
         autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, true));
         autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions));
-        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(krakenSwerve, compositions, elevatorArmIntakeHandler));
+        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -265,12 +264,12 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(
-            elevatorArmIntakeHandler.prepareForCoralScoring()
+            elevatorArmIntakeHandler.prepareForCoralScoring(buttonBoard::getSelectedReefLevel)
         );
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                buttonBoard.scoreCoral(endEffector).asProxy(),
+                endEffector.scoreCoral(buttonBoard::getSelectedReefLevel).asProxy(),
                 elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );
@@ -295,7 +294,7 @@ public class RobotContainer {
 
         buttonBoard.manual10.onTrue(
             Commands.sequence(
-                elevatorArmIntakeHandler.prepareForAlgaeScoring(),
+                elevatorArmIntakeHandler.prepareForAlgaeScoring(buttonBoard::getSelectedAlgaeScorePath),
                 endEffector.pickupAlgae()  
             )
         );
