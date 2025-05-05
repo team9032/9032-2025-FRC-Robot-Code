@@ -25,8 +25,6 @@ import com.pathplanner.lib.path.PathConstraints;
 //TODO import evilharshel.pandez.EvilTiggerConstantz.*;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -468,13 +466,10 @@ public final class Constants {
             .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
     }
 
-    public static final class AutomationConstants {
+    public static final class ButtonBoardConstants {
         public static final int kButtonBoardPort1 = 3;
         public static final int kButtonBoardPort2 = 4;
         public static final int kButtonBoardPort3 = 5;
-
-        public static final Rectangle2d kIntakeZoneRectangle = new Rectangle2d(
-            new Pose2d(2.04, 6.04, Rotation2d.fromDegrees(-55.0)), 0.8, 4.0);
     }
 
     public static final class LEDConstants {

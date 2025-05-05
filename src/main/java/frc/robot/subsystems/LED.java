@@ -30,6 +30,8 @@ public class LED extends SubsystemBase {
         }
     }
 
+    private boolean hasError = false;
+
     private State currentState = State.BOOTING;//Default to booting - gets changed to disable when booted
 
     private final AddressableLED ledStrip;
@@ -62,8 +64,16 @@ public class LED extends SubsystemBase {
         ledStrip.setData(ledBuffer);
     }
 
+    public void displayError() {
+        hasError = true;
+    }
+
     @Override
     public void periodic() {
-        applyPattern(currentState.statePattern);
+        if (hasError)
+            applyPattern(State.ERROR.statePattern);
+
+        else
+            applyPattern(currentState.statePattern);
     }
 }

@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LED.State;
 
-import static frc.robot.Constants.AutomationConstants.*;
+import static frc.robot.Constants.ButtonBoardConstants.*;
 
 public class ButtonBoardHandler {
     private final CommandXboxController buttonBoardController1 = new CommandXboxController(kButtonBoardPort1);

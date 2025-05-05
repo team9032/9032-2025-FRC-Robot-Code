@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -29,6 +31,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     /* Starts a webserver to allow Elastic to download layouts saved on the robot */
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+
+    /* Disable CTRE auto logging */
+    SignalLogger.enableAutoLogging(false);
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -63,7 +69,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }

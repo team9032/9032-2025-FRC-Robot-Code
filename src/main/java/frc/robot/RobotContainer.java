@@ -323,6 +323,11 @@ public class RobotContainer {
         buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
         
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+
+        /* Display CAN errors on the LEDs */
+        var currentCANStatus = RobotController.getCANStatus();
+        if (currentCANStatus.receiveErrorCount > 0 || currentCANStatus.transmitErrorCount > 0)
+            led.displayError();
     }
 
     /** Bind robot mode triggers here */
