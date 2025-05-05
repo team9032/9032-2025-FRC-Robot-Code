@@ -102,14 +102,9 @@ public final class Constants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
         public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
-        public static final int kCycleAmtSinceTargetSeenCutoff = 10;
-        public static final double kPitchDifferenceCutoff = 2.0;
-
+        /* For intake driver assist */
         public static final double kRotationSetpoint = 13.3;
         public static final double kMaxDrivingSpeed = kMaxSpeed;//Meters per second
-
-        public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
-        public static final double kSlowDrivingSpeed = 0.5;
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -182,7 +177,7 @@ public final class Constants {
         };
 
         /* Field constants */
-        public static final Translation2d  kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
+        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
     }
 
     public static class ElevatorConfigs {

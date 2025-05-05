@@ -107,8 +107,7 @@ public class RobotContainer {
             .andThen(
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
                     .onlyIf(endEffector::hasCoral)
-            )
-            .onlyIf(buttonBoard::hasQueues);
+        );
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride)

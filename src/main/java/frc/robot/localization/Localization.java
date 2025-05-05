@@ -4,6 +4,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -34,23 +35,27 @@ public class Localization {
     private Pose2d predictedPose;
     private Pose2d currentPose;
 
+    private AprilTagFieldLayout aprilTagLayout;
+
     public Localization(SwerveDrivetrain<?, ?, ?> drivetrain) {  
         this.drivetrain = drivetrain;
 
         field = new Field2d();
 
         try {
-            AprilTagFieldLayout layout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
-
-            for (var constants : kCameraConstants) {
-                if (constants.isObjectTracking())
-                    objectTrackingCameras.add(new ObjectTrackingCamera(constants));
-
-                else
-                    localizationCameras.add(new LocalizationCamera(constants, layout)); 
-            }
+            aprilTagLayout = new AprilTagFieldLayout(Filesystem.getDeployDirectory() + "/" + kAprilTagFieldLayoutName);
         } catch(Exception e) {
-            ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will commit die!");
+            aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+            ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will use the default layout");
+        }
+
+        for (var constants : kCameraConstants) {
+            if (constants.isObjectTracking())
+                objectTrackingCameras.add(new ObjectTrackingCamera(constants));
+
+            else
+                localizationCameras.add(new LocalizationCamera(constants, aprilTagLayout)); 
         }
 
         SmartDashboard.putData("Localization Field", field);
@@ -78,6 +83,9 @@ public class Localization {
         /* Remove any old objects */
         double currentTime = Utils.getCurrentTimeSeconds();
         trackedObjects.removeIf((object) -> currentTime - object.getTimestamp() > kObjectExpireTime);
+
+        /* Remove objects that are off the field */
+        trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
 
         /* Publish each object's pose */
         trackedObjectPublisher.set((Pose2d[]) 
@@ -158,6 +166,12 @@ public class Localization {
             .stream()
             .filter((object) -> object.getCameraName().equals(cameraName) && object.getObjectType().equals(objectType))
             .toList();
+    }
+
+    public boolean isPoseOnField(Pose2d pose) {
+        /* Poses use a global blue origin with (0, 0) at the lower left */
+        return 0 < pose.getY() && pose.getY() < aprilTagLayout.getFieldWidth()
+            && 0 < pose.getX() && pose.getX() < aprilTagLayout.getFieldLength();
     }
 }
    

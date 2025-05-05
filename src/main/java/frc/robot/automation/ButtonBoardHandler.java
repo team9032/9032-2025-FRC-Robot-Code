@@ -21,7 +21,7 @@ public class ButtonBoardHandler {
     private final NetworkTable buttonTable = inst.getTable("ButtonTable");
 
     private final BooleanPublisher toLSourcePub = buttonTable.getBooleanTopic("toLSource").publish();
-    private final BooleanPublisher toBargePub = buttonTable.getBooleanTopic("toBarge").publish();
+    private final BooleanPublisher toNetPub = buttonTable.getBooleanTopic("toBarge").publish();
     private final BooleanPublisher toRSourcePub = buttonTable.getBooleanTopic("toRSource").publish();
     private final BooleanPublisher toProcessorPub = buttonTable.getBooleanTopic("toProcessor").publish();
     private final BooleanPublisher to1LPub = buttonTable.getBooleanTopic("to1L").publish();
@@ -37,10 +37,10 @@ public class ButtonBoardHandler {
     private final BooleanPublisher to6LPub = buttonTable.getBooleanTopic("to6L").publish();
     private final BooleanPublisher to6RPub = buttonTable.getBooleanTopic("to6R").publish();
 
-    private final BooleanPublisher toTroughPub = buttonTable.getBooleanTopic("toTrough").publish();
-    private final BooleanPublisher toLevel1Pub = buttonTable.getBooleanTopic("toLevel1").publish();
-    private final BooleanPublisher toLevel2Pub = buttonTable.getBooleanTopic("toLevel2").publish();
-    private final BooleanPublisher toLevel3Pub = buttonTable.getBooleanTopic("toLevel3").publish();
+    private final BooleanPublisher toL1Pub = buttonTable.getBooleanTopic("toTrough").publish();
+    private final BooleanPublisher toL2Pub = buttonTable.getBooleanTopic("toLevel1").publish();
+    private final BooleanPublisher toL3Pub = buttonTable.getBooleanTopic("toLevel2").publish();
+    private final BooleanPublisher toL4Pub = buttonTable.getBooleanTopic("toLevel3").publish();
     private final BooleanPublisher algaeModePub = buttonTable.getBooleanTopic("algaeToggle").publish();
     private final BooleanPublisher coralModePub = buttonTable.getBooleanTopic("automaticMode").publish();
 
@@ -205,7 +205,7 @@ public class ButtonBoardHandler {
 
     public void update(boolean coralModeEnabled, boolean algaeModeEnabled) {
         toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
-        toBargePub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_NET));
+        toNetPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_NET));
         toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
         toProcessorPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_PROCESSOR));
 
@@ -222,10 +222,10 @@ public class ButtonBoardHandler {
         to6LPub.set(reefPathTarget.equals(ReefPath.TO_6L));
         to6RPub.set(reefPathTarget.equals(ReefPath.TO_6R));
 
-        toTroughPub.set(reefLevelTarget.equals(ReefLevel.L1));
-        toLevel1Pub.set(reefLevelTarget.equals(ReefLevel.L2));
-        toLevel2Pub.set(reefLevelTarget.equals(ReefLevel.L3));
-        toLevel3Pub.set(reefLevelTarget.equals(ReefLevel.L4));
+        toL1Pub.set(reefLevelTarget.equals(ReefLevel.L1));
+        toL2Pub.set(reefLevelTarget.equals(ReefLevel.L2));
+        toL3Pub.set(reefLevelTarget.equals(ReefLevel.L3));
+        toL4Pub.set(reefLevelTarget.equals(ReefLevel.L4));
 
         algaeModePub.set(algaeModeEnabled);
         coralModePub.set(coralModeEnabled);
@@ -257,18 +257,6 @@ public class ButtonBoardHandler {
             led.setState(State.ENABLED);
                 break;
         }
-    }
-
-    public boolean hasQueues() {
-        return reefLevelTarget != ReefLevel.NONE && reefPathTarget != ReefPath.NONE && sourcePathTarget != SourcePath.NONE;
-    }
-
-    public boolean l4Selected() {
-        return reefLevelTarget.equals(ReefLevel.L4);
-    }
-
-    public boolean l1NotSelected() {
-        return !reefLevelTarget.equals(ReefLevel.L1);
     }
 
     public boolean backReefSegmentsSelected() {
