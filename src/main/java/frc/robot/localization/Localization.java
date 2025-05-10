@@ -34,6 +34,7 @@ public class Localization {
 
     private Pose2d predictedPose;
     private Pose2d currentPose;
+    private ChassisSpeeds currentVelocity;
 
     private AprilTagFieldLayout aprilTagLayout;
 
@@ -97,8 +98,9 @@ public class Localization {
 
         /* Update and publish the current pose estimate */
         var swerveStateCapture = drivetrain.getState();
-
         currentPose = swerveStateCapture.Pose;
+        currentVelocity = swerveStateCapture.Speeds;
+
         field.setRobotPose(currentPose);
 
         if (!trackedObjects.isEmpty()) {//TODO find a better way to visualize and remove this
@@ -110,8 +112,7 @@ public class Localization {
         }
 
         /* Predict where the robot will be */
-        ChassisSpeeds velocity = swerveStateCapture.Speeds;
-        predictedPose = currentPose.exp(velocity.toTwist2d(kPoseLookaheadTime));
+        predictedPose = currentPose.exp(currentVelocity.toTwist2d(kPoseLookaheadTime));
     } 
 
     /** Gets the current pose */
@@ -122,6 +123,11 @@ public class Localization {
     /** Gets the pose that the robot will likely be at in the near future based on the current velocity */
     public Pose2d getPredictedPose() {
         return predictedPose;
+    }
+
+    /** Gets the current velocity */
+    public ChassisSpeeds getCurrentVelocity() {
+        return currentVelocity;
     }
 
     /** Finds the nearest object of the given type. If no objects of that type are detected, this returns an empty optional. */

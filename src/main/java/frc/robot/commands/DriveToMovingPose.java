@@ -52,12 +52,11 @@ public class DriveToMovingPose extends Command {
     @Override
     public void initialize() {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
+        ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
 
-        alignmentXPID.reset(currentPose.getX());
-        alignmentYPID.reset(currentPose.getY());
-        alignmentRotationPID.reset(currentPose.getRotation().getRadians());
-
-        updateControllerGoals();
+        alignmentXPID.reset(currentPose.getX(), currentVelocity.vxMetersPerSecond);
+        alignmentYPID.reset(currentPose.getY(), currentVelocity.vyMetersPerSecond);
+        alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
     }
 
     @Override
