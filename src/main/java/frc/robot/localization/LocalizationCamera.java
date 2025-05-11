@@ -144,4 +144,8 @@ public class LocalizationCamera {
     public String getName() {
         return camera.getName();
     }
+
+    public PhotonCamera getPhotonCamera() {
+        return camera;
+    }
 }

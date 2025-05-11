@@ -6,10 +6,12 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.localization.TrackedObject.ObjectType;
@@ -18,6 +20,11 @@ import frc.robot.utils.ElasticUtil;
 import static frc.robot.Constants.LocalizationConstants.*;
 import java.util.List;
 import java.util.Optional;
+
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+
 import java.util.ArrayList;
 
 public class Localization {
@@ -31,6 +38,8 @@ public class Localization {
     private final List<TrackedObject> trackedObjects = new ArrayList<>();
 
     private final StructArrayPublisher<Pose2d> trackedObjectPublisher;
+
+    private VisionSystemSim simulatedCoprocessor;
 
     private Pose2d predictedPose;
     private Pose2d currentPose;
@@ -51,13 +60,42 @@ public class Localization {
             ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will use the default layout");
         }
 
-        // for (var constants : kCameraConstants) {
-        //     if (constants.isObjectTracking())
-        //         objectTrackingCameras.add(new ObjectTrackingCamera(constants));
+        if (RobotBase.isSimulation()) {
+            simulatedCoprocessor = new VisionSystemSim("Localization");
+            simulatedCoprocessor.addAprilTags(aprilTagLayout);
 
-        //     else
-        //         localizationCameras.add(new LocalizationCamera(constants, aprilTagLayout)); 
-        // }
+            for (var constants : kCameraConstants) {
+                if (!constants.isObjectTracking()) {
+                    var camera = new LocalizationCamera(constants, aprilTagLayout);
+                    localizationCameras.add(camera); 
+
+                    var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                    properties.setCalibration(960, 720, Rotation2d.fromDegrees(90));
+                    properties.setCalibError(0.35, 0.10);
+                    properties.setFPS(30);
+                    properties.setAvgLatencyMs(20);
+                    properties.setLatencyStdDevMs(5);
+                    
+                    /* Links the simulated camera to the localization camera */
+                    var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                    cameraSim.enableDrawWireframe(false);
+                    cameraSim.enableRawStream(false);
+                    cameraSim.enableProcessedStream(false);
+
+                    simulatedCoprocessor.addCamera(cameraSim, constants.robotToCameraTransform());
+                }
+            }
+        }
+
+        else {
+            for (var constants : kCameraConstants) {
+                if (constants.isObjectTracking())
+                    objectTrackingCameras.add(new ObjectTrackingCamera(constants));
+
+                else
+                    localizationCameras.add(new LocalizationCamera(constants, aprilTagLayout)); 
+            }
+        }
 
         SmartDashboard.putData("Localization Field", field);
 
@@ -114,6 +152,11 @@ public class Localization {
         /* Predict where the robot will be */
         predictedPose = currentPose.exp(currentVelocity.toTwist2d(kPoseLookaheadTime));
     } 
+
+    /** Call this every loop to update simulation */
+    public void updateSimulation(Pose2d simulatedRobotPose) {
+        simulatedCoprocessor.update(simulatedRobotPose);
+    }
 
     /** Gets the current pose */
     public Pose2d getCurrentPose() {
