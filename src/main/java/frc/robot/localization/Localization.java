@@ -51,13 +51,13 @@ public class Localization {
             ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will use the default layout");
         }
 
-        for (var constants : kCameraConstants) {
-            if (constants.isObjectTracking())
-                objectTrackingCameras.add(new ObjectTrackingCamera(constants));
+        // for (var constants : kCameraConstants) {
+        //     if (constants.isObjectTracking())
+        //         objectTrackingCameras.add(new ObjectTrackingCamera(constants));
 
-            else
-                localizationCameras.add(new LocalizationCamera(constants, aprilTagLayout)); 
-        }
+        //     else
+        //         localizationCameras.add(new LocalizationCamera(constants, aprilTagLayout)); 
+        // }
 
         SmartDashboard.putData("Localization Field", field);
 
@@ -89,12 +89,12 @@ public class Localization {
         trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
 
         /* Publish each object's pose */
-        trackedObjectPublisher.set((Pose2d[]) 
-            trackedObjects
-                .stream()
-                .map((object) -> object.getFieldPosition())
-                .toArray()
-        );
+        // trackedObjectPublisher.set((Pose2d[]) 
+        //     trackedObjects
+        //         .stream()
+        //         .map((object) -> object.getFieldPosition())
+        //         .toArray()
+        // );
 
         /* Update and publish the current pose estimate */
         var swerveStateCapture = drivetrain.getState();

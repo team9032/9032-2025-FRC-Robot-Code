@@ -12,15 +12,20 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.localization.Localization;
+import frc.robot.simulation.MapleSimSwerveDrivetrain;
 import frc.robot.utils.ElasticUtil;
 
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.PathplannerConfig.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
@@ -33,11 +38,29 @@ public class KrakenSwerve extends SubsystemBase {
 
     private boolean operatorPerspectiveSet = false;
 
+    private MapleSimSwerveDrivetrain simulatedDrivetrain;
+
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
-            kDrivetrainConstants, kFrontLeft, kFrontRight, kBackLeft, kBackRight
+            kDrivetrainConstants, 
+            MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(kFrontLeft, kFrontRight, kBackLeft, kBackRight)
         );
+
+        if (RobotBase.isSimulation()) {
+            simulatedDrivetrain = new MapleSimSwerveDrivetrain(
+                Pounds.of(115),
+                Inches.of(30),
+                Inches.of(30),
+                DCMotor.getKrakenX60(1),
+                DCMotor.getKrakenX60(1),
+                1.4,
+                drivetrain.getModuleLocations(),
+                drivetrain.getPigeon2(),
+                drivetrain.getModules(),
+                kFrontLeft, kFrontRight, kBackLeft, kBackRight
+            );
+        }
 
         localization = new Localization(drivetrain);
 
@@ -139,6 +162,11 @@ public class KrakenSwerve extends SubsystemBase {
             
             operatorPerspectiveSet = true;
         }
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        simulatedDrivetrain.update();   
     }
 
     public Localization getLocalization() {
