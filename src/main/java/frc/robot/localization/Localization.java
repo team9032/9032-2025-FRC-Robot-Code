@@ -127,12 +127,12 @@ public class Localization {
         trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
 
         /* Publish each object's pose */
-        // trackedObjectPublisher.set((Pose2d[]) 
-        //     trackedObjects
-        //         .stream()
-        //         .map((object) -> object.getFieldPosition())
-        //         .toArray()
-        // );
+        var objectPoses = new Pose2d[trackedObjects.size()];
+        for (int i = 0; i < trackedObjects.size(); i++) {
+            objectPoses[i] = trackedObjects.get(i).getFieldPosition();
+        }
+
+        trackedObjectPublisher.set(objectPoses);
 
         /* Update and publish the current pose estimate */
         var swerveStateCapture = drivetrain.getState();
