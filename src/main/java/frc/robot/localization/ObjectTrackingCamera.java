@@ -53,11 +53,11 @@ public class ObjectTrackingCamera {
         double targetYaw = Units.degreesToRadians(target.getYaw());
 
         /* Find the distance from the camera's lense to the object using target pitch and yaw */
-        double cameraToTargetDistance =
-            (-robotToCamera.getZ())
-                / Math.tan(-robotToCamera.getRotation().getY() - Units.degreesToRadians(target.getPitch()))
+        double cameraToTargetDistance = 
+            (Units.inchesToMeters(2.25) - robotToCamera.getZ())//TODO compensate for lollipop coral 
+                / Math.tan(-robotToCamera.getRotation().getY() + Units.degreesToRadians(target.getPitch()))
                 / Math.cos(-targetYaw);
-        
+
         /* Find the camera's pose in field space using camera offsets and the robot's pose */
         Pose2d cameraInFieldSpace = poseAtDetectionTime.transformBy(
             new Transform2d(robotToCamera.getX(), robotToCamera.getY(), robotToCamera.getRotation().toRotation2d())   
@@ -97,5 +97,9 @@ public class ObjectTrackingCamera {
 
     public String getName() {
         return camera.getName();
+    }
+
+    public PhotonCamera getPhotonCamera() {
+        return camera;
     }
 }

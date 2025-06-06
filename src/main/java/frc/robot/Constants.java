@@ -86,7 +86,7 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final double kAlignmentXYkP = 2;//TODO Tune better
+        public static final double kAlignmentXYkP = 5.0;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
         
         public static final double kAlignmentRotkP = 10.0;
@@ -113,7 +113,7 @@ public final class Constants {
         public static final int kAlgaeId = 0;
 
         /* Intake offset */
-        public static final Transform2d kIntakeOffset = new Transform2d(2, 0, Rotation2d.kZero);//TODO find
+        public static final Transform2d kIntakeOffset = new Transform2d(0, 0, Rotation2d.kZero);//TODO find
     }
 
     public static final class LocalizationConstants {
@@ -167,11 +167,11 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            new CameraConstants("GroundCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
-                true//TODO find offsets for this camera
-            )
+            // new CameraConstants("GroundCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
+            //     true//TODO find offsets for this camera
+            // )
         };
 
         /* Field constants */

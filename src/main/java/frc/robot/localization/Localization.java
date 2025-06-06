@@ -8,6 +8,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -21,9 +22,12 @@ import static frc.robot.Constants.LocalizationConstants.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.simulation.VisionTargetSim;
 
 import java.util.ArrayList;
 
@@ -39,7 +43,8 @@ public class Localization {
 
     private final StructArrayPublisher<Pose2d> trackedObjectPublisher;
 
-    private VisionSystemSim simulatedCoprocessor;
+    private VisionSystemSim simulatedObjectTracking;
+    private VisionSystemSim simulatedLocalization;
 
     private Pose2d predictedPose;
     private Pose2d currentPose;
@@ -61,11 +66,33 @@ public class Localization {
         }
 
         if (RobotBase.isSimulation()) {
-            simulatedCoprocessor = new VisionSystemSim("Localization");
-            simulatedCoprocessor.addAprilTags(aprilTagLayout);
+            simulatedLocalization = new VisionSystemSim("Localization");
+            simulatedLocalization.addAprilTags(aprilTagLayout);
+
+            simulatedObjectTracking = new VisionSystemSim("Object Tracking");
 
             for (var constants : kCameraConstants) {
-                if (!constants.isObjectTracking()) {
+                if (constants.isObjectTracking()) {
+                    var camera = new ObjectTrackingCamera(constants);
+                    objectTrackingCameras.add(camera); 
+
+                    var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                    properties.setCalibration(960, 720, Rotation2d.fromDegrees(90));
+                    properties.setCalibError(0.35, 0.10);
+                    properties.setFPS(30);
+                    properties.setAvgLatencyMs(20);
+                    properties.setLatencyStdDevMs(5);
+                    
+                    /* Links the simulated camera to the localization camera */
+                    var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                    cameraSim.enableDrawWireframe(false);
+                    cameraSim.enableRawStream(false);
+                    cameraSim.enableProcessedStream(true);
+
+                    simulatedObjectTracking.addCamera(cameraSim, constants.robotToCameraTransform());
+                }
+
+                else {
                     var camera = new LocalizationCamera(constants, aprilTagLayout);
                     localizationCameras.add(camera); 
 
@@ -82,7 +109,7 @@ public class Localization {
                     cameraSim.enableRawStream(false);
                     cameraSim.enableProcessedStream(false);
 
-                    simulatedCoprocessor.addCamera(cameraSim, constants.robotToCameraTransform());
+                    simulatedLocalization.addCamera(cameraSim, constants.robotToCameraTransform());
                 }
             }
         }
@@ -155,9 +182,19 @@ public class Localization {
 
     /** Call this every loop to update simulation */
     public void updateSimulation(Pose2d simulatedRobotPose) {
-        simulatedCoprocessor.update(simulatedRobotPose);
-    }
+        simulatedObjectTracking.clearVisionTargets();
 
+        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO don't clear objects every loop
+            .stream()
+            .map((coralPose) -> 
+                    new VisionTargetSim(coralPose, new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5))
+                )
+            )
+            .forEach((target) -> simulatedObjectTracking.addVisionTargets("Coral", target));
+        
+        simulatedLocalization.update(simulatedRobotPose);
+        simulatedObjectTracking.update(simulatedRobotPose);
+    }
     /** Gets the current pose */
     public Pose2d getCurrentPose() {
         return currentPose;
