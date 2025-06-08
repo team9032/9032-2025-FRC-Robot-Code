@@ -41,7 +41,7 @@ public class TrackedObject {
 
         this.trackingId = trackingId;
 
-        objectType = ObjectType.fromClassId(photonVisionData.getDetectedObjectClassID());
+        objectType = ObjectType.fromClassId(/*photonVisionData.getDetectedObjectClassID()*/1);//TODO fix class ids
     }
 
     public boolean isCoral() {

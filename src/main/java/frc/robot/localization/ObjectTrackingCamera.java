@@ -54,7 +54,7 @@ public class ObjectTrackingCamera {
 
         /* Find the distance from the camera's lense to the object using target pitch and yaw */
         double cameraToTargetDistance = 
-            (Units.inchesToMeters(2.25) - robotToCamera.getZ())//TODO compensate for lollipop coral 
+            (Units.inchesToMeters(2.25) - robotToCamera.getZ())//TODO compensate for lollipop coral and algae height
                 / Math.tan(-robotToCamera.getRotation().getY() + Units.degreesToRadians(target.getPitch()))
                 / Math.cos(-targetYaw);
 
@@ -70,11 +70,18 @@ public class ObjectTrackingCamera {
                 .transformBy(new Transform2d(Translation2d.kZero, new Rotation2d(-targetYaw)))
                 /* Project outwards using the camera to target distance */
                 .transformBy(new Transform2d(new Translation2d(cameraToTargetDistance, 0), Rotation2d.kZero));
+        
+        /* Find the target's rotation */
+        targetPoseInField = 
+            /* Undo the rotation from projecting outwards */
+            new Pose2d(targetPoseInField.getTranslation(), Rotation2d.kZero)
+            /* Rotate using bounding box */
+            .rotateBy(Rotation2d.fromRadians(0));//TODO rotate using bounding box
 
         boolean updatedObject = false;
         for (var object : objectList) {
             boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance;
-            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(target.getDetectedObjectClassID()));
+            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(/*target.getDetectedObjectClassID()*/1));//TODO fix class ids
 
             /* If an object is close to a previous detection with the same object type, assume it's the same object 
                 and update the previous detection */

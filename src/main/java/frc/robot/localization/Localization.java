@@ -195,6 +195,7 @@ public class Localization {
         simulatedLocalization.update(simulatedRobotPose);
         simulatedObjectTracking.update(simulatedRobotPose);
     }
+    
     /** Gets the current pose */
     public Pose2d getCurrentPose() {
         return currentPose;
