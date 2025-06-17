@@ -6,6 +6,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -41,7 +42,7 @@ public class Localization {
 
     private final List<TrackedObject> trackedObjects = new ArrayList<>();
 
-    private final StructArrayPublisher<Pose2d> trackedObjectPublisher;
+    private final StructArrayPublisher<Pose3d> trackedObjectPublisher;
 
     private VisionSystemSim simulatedObjectTracking;
     private VisionSystemSim simulatedLocalization;
@@ -127,7 +128,7 @@ public class Localization {
         SmartDashboard.putData("Localization Field", field);
 
         trackedObjectPublisher = NetworkTableInstance.getDefault()
-            .getStructArrayTopic("Tracked Objects", Pose2d.struct)
+            .getStructArrayTopic("Tracked Objects", Pose3d.struct)
             .publish();
     }
 
@@ -154,9 +155,9 @@ public class Localization {
         trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
 
         /* Publish each object's pose */
-        var objectPoses = new Pose2d[trackedObjects.size()];
+        var objectPoses = new Pose3d[trackedObjects.size()];
         for (int i = 0; i < trackedObjects.size(); i++) {
-            objectPoses[i] = trackedObjects.get(i).getFieldPosition();
+            objectPoses[i] = new Pose3d(trackedObjects.get(i).getFieldPosition());
         }
 
         trackedObjectPublisher.set(objectPoses);
