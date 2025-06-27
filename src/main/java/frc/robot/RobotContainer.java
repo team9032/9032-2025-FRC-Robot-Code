@@ -74,7 +74,7 @@ public class RobotContainer {
 
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
-    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake, buttonBoard);
+    private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
     private final Command coralCyclingCommand;
@@ -107,8 +107,7 @@ public class RobotContainer {
             .andThen(
                 new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
                     .onlyIf(endEffector::hasCoral)
-            )
-            .onlyIf(buttonBoard::hasQueues);
+        );
 
         algaeCyclingCommand = automationHandler.algaeResumeCommand()
             .until(this::driverWantsOverride)
@@ -123,10 +122,10 @@ public class RobotContainer {
         buttonBoard.getEnableAlgaeModeTrigger()
             .onTrue(algaeCyclingCommand);
 
-        // buttonBoard.getAutoIntakeTrigger().onTrue(
-        //     compositions.autoIntake(true)
-        //     .until(this::driverWantsOverride)
-        // );     
+        buttonBoard.getAutoIntakeTrigger().onTrue(
+            compositions.intakeNearestCoral(true)
+            .until(this::driverWantsOverride)
+        );     
 
         /* Bind Triggers */
         coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
@@ -146,15 +145,19 @@ public class RobotContainer {
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, false));
-        autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(intake, elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions, true));
-        autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, indexer, compositions));
+        autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, false));
+        autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, true));
+        autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions));
+        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         /* Add Git Data to Elastic */
         SmartDashboard.putString("Version Info", "Branch: \"" + GitData.GIT_BRANCH + "\" Build Date: " + GitData.BUILD_DATE);
+
+        /* Add coast button */
+        SmartDashboard.putData(elevatorArmIntakeHandler.coastAll().withName("Coast All"));
 
         /* Switch LEDs to disabled or low battery */
         if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
@@ -260,12 +263,12 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(
-            elevatorArmIntakeHandler.prepareForCoralScoring()
+            elevatorArmIntakeHandler.prepareForCoralScoring(buttonBoard::getSelectedReefLevel)
         );
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                buttonBoard.scoreCoral(endEffector).asProxy(),
+                endEffector.scoreCoral(buttonBoard::getSelectedReefLevel).asProxy(),
                 elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );
@@ -290,7 +293,7 @@ public class RobotContainer {
 
         buttonBoard.manual10.onTrue(
             Commands.sequence(
-                elevatorArmIntakeHandler.prepareForAlgaeScoring(),
+                elevatorArmIntakeHandler.prepareForAlgaeScoring(buttonBoard::getSelectedAlgaeScorePath),
                 endEffector.pickupAlgae()  
             )
         );
@@ -320,6 +323,11 @@ public class RobotContainer {
         buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
         
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+
+        /* Display CAN errors on the LEDs */
+        var currentCANStatus = RobotController.getCANStatus();
+        if (currentCANStatus.receiveErrorCount > 0 || currentCANStatus.transmitErrorCount > 0)
+            led.displayError();
     }
 
     /** Bind robot mode triggers here */

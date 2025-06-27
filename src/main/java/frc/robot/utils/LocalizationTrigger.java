@@ -23,7 +23,7 @@ public class LocalizationTrigger {
     }
 
     private boolean isTriggered() {
-        Translation2d currentTranslation = swerve.drivetrain.getState().Pose.getTranslation();
+        Translation2d currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
 
         return placeToTrigger.contains(currentTranslation);
     }

@@ -9,10 +9,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.localization.TrackedObject;
+import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kClosedLoopDriveRequest;
+import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
 
 public class DriverAssistedAutoIntake extends Command {
     private final KrakenSwerve swerve;
@@ -39,7 +40,7 @@ public class DriverAssistedAutoIntake extends Command {
 
     @Override
     public void initialize() {
-        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
 
         /* Prevent rotating on init if no target is seen */
         rotationController.setSetpoint(currentYaw);
@@ -47,13 +48,13 @@ public class DriverAssistedAutoIntake extends Command {
 
     @Override
     public void execute() {
-        double currentYaw = swerve.drivetrain.getState().Pose.getRotation().getDegrees();
+        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
 
         var coralTarget = getCoralTarget();
 
         /* Update setpoint if we have a target */
         if (coralTarget != null) {
-            double rotationSetpoint = coralTarget.objectYawInFieldSpace() + kRotationSetpoint;
+            double rotationSetpoint = currentYaw - (coralTarget.getPhotonVisionData().yaw - kRotationSetpoint);
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
@@ -67,17 +68,13 @@ public class DriverAssistedAutoIntake extends Command {
             rotationController.calculate(currentYaw)
         );
 
-        swerve.drivetrain.setControl(kClosedLoopDriveRequest.withSpeeds(speeds));
+        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
     private TrackedObject getCoralTarget() {
         TrackedObject coralTarget;
 
-        var coralTargets = localization.getTrackedObjectsFromCamera(kObjectTrackingCameraName);
-        
-        /* Remove targets that are not coral  */
-        coralTargets.removeIf((target) -> !target.isCoral());
-
+        var coralTargets = localization.getTrackedObjectsFromCameraWithType(kObjectTrackingCameraName, ObjectType.CORAL);
         /* Exit if no targets exist */
         if (coralTargets.isEmpty())
             return null;
@@ -93,7 +90,7 @@ public class DriverAssistedAutoIntake extends Command {
             coralTarget = getClosestCoral(coralTargets);
 
             for(TrackedObject target : coralTargets) {
-                double yawDifference = Math.abs(target.objectYawInFieldSpace() - lastCoralTarget.objectYawInFieldSpace());
+                double yawDifference = Math.abs(target.getPhotonVisionData().getYaw() - lastCoralTarget.getPhotonVisionData().getYaw());
 
                 if(yawDifference < lowestYawDifference) {
                     lowestYawDifference = yawDifference;
@@ -112,7 +109,7 @@ public class DriverAssistedAutoIntake extends Command {
         TrackedObject closetCoral = coralTargets.get(0);
 
         for(var target : coralTargets) {
-            if(target.objectPitchInCameraSpace() < closetCoral.objectPitchInCameraSpace()) {
+            if(target.getPhotonVisionData().getPitch() < closetCoral.getPhotonVisionData().getPitch()) {
                 closetCoral = target;
             } 
         }

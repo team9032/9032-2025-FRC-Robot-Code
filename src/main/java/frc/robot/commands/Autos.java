@@ -9,9 +9,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
+import frc.robot.automation.PathfindingHandler;
+import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
+import frc.robot.automation.ButtonBoardHandler.ReefPath;
+import frc.robot.automation.ButtonBoardHandler.SourcePath;
 import frc.robot.subsystems.EndEffector;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 
@@ -21,7 +24,7 @@ public class Autos {
 
     private static boolean shouldMoveElevator = false;
 
-    public static Command fourCoralLeft(Intake intake, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions, boolean mirrored) {
+    public static Command fourCoralLeft(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Compositions compositions, boolean mirrored) {
         PathPlannerPath score1;
         PathPlannerPath get2;
         PathPlannerPath score2;
@@ -68,7 +71,7 @@ public class Autos {
         );
     }
 
-    public static Command oneCoralTwoAlgaeCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Indexer indexer, Compositions compositions) {
+    public static Command oneCoralTwoAlgaeCenter(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, KrakenSwerve swerve, Compositions compositions) {
         PathPlannerPath scoreCoral; 
         PathPlannerPath pullAway1; 
         PathPlannerPath scoreAlgae1; 
@@ -104,12 +107,12 @@ public class Autos {
             Commands.sequence(
                 AutoBuilder.followPath(pullAwayPath)
                     .alongWith(elevatorArmIntakeHandler.moveToStowPositions()),
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(false),
+                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> true),
                 AutoBuilder.followPath(getAndScoreAlgaePath)
                     .alongWith(
                         endEffector.pickupAlgae().asProxy(),
                         Commands.waitUntil(moveElevatorTrigger)
-                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoringAuto())
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET))
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),
@@ -124,13 +127,13 @@ public class Autos {
                 AutoBuilder.followPath(getPath)
                     .alongWith(
                         elevatorArmIntakeHandler.moveToStowPositions()
-                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntakingAuto(highAlgae)),
+                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> !highAlgae)),
                         endEffector.pickupAlgae().asProxy()
                     ),
                 AutoBuilder.followPath(scorePath)
                     .alongWith(
                         Commands.waitUntil(moveElevatorTrigger),
-                        elevatorArmIntakeHandler.prepareForAlgaeScoringAuto()
+                        elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET)
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),
@@ -157,7 +160,7 @@ public class Autos {
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
                 Commands.waitSeconds(0.25),//TODO d
-                endEffector.placeCoral().asProxy(),
+                endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
                 Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
@@ -168,8 +171,27 @@ public class Autos {
                 .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator))
                     .deadlineFor(endEffector.holdCoral().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
-            endEffector.placeCoral().asProxy(),
+            endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
             Commands.runOnce(() -> shouldMoveElevator = false)
+        );
+    }
+
+    public static Command dynamicCoralAuto(Compositions compositions, ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
+        return Commands.sequence(
+            /* Score preload, and move to source area while preparing for intaking */
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_4L, ReefLevel.L4),
+            PathfindingHandler.pathToSource(() -> SourcePath.TO_LSOURCE)
+                .alongWith(elevatorArmIntakeHandler.moveToIntakePosition()),
+            /* Get coral 2 */
+            compositions.intakeNearestCoral(true),
+            /* Score coral 2 */
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2L, ReefLevel.L4),
+            /* Get coral 3 */
+            compositions.intakeNearestCoral(true),
+            /* Score coral 3 */
+            compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2R, ReefLevel.L4),
+            /* Stow */
+            elevatorArmIntakeHandler.moveToStowPositions()
         );
     }
 }

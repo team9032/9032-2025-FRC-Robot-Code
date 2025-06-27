@@ -9,10 +9,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.EndEffectorConstants.*;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class EndEffector extends SubsystemBase {
     private final TalonFX endEffectorMainMotor;
@@ -61,7 +67,11 @@ public class EndEffector extends SubsystemBase {
         return runOnce(() -> setEndEffectorMotors(power));
     }
 
-    public Command placeCoral() {
+    public Command scoreCoral(Supplier<ReefLevel> reefLevelSup) {
+        return Commands.either(placeCoralInTrough(), placeCoral(), () -> reefLevelSup.get().equals(ReefLevel.L1));
+    }
+
+    private Command placeCoral() {
         return Commands.sequence(
             setEndEffectorMotorsCommand(kCoralOuttakePower),
             Commands.waitSeconds(kCoralOuttakeWait),
@@ -69,7 +79,7 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-    public Command placeCoralInTrough() {
+    private Command placeCoralInTrough() {
         return Commands.sequence(
             setEndEffectorMotorsCommand(kCoralOuttakeToTrough),
             Commands.waitSeconds(kCoralOuttakeWaitToTrough),
@@ -128,6 +138,17 @@ public class EndEffector extends SubsystemBase {
             Commands.waitUntil(this::hasAlgaeNearby),
             new ScheduleCommand(holdAlgae())
         );
+    }
+
+    public Command scoreAlgae(Supplier<AlgaeScorePath> algaeScorePathSup) {
+        return new SelectCommand<AlgaeScorePath>(
+            Map.ofEntries(
+                Map.entry(AlgaeScorePath.NONE, Commands.none()),
+                Map.entry(AlgaeScorePath.TO_NET, outtakeNetAlgae()),
+                Map.entry(AlgaeScorePath.TO_PROCESSOR, outtakeProcessorAlgae())
+            ),
+            algaeScorePathSup
+        ); 
     }
 
     public Command outtakeProcessorAlgae() {

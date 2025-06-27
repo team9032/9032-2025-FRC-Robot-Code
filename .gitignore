@@ -189,3 +189,4 @@ compile_commands.json
 # Generated Git Data
 src/main/java/frc/robot/utils/GitData.java
 
+/.VSCodeCounter

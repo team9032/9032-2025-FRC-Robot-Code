@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
+import org.photonvision.estimation.TargetModel;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -19,17 +21,18 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 //TODO import harshil.pande.TigerConstants;
 //TODO import evilharshel.pandez.EvilTiggerConstantz.*;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -63,13 +66,15 @@ public final class Constants {
             .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+        public static final double kCloseDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
     public static class PathplannerConfig {
         public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
-        public static final ApplyRobotSpeeds kClosedLoopDriveRequest = new ApplyRobotSpeeds()
+        public static final ApplyRobotSpeeds kRobotRelativeClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
@@ -80,7 +85,12 @@ public final class Constants {
             3 * Math.PI
         );
 
-        public static final double kAlignmentXYkP = 2;//TODO Tune better
+        public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+
+        public static final double kAlignmentXYkP = 5.0;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
         
         public static final double kAlignmentRotkP = 10.0;
@@ -94,14 +104,9 @@ public final class Constants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
         public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
-        public static final int kCycleAmtSinceTargetSeenCutoff = 10;
-        public static final double kPitchDifferenceCutoff = 2.0;
-
+        /* For intake driver assist */
         public static final double kRotationSetpoint = 13.3;
         public static final double kMaxDrivingSpeed = kMaxSpeed;//Meters per second
-
-        public static final double kSlowObstacleDistance = 0.85;//Meters from sensor
-        public static final double kSlowDrivingSpeed = 0.5;
 
         /* PID Constants */
         public static final double kPRotation = 0.15;
@@ -110,6 +115,9 @@ public final class Constants {
         /* Class Ids */
         public static final int kCoralId = 1;
         public static final int kAlgaeId = 0;
+
+        /* Intake offset */
+        public static final Transform2d kIntakeOffset = new Transform2d(0, 0, Rotation2d.kZero);//TODO find
     }
 
     public static final class LocalizationConstants {
@@ -121,6 +129,12 @@ public final class Constants {
         /* Thresholds for when to reject an estimate */
         public static final double kAmbiguityThreshold = 0.2;
         public static final double kDistanceThreshold = 4.0;//Meters
+
+        /* Object tracking constants */
+        public static final double kObjectExpireTime = 0.5;//Seconds
+        public static final double kSameObjectDistance = Units.inchesToMeters(6);
+
+        public static final double kPoseLookaheadTime = 0.15;//Seconds
         
         public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
             1,//X
@@ -157,12 +171,16 @@ public final class Constants {
                 new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                 false
             ),
-            new CameraConstants("GroundCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
-                true//TODO find offsets for this camera
-            )
+            // new CameraConstants("GroundCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
+            //     true//TODO find offsets for this camera
+            // )
         };
+
+        /* Field constants from the game manual */
+        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);
+        public static final TargetModel kCoralModel = new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5));
     }
 
     public static class ElevatorConfigs {
@@ -209,10 +227,10 @@ public final class Constants {
 
         public static final double kElevatorTolerance = 0.05;
 
-        public static final double kElevatorTrough = 2.9;
-        public static final double kElevatorL1 = 1;
-        public static final double kElevatorL2 = 3.2;
-        public static final double kElevatorL3 = 8.70;
+        public static final double kElevatorL1 = 2.9;
+        public static final double kElevatorL2 = 1;
+        public static final double kElevatorL3 = 3.2;
+        public static final double kElevatorL4 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorIndexerPos = 1.6;
@@ -313,10 +331,10 @@ public final class Constants {
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmIndexerPos = 0.75;
-        public static final double kArmTroughPos = 0.85;
-        public static final double kArmLevel1Pos = kArmStowPos; 
-        public static final double kArmLevel2Pos = kArmStowPos;
-        public static final double kArmLevel3Pos = 0.045;
+        public static final double kArmL1Pos = 0.85;
+        public static final double kArmL2Pos = kArmStowPos; 
+        public static final double kArmL3Pos = kArmStowPos;
+        public static final double kArmL4Pos = 0.045;
         public static final double kArmHighAlgaePos = 0.06;
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
@@ -453,13 +471,10 @@ public final class Constants {
             .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
     }
 
-    public static final class AutomationConstants {
+    public static final class ButtonBoardConstants {
         public static final int kButtonBoardPort1 = 3;
         public static final int kButtonBoardPort2 = 4;
         public static final int kButtonBoardPort3 = 5;
-
-        public static final Rectangle2d kIntakeZoneRectangle = new Rectangle2d(
-            new Pose2d(2.04, 6.04, Rotation2d.fromDegrees(-55.0)), 0.8, 4.0);
     }
 
     public static final class LEDConstants {

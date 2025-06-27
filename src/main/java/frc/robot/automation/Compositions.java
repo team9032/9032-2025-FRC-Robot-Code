@@ -1,11 +1,14 @@
 package frc.robot.automation;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import frc.robot.commands.AimAtCoral;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
+import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -20,8 +23,8 @@ public class Compositions {
     private final ButtonBoardHandler buttonBoardHandler;
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
-    public final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
-    public final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
+    private final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
+    private final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
 
     public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
@@ -31,17 +34,6 @@ public class Compositions {
 
         this.buttonBoardHandler = buttonBoardHandler;
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
-
-        prepareElevatorForCoralScoring.onTrue(
-            Commands.waitSeconds(0.25)
-                .onlyIf(buttonBoardHandler::l4Selected)
-            .andThen(elevatorArmIntakeHandler.prepareForCoralScoring())
-        );
-
-        prepareElevatorForAlgaeScoring.onTrue(
-            elevatorArmIntakeHandler.prepareForAlgaeReefIntaking() 
-                .onlyIf(() -> !buttonBoardHandler.lowAlgaeSelected()) 
-        );
     }
 
     public Command driveToSource() {
@@ -49,28 +41,43 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Drive to source started"),
             new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition()),
             Commands.waitSeconds(0.25),//TODO no
-            buttonBoardHandler.followSourcePath()
+            PathfindingHandler.pathToSource(buttonBoardHandler::getSelectedSourcePath)
         );
     }
 
-    public Command alignToReefAndScore() {
+    public Command alignToReefAndScoreFromButtonBoard() {
+        return alignToReefAndScore(buttonBoardHandler::getSelectedReefPath, buttonBoardHandler::getSelectedReefLevel);
+    }
+
+    public Command alignToReefAndScoreFromPreset(ReefPath reefPath, ReefLevel reefLevel) {
+        return alignToReefAndScore(() -> reefPath, () -> reefLevel);
+    }
+
+    public Command alignToReefAndScore(Supplier<ReefPath> reefPathSup, Supplier<ReefLevel> reefLevelSup) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Aligning to reef and scoing"),
-            buttonBoardHandler.followReefPath(swerve),//This will trigger the elevator and arm
-            Commands.waitUntil(elevatorArmIntakeHandler::readyForCoralScoring),
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoring in auto"),
+            PathfindingHandler.pathToReefSide(reefPathSup)
+                /* Moves elevator and arm when the robot hits the event trigger */
+                .alongWith(
+                    Commands.waitUntil(prepareElevatorForCoralScoring)
+                    .andThen(
+                        Commands.waitSeconds(0.25)
+                            .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
+                        elevatorArmIntakeHandler.prepareForCoralScoring(reefLevelSup)
+                    )   
+                ),
+            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
             Commands.waitSeconds(0.25)//TODO fix?
-                .onlyIf(buttonBoardHandler::l4Selected),
-            buttonBoardHandler.scoreCoral(endEffector).asProxy()
+                .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
+            endEffector.scoreCoral(buttonBoardHandler::getSelectedReefLevel).asProxy()
         );
     }
 
-    public Command autoIntake(boolean moveToStow) {
+    public Command intakeNearestCoral(boolean moveToStow) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Started auto intaking"),
-            intake.resetLastObstacleDistance(),
-            new AimAtCoral(swerve, intake::getObstacleSensorDistance, true)
-                .until(endEffector::hasCoral)
-                    .alongWith(intakeCoralToEndEffector(moveToStow))  
+            ElasticUtil.sendInfoCommand("Started intaking nearest coral"),
+            PathfindingHandler.pathToNearestCoral(swerve)
+                .alongWith(intakeCoralToEndEffector(moveToStow))
         );
     }
 
@@ -94,10 +101,13 @@ public class Compositions {
             intake.stopIntaking(),
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.holdCoral()),
-            elevatorArmIntakeHandler.moveToStowPositions()
-                .onlyIf(() -> moveToStow && buttonBoardHandler.l1NotSelected()),
-            elevatorArmIntakeHandler.prepareForL1Scoring()
-                .onlyIf(() -> !buttonBoardHandler.l1NotSelected())
+            /* Prepare for L1 early instead of stowing */
+            Commands.either(
+                elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L1), 
+                elevatorArmIntakeHandler.moveToStowPositions()
+                    .onlyIf(() -> moveToStow), 
+                () -> buttonBoardHandler.getSelectedReefLevel().equals(ReefLevel.L1)
+            )
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
@@ -126,12 +136,15 @@ public class Compositions {
     public Command intakeAlgaeFromReef() {
         return Commands.sequence(
             Commands.print("Intaking algae from reef"),
-            /* Also moves to algae intake position */
-            buttonBoardHandler.followAlgaeIntakePath(swerve)
+            PathfindingHandler.pathToAlgaeIntakeFromReef(buttonBoardHandler::getSelectedReefPath)
             .alongWith(
+                /* Low algae position can be reached while driving, but high can't because of tipping */
                 Commands.either(
-                    elevatorArmIntakeHandler.prepareForAlgaeReefIntaking().asProxy(), 
-                    elevatorArmIntakeHandler.moveToStowPositions().asProxy(), 
+                    elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(buttonBoardHandler::lowAlgaeSelected), 
+                    /* Moves elevator and arm to high algae intake when the robot hits the event trigger  */
+                    Commands.waitUntil(prepareElevatorForAlgaeScoring)
+                        .deadlineFor(elevatorArmIntakeHandler.moveToStowPositions())
+                        .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(buttonBoardHandler::lowAlgaeSelected)), 
                     buttonBoardHandler::lowAlgaeSelected
                 ),
                 endEffector.pickupAlgae()
@@ -141,9 +154,9 @@ public class Compositions {
 
     public Command scoreAlgaeSequence() {
         return Commands.sequence(
-            buttonBoardHandler.followAlgaeScorePath(),
-            elevatorArmIntakeHandler.prepareForAlgaeScoring(),
-            buttonBoardHandler.scoreAlgae(endEffector)
+            PathfindingHandler.followAlgaeScorePath(buttonBoardHandler::getSelectedAlgaeScorePath),
+            elevatorArmIntakeHandler.prepareForAlgaeScoring(buttonBoardHandler::getSelectedAlgaeScorePath),
+            endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath)
         );
     }
 

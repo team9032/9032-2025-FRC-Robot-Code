@@ -1,18 +1,26 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.utils.ElasticUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ElevatorConfigs.*;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class Elevator extends SubsystemBase {
     private final TalonFX elevatorMotor;
@@ -46,19 +54,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atTrough() {
-        return atPosition(kElevatorTrough);
-    }
-
-    public boolean atL1() {
         return atPosition(kElevatorL1);
     }
 
-    public boolean atL2() {
+    public boolean atL1() {
         return atPosition(kElevatorL2);
     }
 
-    public boolean atL3() {
+    public boolean atL2() {
         return atPosition(kElevatorL3);
+    }
+
+    public boolean atL3() {
+        return atPosition(kElevatorL4);
     }
     
     public boolean atSetpoint() {
@@ -97,20 +105,17 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorHighAlgae));
     }
 
-    public Command moveToTroughPosition() {
-        return runOnce(() -> moveElevator(kElevatorTrough));
-    }
-
-    public Command moveToL1Position() {
-        return runOnce(() -> moveElevator(kElevatorL1));
-    }
-
-    public Command moveToL2Position() {
-        return runOnce(() -> moveElevator(kElevatorL2));
-    }
-
-    public Command moveToL3Position() {
-        return runOnce(() -> moveElevator(kElevatorL3));
+    public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries(
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, runOnce(() -> moveElevator(kElevatorL1))),
+                Map.entry(ReefLevel.L2, runOnce(() -> moveElevator(kElevatorL2))),
+                Map.entry(ReefLevel.L3, runOnce(() -> moveElevator(kElevatorL3))),
+                Map.entry(ReefLevel.L4, runOnce(() -> moveElevator(kElevatorL4)))
+            ),
+            reefLevelSup
+        );
     }
 
     public Command moveToProcessorPosition() {
@@ -131,6 +136,11 @@ public class Elevator extends SubsystemBase {
 
     public boolean overHighAlgae() {
         return elevatorPosSignal.getValueAsDouble() > kElevatorOverHighAlgae;
+    }
+
+    public Command coast() {
+        return runOnce(() -> elevatorMotor.setControl(new CoastOut()))
+            .ignoringDisable(true);
     }
 
     @Override
