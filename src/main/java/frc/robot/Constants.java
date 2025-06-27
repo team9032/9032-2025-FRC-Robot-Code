@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
+import org.photonvision.estimation.TargetModel;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -176,8 +178,9 @@ public final class Constants {
             // )
         };
 
-        /* Field constants */
-        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);//From the game manual
+        /* Field constants from the game manual */
+        public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);
+        public static final TargetModel kCoralModel = new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5));
     }
 
     public static class ElevatorConfigs {

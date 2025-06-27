@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.ironmaple.simulation.SimulatedArena;
-import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
@@ -66,54 +64,8 @@ public class Localization {
             ElasticUtil.sendError("Error opening AprilTag field layout", "Localization will use the default layout");
         }
 
-        if (RobotBase.isSimulation()) {
-            simulatedLocalization = new VisionSystemSim("Localization");
-            simulatedLocalization.addAprilTags(aprilTagLayout);
-
-            simulatedObjectTracking = new VisionSystemSim("Object Tracking");
-
-            for (var constants : kCameraConstants) {
-                if (constants.isObjectTracking()) {
-                    var camera = new ObjectTrackingCamera(constants);
-                    objectTrackingCameras.add(camera); 
-
-                    var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                    properties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
-                    properties.setCalibError(0.35, 0.10);
-                    properties.setFPS(30);
-                    properties.setAvgLatencyMs(20);
-                    properties.setLatencyStdDevMs(5);
-                    
-                    /* Links the simulated camera to the localization camera */
-                    var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
-                    cameraSim.enableDrawWireframe(false);
-                    cameraSim.enableRawStream(false);
-                    cameraSim.enableProcessedStream(true);
-
-                    simulatedObjectTracking.addCamera(cameraSim, constants.robotToCameraTransform());
-                }
-
-                else {
-                    var camera = new LocalizationCamera(constants, aprilTagLayout);
-                    localizationCameras.add(camera); 
-
-                    var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                    properties.setCalibration(800, 600, Rotation2d.fromDegrees(60));
-                    properties.setCalibError(0.35, 0.10);
-                    properties.setFPS(30);
-                    properties.setAvgLatencyMs(20);
-                    properties.setLatencyStdDevMs(5);
-                    
-                    /* Links the simulated camera to the localization camera */
-                    var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
-                    cameraSim.enableDrawWireframe(false);
-                    cameraSim.enableRawStream(false);
-                    cameraSim.enableProcessedStream(false);
-
-                    simulatedLocalization.addCamera(cameraSim, constants.robotToCameraTransform());
-                }
-            }
-        }
+        if (RobotBase.isSimulation()) 
+            initSimulation();
 
         else {
             for (var constants : kCameraConstants) {
@@ -169,28 +121,66 @@ public class Localization {
 
         field.setRobotPose(currentPose);
 
-        if (!trackedObjects.isEmpty()) {//TODO find a better way to visualize and remove this
-            var object = trackedObjects.get(0);
-
-            field.getObject(object.getCameraName() + " target").setPose(object.getFieldPosition());
-
-            SmartDashboard.putString("object 0", object.getTrackingId() + " " + object.getCameraName() + " " + object.getFieldPosition());
-        }
-
         /* Predict where the robot will be */
         predictedPose = currentPose.exp(currentVelocity.toTwist2d(kPoseLookaheadTime));
     } 
+
+    private void initSimulation() {
+        simulatedLocalization = new VisionSystemSim("Localization");
+        simulatedLocalization.addAprilTags(aprilTagLayout);
+
+        simulatedObjectTracking = new VisionSystemSim("Object Tracking");
+
+        for (var constants : kCameraConstants) {
+            if (constants.isObjectTracking()) {
+                var camera = new ObjectTrackingCamera(constants);
+                objectTrackingCameras.add(camera); 
+
+                var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                properties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
+                properties.setCalibError(0.35, 0.10);
+                properties.setFPS(30);
+                properties.setAvgLatencyMs(20);
+                properties.setLatencyStdDevMs(5);
+                
+                /* Links the simulated camera to the localization camera */
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                cameraSim.enableDrawWireframe(false);
+                cameraSim.enableRawStream(false);
+                cameraSim.enableProcessedStream(true);
+
+                simulatedObjectTracking.addCamera(cameraSim, constants.robotToCameraTransform());
+            }
+
+            else {
+                var camera = new LocalizationCamera(constants, aprilTagLayout);
+                localizationCameras.add(camera); 
+
+                var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                properties.setCalibration(800, 600, Rotation2d.fromDegrees(60));
+                properties.setCalibError(0.35, 0.10);
+                properties.setFPS(30);
+                properties.setAvgLatencyMs(20);
+                properties.setLatencyStdDevMs(5);
+                
+                /* Links the simulated camera to the localization camera */
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                cameraSim.enableDrawWireframe(false);
+                cameraSim.enableRawStream(false);
+                cameraSim.enableProcessedStream(false);
+
+                simulatedLocalization.addCamera(cameraSim, constants.robotToCameraTransform());
+            }
+        }
+    }
 
     /** Call this every loop to update simulation */
     public void updateSimulation(Pose2d simulatedRobotPose) {
         simulatedObjectTracking.clearVisionTargets();
 
-        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO don't clear objects every loop
+        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO don't clear objects every loop and add algae
             .stream()
-            .map((coralPose) -> 
-                    new VisionTargetSim(coralPose, new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5))
-                )
-            )
+            .map((coralPose) -> new VisionTargetSim(coralPose, kCoralModel))
             .forEach((target) -> simulatedObjectTracking.addVisionTargets("Coral", target));
         
         simulatedLocalization.update(simulatedRobotPose);
