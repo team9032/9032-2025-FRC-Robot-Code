@@ -19,6 +19,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 //TODO import harshil.pande.TigerConstants;
@@ -84,7 +85,8 @@ public final class Constants {
 
         public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
             .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
         public static final double kAlignmentXYkP = 5.0;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
