@@ -78,7 +78,7 @@ public class Localization {
                     objectTrackingCameras.add(camera); 
 
                     var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                    properties.setCalibration(960, 720, Rotation2d.fromDegrees(90));
+                    properties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
                     properties.setCalibError(0.35, 0.10);
                     properties.setFPS(30);
                     properties.setAvgLatencyMs(20);
@@ -98,7 +98,7 @@ public class Localization {
                     localizationCameras.add(camera); 
 
                     var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                    properties.setCalibration(960, 720, Rotation2d.fromDegrees(90));
+                    properties.setCalibration(800, 600, Rotation2d.fromDegrees(60));
                     properties.setCalibError(0.35, 0.10);
                     properties.setFPS(30);
                     properties.setAvgLatencyMs(20);
