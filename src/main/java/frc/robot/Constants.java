@@ -9,14 +9,17 @@ import org.photonvision.estimation.TargetModel;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -334,10 +337,11 @@ public final class Constants {
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
 
-        public static final double kArmEncoderRange = 1.0;
-        public static final boolean kInvertAbsEncoder = true;
-        public static final int kArmEncoderPort = 2; 
-        public static final double kArmEncoderZeroPos = 0.447; 
+        public static final int kArmEncoderId = 36;//TODO id
+        public static final MagnetSensorConfigs kArmEncoderConfig = new MagnetSensorConfigs()
+            .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+            .withAbsoluteSensorDiscontinuityPoint(0.5)
+            .withMagnetOffset(0);
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmIndexerPos = 0.75;
@@ -373,7 +377,10 @@ public final class Constants {
             .withMotionMagicAcceleration(5.0); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(94.5);
+            .withSensorToMechanismRatio(1.0)
+            .withRotorToSensorRatio(162240.0 / 3456.0)
+            .withFeedbackRemoteSensorID(kArmEncoderId)
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
         public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)

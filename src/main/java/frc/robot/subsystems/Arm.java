@@ -3,11 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,34 +23,25 @@ import java.util.function.Supplier;
 
 public class Arm extends SubsystemBase {
     private final TalonFX armMotor;
+    private final CANcoder armEncoder;
     private final MotionMagicVoltage armRequest = new MotionMagicVoltage(0);
     private final StatusSignal<Angle> armPosSignal;
-    private final DutyCycleEncoder armEncoder;
     
     public Arm() { 
+        armEncoder = new CANcoder(kArmEncoderId);
+        ElasticUtil.checkStatus(armEncoder.getConfigurator().apply(kArmEncoderConfig));
+
         armMotor = new TalonFX(kArmMotorId);
         
         armPosSignal = armMotor.getPosition();
         armPosSignal.setUpdateFrequency(100);
         armMotor.optimizeBusUtilization();
 
-        armEncoder = new DutyCycleEncoder(kArmEncoderPort, kArmEncoderRange, kArmEncoderZeroPos);
-        armEncoder.setInverted(kInvertAbsEncoder);
-
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
-
-        //This wait is needed for the absolute encoder to initialize
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        armMotor.setPosition(getArmAbsolutePosition());
     }
 
     public Command holdPosition() {
-        return runOnce(() -> armMotor.setControl(armRequest.withPosition(getRelativePosition())));
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(getPosition())));
     }
 
     public boolean atTrough() {
@@ -69,32 +60,28 @@ public class Arm extends SubsystemBase {
         return atPosition(kArmL4Pos);
     }
 
-    private double getRelativePosition() {
+    private double getPosition() {
         return armPosSignal.getValueAsDouble();
     }
 
     private boolean atPosition(double position) {
-        return MathUtil.isNear(position, getRelativePosition(), kArmPositionTolerance);
+        return MathUtil.isNear(position, getPosition(), kArmPositionTolerance);
     }
 
     public boolean atSetpoint() {
         return atPosition(armRequest.Position);
     }
 
-    public double getArmAbsolutePosition() {
-        return armEncoder.get();
-    }
-
     public boolean overIntake() {
-        return getRelativePosition() <= kArmOverIntakePos;
+        return getPosition() <= kArmOverIntakePos;
     }
 
     public boolean closeToIndexPosition() {
-        return getRelativePosition() > kArmIndexerPos - (kArmPositionTolerance * 10.0);
+        return getPosition() > kArmIndexerPos - (kArmPositionTolerance * 10.0);
     }
 
     public boolean closeToL4() {
-        return MathUtil.isNear(kArmL4Pos, getRelativePosition(), kArmPositionTolerance * 10.0);
+        return MathUtil.isNear(kArmL4Pos, getPosition(), kArmPositionTolerance * 10.0);
     }
 
     public Command moveToStowPos() {
@@ -152,7 +139,6 @@ public class Arm extends SubsystemBase {
         armPosSignal.refresh();
 
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
-        SmartDashboard.putNumber("End effector arm absolute position", getArmAbsolutePosition());
-        SmartDashboard.putNumber("End effector arm relative position", getRelativePosition());
+        SmartDashboard.putNumber("End effector arm position", getPosition());
     }
 }
