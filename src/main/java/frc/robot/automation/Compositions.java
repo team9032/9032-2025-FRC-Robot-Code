@@ -18,6 +18,7 @@ public class Compositions {
     private final EndEffector endEffector;
     private final Indexer indexer;
     private final Intake intake;
+    private final Climber climber;
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
@@ -26,10 +27,11 @@ public class Compositions {
     private final EventTrigger prepareElevatorForCoralScoring = new EventTrigger("Elevator");
     private final EventTrigger prepareElevatorForAlgaeScoring = new EventTrigger("ElevatorAlgae");
 
-    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
+    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Indexer indexer, Intake intake, Climber climber, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
         this.indexer = indexer;
         this.intake = intake;
+        this.climber = climber;
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
@@ -158,6 +160,16 @@ public class Compositions {
             elevatorArmIntakeHandler.prepareForAlgaeScoring(buttonBoardHandler::getSelectedAlgaeScorePath),
             endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath)
         );
+    }
+
+    public Command climb() {
+        return elevatorArmIntakeHandler.prepareForClimbing()
+            .andThen(climber.intakeCageAndClimb());
+    }
+
+    public Command cancelClimb() {
+        return elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(climber.moveToStowPosition());
     }
 
     public Command stopRollers() {

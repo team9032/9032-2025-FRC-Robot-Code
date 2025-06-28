@@ -4,42 +4,86 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 import static frc.robot.Constants.ClimberConstants.*;
 
 public class Climber extends SubsystemBase {
-    private final TalonFX climberMotor;
-    private final PositionVoltage motionMagic = new PositionVoltage(0);
-    private final StatusSignal<Angle> climberPosSignal;
+    private final TalonFX armMotor;
+    private final PositionVoltage armRequest = new PositionVoltage(0);
+    private final StatusSignal<Angle> armPosSignal;
+
+    private final TalonFX intakeMotor;
+    private final StatusSignal<Current> intakeCurrentSignal;
 
     public Climber() {
-        climberMotor = new TalonFX(kMotorID);
+        armMotor = new TalonFX(kClimberArmID);
         
-        climberPosSignal = climberMotor.getPosition();
-        climberPosSignal.setUpdateFrequency(100);
-        climberMotor.optimizeBusUtilization();
+        armPosSignal = armMotor.getPosition();
+        armPosSignal.setUpdateFrequency(100);
+        armMotor.optimizeBusUtilization();
 
-        ElasticUtil.checkStatus(climberMotor.getConfigurator().apply(kClimberMotorConfig));
+        ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kClimberArmMotorConfig));
+
+        intakeMotor = new TalonFX(kClimberArmID);
+        
+        intakeCurrentSignal = intakeMotor.getStatorCurrent();
+        intakeCurrentSignal.setUpdateFrequency(100);
+        intakeMotor.optimizeBusUtilization();
+
+        ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kClimberIntakeMotorConfig));
     }
 
-    private void moveClimber(double pos) {
-        climberMotor.setControl(motionMagic.withPosition(pos));
+    public boolean hasCage() {
+        return intakeCurrentSignal.getValueAsDouble() > kHasCageCurrent;
     }
 
-    public Command moveClimberDown() {
-        return runOnce(() -> moveClimber(kClimberDown));
+    public boolean atSetpoint() {
+        return MathUtil.isNear(armRequest.Position, armPosSignal.getValueAsDouble(), kClimberArmTolerance);
     }
 
-    public Command moveClimberUp() {
-        return runOnce(() -> moveClimber(kClimberUp));
+    private Command moveClimber(double pos) {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(pos)))
+            .andThen(Commands.waitUntil(this::atSetpoint));
+    }
+
+    private Command runIntake() {
+        return startEnd(() -> intakeMotor.setVoltage(kClimberIntakeVolts), () -> intakeMotor.setVoltage(0));
+    }
+
+    public Command moveToStowPosition() {
+        return moveClimber(kClimberStowPos);
+    }
+
+    private Command moveToClimbPosition() {
+        return moveClimber(kClimberClimbPos);
+    }
+
+    private Command moveToIntakePosition() {
+        return moveClimber(kClimberCageIntakePos);
+    }
+
+    public Command intakeCageAndClimb() {
+        return Commands.sequence(
+            moveToIntakePosition(),
+            runIntake()
+                .until(this::hasCage),
+            moveToClimbPosition()
+        );
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Climber position", climberPosSignal.getValueAsDouble());
+        intakeCurrentSignal.refresh();
+        armPosSignal.refresh();
+
+        SmartDashboard.putNumber("Climber position", armPosSignal.getValueAsDouble());
+        SmartDashboard.putBoolean("Has cage", hasCage());
     }
 }

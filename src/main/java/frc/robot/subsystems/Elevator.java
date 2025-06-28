@@ -105,6 +105,10 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorHighAlgae));
     }
 
+    public Command moveToClimbPosition() {
+        return runOnce(() -> moveElevator(kElevatorClimb));
+    }
+
     public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries(

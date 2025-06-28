@@ -251,6 +251,7 @@ public final class Constants {
         public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 9.5;
         public static final double kElevatorAlgaeGround = 0.9;
+        public static final double kElevatorClimb = 1.0;
 
         public static final double kElevatorOverIndexer = 2.7;
         public static final double kElevatorOverHighAlgae = 4.5;
@@ -330,6 +331,8 @@ public final class Constants {
 
         public static final double kRunRollersPosition = -100;
 
+        public static final double kCanClimbPosition = -30.0;
+
         public static final int kObstacleSensorID = 36;
         public static final double kDefaultObstacleDistance = 10.0;
     }
@@ -355,6 +358,7 @@ public final class Constants {
         public static final double kArmSourcePos = 0.0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
+        public static final double kArmClimbPos = 0.0;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
@@ -401,10 +405,12 @@ public final class Constants {
     }
     
     public static class ClimberConstants {
-        public static final int kMotorID = 19;
+        public static final int kClimberArmID = 19;
+        public static final int kClimberIntakeID = 37;
 
-        public static final int kClimberUp = 580;
-        public static final int kClimberDown = -50;
+        public static final double kClimberStowPos = 0.5;
+        public static final double kClimberCageIntakePos = 0.2;
+        public static final double kClimberClimbPos = 0.9;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(2)
@@ -415,25 +421,37 @@ public final class Constants {
             .withKG(0);
         //FIXME hi HARSHIL PANDENATOR
 
-        public static final CurrentLimitsConfigs kClimberCurrentLimits = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kClimberArmCurrentLimits = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(70)
             .withStatorCurrentLimit(120);
             
-        public static final FeedbackConfigs kClimberFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(125.0 / 360.0); //TODO find true value
+        public static final FeedbackConfigs kClimberArmFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(243.0); 
 
         public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(580)
-            .withReverseSoftLimitThreshold(-50);
+            .withForwardSoftLimitThreshold(-1.0)
+            .withReverseSoftLimitThreshold(1.0);
 
-        public static final TalonFXConfiguration kClimberMotorConfig = new TalonFXConfiguration()
+        public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withFeedback(kClimberFeedbackConfigs)
-            .withCurrentLimits(kClimberCurrentLimits)
+            .withFeedback(kClimberArmFeedbackConfigs)
+            .withCurrentLimits(kClimberArmCurrentLimits)
             .withSoftwareLimitSwitch(kClimberSoftLimit);
+
+        public static final TalonFXConfiguration kClimberIntakeMotorConfig = new TalonFXConfiguration()
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                .withStatorCurrentLimit(120)
+                .withSupplyCurrentLimit(40)
+            );
+
+        public static final double kClimberIntakeVolts = 12.0;
+        public static final int kHasCageCurrent = 20;
+
+        public static final double kClimberArmTolerance = 0.005;
     }
 
     public static final class EndEffectorConstants {

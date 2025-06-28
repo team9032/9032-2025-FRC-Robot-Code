@@ -93,6 +93,10 @@ public class Intake extends SubsystemBase {
         return getArmPosition() < kEndEffectorMovePosition;
     }
 
+    public boolean readyForClimbing() {
+        return getArmPosition() > kRunRollersPosition;
+    }
+
     public double getObstacleSensorDistance() {
         /* Only return a distance if it's valid - default to last distance */
         double distance = obstacleSensor.getStatus().equals(Status.Valid) ? obstacleSensor.getRange() / 1000.0 : lastObstacleSensorDistance;

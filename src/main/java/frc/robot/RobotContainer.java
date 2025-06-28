@@ -66,7 +66,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Indexer indexer = new Indexer();
-    // private final Climber climber = new Climber();
+    private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
@@ -75,7 +75,7 @@ public class RobotContainer {
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake);
-    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, krakenSwerve, buttonBoard);
+    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, indexer, intake, climber, krakenSwerve, buttonBoard);
     private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
     private final Command coralCyclingCommand;
     private final Command algaeCyclingCommand;

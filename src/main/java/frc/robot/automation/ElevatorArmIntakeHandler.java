@@ -160,6 +160,15 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command prepareForClimbing() {
+        return Commands.sequence(
+            arm.moveToClimbPos(),
+            elevator.moveToClimbPosition(),
+            intake.returnToStowPosition(),
+            Commands.waitUntil(() -> elevatorAndArmAtSetpoints() && intake.readyForClimbing())
+        );
+    }
+
     public Command holdPositions() {
         return Commands.sequence(
             arm.holdPosition(),

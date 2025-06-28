@@ -96,6 +96,10 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmSourcePos)));
     }
 
+    public Command moveToClimbPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmClimbPos)));
+    }
+
     public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (
