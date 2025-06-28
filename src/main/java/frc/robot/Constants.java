@@ -70,7 +70,8 @@ public final class Constants {
         public static final double kCloseDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
-    public static class PathplannerConfig {
+    public static class PathFollowingConstants {
+        /* Pathplanner constants */
         public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
@@ -90,6 +91,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
+        /* Drive to pose constants */
         public static final double kAlignmentXYkP = 5.0;//TODO Tune better
         public static final double kAlignmentXYkD = 0;
         
@@ -98,6 +100,13 @@ public final class Constants {
 
         public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.25);
         public static final double kRotAlignmentTolerance = Units.degreesToRadians(2);
+
+        /* Barge alignment constants */
+        public static final double kBargeAlignmentX = 7.6;
+        public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
+
+        /* Intake offset for coral alignment */
+        public static final Transform2d kIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
     }
 
     public static final class ObjectAimingConstants {
@@ -111,13 +120,6 @@ public final class Constants {
         /* PID Constants */
         public static final double kPRotation = 0.15;
         public static final double kDRotation = 0.002;
-
-        /* Class Ids */
-        public static final int kCoralId = 1;
-        public static final int kAlgaeId = 0;
-
-        /* Intake offset */
-        public static final Transform2d kIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
     }
 
     public static final class DriverAssistConstants {
@@ -137,6 +139,10 @@ public final class Constants {
         /* Object tracking constants */
         public static final double kObjectExpireTime = 0.5;//Seconds
         public static final double kSameObjectDistance = Units.inchesToMeters(6);
+
+        /* Class Ids */
+        public static final int kCoralId = 1;
+        public static final int kAlgaeId = 0;
 
         public static final double kPoseLookaheadTime = 0.15;//Seconds
         

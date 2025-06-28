@@ -1,12 +1,10 @@
 package frc.robot.automation;
 
-import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
+import static frc.robot.Constants.PathFollowingConstants.*;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import static frc.robot.Constants.ObjectAimingConstants.kIntakeOffset;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -24,6 +22,7 @@ import frc.robot.commands.DriveToPose;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
+import frc.robot.utils.FieldUtil;
 
 public class PathfindingHandler {
     private PathfindingHandler() {}
@@ -69,6 +68,16 @@ public class PathfindingHandler {
 
     public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {
         return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
+    }
+
+    private static Pose2d getBargeAlignmentPose(KrakenSwerve swerve) {
+        var bargePose = FieldUtil.flipPoseIfNeeded(new Pose2d(kBargeAlignmentX, 0, kBargeAlignmentRotation));
+
+        return new Pose2d(bargePose.getX(), swerve.getLocalization().getCurrentPose().getY(), bargePose.getRotation());
+    }
+
+    public static Command pathToBarge(KrakenSwerve swerve) {
+        return Commands.defer(() -> new DriveToPose(swerve, getBargeAlignmentPose(swerve)), Set.of(swerve));
     }
 
     public static Command pathToSource(Supplier<SourcePath> sourcePathSup) {

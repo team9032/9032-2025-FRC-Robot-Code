@@ -13,7 +13,7 @@ import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
 public class DriverAssistedAutoIntake extends Command {

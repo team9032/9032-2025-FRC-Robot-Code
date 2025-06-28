@@ -1,7 +1,7 @@
 package frc.robot.localization;
 
-import static frc.robot.Constants.ObjectAimingConstants.kAlgaeId;
-import static frc.robot.Constants.ObjectAimingConstants.kCoralId;
+import static frc.robot.Constants.LocalizationConstants.kAlgaeId;
+import static frc.robot.Constants.LocalizationConstants.kCoralId;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 

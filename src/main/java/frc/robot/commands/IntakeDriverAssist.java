@@ -15,7 +15,7 @@ import static frc.robot.Constants.DriverAssistConstants.*;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 import static frc.robot.Constants.DriverConstants.kRotationRate;
 import static frc.robot.Constants.ObjectAimingConstants.kObjectTrackingCameraName;
-import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 
 public class IntakeDriverAssist extends Command {
     private final KrakenSwerve swerve;

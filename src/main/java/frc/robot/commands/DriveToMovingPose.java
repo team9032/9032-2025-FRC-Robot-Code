@@ -10,7 +10,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
-import static frc.robot.Constants.PathplannerConfig.*;
+import static frc.robot.Constants.PathFollowingConstants.*;
 
 import java.util.function.Supplier;
 
