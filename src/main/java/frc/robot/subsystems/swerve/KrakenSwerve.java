@@ -174,4 +174,8 @@ public class KrakenSwerve extends SubsystemBase {
     public Localization getLocalization() {
         return localization;
     }
+
+    public Rotation2d getOperatorPerspective() {
+        return drivetrain.getOperatorForwardDirection();
+    }
 }

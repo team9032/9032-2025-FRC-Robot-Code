@@ -117,7 +117,11 @@ public final class Constants {
         public static final int kAlgaeId = 0;
 
         /* Intake offset */
-        public static final Transform2d kIntakeOffset = new Transform2d(0, 0, Rotation2d.kZero);//TODO find
+        public static final Transform2d kIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
+    }
+
+    public static final class DriverAssistConstants {
+        public static final double kPTranslation = 0.25;
     }
 
     public static final class LocalizationConstants {

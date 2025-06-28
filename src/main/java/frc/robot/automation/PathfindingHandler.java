@@ -3,6 +3,7 @@ package frc.robot.automation;
 import static frc.robot.Constants.PathplannerConfig.kDynamicPathConstraints;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static frc.robot.Constants.ObjectAimingConstants.kIntakeOffset;
@@ -11,6 +12,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
@@ -18,6 +20,7 @@ import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.automation.ButtonBoardHandler.SourcePath;
 import frc.robot.commands.DriveToMovingPose;
+import frc.robot.commands.DriveToPose;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -45,7 +48,8 @@ public class PathfindingHandler {
             var coralTranslation = optionalCoral.get().getFieldPosition().getTranslation();
 
             /* Find the angle that points the robot towards the coral */
-            var rotationSetpoint = robotTranslation.minus(coralTranslation).getAngle();
+            var rotationSetpoint = robotTranslation.minus(coralTranslation).getAngle()//TODO this causes stability problems while driving if done in real time
+                .plus(Rotation2d.k180deg);
 
             var targetPose = new Pose2d(coralTranslation, rotationSetpoint)
                 /* Apply the intake's offset  */
@@ -60,6 +64,10 @@ public class PathfindingHandler {
     }
 
     public static Command pathToNearestCoral(KrakenSwerve swerve) {
+        return Commands.defer(() -> new DriveToPose(swerve, getCoralAlignmentPose(swerve)), Set.of(swerve));
+    }
+
+    public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {
         return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
     }
 

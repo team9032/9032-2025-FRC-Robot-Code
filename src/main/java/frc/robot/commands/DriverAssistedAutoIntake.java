@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -14,6 +14,7 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
 public class DriverAssistedAutoIntake extends Command {
     private final KrakenSwerve swerve;
@@ -53,68 +54,45 @@ public class DriverAssistedAutoIntake extends Command {
         var coralTarget = getCoralTarget();
 
         /* Update setpoint if we have a target */
-        if (coralTarget != null) {
-            double rotationSetpoint = currentYaw - (coralTarget.getPhotonVisionData().yaw - kRotationSetpoint);
+        if (coralTarget.isPresent()) {
+            lastCoralTarget = coralTarget.get();
+
+            double rotationSetpoint = currentYaw - (coralTarget.get().getPhotonVisionData().yaw - kRotationSetpoint);
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
-        double magnitude = Math.sqrt(Math.pow(xSpeedSupplier.getAsDouble(), 2) + Math.pow(ySpeedSupplier.getAsDouble(), 2));
+        double xSpeed = xSpeedSupplier.getAsDouble() * kMaxSpeed;
+        double ySpeed = ySpeedSupplier.getAsDouble() * kMaxSpeed;
 
-        /* Drive based on desired speed and the rotation PID's output */
-        var speeds = new ChassisSpeeds(
-            magnitude * kMaxDrivingSpeed,
-            0.0,
-            rotationController.calculate(currentYaw)
+        double magnitude = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+
+        /* Gets the robot relative speeds as if we are driving normally */
+        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            xSpeed, 
+            ySpeed,
+            rotationController.calculate(currentYaw),//Apply the rotation PID's output
+            localization.getCurrentPose().getRotation()
+                .minus(swerve.getOperatorPerspective())//Apply the operator perspective
         );
+
+        /* Only drive straight */
+        speeds.vxMetersPerSecond = magnitude * Math.signum(speeds.vxMetersPerSecond);//Use the sign to determine if we are going forwards or backwards
+        speeds.vyMetersPerSecond = 0;
 
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
 
-    private TrackedObject getCoralTarget() {
-        TrackedObject coralTarget;
+    private Optional<TrackedObject> getCoralTarget() {
+        /* Persistently track coral targets */
+        if (lastCoralTarget != null) {
+            var optionalCoral = localization.getTrackedObjectWithTrackingID(lastCoralTarget.getTrackingId());
 
-        var coralTargets = localization.getTrackedObjectsFromCameraWithType(kObjectTrackingCameraName, ObjectType.CORAL);
-        /* Exit if no targets exist */
-        if (coralTargets.isEmpty())
-            return null;
-
-        /* Find the target that is closest if there is no last target */
-        if(lastCoralTarget == null)
-            coralTarget = getClosestCoral(coralTargets);
-
-        /* Find the lowest yaw difference compared to the last coral target */
-        else {            
-            double lowestYawDifference = Double.MAX_VALUE;
-
-            coralTarget = getClosestCoral(coralTargets);
-
-            for(TrackedObject target : coralTargets) {
-                double yawDifference = Math.abs(target.getPhotonVisionData().getYaw() - lastCoralTarget.getPhotonVisionData().getYaw());
-
-                if(yawDifference < lowestYawDifference) {
-                    lowestYawDifference = yawDifference;
-
-                    coralTarget = target;
-                }
-            }
+            if (optionalCoral.isPresent()) 
+                return optionalCoral;
         }
 
-        lastCoralTarget = coralTarget;        
-
-        return coralTarget;
-    }
-
-    private TrackedObject getClosestCoral(List<TrackedObject> coralTargets) {
-        TrackedObject closetCoral = coralTargets.get(0);
-
-        for(var target : coralTargets) {
-            if(target.getPhotonVisionData().getPitch() < closetCoral.getPhotonVisionData().getPitch()) {
-                closetCoral = target;
-            } 
-        }
-
-        return closetCoral;
+        return localization.getNearestObjectOfType(ObjectType.CORAL);
     }
 
     @Override

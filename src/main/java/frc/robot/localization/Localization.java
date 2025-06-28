@@ -225,6 +225,16 @@ public class Localization {
         return Optional.of(closestObject);
     } 
 
+    /** Gets the object with the specified tracking id, or returns an empty optional. */
+    public Optional<TrackedObject> getTrackedObjectWithTrackingID(int id) {
+        for (var object : trackedObjects) {
+            if (object.getTrackingId() == id)
+                return Optional.of(object);
+        }
+
+        return Optional.empty();
+    }
+
     public List<TrackedObject> getTrackedObjectsOfType(ObjectType objectType) {
         return trackedObjects
             .stream()
