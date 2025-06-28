@@ -102,7 +102,7 @@ public class Compositions {
             endEffector.receiveCoralFromIndexer().asProxy(),
             intake.stopIntaking(),
             indexer.stopRollers(),
-            new ScheduleCommand(endEffector.holdCoral()),
+            new ScheduleCommand(endEffector.pickupCoralFromCradle()),
             /* Prepare for L1 early instead of stowing */
             Commands.either(
                 elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L1), 
@@ -124,7 +124,7 @@ public class Compositions {
                 endEffector.receiveCoralFromIndexer().asProxy()
                     .andThen(
                         ElasticUtil.sendInfoCommand("Recovering from coral partially in end effector"),
-                        new ScheduleCommand(endEffector.holdCoral()),
+                        new ScheduleCommand(endEffector.pickupCoralFromCradle()),
                         elevatorArmIntakeHandler.moveToStowPositions()
                     ),
                 endEffector.stopRollers().asProxy(),
@@ -149,7 +149,7 @@ public class Compositions {
                         .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(buttonBoardHandler::lowAlgaeSelected)), 
                     buttonBoardHandler::lowAlgaeSelected
                 ),
-                endEffector.pickupAlgae()
+                endEffector.intakeAlgae()
             )
         );
     }

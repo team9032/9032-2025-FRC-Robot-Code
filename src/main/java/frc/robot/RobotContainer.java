@@ -247,7 +247,6 @@ public class RobotContainer {
          * Manual 10 - algae score pos
          * Manual 11 - algae ground intake
          * Manual 12 - intake down
-         * Manual 13 - source intake
          * 
         */
         buttonBoard.manual1.onTrue(
@@ -294,27 +293,19 @@ public class RobotContainer {
         buttonBoard.manual10.onTrue(
             Commands.sequence(
                 elevatorArmIntakeHandler.prepareForAlgaeScoring(buttonBoard::getSelectedAlgaeScorePath),
-                endEffector.pickupAlgae()  
+                endEffector.intakeAlgae()  
             )
         );
 
         buttonBoard.manual11.onTrue(
             Commands.sequence(
                 elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
-                endEffector.pickupAlgae()
+                endEffector.intakeAlgae()
             )
         );
 
         buttonBoard.manual12.onTrue(
             compositions.intakeCoralToEndEffector(true)
-        );
-
-        buttonBoard.manual13.onTrue(
-            Commands.sequence(
-                arm.moveToSourcePos(),
-                elevator.moveToSourcePosition(),
-                endEffector.pickupCoralFromSource()
-            )
         );
     }
 

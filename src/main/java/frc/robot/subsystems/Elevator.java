@@ -93,10 +93,6 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorIndexerPos));
     }
 
-    public Command moveToSourcePosition() {
-        return runOnce(() -> moveElevator(kElevatorSource));
-    }
-
     public Command moveToLowAlgaePosition() {
         return runOnce(() -> moveElevator(kElevatorLowAlgae));
     }

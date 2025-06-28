@@ -248,7 +248,6 @@ public final class Constants {
         public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorIndexerPos = 1.6;
         public static final double kElevatorProcessor = 0; 
-        public static final double kElevatorSource = 4.311;
         public static final double kElevatorNet = 9.5;
         public static final double kElevatorAlgaeGround = 0.9;
         public static final double kElevatorClimb = 1.0;
@@ -355,7 +354,6 @@ public final class Constants {
         public static final double kArmHighAlgaePos = 0.06;
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
-        public static final double kArmSourcePos = 0.0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
         public static final double kArmClimbPos = 0.0;
@@ -455,55 +453,36 @@ public final class Constants {
     }
 
     public static final class EndEffectorConstants {
-        public static final int kMainEndEffectorID = 20;
-
-        public static final int kSecondaryEndEffectorID = 21;
-
-        public static final int kAlgaeDistSensorID = 35;
-        public static final int kSourcePhotoelectricSensorID = 0;        
-        public static final int kIndexerPhotoelectricSensorID = 1;
+        public static final int kEndEffectorRollerMotorID = 20;
 
         public static final double kProcessorOuttakePower = -1.0;
         public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaeSlowPower = 0.3;
         public static final double kIntakeAlgaePower = 1.0;
         public static final double kHoldAlgaePower = 0.05;
 
         public static final double kCoralOuttakePower = 1.0;
-        public static final double kCoralOuttakeToTrough = -0.4;
-        public static final double kIntakeFromSourcePower = 0.8;
-        public static final double kReceiveFromIndexerPower = -1.0;
-        public static final double kSlowIntakeFromSourcePower = 0.4; 
-        public static final double kSlowReceiveFromIndexerPower = -0.5; 
+        public static final double kCoralOuttakeToTrough = 0.8;
+        public static final double kReceiveFromCradlePower = -1.0; 
+        public static final double kHoldCoralPower = 0.05;
 
         public static final double kCoralOuttakeWait = 0.25;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final double kHasAlgaeDist = 175;
-        public static final double kHasAlgaeNearbyDist = 230;
+        public static final int kHasCoralCurrent = 5;
+        public static final int kHasAlgaeCurrent = 20;
 
-        public static final int kCycleAmountForTOFToExpire = 5;
-
-        public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
 
-        public static final MotorOutputConfigs kMainEndEffectorOutputConfigs = new MotorOutputConfigs()
+        public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake); 
 
-        public static final MotorOutputConfigs kSecondaryEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake); 
-
-        public static final TalonFXConfiguration kMainEndEffectorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kCurrentLimits)
-            .withMotorOutput(kMainEndEffectorOutputConfigs);
-
-        public static final TalonFXConfiguration kSecondaryEndEffectorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kCurrentLimits)
-            .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
+        public static final TalonFXConfiguration kEndEffectorRollerMotorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kEndEffectorCurrentLimits)
+            .withMotorOutput(kEndEffectorOutputConfigs);
     }
 
     public static final class ButtonBoardConstants {

@@ -110,7 +110,7 @@ public class Autos {
                 elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> true),
                 AutoBuilder.followPath(getAndScoreAlgaePath)
                     .alongWith(
-                        endEffector.pickupAlgae().asProxy(),
+                        endEffector.intakeAlgae().asProxy(),
                         Commands.waitUntil(moveElevatorTrigger)
                             .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET))
                     ),
@@ -128,7 +128,7 @@ public class Autos {
                     .alongWith(
                         elevatorArmIntakeHandler.moveToStowPositions()
                             .andThen(elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> !highAlgae)),
-                        endEffector.pickupAlgae().asProxy()
+                        endEffector.intakeAlgae().asProxy()
                     ),
                 AutoBuilder.followPath(scorePath)
                     .alongWith(
@@ -169,7 +169,7 @@ public class Autos {
         return Commands.sequence(
             AutoBuilder.followPath(scoreCoralPath)
                 .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator))
-                    .deadlineFor(endEffector.holdCoral().asProxy()),
+                    .deadlineFor(endEffector.pickupCoralFromCradle().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
             endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
             Commands.runOnce(() -> shouldMoveElevator = false)
