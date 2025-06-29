@@ -60,7 +60,11 @@ public class Compositions {
                     .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(reefLevelSup))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
-            endEffector.scoreCoral(buttonBoardHandler::getSelectedReefLevel)
+            elevatorArmIntakeHandler.moveToIntakePositionFromScoring()
+                .alongWith(
+                    Commands.waitUntil(elevatorArmIntakeHandler::armBelowCoralScoringPosition)
+                    .andThen(endEffector.scoreCoral(reefLevelSup))
+                )
         );
     }
 
@@ -117,8 +121,11 @@ public class Compositions {
             Commands.print("Intaking algae from the reef"),
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve)
             .alongWith(
-                elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(buttonBoardHandler::lowAlgaeSelected),//TODO high and low algae 
-                endEffector.intakeAlgae()
+                Commands.sequence(
+                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToIntakeAlgae(swerve.getLocalization())),
+                    elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
+                    endEffector.intakeAlgae()
+                )
             )
         );
     }

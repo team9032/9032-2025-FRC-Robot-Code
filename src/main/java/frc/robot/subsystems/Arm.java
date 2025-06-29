@@ -10,16 +10,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.ArmConstants.*;
-
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class Arm extends SubsystemBase {
     private final TalonFX armMotor;
@@ -44,20 +38,16 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(getPosition())));
     }
 
-    public boolean atTrough() {
+    public boolean atL1() {
         return atPosition(kArmL1Pos);
     }
 
-    public boolean atL1() {
-        return atPosition(kArmL2Pos);
+    public boolean atCoralPreparedToScorePos() {
+        return atPosition(kArmCoralPreparedToScorePos);
     }
 
-    public boolean atL2() {
-        return atPosition(kArmL3Pos);
-    }
-
-    public boolean atL3() {
-        return atPosition(kArmL4Pos);
+    public boolean belowCoralScoringPos() {
+        return getPosition() < kArmCoralScoringPos;
     }
 
     private double getPosition() {
@@ -76,37 +66,24 @@ public class Arm extends SubsystemBase {
         return getPosition() <= kArmOverIntakePos;
     }
 
-    public boolean closeToIndexPosition() {
-        return getPosition() > kArmIndexerPos - (kArmPositionTolerance * 10.0);
-    }
-
-    public boolean closeToL4() {
-        return MathUtil.isNear(kArmL4Pos, getPosition(), kArmPositionTolerance * 10.0);
+    public boolean closeToCradlePosition() {
+        return getPosition() > kArmCradlePos - (kArmPositionTolerance * 10.0);
     }
 
     public Command moveToStowPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmStowPos)));
     }
 
-    public Command moveToIndexerPos() {
-        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmIndexerPos)));
+    public Command moveToCradlePos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmCradlePos)));
     }
 
     public Command moveToClimbPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmClimbPos)));
     }
 
-    public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
-        return new SelectCommand<ReefLevel>(
-            Map.ofEntries (
-                Map.entry(ReefLevel.NONE, Commands.none()),
-                Map.entry(ReefLevel.L1, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL1Pos)))),
-                Map.entry(ReefLevel.L2, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL2Pos)))),
-                Map.entry(ReefLevel.L3, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL3Pos)))),
-                Map.entry(ReefLevel.L4, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL4Pos))))
-            ),
-            reefLevelSup
-        );
+    public Command moveToCoralScorePos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmCoralPreparedToScorePos)));
     }
 
     public Command moveToHighAlgaePos () {

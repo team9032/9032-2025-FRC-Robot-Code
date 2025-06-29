@@ -91,6 +91,12 @@ public class FieldUtil {
         return closestPose.transformBy(kAlgaeReefIntakeOffset);
     } 
 
+    public static boolean isClosestReefLocationHighAlgae(Localization localization) {
+        var closestTagID = getClosestReefTag(localization).getSecond();
+
+        return closestTagID % 2 == 0;//Even tags are high algae
+    } 
+
     private static Pair<Pose2d, Integer> getClosestReefTag(Localization localization) {
         var currentPose = localization.getCurrentPose();
 

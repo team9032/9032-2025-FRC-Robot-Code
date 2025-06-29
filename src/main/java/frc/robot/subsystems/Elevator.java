@@ -53,19 +53,19 @@ public class Elevator extends SubsystemBase {
         return MathUtil.isNear(position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
     }
 
-    public boolean atTrough() {
+    public boolean atL1() {
         return atPosition(kElevatorL1);
     }
 
-    public boolean atL1() {
+    public boolean atL2() {
         return atPosition(kElevatorL2);
     }
 
-    public boolean atL2() {
+    public boolean atL3() {
         return atPosition(kElevatorL3);
     }
 
-    public boolean atL3() {
+    public boolean atL4() {
         return atPosition(kElevatorL4);
     }
     
@@ -73,7 +73,7 @@ public class Elevator extends SubsystemBase {
         return atPosition(motionMagic.Position);
     }
 
-    public boolean overIndexPosition() {
+    public boolean overCradlePosition() {
         return elevatorPosSignal.getValueAsDouble() > (kElevatorOverCradle - kElevatorTolerance);
     }
 

@@ -362,17 +362,16 @@ public final class Constants {
             .withMagnetOffset(0);
 
         public static final double kArmStowPos = 0.2;
-        public static final double kArmIndexerPos = 0.75;
+        public static final double kArmCradlePos = 0.75;
         public static final double kArmL1Pos = 0.85;
-        public static final double kArmL2Pos = kArmStowPos; 
-        public static final double kArmL3Pos = kArmStowPos;
-        public static final double kArmL4Pos = 0.045;
         public static final double kArmHighAlgaePos = 0.06;
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
         public static final double kArmClimbPos = 0.0;
+        public static final double kArmCoralPreparedToScorePos = 0.0;
+        public static final double kArmCoralScoringPos = 0.0;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
