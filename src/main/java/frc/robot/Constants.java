@@ -222,10 +222,10 @@ public final class Constants {
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(15)
-            .withKD(0)
+            .withKP(13)
+            .withKD(1)
             .withKV(0.6)
-            .withKG(0.45)
+            .withKG(0.4)
             .withGravityType(kElevatorGravityType);
         //FIXME hi HARSHIL PANDENATOR
 
@@ -355,11 +355,11 @@ public final class Constants {
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
 
-        public static final int kArmEncoderId = 36;//TODO id
+        public static final int kArmEncoderId = 38;
         public static final MagnetSensorConfigs kArmEncoderConfig = new MagnetSensorConfigs()
             .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
             .withAbsoluteSensorDiscontinuityPoint(0.5)
-            .withMagnetOffset(0);
+            .withMagnetOffset(-0.1032);
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmCradlePos = 0.75;
@@ -383,10 +383,10 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKG(0.28)
-            .withKP(130.0)
-            .withKD(10.0)
-            .withKV(11.5)
+            .withKG(0)
+            .withKP(0)
+            .withKD(0)
+            .withKV(0)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
@@ -418,8 +418,8 @@ public final class Constants {
     }
     
     public static class ClimberConstants {
-        public static final int kClimberArmID = 19;
-        public static final int kClimberIntakeID = 37;
+        public static final int kClimberArmID = 32;
+        public static final int kClimberIntakeID = 33;
 
         public static final double kClimberStowPos = 0.5;
         public static final double kClimberCageIntakePos = 0.2;

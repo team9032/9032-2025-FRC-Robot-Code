@@ -152,7 +152,7 @@ public class Autos {
                 Commands.sequence(
                     elevatorArmIntakeHandler.moveIntakeDown(),//Make sure the intake is down in time
                     compositions.intakeCoralToEndEffector(true),
-                    elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator),
+                    elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L4),
                     ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
                 )
             )
@@ -167,7 +167,7 @@ public class Autos {
     private static Command scorePreloadCoral(PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector) {
         return Commands.sequence(
             AutoBuilder.followPath(scoreCoralPath)
-                .alongWith(elevatorArmIntakeHandler.prepareForAutoCoralScoring(() -> shouldMoveElevator))
+                .alongWith(elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L4))
                     .deadlineFor(endEffector.pickupCoralFromCradle().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
             endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
