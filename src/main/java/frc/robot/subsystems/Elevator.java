@@ -74,7 +74,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean overIndexPosition() {
-        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverIndexer - kElevatorTolerance);
+        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverCradle - kElevatorTolerance);
     }
 
     public boolean closeToNetPosition() {
@@ -89,8 +89,8 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorStow));
     }
 
-    public Command moveToIndexerPosition() {
-        return runOnce(() -> moveElevator(kElevatorIndexerPos));
+    public Command moveToCradlePosition() {
+        return runOnce(() -> moveElevator(kElevatorCradlePos));
     }
 
     public Command moveToLowAlgaePosition() {
@@ -126,8 +126,8 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorNet));
     }
 
-    public Command moveToOverIndexerPosition() {
-        return runOnce(() -> moveElevator(kElevatorOverIndexer));
+    public Command moveToOverCradlePosition() {
+        return runOnce(() -> moveElevator(kElevatorOverCradle));
     }
 
     public Command moveToAlgaeGroundPosition() {

@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
@@ -31,6 +30,10 @@ public class ElevatorArmIntakeHandler {
         return intake.moveToGround();
     }
 
+    public Command moveToCoralCradlePosition() {
+        return elevator.moveToCradlePosition();
+    }
+
     public Command moveToIntakePosition() {
         return Commands.either(
             Commands.sequence(
@@ -43,17 +46,17 @@ public class ElevatorArmIntakeHandler {
                     )
                     .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
                 arm.moveToStowPos(),
-                elevator.moveToOverIndexerPosition(),
+                elevator.moveToOverCradlePosition(),
                 intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
                 arm.moveToIndexerPos(),
                 Commands.waitUntil(arm::atSetpoint),
-                elevator.moveToIndexerPosition(),
+                elevator.moveToCradlePosition(),
                 Commands.waitUntil(() -> elevator.atSetpoint() && intake.canRunRollers()),
                 ElasticUtil.sendInfoCommand("Moved to index position")
             ),
             Commands.sequence(
-                elevator.moveToIndexerPosition(),
+                elevator.moveToCradlePosition(),
                 arm.moveToIndexerPos(),
                 intake.moveToGround(),
                 Commands.waitUntil(() -> elevator.atSetpoint() && arm.atSetpoint()),
@@ -66,7 +69,7 @@ public class ElevatorArmIntakeHandler {
     public Command moveToStowPositions() {
         return Commands.either(
             Commands.sequence(
-                elevator.moveToOverIndexerPosition(),
+                elevator.moveToOverCradlePosition(),
                 intake.moveToGround(),
                 Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
                 arm.moveToStowPos(),
@@ -143,20 +146,22 @@ public class ElevatorArmIntakeHandler {
         );          
     }
 
-    public Command prepareForAlgaeScoring(Supplier<AlgaeScorePath> algaeScorePathSup) {
+    public Command prepareForNetAlgaeScoring() {
         return Commands.sequence(
-            Commands.either(
-                elevator.moveToNetPosition()
-                    .andThen(
-                        Commands.waitUntil(elevator::closeToNetPosition),
-                        arm.moveToNetPos()
-                    ),
-                elevator.moveToProcessorPosition()
-                    .andThen(arm.moveToProcessorPos()),
-                () -> algaeScorePathSup.get().equals(AlgaeScorePath.TO_NET)
-            ),
+            elevator.moveToNetPosition(),
+            Commands.waitUntil(elevator::closeToNetPosition),
+            arm.moveToNetPos(),
             Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for algae scoring")
+            ElasticUtil.sendInfoCommand("Prepared for net algae scoring")
+        );
+    }
+
+    public Command prepareForProcessorAlgaeScoring() {
+        return Commands.sequence(
+            elevator.moveToProcessorPosition(),
+            arm.moveToProcessorPos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            ElasticUtil.sendInfoCommand("Prepared for processor algae scoring")
         );
     }
 

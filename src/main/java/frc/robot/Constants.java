@@ -108,8 +108,9 @@ public final class Constants {
         public static final double kBargeAlignmentX = 7.6;
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
 
-        /* Intake offset for coral alignment */
-        public static final Transform2d kIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
+        /* Intake offsets */
+        public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.5, 0.0, Rotation2d.kZero);
 
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.5, -0.2, Rotation2d.kZero);
@@ -117,7 +118,10 @@ public final class Constants {
 
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = Units.inchesToMeters(18.0);
+        public static final double kPrepareForAlgaeIntakingReefDistance = Units.inchesToMeters(24.0);
         public static final double kEndEffectorClearReefDistance = Units.inchesToMeters(14.0);
+
+        public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(16.0);
     }
 
     public static final class ObjectAimingConstants {
@@ -257,33 +261,34 @@ public final class Constants {
         public static final double kElevatorL4 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
-        public static final double kElevatorIndexerPos = 1.6;
+        public static final double kElevatorCradlePos = 1.6;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorNet = 9.5;
         public static final double kElevatorAlgaeGround = 0.9;
         public static final double kElevatorClimb = 1.0;
 
-        public static final double kElevatorOverIndexer = 2.7;
+        public static final double kElevatorOverCradle = 2.7;
         public static final double kElevatorOverHighAlgae = 4.5;
         public static final double kElevatorStow = 1.6; 
         public static final double kElevatorCloseToNet = 9.2;
     }
 
-    public static final class IndexerConstants {
-        public static final int kIndexerRollerID = 15;
+    public static final class TransferConstants {
+        public static final int kTransferRollerID = 15;
+        public static final int kTransferPhotoelectricSensorID = 0;
 
-        public static final double kIndexerRollerPower = -1.0;
+        public static final double kTransferRollerPower = -1.0;
 
-        public static final double kIndexerEjectPower = 0.25;
-        public static final double kIndexerEjectWait = 1.0;
+        public static final double kTransferEjectPower = 0.25;
+        public static final double kTransferEjectWait = 1.0;
 
-        public static final CurrentLimitsConfigs kIndexerRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kTransferRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final TalonFXConfiguration kIndexerRollerConfig = new TalonFXConfiguration()
+        public static final TalonFXConfiguration kTransferRollerConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
-            .withCurrentLimits(kIndexerRollerCurrentLimitConfigs);
+            .withCurrentLimits(kTransferRollerCurrentLimitConfigs);
     }
 
     public static final class IntakeConstants {

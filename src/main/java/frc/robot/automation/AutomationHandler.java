@@ -39,7 +39,7 @@ public class AutomationHandler {
             Map.ofEntries(
                 Map.entry(GamePieceState.GAMEPIECES_NOT_READY, compositions.intakeAlgaeFromReef()),
                 Map.entry(GamePieceState.HAS_CORAL, Commands.none()),
-                Map.entry(GamePieceState.HAS_ALGAE, compositions.scoreAlgaeSequence().asProxy())
+                Map.entry(GamePieceState.HAS_ALGAE, compositions.scoreAlgaeInNet().asProxy())
             ),
             this::getGamePieceState
         );

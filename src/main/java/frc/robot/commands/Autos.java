@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.PathfindingHandler;
-import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.automation.ButtonBoardHandler.SourcePath;
@@ -112,7 +111,7 @@ public class Autos {
                     .alongWith(
                         endEffector.intakeAlgae().asProxy(),
                         Commands.waitUntil(moveElevatorTrigger)
-                            .andThen(elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET))
+                            .andThen(elevatorArmIntakeHandler.prepareForNetAlgaeScoring())
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),
@@ -133,7 +132,7 @@ public class Autos {
                 AutoBuilder.followPath(scorePath)
                     .alongWith(
                         Commands.waitUntil(moveElevatorTrigger),
-                        elevatorArmIntakeHandler.prepareForAlgaeScoring(() -> AlgaeScorePath.TO_NET)
+                        elevatorArmIntakeHandler.prepareForNetAlgaeScoring()
                     ),
                 /* Score the algae when the paths finish and everything is at setpoint */
                 endEffector.outtakeNetAlgae().asProxy(),

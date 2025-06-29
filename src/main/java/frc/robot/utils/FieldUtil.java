@@ -5,13 +5,18 @@ import static frc.robot.Constants.LocalizationConstants.kBackReefTagsStartingID;
 import static frc.robot.Constants.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.Constants.LocalizationConstants.kMinReefTagID;
 import static frc.robot.Constants.LocalizationConstants.kReefCenter;
+import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
+import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
+import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
+import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,10 +48,16 @@ public class FieldUtil {
         return translation.getDistance(reefCenter) < kCloseCoralDistanceToReefCenter;
     }
 
-    public static boolean shouldPrepareToScore(Localization localization) {
+    public static boolean shouldPrepareToScoreCoral(Localization localization) {
         var reefCenter = flipTranslationIfNeeded(kReefCenter);
 
         return localization.getCurrentPose().getTranslation().getDistance(reefCenter) < kPrepareForScoringReefDistance;
+    }
+
+    public static boolean shouldPrepareToIntakeAlgae(Localization localization) {
+        var reefCenter = flipTranslationIfNeeded(kReefCenter);
+
+        return localization.getCurrentPose().getTranslation().getDistance(reefCenter) < kPrepareForAlgaeIntakingReefDistance;
     }
 
     public static boolean endEffectorCanClearReef(Localization localization) {
@@ -55,7 +66,32 @@ public class FieldUtil {
         return localization.getCurrentPose().getTranslation().getDistance(reefCenter) > kEndEffectorClearReefDistance;
     }
 
+    public static boolean shouldPrepareToScoreNetAlgae(Localization localization) {
+        var bargeLine = flipTranslationIfNeeded(new Translation2d(kBargeAlignmentX, 0));
+
+        return Math.abs(localization.getCurrentPose().getTranslation().getX() - bargeLine.getX()) < kPrepareForNetAlgaeScoringDistance;
+    }
+
     public static Pose2d getClosestReefScoringLocation(Localization localization, boolean isLeftBranch) {
+        var tag = getClosestReefTag(localization);
+        var closestPoseID = tag.getSecond();
+        var closestPose = tag.getFirst();
+
+        /* Invert direction on the back reef faces so the perspective makes sense */
+        if (closestPoseID >= kBackReefTagsStartingID)
+            return closestPose.transformBy(isLeftBranch ? kRightScoringOffset : kLeftScoringOffset);
+
+        else 
+            return closestPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
+    } 
+
+    public static Pose2d getClosestReefAlgaeIntakeLocation(Localization localization) {
+        var closestPose = getClosestReefTag(localization).getFirst();
+
+        return closestPose.transformBy(kAlgaeReefIntakeOffset);
+    } 
+
+    private static Pair<Pose2d, Integer> getClosestReefTag(Localization localization) {
         var currentPose = localization.getCurrentPose();
 
         /* Find the closest tag pose to the current pose */
@@ -74,11 +110,6 @@ public class FieldUtil {
             }
         }
 
-        /* Invert direction on the back reef faces so the perspective makes sense */
-        if (closestPoseID >= kBackReefTagsStartingID)
-            return closestPose.transformBy(isLeftBranch ? kRightScoringOffset : kLeftScoringOffset);
-
-        else 
-            return closestPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
-    } 
+        return Pair.of(closestPose, closestPoseID);
+    }
 }

@@ -52,7 +52,7 @@ public class PathfindingHandler {
 
             var targetPose = new Pose2d(coralTranslation, rotationSetpoint)
                 /* Apply the intake's offset  */
-                .transformBy(kIntakeOffset);
+                .transformBy(kCoralIntakeOffset);
 
             return targetPose;
         }
@@ -85,6 +85,10 @@ public class PathfindingHandler {
             new DriveToPose(swerve, FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch)), 
             Set.of(swerve)
         );
+    }
+
+    public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
+        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization())), Set.of(swerve));
     }
 
     public static Command pathToSource(Supplier<SourcePath> sourcePathSup) {
