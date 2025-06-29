@@ -80,6 +80,13 @@ public class PathfindingHandler {
         return Commands.defer(() -> new DriveToPose(swerve, getBargeAlignmentPose(swerve)), Set.of(swerve));
     }
 
+    public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
+        return Commands.defer(() -> 
+            new DriveToPose(swerve, FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch)), 
+            Set.of(swerve)
+        );
+    }
+
     public static Command pathToSource(Supplier<SourcePath> sourcePathSup) {
         return new SelectCommand<SourcePath>(
             Map.ofEntries(

@@ -70,7 +70,7 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final double kCloseDistanceToReefCenter = Units.inchesToMeters(12);
+        public static final double kCloseCoralDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
     public static class PathFollowingConstants {
@@ -110,6 +110,14 @@ public final class Constants {
 
         /* Intake offset for coral alignment */
         public static final Transform2d kIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
+
+        /* Scoring offsets */
+        public static final Transform2d kLeftScoringOffset = new Transform2d(0.5, -0.2, Rotation2d.kZero);
+        public static final Transform2d kRightScoringOffset = new Transform2d(0.5, 0.2, Rotation2d.kZero);
+
+        /* Reef distances */
+        public static final double kPrepareForScoringReefDistance = Units.inchesToMeters(18.0);
+        public static final double kEndEffectorClearReefDistance = Units.inchesToMeters(14.0);
     }
 
     public static final class ObjectAimingConstants {
@@ -194,6 +202,9 @@ public final class Constants {
         /* Field constants from the game manual */
         public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);
         public static final TargetModel kCoralModel = new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5));
+        public static final int kMinReefTagID = 17;
+        public static final int kMaxReefTagID = 22;
+        public static final int kBackReefTagsStartingID = 20;
     }
 
     public static class ElevatorConfigs {

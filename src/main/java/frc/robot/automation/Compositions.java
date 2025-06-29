@@ -42,7 +42,6 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Drive to source started"),
             new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition()),
-            Commands.waitSeconds(0.25),//TODO no
             PathfindingHandler.pathToSource(buttonBoardHandler::getSelectedSourcePath)
         );
     }
@@ -99,7 +98,7 @@ public class Compositions {
             elevatorArmIntakeHandler.moveToIntakePosition(),
             intake.intakeCoral(),
             indexer.spinRollers(),
-            endEffector.receiveCoralFromIndexer().asProxy(),
+            endEffector.pickupCoralFromCradle().asProxy(),
             intake.stopIntaking(),
             indexer.stopRollers(),
             new ScheduleCommand(endEffector.pickupCoralFromCradle()),
@@ -121,14 +120,14 @@ public class Compositions {
             intake.outtakeCoral(),
             /* Recover from coral partially in the end effector */
             Commands.either(
-                endEffector.receiveCoralFromIndexer().asProxy()
+                endEffector.pickupCoralFromCradle().asProxy()
                     .andThen(
                         ElasticUtil.sendInfoCommand("Recovering from coral partially in end effector"),
                         new ScheduleCommand(endEffector.pickupCoralFromCradle()),
                         elevatorArmIntakeHandler.moveToStowPositions()
                     ),
                 endEffector.stopRollers().asProxy(),
-                () -> !endEffector.hasCoralCentered() && endEffector.hasCoral()
+                () -> endEffector.hasCoral()
             ),
             indexer.stopRollers(),
             intake.stopIntaking()

@@ -261,5 +261,9 @@ public class Localization {
         return 0 < pose.getY() && pose.getY() < aprilTagLayout.getFieldWidth()
             && 0 < pose.getX() && pose.getX() < aprilTagLayout.getFieldLength();
     }
+
+    public Pose2d getTagPose(int tagID) {
+        return aprilTagLayout.getTagPose(tagID).get().toPose2d();
+    }
 }
    

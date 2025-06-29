@@ -22,7 +22,7 @@ public class GroundCoralTracking {
             /* Remove coral if it is too high (prevent seeing coral in L1) and is not close to the reef */
             coralTargets.removeIf(
                 (coral) -> coral.getPhotonVisionData().getPitch() > 0 ||
-                !FieldUtil.isCloseToReef(coral.getFieldPosition().getTranslation())
+                !FieldUtil.isCoralCloseToReef(coral.getFieldPosition().getTranslation())
             );
 
             if (!coralTargets.isEmpty())

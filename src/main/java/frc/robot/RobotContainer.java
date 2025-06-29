@@ -9,6 +9,7 @@ import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.GroundCoralTracking;
+import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
@@ -47,7 +48,7 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    private final Trigger slowMode = driveController.leftBumper().or(driveController.rightBumper());
+    //private final Trigger slowMode = driveController.leftBumper().or(driveController.rightBumper());
     private final Trigger resetPerspective = driveController.b();
     private final Trigger eject = driveController.x();
     private final Trigger stowPosition = driveController.y();
@@ -55,6 +56,8 @@ public class RobotContainer {
     private final Trigger intakeUp = driveController.leftTrigger();
     private final Trigger resumeAutomation = driveController.a();
     private final Trigger pulseIntake = driveController.povRight();
+    private final Trigger alignReefLeft = driveController.leftBumper();
+    private final Trigger alignReefRight = driveController.rightBumper();
 
     /* Operator Controller Buttons */
 
@@ -180,7 +183,7 @@ public class RobotContainer {
                 driveController::getRightX,
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
-                slowMode
+                () -> false//TODO remove slowMode?
             )
         );  
     }
@@ -234,6 +237,10 @@ public class RobotContainer {
         );
 
         pulseIntake.onTrue(compositions.pulseIntake());
+
+        alignReefRight.onTrue(PathfindingHandler.pathToClosestReefBranch(krakenSwerve, false));
+
+        alignReefLeft.onTrue(PathfindingHandler.pathToClosestReefBranch(krakenSwerve, true));
 
         /* Manual Controls:
          * 
