@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -67,6 +68,11 @@ public class Climber extends SubsystemBase {
 
     private Command moveToIntakePosition() {
         return moveClimber(kClimberCageIntakePos);
+    }
+
+    public Command coastArm() {
+        return runOnce(() -> armMotor.setControl(new CoastOut()))
+            .ignoringDisable(true);
     }
 
     public Command intakeCageAndClimb() {

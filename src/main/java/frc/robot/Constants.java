@@ -382,15 +382,16 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            //.withKG(0.5)
-            .withKP(0)
-            .withKD(0)
-            .withKV(0)
+            .withKG(0.5)
+            .withKP(130)
+            .withKD(0.1)
+            .withKA(0.25)
+            .withKV(4.5)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicExpo_kV(2)
-            .withMotionMagicExpo_kA(2); 
+            .withMotionMagicExpo_kV(2.5)
+            .withMotionMagicExpo_kA(1.5); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(1.0)

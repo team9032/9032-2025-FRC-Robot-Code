@@ -29,14 +29,13 @@ public class Arm extends SubsystemBase {
     
     public Arm() { 
         armEncoder = new CANcoder(kArmEncoderId);
-        //TODO armEncoder.optimizeBusUtilization();
         ElasticUtil.checkStatus(armEncoder.getConfigurator().apply(kArmEncoderConfig));
 
         armMotor = new TalonFX(kArmMotorId);
         
         armPosSignal = armMotor.getPosition();
         armPosSignal.setUpdateFrequency(100);
-        //armMotor.optimizeBusUtilization();
+        armMotor.optimizeBusUtilization();
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
     }

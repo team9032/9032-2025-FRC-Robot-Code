@@ -165,4 +165,10 @@ public class Compositions {
             endEffector.stopRollers()
         );
     }
+
+    public Command coastAll() {
+        return elevatorArmIntakeHandler.coastAll()
+            .andThen(climber.coastArm())
+            .ignoringDisable(true);
+    }
 }
