@@ -60,11 +60,10 @@ public class Compositions {
                     .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(reefLevelSup))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
+            elevatorArmIntakeHandler.moveArmToCoralScorePos(reefLevelSup),
+            endEffector.scoreCoral(reefLevelSup),
+            Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
             elevatorArmIntakeHandler.moveToIntakePositionFromScoring()
-                .alongWith(
-                    Commands.waitUntil(elevatorArmIntakeHandler::armBelowCoralScoringPosition)
-                    .andThen(endEffector.scoreCoral(reefLevelSup))
-                )
         );
     }
 
@@ -146,9 +145,17 @@ public class Compositions {
             .andThen(climber.intakeCageAndClimb());
     }
 
-    public Command cancelClimb() {
+    public Command cancelClimbAndStow() {
         return elevatorArmIntakeHandler.moveToStowPositions()
             .andThen(climber.moveToStowPosition());
+    }
+
+    public Command initClimber() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.moveIntakeDown(),
+            Commands.waitUntil(intake::canRunRollers),
+            climber.moveToStowPosition()            
+        );
     }
 
     public Command stopRollers() {

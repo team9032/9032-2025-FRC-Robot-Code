@@ -44,9 +44,8 @@ public class ElevatorArmIntakeHandler {
     public Command moveToIntakePositionFromScoring() {
         return Commands.sequence(
             arm.moveToCradlePos(),
-            Commands.waitUntil(arm::atSetpoint),
             elevator.moveToOverCradlePosition(),
-            Commands.waitUntil(elevator::atSetpoint),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Moved to intake position from scoring")
         ); 
     }
@@ -77,7 +76,7 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
             elevator.moveToCoralScoreLevel(reefLevelSup),
-            arm.moveToCoralScorePos(),
+            arm.moveToPreparedToScoreCoralPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring")
         );
@@ -141,6 +140,11 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command moveArmToCoralScorePos(Supplier<ReefLevel> reefLevelSup) {
+        return arm.moveToCoralScoreLevel(reefLevelSup)
+            .andThen(Commands.waitUntil(arm::atSetpoint));
+    }
+
     public Command holdPositions() {
         return Commands.sequence(
             arm.holdPosition(),
@@ -167,10 +171,6 @@ public class ElevatorArmIntakeHandler {
             return arm.atCoralPreparedToScorePos() && elevator.atL4();
         
         return false;
-    }
-
-    public boolean armBelowCoralScoringPosition() {
-        return arm.belowCoralScoringPos();
     }
 
     public Command coastAll() {

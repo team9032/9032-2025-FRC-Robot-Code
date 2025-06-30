@@ -201,10 +201,7 @@ public class RobotContainer {
         );
 
         stowPosition.onTrue(
-            elevatorArmIntakeHandler.moveToStowPositions()
-            .andThen(compositions.stopRollers()
-                .onlyIf(() -> !endEffector.hasAlgae())
-            )
+            compositions.cancelClimbAndStow()
         );
 
         intakeDown.onTrue(

@@ -191,11 +191,11 @@ public final class Constants {
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
-            new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
-            ),
+            // new CameraConstants("BackRightCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //     false
+            // ),
             // new CameraConstants("GroundCamera", new Transform3d(
             //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
             //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
@@ -269,7 +269,7 @@ public final class Constants {
 
         public static final double kElevatorOverCradle = 2.7;
         public static final double kElevatorOverHighAlgae = 4.5;
-        public static final double kElevatorStow = 1.6; 
+        public static final double kElevatorStow = 4.5;//TODO 1.6; 
         public static final double kElevatorCloseToNet = 9.2;
     }
 
@@ -347,9 +347,6 @@ public final class Constants {
         public static final double kRunRollersPosition = -100;
 
         public static final double kCanClimbPosition = -30.0;
-
-        public static final int kObstacleSensorID = 36;
-        public static final double kDefaultObstacleDistance = 10.0;
     }
 
     public static class ArmConstants {
@@ -364,6 +361,9 @@ public final class Constants {
         public static final double kArmStowPos = 0.2;
         public static final double kArmCradlePos = 0.75;
         public static final double kArmL1Pos = 0.85;
+        public static final double kArmL2Pos = kArmStowPos; 
+        public static final double kArmL3Pos = kArmStowPos;
+        public static final double kArmL4Pos = 0.045;
         public static final double kArmHighAlgaePos = 0.06;
         public static final double kArmLowAlgaePos = 0.05;
         public static final double kArmProcessorPos = 0;
@@ -371,7 +371,6 @@ public final class Constants {
         public static final double kArmAlgaeGroundPos = -0.06;
         public static final double kArmClimbPos = 0.0;
         public static final double kArmCoralPreparedToScorePos = 0.0;
-        public static final double kArmCoralScoringPos = 0.0;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmPositionTolerance = 0.005;
@@ -383,15 +382,15 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKG(0)
+            //.withKG(0.5)
             .withKP(0)
             .withKD(0)
             .withKV(0)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(0.9)
-            .withMotionMagicAcceleration(5.0); 
+            .withMotionMagicExpo_kV(2)
+            .withMotionMagicExpo_kA(2); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(1.0)
@@ -399,21 +398,15 @@ public final class Constants {
             .withFeedbackRemoteSensorID(kArmEncoderId)
             .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
-        public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(0.86) 
-            .withReverseSoftLimitThreshold(-0.12);
-
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
             .withMotorOutput(
                 new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake)
             )
             .withSlot0(kArmMotorPidConstants)
             .withMotionMagic(kArmMotionMagicConfigs)
-            .withSoftwareLimitSwitch(kArmSoftLimit)
             .withFeedback(kArmFeedbackConfigs);
     }
     
@@ -426,7 +419,7 @@ public final class Constants {
         public static final double kClimberClimbPos = 0.9;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
-            .withKP(2)
+            .withKP(0)
             .withKD(0)
             .withKV(0)
             .withKA(0)

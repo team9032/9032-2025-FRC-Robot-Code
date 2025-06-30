@@ -26,7 +26,7 @@ public class EndEffector extends SubsystemBase {
         rollerMotor = new TalonFX(kEndEffectorRollerMotorID);
 
         rollerCurrentSignal = rollerMotor.getStatorCurrent();
-        rollerCurrentSignal.setUpdateFrequency(100);
+        rollerCurrentSignal.setUpdateFrequency(50);
         rollerMotor.optimizeBusUtilization();
         
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kEndEffectorRollerMotorConfig));

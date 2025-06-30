@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -10,26 +10,33 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.ArmConstants.*;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 public class Arm extends SubsystemBase {
     private final TalonFX armMotor;
     private final CANcoder armEncoder;
-    private final MotionMagicVoltage armRequest = new MotionMagicVoltage(0);
+    private final MotionMagicExpoVoltage armRequest = new MotionMagicExpoVoltage(0);
     private final StatusSignal<Angle> armPosSignal;
     
     public Arm() { 
         armEncoder = new CANcoder(kArmEncoderId);
+        //TODO armEncoder.optimizeBusUtilization();
         ElasticUtil.checkStatus(armEncoder.getConfigurator().apply(kArmEncoderConfig));
 
         armMotor = new TalonFX(kArmMotorId);
         
         armPosSignal = armMotor.getPosition();
         armPosSignal.setUpdateFrequency(100);
-        armMotor.optimizeBusUtilization();
+        //armMotor.optimizeBusUtilization();
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
     }
@@ -41,13 +48,21 @@ public class Arm extends SubsystemBase {
     public boolean atL1() {
         return atPosition(kArmL1Pos);
     }
+    
+    public boolean atL2() {
+        return atPosition(kArmL2Pos);
+    }
+
+    public boolean atL3() {
+        return atPosition(kArmL3Pos);
+    }
+
+    public boolean atL4() {
+        return atPosition(kArmL4Pos);
+    }
 
     public boolean atCoralPreparedToScorePos() {
         return atPosition(kArmCoralPreparedToScorePos);
-    }
-
-    public boolean belowCoralScoringPos() {
-        return getPosition() < kArmCoralScoringPos;
     }
 
     private double getPosition() {
@@ -70,6 +85,10 @@ public class Arm extends SubsystemBase {
         return getPosition() > kArmCradlePos - (kArmPositionTolerance * 10.0);
     }
 
+    public Command moveToPreparedToScoreCoralPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmCoralPreparedToScorePos)));
+    }
+
     public Command moveToStowPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmStowPos)));
     }
@@ -80,10 +99,6 @@ public class Arm extends SubsystemBase {
 
     public Command moveToClimbPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmClimbPos)));
-    }
-
-    public Command moveToCoralScorePos() {
-        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmCoralPreparedToScorePos)));
     }
 
     public Command moveToHighAlgaePos () {
@@ -104,6 +119,19 @@ public class Arm extends SubsystemBase {
 
     public Command moveToAlgaeGroundPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeGroundPos)));
+    }
+
+    public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries (
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL1Pos)))),
+                Map.entry(ReefLevel.L2, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL2Pos)))),
+                Map.entry(ReefLevel.L3, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL3Pos)))),
+                Map.entry(ReefLevel.L4, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL4Pos))))
+            ),
+            reefLevelSup
+        );
     }
 
     public Command coast() {

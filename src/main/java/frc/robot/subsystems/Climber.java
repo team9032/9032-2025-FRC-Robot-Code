@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase {
         armMotor = new TalonFX(kClimberArmID);
         
         armPosSignal = armMotor.getPosition();
-        armPosSignal.setUpdateFrequency(100);
+        armPosSignal.setUpdateFrequency(50);
         armMotor.optimizeBusUtilization();
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kClimberArmMotorConfig));
@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
         intakeMotor = new TalonFX(kClimberArmID);
         
         intakeCurrentSignal = intakeMotor.getStatorCurrent();
-        intakeCurrentSignal.setUpdateFrequency(100);
+        intakeCurrentSignal.setUpdateFrequency(50);
         intakeMotor.optimizeBusUtilization();
 
         ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kClimberIntakeMotorConfig));
