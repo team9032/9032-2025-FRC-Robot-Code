@@ -261,15 +261,15 @@ public final class Constants {
         public static final double kElevatorL4 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
-        public static final double kElevatorCradlePos = 1.6;
+        public static final double kElevatorCradlePos = 2;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorNet = 9.5;
         public static final double kElevatorAlgaeGround = 0.9;
         public static final double kElevatorClimb = 1.0;
 
-        public static final double kElevatorOverCradle = 2.7;
+        public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
-        public static final double kElevatorStow = 4.5;//TODO 1.6; 
+        public static final double kElevatorStow = 1.6; 
         public static final double kElevatorCloseToNet = 9.2;
     }
 
@@ -307,7 +307,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.0)
-            .withReverseSoftLimitThreshold(-95.0); 
+            .withReverseSoftLimitThreshold(-120.0); 
 
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(300)
@@ -340,13 +340,13 @@ public final class Constants {
 
         public static final double kIntakePower = -1.0;
 
-        public static final double kGroundPosition = -120.0;
-        public static final double kStowPosition = -23.0;
-        public static final double kEndEffectorMovePosition = -90.0;
+        public static final double kGroundPosition = -130.0;
+        public static final double kStowPosition = -27.0;
+        public static final double kEndEffectorMovePosition = -94.0;
 
-        public static final double kRunRollersPosition = -100;
+        public static final double kRunRollersPosition = -104;
 
-        public static final double kCanClimbPosition = -30.0;
+        public static final double kCanClimbPosition = -34.0;
     }
 
     public static class ArmConstants {
@@ -359,13 +359,13 @@ public final class Constants {
             .withMagnetOffset(-0.1032);
 
         public static final double kArmStowPos = 0.2;
-        public static final double kArmCradlePos = 0.75;
-        public static final double kArmL1Pos = 0.85;
-        public static final double kArmL2Pos = kArmStowPos; 
-        public static final double kArmL3Pos = kArmStowPos;
-        public static final double kArmL4Pos = 0.045;
-        public static final double kArmHighAlgaePos = 0.06;
-        public static final double kArmLowAlgaePos = 0.05;
+        public static final double kArmCradlePos = -0.25;
+        public static final double kArmL1Pos = 0.25;//TODO
+        public static final double kArmL2Pos = 0.05; 
+        public static final double kArmL3Pos = 0.05;
+        public static final double kArmL4Pos = 0.1;
+        public static final double kArmHighAlgaePos = 0;
+        public static final double kArmLowAlgaePos = 0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
@@ -373,6 +373,7 @@ public final class Constants {
         public static final double kArmCoralPreparedToScorePos = 0.0;
 
         public static final double kArmOverIntakePos = 0.5;
+        public static final double kArmOverCradlePos = -0.1;
         public static final double kArmPositionTolerance = 0.005;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
@@ -464,22 +465,22 @@ public final class Constants {
     public static final class EndEffectorConstants {
         public static final int kEndEffectorRollerMotorID = 20;
 
-        public static final double kProcessorOuttakePower = -1.0;
-        public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaePower = 1.0;
-        public static final double kHoldAlgaePower = 0.05;
+        public static final double kProcessorOuttakePower = 1.0;
+        public static final double kNetOuttakePower = 1.0;
+        public static final double kIntakeAlgaePower = -1.0;
+        public static final double kHoldAlgaePower = -0.05;
 
         public static final double kCoralOuttakePower = 1.0;
         public static final double kCoralOuttakeToTrough = 0.8;
-        public static final double kReceiveFromCradlePower = -1.0; 
-        public static final double kHoldCoralPower = 0.05;
+        public static final double kReceiveFromCradlePower = -0.5; 
+        public static final double kHoldCoralPower = -0.1;
 
         public static final double kCoralOuttakeWait = 0.25;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final int kHasCoralCurrent = 5;
-        public static final int kHasAlgaeCurrent = 20;
+        public static final int kHasCoralCurrent = 30;
+        public static final int kHasAlgaeCurrent = 50;
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)

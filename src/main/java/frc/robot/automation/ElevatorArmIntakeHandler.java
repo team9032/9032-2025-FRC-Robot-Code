@@ -38,7 +38,7 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             elevator.moveToOverCradlePosition(),
             Commands.waitUntil(elevator::atSetpoint)
-        ).onlyIf(arm::closeToCradlePosition);
+        ).onlyIf(() -> !arm.overCradle());
     }       
 
     public Command moveToIntakePositionFromScoring() {
@@ -66,6 +66,7 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
             arm.moveToStowPos(),
+            Commands.waitUntil(arm::overCradle),
             elevator.moveToStowPosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Moved to stow")

@@ -60,6 +60,10 @@ public class Arm extends SubsystemBase {
         return atPosition(kArmL4Pos);
     }
 
+    public boolean overCradle() {
+        return armPosSignal.getValueAsDouble() > kArmOverCradlePos;
+    }
+
     public boolean atCoralPreparedToScorePos() {
         return atPosition(kArmCoralPreparedToScorePos);
     }
@@ -78,10 +82,6 @@ public class Arm extends SubsystemBase {
 
     public boolean overIntake() {
         return getPosition() <= kArmOverIntakePos;
-    }
-
-    public boolean closeToCradlePosition() {
-        return getPosition() > kArmCradlePos - (kArmPositionTolerance * 10.0);
     }
 
     public Command moveToPreparedToScoreCoralPos() {
