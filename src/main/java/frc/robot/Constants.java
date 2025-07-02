@@ -43,7 +43,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -57,6 +56,7 @@ public final class Constants {
         public static final int kDriveControllerPort = 0;
 
         public static final double kOverrideAutomationThreshold = 0.1;
+        public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
         public static final double kSlowSpeed = kMaxSpeed * 0.15;
@@ -434,13 +434,13 @@ public final class Constants {
             .withStatorCurrentLimit(120);
             
         public static final FeedbackConfigs kClimberArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(243.0); 
+            .withSensorToMechanismRatio(375.0); 
 
         public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(-1.0)
-            .withReverseSoftLimitThreshold(1.0);
+            .withForwardSoftLimitThreshold(0.5)
+            .withReverseSoftLimitThreshold(0);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
@@ -470,8 +470,8 @@ public final class Constants {
         public static final double kIntakeAlgaePower = -1.0;
         public static final double kHoldAlgaePower = -0.05;
 
-        public static final double kCoralOuttakePower = 1.0;
-        public static final double kCoralOuttakeToTrough = 0.8;
+        public static final double kCoralOuttakePower = 0.2;
+        public static final double kCoralOuttakeToTrough = 0.5;
         public static final double kReceiveFromCradlePower = -0.5; 
         public static final double kHoldCoralPower = -0.1;
 
@@ -509,9 +509,7 @@ public final class Constants {
         //Patterns
         public static final LEDPattern kError = LEDPattern.solid(Color.kDarkRed);
 
-        public static final LEDPattern kCoralBlockingAlignment = LEDPattern.gradient(GradientType.kContinuous, Color.kBrown, Color.kRed, Color.kLawnGreen)
-            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
-            .blink(Seconds.of(0.1));
+        public static final LEDPattern kClimbing = LEDPattern.rainbow(255, 255);
 
         public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple);
 

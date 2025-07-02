@@ -1,5 +1,6 @@
 package frc.robot.automation;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,15 +43,11 @@ public class Compositions {
         );
     }
 
-    public Command alignToReefAndScoreFromButtonBoard() {
-        return Commands.none();//TODO
-    }
-
     public Command alignToReefAndScoreFromPreset(ReefPath reefPath, ReefLevel reefLevel) {
         return Commands.none();//TODO
     }
 
-    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup) {
+    public Command alignToReefAndScoreInterruptable(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
             PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch)
@@ -61,10 +58,24 @@ public class Compositions {
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
             elevatorArmIntakeHandler.moveArmToCoralScorePos(reefLevelSup),
-            endEffector.scoreCoral(reefLevelSup),
-            Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
-            elevatorArmIntakeHandler.moveToIntakePositionFromScoring()
-        );
+            endEffector.scoreCoral(reefLevelSup)
+        )
+        .until(shouldInterrupt)
+        .andThen(
+            Commands.either(
+                elevatorArmIntakeHandler.moveToStowPositions(),
+                Commands.sequence(
+                    Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
+                    elevatorArmIntakeHandler.moveToIntakePositionFromScoring()   
+                ),
+                endEffector::hasCoral
+            )
+        )
+        .onlyIf(endEffector::hasCoral);
+    }
+
+    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup) {
+        return alignToReefAndScoreInterruptable(isLeftBranch, reefLevelSup, () -> false);
     }
 
     public Command intakeNearestCoral(boolean moveToStow) {
@@ -88,7 +99,7 @@ public class Compositions {
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
-            elevatorArmIntakeHandler.moveToIntakePosition(),
+            elevatorArmIntakeHandler.moveToIntakePosition(),//TODO start rollers sooner
             intake.intakeCoral(),
             transfer.receiveCoralFromIntake(),
             intake.stopIntaking(),
@@ -115,7 +126,7 @@ public class Compositions {
         );
     }       
 
-    public Command intakeAlgaeFromReef() {
+    public Command intakeNearestAlgaeFromReef() {
         return Commands.sequence(
             Commands.print("Intaking algae from the reef"),
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve)
@@ -126,18 +137,32 @@ public class Compositions {
                     endEffector.intakeAlgae()
                 )
             )
-        );
+        )
+        .onlyIf(() -> !endEffector.hasCoral());
     }
 
     public Command scoreAlgaeInNet() {
         return Commands.sequence(
             PathfindingHandler.pathToBarge(swerve)
                 .alongWith(
-                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreNetAlgae(swerve.getLocalization()))
-                        .andThen(elevatorArmIntakeHandler.prepareForNetAlgaeScoring())
+                    Commands.sequence(
+                        elevatorArmIntakeHandler.moveToStowPositions(),
+                        Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreNetAlgae(swerve.getLocalization())),
+                        elevatorArmIntakeHandler.prepareForNetAlgaeScoring()
+                    )
                 ),
-            endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath)
-        );
+            endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath),
+            elevatorArmIntakeHandler.moveToStowPositionsFromNet()
+        )
+        .onlyIf(endEffector::hasAlgae);
+    }
+
+    public Command intakeGroundAlgae() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
+            endEffector.intakeAlgae()  
+        )
+        .onlyIf(() -> !endEffector.hasAlgae() && !endEffector.hasCoral());
     }
 
     public Command climb() {

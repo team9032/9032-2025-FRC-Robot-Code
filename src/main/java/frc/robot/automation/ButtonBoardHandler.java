@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.LED;
-import frc.robot.subsystems.LED.State;
 
 import static frc.robot.Constants.ButtonBoardConstants.*;
 
@@ -20,29 +18,27 @@ public class ButtonBoardHandler {
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable buttonTable = inst.getTable("ButtonTable");
 
-    private final BooleanPublisher toLSourcePub = buttonTable.getBooleanTopic("toLSource").publish();
-    private final BooleanPublisher toNetPub = buttonTable.getBooleanTopic("toBarge").publish();
-    private final BooleanPublisher toRSourcePub = buttonTable.getBooleanTopic("toRSource").publish();
-    private final BooleanPublisher toProcessorPub = buttonTable.getBooleanTopic("toProcessor").publish();
-    private final BooleanPublisher to1LPub = buttonTable.getBooleanTopic("to1L").publish();
-    private final BooleanPublisher to1RPub = buttonTable.getBooleanTopic("to1R").publish();
-    private final BooleanPublisher to2LPub = buttonTable.getBooleanTopic("to2L").publish();
-    private final BooleanPublisher to2RPub = buttonTable.getBooleanTopic("to2R").publish();
-    private final BooleanPublisher to3LPub = buttonTable.getBooleanTopic("to3L").publish();
-    private final BooleanPublisher to3RPub = buttonTable.getBooleanTopic("to3R").publish();
-    private final BooleanPublisher to4LPub = buttonTable.getBooleanTopic("to4L").publish();
-    private final BooleanPublisher to4RPub = buttonTable.getBooleanTopic("to4R").publish();
-    private final BooleanPublisher to5LPub = buttonTable.getBooleanTopic("to5L").publish();
-    private final BooleanPublisher to5RPub = buttonTable.getBooleanTopic("to5R").publish();
-    private final BooleanPublisher to6LPub = buttonTable.getBooleanTopic("to6L").publish();
-    private final BooleanPublisher to6RPub = buttonTable.getBooleanTopic("to6R").publish();
+    // private final BooleanPublisher toLSourcePub = buttonTable.getBooleanTopic("toLSource").publish();
+    // private final BooleanPublisher toNetPub = buttonTable.getBooleanTopic("toBarge").publish();
+    // private final BooleanPublisher toRSourcePub = buttonTable.getBooleanTopic("toRSource").publish();
+    // private final BooleanPublisher toProcessorPub = buttonTable.getBooleanTopic("toProcessor").publish();
+    // private final BooleanPublisher to1LPub = buttonTable.getBooleanTopic("to1L").publish();
+    // private final BooleanPublisher to1RPub = buttonTable.getBooleanTopic("to1R").publish();
+    // private final BooleanPublisher to2LPub = buttonTable.getBooleanTopic("to2L").publish();
+    // private final BooleanPublisher to2RPub = buttonTable.getBooleanTopic("to2R").publish();
+    // private final BooleanPublisher to3LPub = buttonTable.getBooleanTopic("to3L").publish();
+    // private final BooleanPublisher to3RPub = buttonTable.getBooleanTopic("to3R").publish();
+    // private final BooleanPublisher to4LPub = buttonTable.getBooleanTopic("to4L").publish();
+    // private final BooleanPublisher to4RPub = buttonTable.getBooleanTopic("to4R").publish();
+    // private final BooleanPublisher to5LPub = buttonTable.getBooleanTopic("to5L").publish();
+    // private final BooleanPublisher to5RPub = buttonTable.getBooleanTopic("to5R").publish();
+    // private final BooleanPublisher to6LPub = buttonTable.getBooleanTopic("to6L").publish();
+    // private final BooleanPublisher to6RPub = buttonTable.getBooleanTopic("to6R").publish();
 
     private final BooleanPublisher toL1Pub = buttonTable.getBooleanTopic("toTrough").publish();
     private final BooleanPublisher toL2Pub = buttonTable.getBooleanTopic("toLevel1").publish();
     private final BooleanPublisher toL3Pub = buttonTable.getBooleanTopic("toLevel2").publish();
     private final BooleanPublisher toL4Pub = buttonTable.getBooleanTopic("toLevel3").publish();
-    private final BooleanPublisher algaeModePub = buttonTable.getBooleanTopic("algaeToggle").publish();
-    private final BooleanPublisher coralModePub = buttonTable.getBooleanTopic("automaticMode").publish();
 
     private final Trigger toLSource = buttonBoardController1.button(1);
     private final Trigger toBarge = buttonBoardController1.button(4);
@@ -203,61 +199,30 @@ public class ButtonBoardHandler {
         return autoIntake;
     }
 
-    public void update(boolean coralModeEnabled, boolean algaeModeEnabled) {
-        toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
-        toNetPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_NET));
-        toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
-        toProcessorPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_PROCESSOR));
+    public void update() {
+        // toLSourcePub.set(sourcePathTarget.equals(SourcePath.TO_LSOURCE));
+        // toNetPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_NET));
+        // toRSourcePub.set(sourcePathTarget.equals(SourcePath.TO_RSOURCE));
+        // toProcessorPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_PROCESSOR));
 
-        to1LPub.set(reefPathTarget.equals(ReefPath.TO_1L));
-        to2LPub.set(reefPathTarget.equals(ReefPath.TO_2L));
-        to1RPub.set(reefPathTarget.equals(ReefPath.TO_1R));
-        to2RPub.set(reefPathTarget.equals(ReefPath.TO_2R));
-        to3LPub.set(reefPathTarget.equals(ReefPath.TO_3L));
-        to3RPub.set(reefPathTarget.equals(ReefPath.TO_3R));
-        to4LPub.set(reefPathTarget.equals(ReefPath.TO_4L));
-        to4RPub.set(reefPathTarget.equals(ReefPath.TO_4R));
-        to5LPub.set(reefPathTarget.equals(ReefPath.TO_5L));
-        to5RPub.set(reefPathTarget.equals(ReefPath.TO_5R));
-        to6LPub.set(reefPathTarget.equals(ReefPath.TO_6L));
-        to6RPub.set(reefPathTarget.equals(ReefPath.TO_6R));
+        // to1LPub.set(reefPathTarget.equals(ReefPath.TO_1L));
+        // to2LPub.set(reefPathTarget.equals(ReefPath.TO_2L));
+        // to1RPub.set(reefPathTarget.equals(ReefPath.TO_1R));
+        // to2RPub.set(reefPathTarget.equals(ReefPath.TO_2R));
+        // to3LPub.set(reefPathTarget.equals(ReefPath.TO_3L));
+        // to3RPub.set(reefPathTarget.equals(ReefPath.TO_3R));
+        // to4LPub.set(reefPathTarget.equals(ReefPath.TO_4L));
+        // to4RPub.set(reefPathTarget.equals(ReefPath.TO_4R));
+        // to5LPub.set(reefPathTarget.equals(ReefPath.TO_5L));
+        // to5RPub.set(reefPathTarget.equals(ReefPath.TO_5R));
+        // to6LPub.set(reefPathTarget.equals(ReefPath.TO_6L));
+        // to6RPub.set(reefPathTarget.equals(ReefPath.TO_6R));
 
         toL1Pub.set(reefLevelTarget.equals(ReefLevel.L1));
         toL2Pub.set(reefLevelTarget.equals(ReefLevel.L2));
         toL3Pub.set(reefLevelTarget.equals(ReefLevel.L3));
         toL4Pub.set(reefLevelTarget.equals(ReefLevel.L4));
-
-        algaeModePub.set(algaeModeEnabled);
-        coralModePub.set(coralModeEnabled);
     }    
-
-    public void setCoralAimingLEDs(LED led) {
-        switch (reefLevelTarget) {
-            case NONE:
-            led.setState(State.ENABLED);
-                break;
-
-            case L2:
-            led.setState(State.L2);
-                break;
-
-            case L3:
-            led.setState(State.L3);
-                break;
-
-            case L4:
-            led.setState(State.L4);
-                break;
-
-            case L1:
-            led.setState(State.L1);
-                break;
-
-            default:
-            led.setState(State.ENABLED);
-                break;
-        }
-    }
 
     public boolean backReefSegmentsSelected() {
         return reefPathTarget.equals(ReefPath.TO_3L) || reefPathTarget.equals(ReefPath.TO_3R) || 

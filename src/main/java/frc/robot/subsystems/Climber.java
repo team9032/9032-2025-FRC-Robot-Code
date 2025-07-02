@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
 
         intakeMotor = new TalonFX(kClimberArmID);
         
-        intakeCurrentSignal = intakeMotor.getStatorCurrent();
+        intakeCurrentSignal = intakeMotor.getTorqueCurrent();
         intakeCurrentSignal.setUpdateFrequency(50);
         intakeMotor.optimizeBusUtilization();
 

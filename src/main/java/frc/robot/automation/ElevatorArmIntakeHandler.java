@@ -73,6 +73,16 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command moveToStowPositionsFromNet() {
+        return Commands.sequence(
+            arm.moveToStowPos(),
+            Commands.waitUntil(arm::atSetpoint),
+            elevator.moveToStowPosition(),
+            Commands.waitUntil(elevator::atSetpoint),
+            ElasticUtil.sendInfoCommand("Moved to stow from net")
+        );
+    }
+
     public Command prepareForCoralScoring(Supplier<ReefLevel> reefLevelSup) {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),

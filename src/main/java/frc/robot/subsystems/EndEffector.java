@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +26,7 @@ public class EndEffector extends SubsystemBase {
     public EndEffector() {
         rollerMotor = new TalonFX(kEndEffectorRollerMotorID);
 
-        rollerCurrentSignal = rollerMotor.getStatorCurrent();
+        rollerCurrentSignal = rollerMotor.getTorqueCurrent();
         rollerCurrentSignal.setUpdateFrequency(50);
         rollerMotor.optimizeBusUtilization();
         

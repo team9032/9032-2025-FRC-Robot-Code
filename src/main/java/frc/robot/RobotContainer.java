@@ -4,12 +4,9 @@
 
 package frc.robot;
 
-import frc.robot.automation.AutomationHandler;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
-import frc.robot.automation.GroundCoralTracking;
-import frc.robot.automation.PathfindingHandler;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriverAssistedAutoIntake;
 import frc.robot.commands.TeleopSwerve;
@@ -26,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -48,16 +44,16 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
-    //private final Trigger slowMode = driveController.leftBumper().or(driveController.rightBumper());
-    private final Trigger resetPerspective = driveController.b();
-    private final Trigger eject = driveController.x();
-    private final Trigger stowPosition = driveController.y();
+    private final Trigger resetPerspective = driveController.povDown();
+    private final Trigger ejectIntake = driveController.x();
+    private final Trigger stowAndCancelClimb = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
-    private final Trigger resumeAutomation = driveController.a();
-    private final Trigger pulseIntake = driveController.povRight();
-    private final Trigger alignReefLeft = driveController.leftBumper();
-    private final Trigger alignReefRight = driveController.rightBumper();
+    private final Trigger algaeGroundIntake = driveController.a();
+    private final Trigger algaeReefIntakeOrNetScore = driveController.b();
+    private final Trigger deployClimber = driveController.povRight().or(driveController.povLeft());
+    private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
+    private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
 
     /* Operator Controller Buttons */
 
@@ -79,10 +75,6 @@ public class RobotContainer {
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake);
     private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, transfer, intake, climber, krakenSwerve, buttonBoard);
-    private final AutomationHandler automationHandler = new AutomationHandler(compositions, endEffector, buttonBoard);
-    private final Command coralCyclingCommand;
-    private final Command algaeCyclingCommand;
-    private final GroundCoralTracking groundCoralTracking = new GroundCoralTracking(krakenSwerve.getLocalization(), buttonBoard);
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
@@ -91,9 +83,8 @@ public class RobotContainer {
 
     /* Teleop Triggers */
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
-    private final Trigger coralCyclingCommandScheduled;
-    private final Trigger algaeCyclingCommandScheduled;
-    private final Trigger groundCoralOnFarReef = new Trigger(groundCoralTracking::coralBlockingAlignmentOnFarReef);
+    private Trigger coralCyclingCommandScheduled;
+    private Trigger algaeCyclingCommandScheduled;
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -105,46 +96,24 @@ public class RobotContainer {
         FollowPathCommand.warmupCommand().schedule();
 
         /* Setup automation */
-        coralCyclingCommand = automationHandler.coralResumeCommand()
-            .until(this::driverWantsOverride)
-            .andThen(
-                new ScheduleCommand(elevatorArmIntakeHandler.moveToStowPositions())
-                    .onlyIf(endEffector::hasCoral)
-        );
-
-        algaeCyclingCommand = automationHandler.algaeResumeCommand()
-            .until(this::driverWantsOverride)
-            .andThen(
-                compositions.stopRollers().asProxy()
-                    .onlyIf(() -> !endEffector.hasAlgae())
-            );
-
-        buttonBoard.getEnableCoralModeTrigger()
-            .toggleOnTrue(coralCyclingCommand);
-
-        buttonBoard.getEnableAlgaeModeTrigger()
-            .onTrue(algaeCyclingCommand);
-
         buttonBoard.getAutoIntakeTrigger().onTrue(
             compositions.intakeNearestCoral(true)
             .until(this::driverWantsOverride)
         );     
 
         /* Bind Triggers */
-        coralCyclingCommandScheduled = new Trigger(coralCyclingCommand::isScheduled);
-        algaeCyclingCommandScheduled = new Trigger(algaeCyclingCommand::isScheduled);
-
         if(kRunSysId)
             bindSysIdTriggers();
         
-        else    
+        else {
             configureButtonTriggers();
 
+            bindTeleopTriggers();   
+        }
+        
         configureDefaultCommands();
 
         bindRobotModeTriggers();
-
-        bindTeleopTriggers();   
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
@@ -196,11 +165,11 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        eject.onTrue(
+        ejectIntake.onTrue(
             intake.ejectCoral()
         );
 
-        stowPosition.onTrue(
+        stowAndCancelClimb.onTrue(
             compositions.cancelClimbAndStow()
         );
 
@@ -212,7 +181,7 @@ public class RobotContainer {
             )
         );
 
-        intakeDown.whileTrue(
+        intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
             new DriverAssistedAutoIntake(
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
@@ -229,15 +198,30 @@ public class RobotContainer {
             )
         );
 
-        resumeAutomation.and(endEffector::hasCoral).onTrue(//Prevent shooting coral out of the end effector
-            coralCyclingCommand
-        );
+        Command alignAndScoreCoralLeftCommand = compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
 
-        pulseIntake.onTrue(compositions.pulseIntake());
+        alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
-        alignReefRight.onTrue(PathfindingHandler.pathToClosestReefBranch(krakenSwerve, false));
+        Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScoreInterruptable(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
 
-        alignReefLeft.onTrue(PathfindingHandler.pathToClosestReefBranch(krakenSwerve, true));
+        alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
+
+        coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());
+
+        deployClimber.onTrue(compositions.climb());
+
+        Command algaeReefIntakeOrNetScoreCommand = Commands.either(
+            compositions.scoreAlgaeInNet(), 
+            compositions.intakeNearestAlgaeFromReef(), 
+            endEffector::hasAlgae
+        )
+        .until(this::driverWantsOverride);
+
+        algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
+
+        algaeCyclingCommandScheduled = new Trigger(() -> algaeReefIntakeOrNetScoreCommand.isScheduled());
+
+        algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
         /* Manual Controls:
          * 
@@ -315,7 +299,7 @@ public class RobotContainer {
 
     /** Runs every loop cycle */
     public void robotPeriodic() {
-        buttonBoard.update(coralCyclingCommand.isScheduled(), algaeCyclingCommand.isScheduled());
+        buttonBoard.update();
         
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
@@ -344,7 +328,7 @@ public class RobotContainer {
     private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
 
-        coralCyclingCommandScheduled.onTrue(Commands.runOnce(() -> buttonBoard.setCoralAimingLEDs(led)));
+        coralCyclingCommandScheduled.onTrue(led.setStateFromReefLevel(buttonBoard::getSelectedReefLevel));
         coralCyclingCommandScheduled.onFalse(
             Commands.either(
                 led.setStateCommand(State.ENABLED), 
@@ -359,13 +343,6 @@ public class RobotContainer {
                 led.setStateCommand(State.ENABLED), 
                 led.setStateCommand(State.DISABLED),
                 enabled
-            )
-        );
-
-        groundCoralOnFarReef.and(coralCyclingCommandScheduled).onTrue(
-            rumble()
-            .alongWith(
-                led.setStateCommand(State.CORAL_BLOCKING_ALIGNMENT)
             )
         );
     }
