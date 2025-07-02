@@ -199,11 +199,9 @@ public class RobotContainer {
         );
 
         Command alignAndScoreCoralLeftCommand = compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
-
         alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
         Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScoreInterruptable(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
-
         alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
 
         coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());

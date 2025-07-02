@@ -36,28 +36,18 @@ public class ElevatorArmIntakeHandler {
 
     private Command moveOutOfCradleIfNeeded() {
         return Commands.sequence(
+            arm.holdPosition(),
             elevator.moveToOverCradlePosition(),
             Commands.waitUntil(elevator::atSetpoint)
         ).onlyIf(() -> !arm.overCradle());
     }       
 
-    public Command moveToIntakePositionFromScoring() {
+    public Command moveToIntakePosition() {
         return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
             arm.moveToCradlePos(),
             elevator.moveToOverCradlePosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Moved to intake position from scoring")
-        ); 
-    }
-
-    public Command moveToIntakePosition() {
-        return Commands.sequence(
-            arm.holdPosition(),
-            elevator.moveToOverCradlePosition(),
-            intake.moveToGround(),
-            Commands.waitUntil(elevator::overCradlePosition),
-            arm.moveToCradlePos(),
-            Commands.waitUntil(() -> arm.atSetpoint() && intake.canRunRollers()),
             ElasticUtil.sendInfoCommand("Moved to intake position")
         ); 
     }

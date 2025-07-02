@@ -66,7 +66,7 @@ public class Compositions {
                 elevatorArmIntakeHandler.moveToStowPositions(),
                 Commands.sequence(
                     Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
-                    elevatorArmIntakeHandler.moveToIntakePositionFromScoring()   
+                    elevatorArmIntakeHandler.moveToIntakePosition()   
                 ),
                 endEffector::hasCoral
             )
@@ -99,9 +99,15 @@ public class Compositions {
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
-            elevatorArmIntakeHandler.moveToIntakePosition(),//TODO start rollers sooner
-            intake.intakeCoral(),
-            transfer.receiveCoralFromIntake(),
+            elevatorArmIntakeHandler.moveToIntakePosition()
+                .alongWith(
+                    Commands.sequence(
+                        intake.moveToGround(),
+                        Commands.waitUntil(intake::canRunRollers),
+                        intake.intakeCoral(),
+                        transfer.receiveCoralFromIntake()
+                    )
+                ),
             intake.stopIntaking(),
             elevatorArmIntakeHandler.moveToCoralCradlePosition(),
             endEffector.pickupCoralFromCradle(),
