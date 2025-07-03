@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Current;
@@ -23,6 +24,8 @@ public class EndEffector extends SubsystemBase {
 
     private final StatusSignal<Current> rollerCurrentSignal;
 
+    private final TorqueCurrentFOC rollerCurrentRequest = new TorqueCurrentFOC(0);
+
     public EndEffector() {
         rollerMotor = new TalonFX(kEndEffectorRollerMotorID);
 
@@ -33,8 +36,12 @@ public class EndEffector extends SubsystemBase {
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kEndEffectorRollerMotorConfig));
     }
 
-    private Command setRollerMotor(double power) {
+    private Command setRollerMotorPower(double power) {
         return runOnce(() -> rollerMotor.set(power));
+    }
+
+    private Command setRollerMotorCurrent(double current) {
+        return runOnce(() -> rollerMotor.setControl(rollerCurrentRequest.withOutput(current)));
     }
 
     public Command scoreCoral(Supplier<ReefLevel> reefLevelSup) {
@@ -43,33 +50,31 @@ public class EndEffector extends SubsystemBase {
 
     private Command placeCoralOnBranch() {
         return Commands.sequence(
-            setRollerMotor(kCoralOuttakePower),
+            setRollerMotorPower(kCoralOuttakePower),
             Commands.waitSeconds(kCoralOuttakeWait),
-            setRollerMotor(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     private Command placeCoralInTrough() {
         return Commands.sequence(
-            setRollerMotor(kCoralOuttakeToTrough),
+            setRollerMotorPower(kCoralOuttakeToTroughPower),
             Commands.waitSeconds(kCoralOuttakeWaitToTrough),
-            setRollerMotor(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     public Command pickupCoralFromCradle() { 
         return Commands.sequence(
-            setRollerMotor(kReceiveFromCradlePower),
-            Commands.waitUntil(this::canMoveFromCradle),
-            setRollerMotor(kHoldCoralPower)
+            setRollerMotorCurrent(kHoldCoralCurrent),
+            Commands.waitUntil(this::hasCoral)
         );
     }
 
     public Command intakeAlgae() {
         return Commands.sequence(
-            setRollerMotor(kIntakeAlgaePower),
-            Commands.waitUntil(this::hasAlgae),
-            setRollerMotor(kHoldAlgaePower)
+            setRollerMotorCurrent(kHoldAlgaeCurrent),
+            Commands.waitUntil(this::hasAlgae)
         );
     }
 
@@ -86,22 +91,22 @@ public class EndEffector extends SubsystemBase {
 
     public Command outtakeProcessorAlgae() {
         return Commands.sequence(
-            setRollerMotor(kProcessorOuttakePower), 
+            setRollerMotorPower(kProcessorOuttakePower), 
             Commands.waitSeconds(kAlgaeOuttakeWait),
-            setRollerMotor(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     public Command outtakeNetAlgae() {
         return Commands.sequence(
-            setRollerMotor(kNetOuttakePower),
+            setRollerMotorPower(kNetOuttakePower),
             Commands.waitSeconds(kAlgaeOuttakeWait),
-            setRollerMotor(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     public Command stopRollers() {
-        return setRollerMotor(0.0);
+        return setRollerMotorPower(0.0);
     }
 
     public boolean hasAlgae() {
@@ -110,10 +115,6 @@ public class EndEffector extends SubsystemBase {
 
     public boolean hasCoral() {
         return rollerCurrentSignal.getValueAsDouble() < kHasCoralCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
-    }
-
-    private boolean canMoveFromCradle() {
-        return rollerCurrentSignal.getValueAsDouble() < kHasCoralFromCradleCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
     }
 
     @Override

@@ -256,9 +256,9 @@ public final class Constants {
         public static final double kElevatorTolerance = 0.05;
 
         public static final double kElevatorL1 = 2.9;
-        public static final double kElevatorL2 = 1;
-        public static final double kElevatorL3 = 3.2;
-        public static final double kElevatorL4 = 8.70;
+        public static final double kElevatorL2 = 1.3;
+        public static final double kElevatorL3 = 3.7;
+        public static final double kElevatorL4 = 6.7;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
         public static final double kElevatorCradlePos = 2.3;
@@ -362,16 +362,16 @@ public final class Constants {
         public static final double kArmStowPos = 0.2;
         public static final double kArmCradlePos = -0.25;
         public static final double kArmL1Pos = 0.25;//TODO
-        public static final double kArmL2Pos = 0.05; 
-        public static final double kArmL3Pos = 0.05;
-        public static final double kArmL4Pos = 0.1;
+        public static final double kArmL2Pos = 0.03; 
+        public static final double kArmL3Pos = 0.02;
+        public static final double kArmL4Pos = 0.05;
         public static final double kArmHighAlgaePos = 0;
         public static final double kArmLowAlgaePos = 0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
         public static final double kArmClimbPos = 0.0;
-        public static final double kArmCoralPreparedToScorePos = 0.0;
+        public static final double kArmCoralPreparedToScorePos = 0.17;
 
         public static final double kArmOverIntakePos = 0.5;
         public static final double kArmOverCradlePos = -0.1;
@@ -384,7 +384,7 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKG(0.5)
+            .withKG(0.3)
             .withKP(130)
             .withKD(0.1)
             .withKA(0.25)
@@ -468,21 +468,19 @@ public final class Constants {
 
         public static final double kProcessorOuttakePower = 1.0;
         public static final double kNetOuttakePower = 1.0;
-        public static final double kIntakeAlgaePower = -1.0;
-        public static final double kHoldAlgaePower = -0.05;
 
-        public static final double kCoralOuttakePower = 0.2;
-        public static final double kCoralOuttakeToTrough = 0.5;
-        public static final double kReceiveFromCradlePower = -0.3; 
-        public static final double kHoldCoralPower = -0.1;
+        public static final double kCoralOuttakePower = 0.1;
+        public static final double kCoralOuttakeToTroughPower = 0.5;
 
-        public static final double kCoralOuttakeWait = 0.25;
+        public static final double kCoralOuttakeWait = 0.05;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final int kHasCoralCurrent = -30;
-        public static final int kHasCoralFromCradleCurrent = -40;
-        public static final int kHasAlgaeCurrent = -60;
+        public static final double kHoldAlgaeCurrent = -60;
+        public static final double kHoldCoralCurrent = -23;
+
+        public static final int kHasCoralCurrent = -20;
+        public static final int kHasAlgaeCurrent = -57;
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
