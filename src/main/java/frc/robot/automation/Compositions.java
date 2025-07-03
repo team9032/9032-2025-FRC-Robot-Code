@@ -18,17 +18,17 @@ public class Compositions {
     private final EndEffector endEffector;
     private final Transfer transfer;
     private final Intake intake;
-    private final Climber climber;
+    //private final Climber climber;
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
-    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Transfer transfer, Intake intake, Climber climber, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
+    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Transfer transfer, Intake intake, /*Climber climber,*/ KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
         this.transfer = transfer;
         this.intake = intake;
-        this.climber = climber;
+        //this.climber = climber;
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
@@ -181,23 +181,23 @@ public class Compositions {
         .onlyIf(() -> !endEffector.hasAlgae() && !endEffector.hasCoral());
     }
 
-    public Command climb() {
-        return elevatorArmIntakeHandler.prepareForClimbing()
-            .andThen(climber.intakeCageAndClimb());
-    }
+    // public Command climb() {
+    //     return elevatorArmIntakeHandler.prepareForClimbing()
+    //         .andThen(climber.intakeCageAndClimb());
+    // }
 
     public Command cancelClimbAndStow() {
-        return elevatorArmIntakeHandler.moveToStowPositions()
-            .andThen(climber.moveToStowPosition());
+        return elevatorArmIntakeHandler.moveToStowPositions();
+            //.andThen(climber.moveToStowPosition());
     }
 
-    public Command initClimber() {
-        return Commands.sequence(
-            elevatorArmIntakeHandler.moveIntakeDown(),
-            Commands.waitUntil(intake::canRunRollers),
-            climber.moveToStowPosition()            
-        );
-    }
+    // public Command initClimber() {
+    //     return Commands.sequence(
+    //         elevatorArmIntakeHandler.moveIntakeDown(),
+    //         Commands.waitUntil(intake::canRunRollers),
+    //         climber.moveToStowPosition()            
+    //     );
+    // }
 
     public Command stopRollers() {
         return Commands.sequence(
@@ -209,7 +209,7 @@ public class Compositions {
 
     public Command coastAll() {
         return elevatorArmIntakeHandler.coastAll()
-            .andThen(climber.coastArm())
+            //.andThen(climber.coastArm())
             .ignoringDisable(true);
     }
 }
