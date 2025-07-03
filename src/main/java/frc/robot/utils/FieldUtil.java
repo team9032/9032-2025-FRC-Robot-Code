@@ -41,6 +41,12 @@ public class FieldUtil {
 
         return translation;
     }
+    
+    public static double getRobotToReefDistance(Localization localization) {
+        var reefCenter = flipTranslationIfNeeded(kReefCenter);
+
+        return localization.getCurrentPose().getTranslation().getDistance(reefCenter);
+    }
 
     public static boolean isCoralCloseToReef(Translation2d translation) {
         var reefCenter = flipTranslationIfNeeded(kReefCenter);
@@ -49,21 +55,15 @@ public class FieldUtil {
     }
 
     public static boolean shouldPrepareToScoreCoral(Localization localization) {
-        var reefCenter = flipTranslationIfNeeded(kReefCenter);
-
-        return localization.getCurrentPose().getTranslation().getDistance(reefCenter) < kPrepareForScoringReefDistance;
+        return getRobotToReefDistance(localization) < kPrepareForScoringReefDistance;
     }
 
     public static boolean shouldPrepareToIntakeAlgae(Localization localization) {
-        var reefCenter = flipTranslationIfNeeded(kReefCenter);
-
-        return localization.getCurrentPose().getTranslation().getDistance(reefCenter) < kPrepareForAlgaeIntakingReefDistance;
+        return getRobotToReefDistance(localization) < kPrepareForAlgaeIntakingReefDistance;
     }
 
     public static boolean endEffectorCanClearReef(Localization localization) {
-        var reefCenter = flipTranslationIfNeeded(kReefCenter);
-
-        return localization.getCurrentPose().getTranslation().getDistance(reefCenter) > kEndEffectorClearReefDistance;
+        return getRobotToReefDistance(localization) > kEndEffectorClearReefDistance;
     }
 
     public static boolean shouldPrepareToScoreNetAlgae(Localization localization) {

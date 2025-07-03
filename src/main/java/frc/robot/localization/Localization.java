@@ -46,7 +46,7 @@ public class Localization {
     private VisionSystemSim simulatedLocalization;
 
     private Pose2d predictedPose;
-    private Pose2d currentPose;
+    private Pose2d currentPose = new Pose2d();
     private ChassisSpeeds currentVelocity;
 
     private AprilTagFieldLayout aprilTagLayout;

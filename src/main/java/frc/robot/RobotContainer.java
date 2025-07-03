@@ -14,6 +14,7 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
+import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -300,6 +301,8 @@ public class RobotContainer {
         
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+
+        SmartDashboard.putNumber("Robot To Reef Distance", FieldUtil.getRobotToReefDistance(krakenSwerve.getLocalization()));
 
         /* Display CAN errors on the LEDs */
         var currentCANStatus = RobotController.getCANStatus();

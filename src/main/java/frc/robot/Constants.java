@@ -83,10 +83,10 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            4.0,
-            4.5, 
+            1.0,
+            3.0, 
             3 * Math.PI, 
-            3 * Math.PI
+            4 * Math.PI
         );
 
         public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
@@ -95,14 +95,14 @@ public final class Constants {
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
         /* Drive to pose constants */
-        public static final double kAlignmentXYkP = 5.0;//TODO Tune better
-        public static final double kAlignmentXYkD = 0;
+        public static final double kAlignmentXYkP = 10.0;//TODO Tune better
+        public static final double kAlignmentXYkD = 0.1;
         
-        public static final double kAlignmentRotkP = 10.0;
-        public static final double kAlignmentRotkD = 0;
+        public static final double kAlignmentRotkP = 8.0;
+        public static final double kAlignmentRotkD = 0.1;
 
-        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.25);
-        public static final double kRotAlignmentTolerance = Units.degreesToRadians(2);
+        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.33);
+        public static final double kRotAlignmentTolerance = Units.degreesToRadians(4);
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6;
@@ -110,16 +110,16 @@ public final class Constants {
 
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
-        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.5, 0.0, Rotation2d.kZero);
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.7, 0.0, Rotation2d.kZero);
 
         /* Scoring offsets */
-        public static final Transform2d kLeftScoringOffset = new Transform2d(0.5, -0.2, Rotation2d.kZero);
-        public static final Transform2d kRightScoringOffset = new Transform2d(0.5, 0.2, Rotation2d.kZero);
+        public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
+        public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
 
         /* Reef distances */
-        public static final double kPrepareForScoringReefDistance = Units.inchesToMeters(18.0);
+        public static final double kPrepareForScoringReefDistance = 1.71;
         public static final double kPrepareForAlgaeIntakingReefDistance = Units.inchesToMeters(24.0);
-        public static final double kEndEffectorClearReefDistance = Units.inchesToMeters(14.0);
+        public static final double kEndEffectorClearReefDistance = 1.47;
 
         public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(16.0);
     }
@@ -363,14 +363,14 @@ public final class Constants {
         public static final double kArmCradlePos = -0.25;
         public static final double kArmL1Pos = 0.25;//TODO
         public static final double kArmL2Pos = 0.03; 
-        public static final double kArmL3Pos = 0.02;
+        public static final double kArmL3Pos = 0.01;
         public static final double kArmL4Pos = 0.05;
         public static final double kArmHighAlgaePos = 0;
         public static final double kArmLowAlgaePos = 0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;
-        public static final double kArmClimbPos = 0.0;
+        public static final double kArmClimbPos = 0.21;
         public static final double kArmCoralPreparedToScorePos = 0.17;
 
         public static final double kArmOverIntakePos = 0.5;
@@ -469,7 +469,7 @@ public final class Constants {
         public static final double kProcessorOuttakePower = 1.0;
         public static final double kNetOuttakePower = 1.0;
 
-        public static final double kCoralOuttakePower = 0.1;
+        public static final double kCoralOuttakePower = 0.02;
         public static final double kCoralOuttakeToTroughPower = 0.5;
 
         public static final double kCoralOuttakeWait = 0.05;

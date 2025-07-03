@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
@@ -80,6 +81,8 @@ public class DriveToMovingPose extends Command {
         setpointPublisher.set(
             new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position))
         );
+
+        SmartDashboard.putBoolean("Drive To Moving Pose At Goal", atGoal());
     }
 
     private void updateControllerGoals() {
@@ -93,8 +96,12 @@ public class DriveToMovingPose extends Command {
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 
+    private boolean atGoal() {
+        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
+    }
+
     @Override
     public boolean isFinished() {
-        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
+        return atGoal();
     }
 }

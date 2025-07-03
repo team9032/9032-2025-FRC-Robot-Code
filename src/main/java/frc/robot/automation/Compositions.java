@@ -50,15 +50,15 @@ public class Compositions {
     public Command alignToReefAndScoreInterruptable(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
-            PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch)
+            PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization()))
                     .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(reefLevelSup))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
-            elevatorArmIntakeHandler.moveArmToCoralScorePos(reefLevelSup),
-            endEffector.scoreCoral(reefLevelSup)
+            elevatorArmIntakeHandler.moveArmToCoralScorePos(reefLevelSup)
+                .alongWith(endEffector.scoreCoral(reefLevelSup))
         )
         .until(shouldInterrupt)
         .andThen(
