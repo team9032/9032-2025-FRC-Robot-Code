@@ -17,7 +17,7 @@ import static frc.robot.Constants.DriverConstants.kRotationRate;
 import static frc.robot.Constants.ObjectAimingConstants.kObjectTrackingCameraName;
 import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 
-public class IntakeDriverAssist extends Command {
+public class TranslationalIntakeDriverAssist extends Command {
     private final KrakenSwerve swerve;
 
     private final DoubleSupplier rotSup;
@@ -28,7 +28,7 @@ public class IntakeDriverAssist extends Command {
 
     private TrackedObject lastCoralTarget;
 
-    public IntakeDriverAssist(KrakenSwerve swerve, DoubleSupplier rotSup, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
+    public TranslationalIntakeDriverAssist(KrakenSwerve swerve, DoubleSupplier rotSup, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
         this.swerve = swerve;
 
         this.rotSup = rotSup;

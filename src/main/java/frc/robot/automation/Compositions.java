@@ -133,7 +133,7 @@ public class Compositions {
         );
     }       
 
-    public Command intakeNearestAlgaeFromReef() {
+    public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             Commands.print("Intaking algae from the reef"),
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve)
@@ -145,10 +145,18 @@ public class Compositions {
                 )
             )
         )
+        .until(shouldInterrupt)
+            .andThen(
+                Commands.sequence(
+                    endEffector.stopRollers(),
+                    elevatorArmIntakeHandler.moveToStowPositions()
+                )
+                .onlyIf(() -> !endEffector.hasAlgae())
+            )
         .onlyIf(() -> !endEffector.hasCoral());
     }
 
-    public Command scoreAlgaeInNet() {
+    public Command scoreAlgaeInNet(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             PathfindingHandler.pathToBarge(swerve)
                 .alongWith(
@@ -161,6 +169,7 @@ public class Compositions {
             endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath),
             elevatorArmIntakeHandler.moveToStowPositionsFromNet()
         )
+        .until(shouldInterrupt)
         .onlyIf(endEffector::hasAlgae);
     }
 

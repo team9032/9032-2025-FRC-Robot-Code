@@ -8,7 +8,7 @@ import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DriverAssistedAutoIntake;
+import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
@@ -182,7 +182,7 @@ public class RobotContainer {
         );
 
         intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
-            new DriverAssistedAutoIntake(
+            new RotationalIntakeDriverAssist(
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 krakenSwerve
@@ -209,11 +209,10 @@ public class RobotContainer {
         deployClimber.onTrue(compositions.climb());
 
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
-            compositions.scoreAlgaeInNet(), 
-            compositions.intakeNearestAlgaeFromReef(), 
+            compositions.scoreAlgaeInNet(this::driverWantsOverride), 
+            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride), 
             endEffector::hasAlgae
-        )
-        .until(this::driverWantsOverride);
+        );
 
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
 

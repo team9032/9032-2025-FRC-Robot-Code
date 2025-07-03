@@ -60,7 +60,7 @@ public class EndEffector extends SubsystemBase {
     public Command pickupCoralFromCradle() { 
         return Commands.sequence(
             setRollerMotor(kReceiveFromCradlePower),
-            Commands.waitUntil(this::hasCoral),
+            Commands.waitUntil(this::canMoveFromCradle),
             setRollerMotor(kHoldCoralPower)
         );
     }
@@ -110,6 +110,10 @@ public class EndEffector extends SubsystemBase {
 
     public boolean hasCoral() {
         return rollerCurrentSignal.getValueAsDouble() < kHasCoralCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
+    }
+
+    private boolean canMoveFromCradle() {
+        return rollerCurrentSignal.getValueAsDouble() < kHasCoralFromCradleCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
     }
 
     @Override

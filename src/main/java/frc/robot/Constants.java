@@ -457,7 +457,7 @@ public final class Constants {
                 .withSupplyCurrentLimit(40)
             );
 
-        public static final double kClimberIntakeVolts = 12.0;
+        public static final double kClimberIntakeVolts = 6.0;
         public static final int kHasCageCurrent = 20;
 
         public static final double kClimberArmTolerance = 0.005;
@@ -480,7 +480,8 @@ public final class Constants {
         public static final double kCoralOuttakeWaitToTrough = 0.5;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final int kHasCoralCurrent = -40;
+        public static final int kHasCoralCurrent = -30;
+        public static final int kHasCoralFromCradleCurrent = -40;
         public static final int kHasAlgaeCurrent = -60;
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()

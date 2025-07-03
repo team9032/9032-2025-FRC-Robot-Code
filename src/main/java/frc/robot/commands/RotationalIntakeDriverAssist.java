@@ -16,7 +16,7 @@ import static frc.robot.Constants.ObjectAimingConstants.*;
 import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
-public class DriverAssistedAutoIntake extends Command {
+public class RotationalIntakeDriverAssist extends Command {
     private final KrakenSwerve swerve;
     private final DoubleSupplier xSpeedSupplier;
     private final DoubleSupplier ySpeedSupplier;
@@ -26,7 +26,7 @@ public class DriverAssistedAutoIntake extends Command {
 
     private TrackedObject lastCoralTarget;
 
-    public DriverAssistedAutoIntake(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, KrakenSwerve swerve) {
+    public RotationalIntakeDriverAssist(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, KrakenSwerve swerve) {
         this.swerve = swerve;
         this.xSpeedSupplier = xSpeedSupplier;
         this.ySpeedSupplier = ySpeedSupplier;
