@@ -3,7 +3,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
 import org.photonvision.estimation.TargetModel;
 
@@ -124,20 +123,15 @@ public final class Constants {
         public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(16.0);
     }
 
-    public static final class ObjectAimingConstants {
+    public static final class IntakeDriverAssistConstants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
-        public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
-        /* For intake driver assist */
-        public static final double kRotationSetpoint = 13.3;
-        public static final double kMaxDrivingSpeed = kMaxSpeed;//Meters per second
-
-        /* PID Constants */
+        /* Rotational */
         public static final double kPRotation = 0.15;
         public static final double kDRotation = 0.002;
-    }
+        public static final double kRotationSetpoint = 13.3;
 
-    public static final class DriverAssistConstants {
+        /* Translational */
         public static final double kPTranslation = 0.25;
     }
 

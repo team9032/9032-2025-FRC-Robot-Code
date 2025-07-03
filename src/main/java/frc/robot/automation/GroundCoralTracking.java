@@ -1,8 +1,7 @@
 package frc.robot.automation;
 
-import static frc.robot.Constants.ObjectAimingConstants.*;
-
 import frc.robot.localization.Localization;
+import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.utils.FieldUtil;
 
 public class GroundCoralTracking {
@@ -16,7 +15,7 @@ public class GroundCoralTracking {
 
     public boolean coralBlockingAlignmentOnFarReef() {
         if (buttonBoardHandler.backReefSegmentsSelected()) {
-            var coralTargets = localization.getTrackedObjectsFromCamera(kGroundCoralTrackingCameraName);
+            var coralTargets = localization.getTrackedObjectsOfType(ObjectType.CORAL);
             coralTargets.removeIf((target) -> !target.isCoral());
 
             /* Remove coral if it is too high (prevent seeing coral in L1) and is not close to the reef */
