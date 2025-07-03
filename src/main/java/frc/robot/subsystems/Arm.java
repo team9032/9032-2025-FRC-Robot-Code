@@ -143,6 +143,6 @@ public class Arm extends SubsystemBase {
         armPosSignal.refresh();
 
         SmartDashboard.putBoolean("At Setpoint", atSetpoint());
-        SmartDashboard.putNumber("End effector arm position", getPosition());
+        SmartDashboard.putNumber("End Effector Arm Position", getPosition());
     }
 }

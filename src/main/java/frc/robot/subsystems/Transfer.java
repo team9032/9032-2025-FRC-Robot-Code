@@ -16,6 +16,8 @@ public class Transfer extends SubsystemBase {
 
     private final DigitalInput coralSensor = new DigitalInput(kTransferPhotoelectricSensorID); 
 
+    private boolean hasCoralState = false;
+
     public Transfer() {
         rollerMotor = new TalonFX(kTransferRollerID);
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kTransferRollerConfig));
@@ -27,6 +29,10 @@ public class Transfer extends SubsystemBase {
         return runOnce(() -> rollerMotor.set(kTransferRollerPower));
     }
 
+    private Command spinRollersSlowly() {
+        return runOnce(() -> rollerMotor.set(kTransferRollerSlowPower));
+    }
+
     public Command stopRollers() {
         return runOnce(() -> rollerMotor.set(0));
     }
@@ -34,8 +40,11 @@ public class Transfer extends SubsystemBase {
     public Command receiveCoralFromIntake() {
         return Commands.sequence(
             spinRollers(),
-            Commands.waitUntil(this::hasCoral),
-            stopRollers()
+            Commands.waitUntil(this::coralSensorTriggered),
+            spinRollersSlowly(),
+            Commands.waitUntil(() -> !coralSensorTriggered()),
+            stopRollers(),
+            runOnce(() -> hasCoralState = true)
         );
     }
 
@@ -43,16 +52,25 @@ public class Transfer extends SubsystemBase {
         return runOnce(() -> rollerMotor.set(kTransferEjectPower))
             .andThen(
                 Commands.waitSeconds(kTransferEjectWait),
-                stopRollers()
+                stopRollers(),
+                setCoralRemoved()
             );
     }
 
+    public Command setCoralRemoved() {
+        return runOnce(() -> hasCoralState = false);
+    }
+
     public boolean hasCoral() {
+        return hasCoralState;
+    }
+
+    private boolean coralSensorTriggered() {
         return !coralSensor.get();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Transfer has coral", hasCoral());
+        SmartDashboard.putBoolean("Transfer Sensor", coralSensorTriggered());
     }
 }

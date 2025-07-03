@@ -32,7 +32,7 @@ public class Climber extends SubsystemBase {
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kClimberArmMotorConfig));
 
-        intakeMotor = new TalonFX(kClimberArmID);
+        intakeMotor = new TalonFX(kClimberIntakeID);
         
         intakeCurrentSignal = intakeMotor.getTorqueCurrent();
         intakeCurrentSignal.setUpdateFrequency(50);
@@ -89,7 +89,7 @@ public class Climber extends SubsystemBase {
         intakeCurrentSignal.refresh();
         armPosSignal.refresh();
 
-        SmartDashboard.putNumber("Climber position", armPosSignal.getValueAsDouble());
-        SmartDashboard.putBoolean("Has cage", hasCage());
+        SmartDashboard.putNumber("Climber Position", armPosSignal.getValueAsDouble());
+        SmartDashboard.putBoolean("Has Cage", hasCage());
     }
 }

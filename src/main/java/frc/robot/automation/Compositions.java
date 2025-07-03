@@ -111,6 +111,7 @@ public class Compositions {
             intake.stopIntaking(),
             elevatorArmIntakeHandler.moveToCoralCradlePosition(),
             endEffector.pickupCoralFromCradle(),
+            transfer.setCoralRemoved(),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),//Don't hit the reef when moving to stow
             /* Prepare for L1 early instead of stowing */
             Commands.either(

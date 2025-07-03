@@ -105,11 +105,11 @@ public class EndEffector extends SubsystemBase {
     }
 
     public boolean hasAlgae() {
-        return rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
+        return rollerCurrentSignal.getValueAsDouble() < kHasAlgaeCurrent;
     }
 
     public boolean hasCoral() {
-        return rollerCurrentSignal.getValueAsDouble() > kHasCoralCurrent && rollerCurrentSignal.getValueAsDouble() < kHasAlgaeCurrent;
+        return rollerCurrentSignal.getValueAsDouble() < kHasCoralCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
     }
 
     @Override

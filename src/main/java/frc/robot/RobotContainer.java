@@ -300,6 +300,7 @@ public class RobotContainer {
         buttonBoard.update();
         
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
 
         /* Display CAN errors on the LEDs */
         var currentCANStatus = RobotController.getCANStatus();

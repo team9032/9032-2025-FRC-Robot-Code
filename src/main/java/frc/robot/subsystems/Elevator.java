@@ -147,6 +147,6 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorPosSignal.refresh();
 
-        SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
+        SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
     }
 }

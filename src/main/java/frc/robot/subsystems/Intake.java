@@ -97,6 +97,6 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         armMotorPosSignal.refresh();
 
-        SmartDashboard.putBoolean("Can run rollers", canRunRollers());
+        SmartDashboard.putBoolean("Can Run Rollers", canRunRollers());
     }
 }

@@ -261,11 +261,11 @@ public final class Constants {
         public static final double kElevatorL4 = 8.70;
         public static final double kElevatorLowAlgae = 2.4;
         public static final double kElevatorHighAlgae = 4.4;
-        public static final double kElevatorCradlePos = 2;
+        public static final double kElevatorCradlePos = 2.3;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorNet = 9.5;
         public static final double kElevatorAlgaeGround = 0.9;
-        public static final double kElevatorClimb = 1.0;
+        public static final double kElevatorClimb = 0.25;
 
         public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
@@ -278,6 +278,7 @@ public final class Constants {
         public static final int kTransferPhotoelectricSensorID = 0;
 
         public static final double kTransferRollerPower = -1.0;
+        public static final double kTransferRollerSlowPower = -0.2;
 
         public static final double kTransferEjectPower = 0.25;
         public static final double kTransferEjectWait = 1.0;
@@ -439,7 +440,7 @@ public final class Constants {
         public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(0.5)
+            .withForwardSoftLimitThreshold(0.25)
             .withReverseSoftLimitThreshold(0);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
@@ -472,15 +473,15 @@ public final class Constants {
 
         public static final double kCoralOuttakePower = 0.2;
         public static final double kCoralOuttakeToTrough = 0.5;
-        public static final double kReceiveFromCradlePower = -0.5; 
+        public static final double kReceiveFromCradlePower = -0.3; 
         public static final double kHoldCoralPower = -0.1;
 
         public static final double kCoralOuttakeWait = 0.25;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final int kHasCoralCurrent = 30;
-        public static final int kHasAlgaeCurrent = 50;
+        public static final int kHasCoralCurrent = -40;
+        public static final int kHasAlgaeCurrent = -60;
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
