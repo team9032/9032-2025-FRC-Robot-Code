@@ -77,6 +77,8 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
             elevator.moveToCoralScoreLevel(reefLevelSup),
+            Commands.waitUntil(elevator::atSetpoint)
+                .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             arm.moveToPreparedToScoreCoralPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring")

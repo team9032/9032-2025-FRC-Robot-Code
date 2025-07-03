@@ -45,10 +45,19 @@ public class EndEffector extends SubsystemBase {
     }
 
     public Command scoreCoral(Supplier<ReefLevel> reefLevelSup) {
-        return Commands.either(placeCoralInTrough(), placeCoralOnBranch(), () -> reefLevelSup.get().equals(ReefLevel.L1));
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries (
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, placeCoralInTrough()),
+                Map.entry(ReefLevel.L2, placeCoralOnMiddleBranch()),
+                Map.entry(ReefLevel.L3, placeCoralOnMiddleBranch()),
+                Map.entry(ReefLevel.L4, placeCoralOnL4())
+            ),
+            reefLevelSup
+        );
     }
 
-    private Command placeCoralOnBranch() {
+    private Command placeCoralOnMiddleBranch() {
         return Commands.sequence(
             setRollerMotorPower(kCoralOuttakePower),
             Commands.waitSeconds(kCoralOuttakeWait),
@@ -60,6 +69,14 @@ public class EndEffector extends SubsystemBase {
         return Commands.sequence(
             setRollerMotorPower(kCoralOuttakeToTroughPower),
             Commands.waitSeconds(kCoralOuttakeWaitToTrough),
+            setRollerMotorPower(0.0)
+        );
+    }
+
+    private Command placeCoralOnL4() {
+        return Commands.sequence(
+            setRollerMotorPower(kCoralOuttakeToL4Power),
+            Commands.waitSeconds(kCoralOuttakeWaitToL4),
             setRollerMotorPower(0.0)
         );
     }

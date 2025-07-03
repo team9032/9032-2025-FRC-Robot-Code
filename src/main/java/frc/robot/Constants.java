@@ -470,10 +470,12 @@ public final class Constants {
         public static final double kNetOuttakePower = 1.0;
 
         public static final double kCoralOuttakePower = 0.02;
+        public static final double kCoralOuttakeToL4Power = 0.5;
         public static final double kCoralOuttakeToTroughPower = 0.5;
 
         public static final double kCoralOuttakeWait = 0.05;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
+        public static final double kCoralOuttakeWaitToL4 = 0.2;
         public static final double kAlgaeOuttakeWait = 0.5;
 
         public static final double kHoldAlgaeCurrent = -60;
