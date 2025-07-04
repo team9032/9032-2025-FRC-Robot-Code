@@ -109,7 +109,7 @@ public final class Constants {
 
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
-        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.7, 0.0, Rotation2d.kZero);
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.66, 0.0, Rotation2d.kZero);//TODO tune more
 
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
@@ -117,8 +117,9 @@ public final class Constants {
 
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = 1.71;
-        public static final double kPrepareForAlgaeIntakingReefDistance = Units.inchesToMeters(24.0);
+        public static final double kPrepareForAlgaeIntakingReefDistance = 2.04;
         public static final double kEndEffectorClearReefDistance = 1.47;
+        public static final double kEndEffectorClearReefDistanceWithAlgae = 2;//TODO tune
 
         public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(16.0);
     }
@@ -253,8 +254,8 @@ public final class Constants {
         public static final double kElevatorL2 = 1.3;
         public static final double kElevatorL3 = 3.7;
         public static final double kElevatorL4 = 6.7;
-        public static final double kElevatorLowAlgae = 2.4;
-        public static final double kElevatorHighAlgae = 4.4;
+        public static final double kElevatorLowAlgae = 3.5;
+        public static final double kElevatorHighAlgae = 5.7;
         public static final double kElevatorCradlePos = 2.3;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorNet = 9.5;
@@ -359,8 +360,8 @@ public final class Constants {
         public static final double kArmL2Pos = 0.03; 
         public static final double kArmL3Pos = 0.01;
         public static final double kArmL4Pos = 0.05;
-        public static final double kArmHighAlgaePos = 0;
-        public static final double kArmLowAlgaePos = 0;
+        public static final double kArmHighAlgaePos = 0.0;
+        public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
         public static final double kArmAlgaeGroundPos = -0.06;

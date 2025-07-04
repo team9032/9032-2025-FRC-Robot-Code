@@ -136,22 +136,18 @@ public class Compositions {
     public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             Commands.print("Intaking algae from the reef"),
-            PathfindingHandler.pathToClosestReefAlgaeIntake(swerve)
-            .alongWith(
-                Commands.sequence(
-                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToIntakeAlgae(swerve.getLocalization())),
-                    elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
-                    endEffector.intakeAlgae()
-                )
-            )
+            elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
+            PathfindingHandler.pathToClosestReefAlgaeIntake(swerve).asProxy()
+                .alongWith(endEffector.intakeAlgae())
         )
         .until(shouldInterrupt)
             .andThen(
-                Commands.sequence(
+                Commands.either(
+                    Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization())),
                     endEffector.stopRollers(),
-                    elevatorArmIntakeHandler.moveToStowPositions()
-                )
-                .onlyIf(() -> !endEffector.hasAlgae())
+                    endEffector::hasAlgae
+                ),
+                elevatorArmIntakeHandler.moveToStowPositions()
             )
         .onlyIf(() -> !endEffector.hasCoral());
     }

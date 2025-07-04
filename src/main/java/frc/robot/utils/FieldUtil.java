@@ -8,6 +8,7 @@ import static frc.robot.Constants.LocalizationConstants.kReefCenter;
 import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
 import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
+import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistanceWithAlgae;
 import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
@@ -64,6 +65,10 @@ public class FieldUtil {
 
     public static boolean endEffectorCanClearReef(Localization localization) {
         return getRobotToReefDistance(localization) > kEndEffectorClearReefDistance;
+    }
+
+    public static boolean endEffectorWithAlgaeCanClearReef(Localization localization) {
+        return getRobotToReefDistance(localization) > kEndEffectorClearReefDistanceWithAlgae;
     }
 
     public static boolean shouldPrepareToScoreNetAlgae(Localization localization) {
