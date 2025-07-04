@@ -18,17 +18,17 @@ public class Compositions {
     private final EndEffector endEffector;
     private final Transfer transfer;
     private final Intake intake;
-    //private final Climber climber;
+    private final Climber climber;
     private final KrakenSwerve swerve;
 
     private final ButtonBoardHandler buttonBoardHandler;
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler;
 
-    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Transfer transfer, Intake intake, /*Climber climber,*/ KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
+    public Compositions(ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector, Transfer transfer, Intake intake, Climber climber, KrakenSwerve swerve, ButtonBoardHandler buttonBoardHandler) {
         this.endEffector = endEffector;
         this.transfer = transfer;
         this.intake = intake;
-        //this.climber = climber;
+        this.climber = climber;
         this.swerve = swerve;
 
         this.buttonBoardHandler = buttonBoardHandler;
@@ -50,6 +50,7 @@ public class Compositions {
     public Command alignToReefAndScoreInterruptable(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
+            elevatorArmIntakeHandler.moveToStowPositions(),
             PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
@@ -154,7 +155,7 @@ public class Compositions {
 
     public Command scoreAlgaeInNet(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
-            PathfindingHandler.pathToBarge(swerve)
+            PathfindingHandler.pathToBarge(swerve).asProxy()
                 .alongWith(
                     Commands.sequence(
                         elevatorArmIntakeHandler.moveToStowPositions(),
@@ -177,23 +178,23 @@ public class Compositions {
         .onlyIf(() -> !endEffector.hasAlgae() && !endEffector.hasCoral());
     }
 
-    // public Command climb() {
-    //     return elevatorArmIntakeHandler.prepareForClimbing()
-    //         .andThen(climber.intakeCageAndClimb());
-    // }
-
-    public Command cancelClimbAndStow() {
-        return elevatorArmIntakeHandler.moveToStowPositions();
-            //.andThen(climber.moveToStowPosition());
+    public Command climb() {
+        return elevatorArmIntakeHandler.prepareForClimbing()
+            .andThen(climber.intakeCageAndClimb());
     }
 
-    // public Command initClimber() {
-    //     return Commands.sequence(
-    //         elevatorArmIntakeHandler.moveIntakeDown(),
-    //         Commands.waitUntil(intake::canRunRollers),
-    //         climber.moveToStowPosition()            
-    //     );
-    // }
+    public Command cancelClimbAndStow() {
+        return elevatorArmIntakeHandler.moveToStowPositions()
+            .andThen(climber.moveToStowPosition());
+    }
+
+    public Command initClimber() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.moveIntakeDown(),
+            Commands.waitUntil(intake::canRunRollers),
+            climber.moveToStowPosition()            
+        );
+    }
 
     public Command stopRollers() {
         return Commands.sequence(

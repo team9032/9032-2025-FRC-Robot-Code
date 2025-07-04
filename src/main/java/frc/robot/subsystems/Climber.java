@@ -79,7 +79,10 @@ public class Climber extends SubsystemBase {
         return Commands.sequence(
             moveToIntakePosition(),
             runIntake()
-                .until(this::hasCage),
+                .withDeadline(
+                    Commands.waitUntil(this::hasCage)
+                        .andThen(Commands.waitSeconds(kCageIntakeDelay))
+                ),
             moveToClimbPosition()
         );
     }

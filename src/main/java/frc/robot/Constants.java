@@ -109,7 +109,7 @@ public final class Constants {
 
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
-        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.66, 0.0, Rotation2d.kZero);//TODO tune more
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);//TODO tune more
 
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
@@ -118,10 +118,10 @@ public final class Constants {
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = 1.71;
         public static final double kPrepareForAlgaeIntakingReefDistance = 2.04;
-        public static final double kEndEffectorClearReefDistance = 1.47;
-        public static final double kEndEffectorClearReefDistanceWithAlgae = 2;//TODO tune
+        public static final double kEndEffectorClearReefDistance = 1.55;
+        public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;//TODO tune
 
-        public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(16.0);
+        public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(24.0);
     }
 
     public static final class IntakeDriverAssistConstants {
@@ -259,8 +259,8 @@ public final class Constants {
         public static final double kElevatorCradlePos = 2.3;
         public static final double kElevatorProcessor = 0; 
         public static final double kElevatorNet = 9.5;
-        public static final double kElevatorAlgaeGround = 0.9;
-        public static final double kElevatorClimb = 0.25;
+        public static final double kElevatorAlgaeGround = 2.0;
+        public static final double kElevatorClimb = 0.05;
 
         public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
@@ -364,12 +364,12 @@ public final class Constants {
         public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.35;
-        public static final double kArmAlgaeGroundPos = -0.06;
+        public static final double kArmAlgaeGroundPos = -0.11;
         public static final double kArmClimbPos = 0.21;
         public static final double kArmCoralPreparedToScorePos = 0.17;
 
         public static final double kArmOverIntakePos = 0.5;
-        public static final double kArmOverCradlePos = -0.1;
+        public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
@@ -412,12 +412,12 @@ public final class Constants {
         public static final int kClimberArmID = 32;
         public static final int kClimberIntakeID = 33;
 
-        public static final double kClimberStowPos = 0.5;
+        public static final double kClimberStowPos = 0.11;
         public static final double kClimberCageIntakePos = 0.2;
-        public static final double kClimberClimbPos = 0.9;
+        public static final double kClimberClimbPos = -0.07;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
-            .withKP(0)
+            .withKP(10000)
             .withKD(0)
             .withKV(0)
             .withKA(0)
@@ -430,13 +430,13 @@ public final class Constants {
             .withStatorCurrentLimit(120);
             
         public static final FeedbackConfigs kClimberArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(375.0); 
+            .withSensorToMechanismRatio(432.0); 
 
         public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.25)
-            .withReverseSoftLimitThreshold(0);
+            .withReverseSoftLimitThreshold(-0.08);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
@@ -453,7 +453,8 @@ public final class Constants {
             );
 
         public static final double kClimberIntakeVolts = 6.0;
-        public static final int kHasCageCurrent = 20;
+        public static final int kHasCageCurrent = 94;
+        public static final double kCageIntakeDelay = 0.5;
 
         public static final double kClimberArmTolerance = 0.005;
     }

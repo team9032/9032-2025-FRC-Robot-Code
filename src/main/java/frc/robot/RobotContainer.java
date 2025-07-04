@@ -66,7 +66,7 @@ public class RobotContainer {
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
     private final Elevator elevator = new Elevator();
     private final Transfer transfer = new Transfer();
-    //private final Climber climber = new Climber();
+    private final Climber climber = new Climber();
     private final EndEffector endEffector = new EndEffector();
 
     /* Dashboard */
@@ -75,7 +75,7 @@ public class RobotContainer {
     /* Automation */
     private final ButtonBoardHandler buttonBoard = new ButtonBoardHandler();
     private final ElevatorArmIntakeHandler elevatorArmIntakeHandler = new ElevatorArmIntakeHandler(elevator, arm, intake);
-    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, transfer, intake, /*climber,*/ krakenSwerve, buttonBoard);
+    private final Compositions compositions = new Compositions(elevatorArmIntakeHandler, endEffector, transfer, intake, climber, krakenSwerve, buttonBoard);
 
     /* Robot Mode Triggers */
     private final Trigger teleopEnabled = RobotModeTriggers.teleop();
@@ -207,7 +207,7 @@ public class RobotContainer {
 
         coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());
 
-        //deployClimber.onTrue(compositions.climb());
+        deployClimber.onTrue(compositions.climb());
 
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
             compositions.scoreAlgaeInNet(this::driverWantsOverride), 
