@@ -81,7 +81,7 @@ public class ObjectTrackingCamera {
         boolean updatedObject = false;
         for (var object : objectList) {
             boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance;
-            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(/*target.getDetectedObjectClassID()*/1));//TODO fix class ids
+            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(target.getDetectedObjectClassID()));//TODO fix class ids in sim
 
             /* If an object is close to a previous detection with the same object type, assume it's the same object 
                 and update the previous detection */

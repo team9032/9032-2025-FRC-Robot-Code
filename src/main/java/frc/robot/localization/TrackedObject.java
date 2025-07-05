@@ -41,7 +41,7 @@ public class TrackedObject {
 
         this.trackingId = trackingId;
 
-        objectType = ObjectType.fromClassId(/*photonVisionData.getDetectedObjectClassID()*/1);//TODO fix class ids
+        objectType = ObjectType.fromClassId(photonVisionData.getDetectedObjectClassID());//TODO fix class ids in sim
     }
 
     public boolean isCoral() {

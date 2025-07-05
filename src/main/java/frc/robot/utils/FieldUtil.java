@@ -123,4 +123,15 @@ public class FieldUtil {
 
         return Pair.of(closestPose, closestPoseID);
     }
+
+    public static Pose2d getReefScoringLocationFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
+        var tagPose = localization.getTagPose(tagID);
+
+        /* Invert direction on the back reef faces so the perspective makes sense */
+        if (tagID >= kBackReefTagsStartingID)
+            return tagPose.transformBy(isLeftBranch ? kRightScoringOffset : kLeftScoringOffset);
+
+        else 
+            return tagPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
+    }   
 }

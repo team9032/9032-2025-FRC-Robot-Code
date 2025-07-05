@@ -314,12 +314,14 @@ public class RobotContainer {
     private void bindRobotModeTriggers() {
         teleopEnabled.onTrue(
             compositions.stopRollers()
-            .andThen(elevatorArmIntakeHandler.holdPositions())
+            .andThen(
+                elevatorArmIntakeHandler.holdPositions(),
+                compositions.initClimberIfNeeded()
+            )
         );
 
         enabled.onTrue(
             led.setStateCommand(State.ENABLED)
-            .andThen(compositions.initClimberIfNeeded())
         );
 
         disabled.onTrue(

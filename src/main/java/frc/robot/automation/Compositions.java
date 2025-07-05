@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
-import frc.robot.automation.ButtonBoardHandler.ReefPath;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -43,8 +42,21 @@ public class Compositions {
         );
     }
 
-    public Command alignToReefAndScoreFromPreset(ReefPath reefPath, ReefLevel reefLevel) {
-        return Commands.none();//TODO
+    public Command alignToReefAndScoreFromPreset(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoring from preset"),
+            elevatorArmIntakeHandler.moveToStowPositions(),
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
+                /* Moves the elevator and arm when the robot is close enough to the reef */
+                .alongWith(
+                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization()))
+                    .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(() -> reefLevel))   
+                ),
+            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevel)),
+            elevatorArmIntakeHandler.moveArmToCoralScorePos(() -> reefLevel)
+                .alongWith(endEffector.scoreCoral(() -> reefLevel))
+        )
+        .onlyIf(endEffector::hasCoral);
     }
 
     public Command alignToReefAndScoreInterruptable(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
