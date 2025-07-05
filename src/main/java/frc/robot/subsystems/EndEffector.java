@@ -44,11 +44,11 @@ public class EndEffector extends SubsystemBase {
         return runOnce(() -> rollerMotor.setControl(rollerCurrentRequest.withOutput(current)));
     }
 
-    public Command scoreCoral(Supplier<ReefLevel> reefLevelSup) {
+    public Command placeCoralOnBranch(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (
                 Map.entry(ReefLevel.NONE, Commands.none()),
-                Map.entry(ReefLevel.L1, placeCoralInTrough()),
+                Map.entry(ReefLevel.L1, Commands.none()),
                 Map.entry(ReefLevel.L2, placeCoralOnMiddleBranch()),
                 Map.entry(ReefLevel.L3, placeCoralOnMiddleBranch()),
                 Map.entry(ReefLevel.L4, placeCoralOnL4())
@@ -65,7 +65,7 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-    private Command placeCoralInTrough() {
+    public Command placeCoralInTrough() {
         return Commands.sequence(
             setRollerMotorPower(kCoralOuttakeToTroughPower),
             Commands.waitSeconds(kCoralOuttakeWaitToTrough),

@@ -43,21 +43,17 @@ public class Arm extends SubsystemBase {
     public Command holdPosition() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(getPosition())));
     }
-
-    public boolean atL1() {
-        return atPosition(kArmL1Pos);
-    }
     
     public boolean atL2() {
-        return atPosition(kArmL2Pos);
+        return atPosition(kArmL2ScorePos);
     }
 
     public boolean atL3() {
-        return atPosition(kArmL3Pos);
+        return atPosition(kArmL3ScorePos);
     }
 
     public boolean atL4() {
-        return atPosition(kArmL4Pos);
+        return atPosition(kArmL4ScorePos);
     }
 
     public boolean overCradle() {
@@ -80,12 +76,16 @@ public class Arm extends SubsystemBase {
         return atPosition(armRequest.Position);
     }
 
-    public boolean overIntake() {
-        return getPosition() <= kArmOverIntakePos;
-    }
-
     public Command moveToPreparedToScoreCoralPos() {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmCoralPreparedToScorePos)));
+    }
+
+    public Command moveToPreparedToScoreLowL1Pos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmLowL1PreparedToScorePos)));
+    }
+
+    public Command moveToPreparedToScoreHighL1Pos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmLowL1PreparedToScorePos)));
     }
 
     public Command moveToStowPos() {
@@ -120,14 +120,14 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeGroundPos)));
     }
 
-    public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
+    public Command moveToReefBranchScorePos(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (
                 Map.entry(ReefLevel.NONE, Commands.none()),
-                Map.entry(ReefLevel.L1, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL1Pos)))),
-                Map.entry(ReefLevel.L2, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL2Pos)))),
-                Map.entry(ReefLevel.L3, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL3Pos)))),
-                Map.entry(ReefLevel.L4, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL4Pos))))
+                Map.entry(ReefLevel.L1, Commands.none()),
+                Map.entry(ReefLevel.L2, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL2ScorePos)))),
+                Map.entry(ReefLevel.L3, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL3ScorePos)))),
+                Map.entry(ReefLevel.L4, runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmL4ScorePos))))
             ),
             reefLevelSup
         );

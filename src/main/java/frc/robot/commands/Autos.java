@@ -152,14 +152,14 @@ public class Autos {
                 Commands.sequence(
                     elevatorArmIntakeHandler.moveIntakeDown(),//Make sure the intake is down in time
                     compositions.intakeCoralToEndEffector(true),
-                    elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L4),
+                    elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> ReefLevel.L4),
                     ElasticUtil.sendInfoCommand("Prepared for coral scoring in auto")
                 )
             )
             /* Score the coral when the paths finish and everything is at setpoint */
             .andThen(
                 Commands.waitSeconds(0.25),//TODO d
-                endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
+                endEffector.placeCoralOnBranch(() -> ReefLevel.L4).asProxy(),
                 Commands.runOnce(() -> shouldMoveElevator = false)
             );
     }
@@ -167,10 +167,10 @@ public class Autos {
     private static Command scorePreloadCoral(PathPlannerPath scoreCoralPath, ElevatorArmIntakeHandler elevatorArmIntakeHandler, EndEffector endEffector) {
         return Commands.sequence(
             AutoBuilder.followPath(scoreCoralPath)
-                .alongWith(elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L4))
+                .alongWith(elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> ReefLevel.L4))
                     .deadlineFor(endEffector.pickupCoralFromCradle().asProxy()),
             Commands.waitSeconds(0.25),//TODO d
-            endEffector.scoreCoral(() -> ReefLevel.L4).asProxy(),
+            endEffector.placeCoralOnBranch(() -> ReefLevel.L4).asProxy(),
             Commands.runOnce(() -> shouldMoveElevator = false)
         );
     }

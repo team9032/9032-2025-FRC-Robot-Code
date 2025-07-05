@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.commands.Autos;
 import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
@@ -199,7 +200,13 @@ public class RobotContainer {
             )
         );
 
-        Command alignAndScoreCoralLeftCommand = compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
+        Command alignAndScoreCoralLeftCommand = 
+            Commands.either(
+                endEffector.placeCoralInTrough(),
+                compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride), 
+                () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
+            );
+
         alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
         Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScoreInterruptable(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
@@ -248,12 +255,12 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(
-            elevatorArmIntakeHandler.prepareForCoralScoring(buttonBoard::getSelectedReefLevel)
+            elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel)
         );
 
         buttonBoard.manual6.onTrue(
             Commands.sequence(
-                endEffector.scoreCoral(buttonBoard::getSelectedReefLevel).asProxy(),
+                endEffector.placeCoralOnBranch(buttonBoard::getSelectedReefLevel).asProxy(),
                 elevatorArmIntakeHandler.moveToIntakePosition()
             )
         );

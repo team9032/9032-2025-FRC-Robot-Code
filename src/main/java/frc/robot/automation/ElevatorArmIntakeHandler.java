@@ -73,7 +73,7 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForCoralScoring(Supplier<ReefLevel> reefLevelSup) {
+    public Command prepareForBranchCoralScoring(Supplier<ReefLevel> reefLevelSup) {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
             elevator.moveToCoralScoreLevel(reefLevelSup),
@@ -82,6 +82,16 @@ public class ElevatorArmIntakeHandler {
             arm.moveToPreparedToScoreCoralPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
             ElasticUtil.sendInfoCommand("Prepared for coral scoring")
+        );
+    }
+
+    public Command prepareForL1() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToCoralScoreLevel(() -> ReefLevel.L1),
+            arm.moveToPreparedToScoreLowL1Pos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            ElasticUtil.sendInfoCommand("Prepared for L1 scoring")
         );
     }
 
@@ -143,8 +153,8 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command moveArmToCoralScorePos(Supplier<ReefLevel> reefLevelSup) {
-        return arm.moveToCoralScoreLevel(reefLevelSup)
+    public Command moveArmToReefBranchScorePos(Supplier<ReefLevel> reefLevelSup) {
+        return arm.moveToReefBranchScorePos(reefLevelSup)
             .andThen(Commands.waitUntil(arm::atSetpoint));
     }
 
@@ -160,11 +170,8 @@ public class ElevatorArmIntakeHandler {
         return elevator.atSetpoint() && arm.atSetpoint();
     }
 
-    public boolean readyToScoreCoral(ReefLevel reefLevel) {
-        if (reefLevel.equals(ReefLevel.L1))
-            return arm.atL1() && elevator.atL1();
-
-        else if (reefLevel.equals(ReefLevel.L2))
+    public boolean readyToScoreCoralOnBranch(ReefLevel reefLevel) {
+        if (reefLevel.equals(ReefLevel.L2))
             return arm.atCoralPreparedToScorePos() && elevator.atL2();
 
         else if (reefLevel.equals(ReefLevel.L3))

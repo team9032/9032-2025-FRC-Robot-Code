@@ -356,10 +356,9 @@ public final class Constants {
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmCradlePos = -0.25;
-        public static final double kArmL1Pos = 0.25;//TODO
-        public static final double kArmL2Pos = 0.03; 
-        public static final double kArmL3Pos = 0.01;
-        public static final double kArmL4Pos = 0.05;
+        public static final double kArmL2ScorePos = 0.03; 
+        public static final double kArmL3ScorePos = 0.01;
+        public static final double kArmL4ScorePos = 0.05;
         public static final double kArmHighAlgaePos = 0.0;
         public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
@@ -367,8 +366,9 @@ public final class Constants {
         public static final double kArmAlgaeGroundPos = -0.11;
         public static final double kArmClimbPos = 0.21;
         public static final double kArmCoralPreparedToScorePos = 0.17;
+        public static final double kArmLowL1PreparedToScorePos = -0.06;
+        public static final double kArmHighL1PreparedToScorePos = -0.06;
 
-        public static final double kArmOverIntakePos = 0.5;
         public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;
 

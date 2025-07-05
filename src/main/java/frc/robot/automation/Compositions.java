@@ -50,11 +50,11 @@ public class Compositions {
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization()))
-                    .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(() -> reefLevel))   
+                    .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel))   
                 ),
-            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevel)),
-            elevatorArmIntakeHandler.moveArmToCoralScorePos(() -> reefLevel)
-                .alongWith(endEffector.scoreCoral(() -> reefLevel))
+            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
+            elevatorArmIntakeHandler.moveArmToReefBranchScorePos(() -> reefLevel)
+                .alongWith(endEffector.placeCoralOnBranch(() -> reefLevel))
         )
         .onlyIf(endEffector::hasCoral);
     }
@@ -67,11 +67,11 @@ public class Compositions {
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization()))
-                    .andThen(elevatorArmIntakeHandler.prepareForCoralScoring(reefLevelSup))   
+                    .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(reefLevelSup))   
                 ),
-            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoral(reefLevelSup.get())),
-            elevatorArmIntakeHandler.moveArmToCoralScorePos(reefLevelSup)
-                .alongWith(endEffector.scoreCoral(reefLevelSup))
+            Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
+            elevatorArmIntakeHandler.moveArmToReefBranchScorePos(reefLevelSup)
+                .alongWith(endEffector.placeCoralOnBranch(reefLevelSup))
         )
         .until(shouldInterrupt)
         .andThen(
@@ -128,7 +128,7 @@ public class Compositions {
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),//Don't hit the reef when moving to stow
             /* Prepare for L1 early instead of stowing */
             Commands.either(
-                elevatorArmIntakeHandler.prepareForCoralScoring(() -> ReefLevel.L1), 
+                elevatorArmIntakeHandler.prepareForL1(),
                 elevatorArmIntakeHandler.moveToStowPositions()
                     .onlyIf(() -> moveToStow), 
                 () -> buttonBoardHandler.getSelectedReefLevel().equals(ReefLevel.L1)
@@ -219,7 +219,7 @@ public class Compositions {
 
     public Command coastAll() {
         return elevatorArmIntakeHandler.coastAll()
-            //.andThen(climber.coastArm())
+            .andThen(climber.coastArm())
             .ignoringDisable(true);
     }
 }
