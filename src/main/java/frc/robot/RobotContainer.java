@@ -319,6 +319,7 @@ public class RobotContainer {
 
         enabled.onTrue(
             led.setStateCommand(State.ENABLED)
+            .andThen(compositions.initClimberIfNeeded())
         );
 
         disabled.onTrue(

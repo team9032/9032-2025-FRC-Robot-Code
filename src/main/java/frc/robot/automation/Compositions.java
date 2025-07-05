@@ -188,12 +188,13 @@ public class Compositions {
             .andThen(climber.moveToStowPosition());
     }
 
-    public Command initClimber() {
+    public Command initClimberIfNeeded() {
         return Commands.sequence(
             elevatorArmIntakeHandler.moveIntakeDown(),
             Commands.waitUntil(intake::canRunRollers),
             climber.moveToStowPosition()            
-        );
+        )
+        .onlyIf(() -> !climber.atStow());
     }
 
     public Command stopRollers() {

@@ -49,6 +49,10 @@ public class Climber extends SubsystemBase {
         return MathUtil.isNear(armRequest.Position, armPosSignal.getValueAsDouble(), kClimberArmTolerance);
     }
 
+    public boolean atStow() {
+        return MathUtil.isNear(kClimberStowPos, armPosSignal.getValueAsDouble(), kClimberArmTolerance);
+    }
+
     private Command moveClimber(double pos) {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(pos)))
             .andThen(Commands.waitUntil(this::atSetpoint));
