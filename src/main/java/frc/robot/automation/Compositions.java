@@ -82,6 +82,15 @@ public class Compositions {
         .onlyIf(endEffector::hasCoral);
     }
 
+    public Command scoreL1() {
+        return Commands.sequence(
+            endEffector.placeCoralInTrough(),
+            Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
+            elevatorArmIntakeHandler.moveToIntakePosition()   
+        )
+        .onlyIf(endEffector::hasCoral);
+    }
+
     public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup) {
         return alignToReefAndScoreInterruptable(isLeftBranch, reefLevelSup, () -> false);
     }
@@ -178,17 +187,18 @@ public class Compositions {
                         elevatorArmIntakeHandler.prepareForNetAlgaeScoring()
                     )
                 ),
-            endEffector.scoreAlgae(buttonBoardHandler::getSelectedAlgaeScorePath),
-            elevatorArmIntakeHandler.moveToStowPositionsFromNet()
+            endEffector.outtakeNetAlgae()
         )
         .until(shouldInterrupt)
+        .andThen(elevatorArmIntakeHandler.moveToStowPositionsFromNet())
         .onlyIf(endEffector::hasAlgae);
     }
 
     public Command intakeGroundAlgae() {
         return Commands.sequence(
             elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
-            endEffector.intakeAlgae()  
+            endEffector.intakeAlgae(),
+            elevatorArmIntakeHandler.moveToStowPositions()  
         )
         .onlyIf(() -> !endEffector.hasAlgae() && !endEffector.hasCoral());
     }

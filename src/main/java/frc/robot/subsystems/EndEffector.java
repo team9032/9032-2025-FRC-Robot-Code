@@ -95,17 +95,6 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
-    public Command scoreAlgae(Supplier<AlgaeScorePath> algaeScorePathSup) {
-        return new SelectCommand<AlgaeScorePath>(
-            Map.ofEntries(
-                Map.entry(AlgaeScorePath.NONE, Commands.none()),
-                Map.entry(AlgaeScorePath.TO_NET, outtakeNetAlgae()),
-                Map.entry(AlgaeScorePath.TO_PROCESSOR, outtakeProcessorAlgae())
-            ),
-            algaeScorePathSup
-        ); 
-    }
-
     public Command outtakeProcessorAlgae() {
         return Commands.sequence(
             setRollerMotorPower(kProcessorOuttakePower), 

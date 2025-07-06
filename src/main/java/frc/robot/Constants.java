@@ -119,7 +119,7 @@ public final class Constants {
         public static final double kPrepareForScoringReefDistance = 1.71;
         public static final double kPrepareForAlgaeIntakingReefDistance = 2.04;
         public static final double kEndEffectorClearReefDistance = 1.55;
-        public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;//TODO tune
+        public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;
 
         public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(24.0);
     }
@@ -258,14 +258,14 @@ public final class Constants {
         public static final double kElevatorHighAlgae = 5.7;
         public static final double kElevatorCradlePos = 2.3;
         public static final double kElevatorProcessor = 0; 
-        public static final double kElevatorNet = 9.5;
+        public static final double kElevatorNet = 9.1;
         public static final double kElevatorAlgaeGround = 2.0;
         public static final double kElevatorClimb = 0.05;
 
         public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
         public static final double kElevatorStow = 1.6; 
-        public static final double kElevatorCloseToNet = 9.2;
+        public static final double kElevatorCloseToNet = 8.8;
     }
 
     public static final class TransferConstants {
@@ -362,8 +362,8 @@ public final class Constants {
         public static final double kArmHighAlgaePos = 0.0;
         public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
-        public static final double kArmNetPos = 0.35;
-        public static final double kArmAlgaeGroundPos = -0.11;
+        public static final double kArmNetPos = 0.38;
+        public static final double kArmAlgaeGroundPos = -0.1;
         public static final double kArmClimbPos = 0.21;
         public static final double kArmCoralPreparedToScorePos = 0.17;
         public static final double kArmLowL1PreparedToScorePos = -0.06;
@@ -414,7 +414,7 @@ public final class Constants {
 
         public static final double kClimberStowPos = 0.11;
         public static final double kClimberCageIntakePos = 0.2;
-        public static final double kClimberClimbPos = -0.07;
+        public static final double kClimberClimbPos = -0.08;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(10000)
@@ -475,9 +475,9 @@ public final class Constants {
         public static final double kAlgaeOuttakeWait = 0.5;
 
         public static final double kHoldAlgaeCurrent = -60;
-        public static final double kHoldCoralCurrent = -23;
+        public static final double kHoldCoralCurrent = -15;
 
-        public static final int kHasCoralCurrent = -20;
+        public static final int kHasCoralCurrent = -14;
         public static final int kHasAlgaeCurrent = -57;
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()

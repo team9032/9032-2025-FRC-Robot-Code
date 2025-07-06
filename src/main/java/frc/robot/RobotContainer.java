@@ -202,7 +202,7 @@ public class RobotContainer {
 
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
-                endEffector.placeCoralInTrough(),
+                compositions.scoreL1(),
                 compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
