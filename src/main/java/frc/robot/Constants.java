@@ -364,7 +364,7 @@ public final class Constants {
         public static final double kArmProcessorPos = 0;
         public static final double kArmNetPos = 0.38;
         public static final double kArmAlgaeGroundPos = -0.1;
-        public static final double kArmClimbPos = 0.21;
+        public static final double kArmClimbPos = 0.09;
         public static final double kArmCoralPreparedToScorePos = 0.17;
         public static final double kArmLowL1PreparedToScorePos = -0.06;
         public static final double kArmHighL1PreparedToScorePos = -0.06;

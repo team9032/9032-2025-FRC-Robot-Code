@@ -161,6 +161,7 @@ public class Compositions {
     public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             Commands.print("Intaking algae from the reef"),
+            stopRollers(),
             elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve).asProxy()
                 .alongWith(endEffector.intakeAlgae())
@@ -174,7 +175,7 @@ public class Compositions {
                 ),
                 elevatorArmIntakeHandler.moveToStowPositions()
             )
-        .onlyIf(() -> !endEffector.hasCoral());
+        .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
 
     public Command scoreAlgaeInNet(BooleanSupplier shouldInterrupt) {
@@ -204,8 +205,11 @@ public class Compositions {
     }
 
     public Command climb() {
-        return elevatorArmIntakeHandler.prepareForClimbing()
-            .andThen(climber.intakeCageAndClimb());
+        return Commands.sequence(
+            stopRollers(),
+            elevatorArmIntakeHandler.prepareForClimbing(),
+            climber.intakeCageAndClimb()
+        );
     }
 
     public Command cancelClimbAndStow() {

@@ -147,6 +147,7 @@ public class ElevatorArmIntakeHandler {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
             arm.moveToClimbPos(),
+            Commands.waitUntil(arm::overCradle),
             elevator.moveToClimbPosition(),
             intake.returnToStowPosition(),
             Commands.waitUntil(() -> elevatorAndArmAtSetpoints() && intake.readyForClimbing())
