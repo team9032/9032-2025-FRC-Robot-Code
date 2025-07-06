@@ -168,7 +168,7 @@ public class RobotContainer {
         );
 
         ejectIntake.onTrue(
-            intake.ejectCoral()
+            compositions.ejectIntake()
         );
 
         stowAndCancelClimb.onTrue(
@@ -242,9 +242,7 @@ public class RobotContainer {
          * Manual 12 - intake down
          * 
         */
-        buttonBoard.manual1.onTrue(
-            intake.ejectCoral()
-        );
+        buttonBoard.manual1.onTrue(intake.ejectCoral());
 
         buttonBoard.manual2.onTrue(
             Commands.sequence(
@@ -254,52 +252,24 @@ public class RobotContainer {
             )
         );
 
-        buttonBoard.manual3.onTrue(
-            elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel)
-        );
+        buttonBoard.manual3.onTrue(elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel));
 
         buttonBoard.manual6.onTrue(
-            Commands.sequence(
-                endEffector.placeCoralOnBranch(buttonBoard::getSelectedReefLevel).asProxy(),
-                elevatorArmIntakeHandler.moveToIntakePosition()
-            )
+            endEffector.placeCoralOnBranch(buttonBoard::getSelectedReefLevel)
+                .alongWith(elevatorArmIntakeHandler.moveArmToReefBranchScorePos(buttonBoard::getSelectedReefLevel))
         );
 
-        buttonBoard.manual7.onTrue(
-            elevatorArmIntakeHandler.moveToStowPositions()
-            .andThen(compositions.stopRollers()
-                .onlyIf(() -> !endEffector.hasAlgae())
-            )
-        );
+        buttonBoard.manual7.onTrue(compositions.cancelClimbAndStow());
 
-        buttonBoard.manual8.onTrue(
-            compositions.cancelIntake()
-        );
+        buttonBoard.manual8.onTrue(compositions.cancelIntake());
 
-        buttonBoard.manual9.onTrue(
-            Commands.sequence(
-                endEffector.outtakeProcessorAlgae(),
-                elevatorArmIntakeHandler.moveToStowPositions()
-            )
-        );
+        buttonBoard.manual9.onTrue(endEffector.outtakeProcessorAlgae());
 
-        buttonBoard.manual10.onTrue(
-            Commands.sequence(
-                elevatorArmIntakeHandler.prepareForNetAlgaeScoring(),
-                endEffector.intakeAlgae()  
-            )
-        );
+        buttonBoard.manual10.onTrue(elevatorArmIntakeHandler.prepareForNetAlgaeScoring());
 
-        buttonBoard.manual11.onTrue(
-            Commands.sequence(
-                elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
-                endEffector.intakeAlgae()
-            )
-        );
+        buttonBoard.manual11.onTrue(compositions.intakeGroundAlgae());
 
-        buttonBoard.manual12.onTrue(
-            compositions.intakeCoralToEndEffector(true)
-        );
+        buttonBoard.manual12.onTrue(compositions.intakeCoralToEndEffector(true));
     }
 
     /** Runs every loop cycle */

@@ -11,8 +11,6 @@ import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.PathfindingHandler;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
-import frc.robot.automation.ButtonBoardHandler.ReefPath;
-import frc.robot.automation.ButtonBoardHandler.SourcePath;
 import frc.robot.subsystems.EndEffector;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -180,7 +178,7 @@ public class Autos {
              /* Score preload, and move to source area while preparing for intaking */
             compositions.alignToReefAndScoreFromPreset(20, true, ReefLevel.L4)
                 .alongWith(compositions.initClimberIfNeeded()),
-            PathfindingHandler.pathToSource(() -> SourcePath.TO_LSOURCE)
+            PathfindingHandler.pathToSource(true)
         // .alongWith(elevatorArmIntakeHandler.moveToIntakePosition())
         //     /* Get coral 2 */
         //     compositions.intakeNearestCoral(true),

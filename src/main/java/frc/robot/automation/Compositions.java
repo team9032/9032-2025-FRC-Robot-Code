@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -35,11 +34,7 @@ public class Compositions {
     }
 
     public Command driveToSource() {
-        return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Drive to source started"),
-            new ScheduleCommand(elevatorArmIntakeHandler.moveToIntakePosition()),
-            PathfindingHandler.pathToSource(buttonBoardHandler::getSelectedSourcePath)
-        );
+        return Commands.none();//TODO stub
     }
 
     public Command alignToReefAndScoreFromPreset(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
@@ -145,6 +140,14 @@ public class Compositions {
                 .alongWith(transfer.eject())
         );
     }       
+
+    public Command ejectIntake() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Ejected intake"),
+            stopRollers(),
+            intake.ejectCoral()
+        );
+    }
 
     public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(

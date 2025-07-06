@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
-import frc.robot.automation.ButtonBoardHandler.ReefPath;
-import frc.robot.automation.ButtonBoardHandler.SourcePath;
+
 import frc.robot.commands.DriveToMovingPose;
 import frc.robot.commands.DriveToPose;
 import frc.robot.localization.TrackedObject.ObjectType;
@@ -95,15 +94,8 @@ public class PathfindingHandler {
         return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization())), Set.of(swerve));
     }
 
-    public static Command pathToSource(Supplier<SourcePath> sourcePathSup) {
-        return new SelectCommand<SourcePath>(
-            Map.ofEntries(
-                Map.entry(SourcePath.NONE, Commands.none()),
-                Map.entry(SourcePath.TO_LSOURCE, pathTo("LSource")),
-                Map.entry(SourcePath.TO_RSOURCE, pathTo("RSource"))
-            ),
-            sourcePathSup
-        );
+    public static Command pathToSource(boolean isLeftSource) {
+        return Commands.none();//TODO stub
     }
 
     public static Command followAlgaeScorePath(Supplier<AlgaeScorePath> algaeScorePathSup) {
@@ -114,48 +106,6 @@ public class PathfindingHandler {
                 Map.entry(AlgaeScorePath.TO_PROCESSOR, pathTo("Processor"))
             ),
             algaeScorePathSup
-        );
-    }
-
-    public static Command pathToReefSide(Supplier<ReefPath> reefPathSup) {
-        return new SelectCommand<ReefPath>(
-            Map.ofEntries(
-                Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, pathTo("1L")),
-                Map.entry(ReefPath.TO_1R, pathTo("1R")),
-                Map.entry(ReefPath.TO_2L, pathTo("2L")),
-                Map.entry(ReefPath.TO_2R, pathTo("2R")),
-                Map.entry(ReefPath.TO_3L, pathTo("3L")),
-                Map.entry(ReefPath.TO_3R, pathTo("3R")),
-                Map.entry(ReefPath.TO_4L, pathTo("4L")),
-                Map.entry(ReefPath.TO_4R, pathTo("4R")),
-                Map.entry(ReefPath.TO_5L, pathTo("5L")),
-                Map.entry(ReefPath.TO_5R, pathTo("5R")),
-                Map.entry(ReefPath.TO_6L, pathTo("6L")),
-                Map.entry(ReefPath.TO_6R, pathTo("6R"))
-            ),
-            reefPathSup
-        );
-    }
-
-    public static Command pathToAlgaeIntakeFromReef(Supplier<ReefPath> reefPathSup) {
-        return new SelectCommand<ReefPath>(
-            Map.ofEntries(
-                Map.entry(ReefPath.NONE, Commands.none()),
-                Map.entry(ReefPath.TO_1L, pathTo("1A")),
-                Map.entry(ReefPath.TO_1R, pathTo("1A")),
-                Map.entry(ReefPath.TO_2L, pathTo("2A")),
-                Map.entry(ReefPath.TO_2R, pathTo("2A")),
-                Map.entry(ReefPath.TO_3L, pathTo("3A")),
-                Map.entry(ReefPath.TO_3R, pathTo("3A")),
-                Map.entry(ReefPath.TO_4L, pathTo("4A")),
-                Map.entry(ReefPath.TO_4R, pathTo("4A")),
-                Map.entry(ReefPath.TO_5L, pathTo("5A")),
-                Map.entry(ReefPath.TO_5R, pathTo("5A")),
-                Map.entry(ReefPath.TO_6L, pathTo("6A")),
-                Map.entry(ReefPath.TO_6R, pathTo("6A"))
-            ),
-            reefPathSup
         );
     }
 }

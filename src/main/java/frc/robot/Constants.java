@@ -250,7 +250,7 @@ public final class Constants {
 
         public static final double kElevatorTolerance = 0.05;
 
-        public static final double kElevatorL1 = 2.9;
+        public static final double kElevatorL1 = 3.1;
         public static final double kElevatorL2 = 1.3;
         public static final double kElevatorL3 = 3.7;
         public static final double kElevatorL4 = 6.7;
