@@ -513,38 +513,10 @@
             }
           },
           {
-            "title": "End effector arm absolute position",
-            "x": 1088.0,
-            "y": 64.0,
-            "width": 320.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/End effector arm absolute position",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "End effector arm relative position",
-            "x": 1088.0,
-            "y": 224.0,
-            "width": 320.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/End effector arm relative position",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Version Info",
             "x": 0.0,
             "y": 640.0,
-            "width": 544.0,
+            "width": 1536.0,
             "height": 96.0,
             "type": "Large Text Display",
             "properties": {
@@ -555,9 +527,9 @@
           },
           {
             "title": "Has Algae",
-            "x": 64.0,
-            "y": 32.0,
-            "width": 288.0,
+            "x": 1120.0,
+            "y": 128.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -571,70 +543,8 @@
             }
           },
           {
-            "title": "Obstacle sensor distance",
-            "x": 1088.0,
-            "y": 448.0,
-            "width": 320.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Obstacle sensor distance",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "End Effector Photoelectric Sensor (first from indexer)",
-            "x": 32.0,
-            "y": 320.0,
-            "width": 448.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/End Effector Photoelectric Sensor (first from indexer)",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "End Effector Photoelectric Sensor (first from source)",
-            "x": 32.0,
-            "y": 448.0,
-            "width": 448.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/End Effector Photoelectric Sensor (first from source)",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Algae Sensor Dist",
-            "x": 64.0,
-            "y": 160.0,
-            "width": 288.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Algae Sensor Dist",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Coast All",
-            "x": 576.0,
+            "x": 512.0,
             "y": 448.0,
             "width": 384.0,
             "height": 128.0,
@@ -642,227 +552,136 @@
             "properties": {
               "topic": "/SmartDashboard/Coast All",
               "period": 0.06,
-              "show_type": true
+              "show_type": false
+            }
+          },
+          {
+            "title": "Transfer Sensor",
+            "x": 1120.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Transfer Sensor",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Has Cage",
+            "x": 1120.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Has Cage",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Can Run Rollers",
+            "x": 1120.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Can Run Rollers",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "End Effector Has Coral",
+            "x": 1120.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/End Effector Has Coral",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Robot To Reef Distance",
+            "x": 64.0,
+            "y": 32.0,
+            "width": 352.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Robot To Reef Distance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drive To Moving Pose At Goal",
+            "x": 64.0,
+            "y": 192.0,
+            "width": 352.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Drive To Moving Pose At Goal",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "End Effector Arm Position",
+            "x": 64.0,
+            "y": 448.0,
+            "width": 352.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/End Effector Arm Position",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
       }
     },
     {
-      "name": "Button Board",
+      "name": "Driver",
       "grid_layout": {
         "layouts": [],
         "containers": [
           {
-            "title": "to1L",
-            "x": 192.0,
-            "y": 416.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to1L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967295,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to1R",
-            "x": 288.0,
-            "y": 416.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to1R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967295,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to2L",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to2L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967040,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to2R",
-            "x": 96.0,
-            "y": 352.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to2R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967040,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to3L",
-            "x": 0.0,
-            "y": 128.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to3L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4286578816,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to3R",
-            "x": 96.0,
-            "y": 32.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to3R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4286578816,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to4L",
-            "x": 192.0,
-            "y": 0.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to4L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to4R",
-            "x": 288.0,
-            "y": 0.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to4R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to5L",
-            "x": 384.0,
-            "y": 32.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to5L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294901760,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to5R",
-            "x": 480.0,
-            "y": 128.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to5R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294901760,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to6L",
-            "x": 384.0,
-            "y": 352.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to6L",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4278193919,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "to6R",
-            "x": 480.0,
-            "y": 256.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/to6R",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4278193919,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Level 1",
-            "x": 608.0,
-            "y": 416.0,
-            "width": 96.0,
-            "height": 128.0,
+            "x": 0.0,
+            "y": 480.0,
+            "width": 224.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/ButtonTable/toTrough",
@@ -876,10 +695,10 @@
           },
           {
             "title": "Level 2",
-            "x": 608.0,
-            "y": 288.0,
-            "width": 96.0,
-            "height": 128.0,
+            "x": 0.0,
+            "y": 320.0,
+            "width": 224.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/ButtonTable/toLevel1",
@@ -893,10 +712,10 @@
           },
           {
             "title": "Level 3",
-            "x": 608.0,
+            "x": 0.0,
             "y": 160.0,
-            "width": 96.0,
-            "height": 128.0,
+            "width": 224.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/ButtonTable/toLevel2",
@@ -910,101 +729,16 @@
           },
           {
             "title": "Level 4",
-            "x": 608.0,
-            "y": 32.0,
-            "width": 96.0,
-            "height": 128.0,
+            "x": 0.0,
+            "y": 0.0,
+            "width": 224.0,
+            "height": 160.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/ButtonTable/toLevel3",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4278193919,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "RSource",
-            "x": 608.0,
-            "y": 576.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/toRSource",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967295,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "LSource",
-            "x": 0.0,
-            "y": 576.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/toLSource",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294967295,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Automatic Mode",
-            "x": 128.0,
-            "y": 576.0,
-            "width": 192.0,
-            "height": 160.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/automaticMode",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4278255370,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "To Barge",
-            "x": 352.0,
-            "y": 576.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/toBarge",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294901764,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "To Processor",
-            "x": 480.0,
-            "y": 576.0,
-            "width": 96.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/toProcessor",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4294704896,
               "false_color": 4278190080,
               "true_icon": "None",
               "false_icon": "None"
@@ -1034,11 +768,11 @@
               "topic": "/CameraPublisher/grayorangepi_Port_1182_Output_MJPEG_Server",
               "period": 0.06,
               "rotation_turns": 0,
-              "compression": 10
+              "compression": 30
             }
           },
           {
-            "title": "Has Coral",
+            "title": "End Effector Has Coral",
             "x": 1312.0,
             "y": 352.0,
             "width": 224.0,
@@ -1055,23 +789,6 @@
             }
           },
           {
-            "title": "Algae Mode",
-            "x": 224.0,
-            "y": 192.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/ButtonTable/algaeToggle",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4281709620,
-              "false_color": 4278190080,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Ground Camera",
             "x": 736.0,
             "y": 0.0,
@@ -1082,15 +799,15 @@
               "topic": "/CameraPublisher/grayorangepi_Port_1184_Output_MJPEG_Server",
               "period": 0.06,
               "rotation_turns": 0,
-              "compression": 15
+              "compression": 10
             }
           },
           {
             "title": "Match Time",
-            "x": 1312.0,
+            "x": 224.0,
             "y": 0.0,
-            "width": 224.0,
-            "height": 352.0,
+            "width": 512.0,
+            "height": 256.0,
             "type": "Match Time",
             "properties": {
               "topic": "/SmartDashboard/Match Time",
@@ -1099,6 +816,58 @@
               "time_display_mode": "Minutes and Seconds",
               "red_start_time": 15,
               "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Battery Voltage",
+            "x": 224.0,
+            "y": 256.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "/SmartDashboard/Battery Voltage",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 11.0,
+              "max_value": 13.0,
+              "divisions": 5,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Processor Algae",
+            "x": 480.0,
+            "y": 480.0,
+            "width": 192.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toProcessor",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294704896,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Net Algae",
+            "x": 288.0,
+            "y": 480.0,
+            "width": 192.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/ButtonTable/toBarge",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901764,
+              "false_color": 4278190080,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
