@@ -103,7 +103,7 @@ public class RobotContainer {
 
         /* Setup automation */
         buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.intakeNearestCoral(true)
+            compositions.intakeNearestCoral()
             .until(this::driverWantsOverride)
         );     
 
@@ -182,7 +182,7 @@ public class RobotContainer {
                 elevatorArmIntakeHandler.moveIntakeDown(), 
                 Commands.either(
                     compositions.intakeCoralToCradle(), 
-                    compositions.intakeCoralToEndEffector(true), 
+                    compositions.intakeCoralToEndEffector(), 
                     endEffector::hasAlgae
                 ),
                 endEffector::hasCoral
@@ -272,7 +272,7 @@ public class RobotContainer {
 
         buttonBoard.manual11.onTrue(compositions.intakeGroundAlgae());
 
-        buttonBoard.manual12.onTrue(compositions.intakeCoralToEndEffector(true));
+        buttonBoard.manual12.onTrue(compositions.intakeCoralToEndEffector());
     }
 
     /** Runs every loop cycle */

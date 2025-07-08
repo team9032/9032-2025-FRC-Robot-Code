@@ -40,7 +40,7 @@ public class Compositions {
         )                
         .alongWith(
             Commands.sequence(
-                intakeCoralToEndEffector(true),
+                intakeCoralToEndEffector(),
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
                 elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel),
@@ -106,11 +106,11 @@ public class Compositions {
         .onlyIf(endEffector::hasCoral);
     }
 
-    public Command intakeNearestCoral(boolean moveToStow) {
+    public Command intakeNearestCoral() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking nearest coral"),
             PathfindingHandler.pathToNearestCoral(swerve)
-                .alongWith(intakeCoralToEndEffector(moveToStow))
+                .alongWith(intakeCoralToEndEffector())
         );
     }
 
@@ -119,7 +119,7 @@ public class Compositions {
             ElasticUtil.sendInfoCommand("Pulsing intake"),
             cancelIntake(),
             Commands.waitSeconds(0.08),
-            intakeCoralToEndEffector(true)
+            intakeCoralToEndEffector()
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
@@ -135,7 +135,7 @@ public class Compositions {
         );
     }
 
-    public Command intakeCoralToEndEffector(boolean moveToStow) {
+    public Command intakeCoralToEndEffector() {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
@@ -157,8 +157,7 @@ public class Compositions {
             /* Prepare for L1 early instead of stowing */
             Commands.either(
                 elevatorArmIntakeHandler.prepareForL1(),
-                elevatorArmIntakeHandler.moveToStowPositions()
-                    .onlyIf(() -> moveToStow), 
+                elevatorArmIntakeHandler.moveToStowPositions(),
                 () -> buttonBoardHandler.getSelectedReefLevel().equals(ReefLevel.L1)
             )
         )
