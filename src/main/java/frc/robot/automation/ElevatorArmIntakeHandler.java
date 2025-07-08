@@ -96,6 +96,16 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command prepareForHighL1() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToCoralScoreLevel(() -> ReefLevel.L1),
+            arm.moveToPreparedToScoreHighL1Pos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for High L1 scoring")
+        );
+    }
+
     public Command prepareForAlgaeReefIntaking(BooleanSupplier isHighAlgaeSup) {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),

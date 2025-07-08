@@ -87,7 +87,7 @@ public class RobotContainer {
     private final Trigger enabled = RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop());
 
     /* Teleop Triggers */
-    private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
+    private final Trigger hasCoral = new Trigger(endEffector::hasCoral).debounce(kHasCoralDebounceTime);
     private Trigger coralCyclingCommandScheduled;
     private Trigger algaeCyclingCommandScheduled;
 
@@ -208,33 +208,38 @@ public class RobotContainer {
             )
         );
 
+        deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+
+        algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
+
+        /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
-                compositions.scoreL1(),
-                compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride), 
+                compositions.scoreL1(false),
+                compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
-
         alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
-        Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
+        Command alignAndScoreCoralRightCommand = 
+            Commands.either(
+                compositions.scoreL1(true),
+                compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
+                () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
+            );
         alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
 
         coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());
 
-        deployClimber.onTrue(compositions.climb());
-
+        /* Algae cycling commands */
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
             compositions.scoreAlgaeInNet(this::driverWantsOverride), 
             compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride), 
             endEffector::hasAlgae
         );
-
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
 
         algaeCyclingCommandScheduled = new Trigger(() -> algaeReefIntakeOrNetScoreCommand.isScheduled());
-
-        algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
         /* Manual Controls:
          * 
@@ -250,7 +255,7 @@ public class RobotContainer {
          * Manual 12 - intake down
          * 
         */
-        buttonBoard.manual1.onTrue(intake.ejectCoral());
+        buttonBoard.manual1.onTrue(compositions.ejectIntake());
 
         buttonBoard.manual2.onTrue(
             Commands.sequence(
@@ -338,9 +343,9 @@ public class RobotContainer {
     private Command rumble() {
         return Commands.sequence(
             Commands.runOnce(() -> driveController.setRumble(RumbleType.kBothRumble, 1.0)),
-            Commands.waitSeconds(kRumbleTime),
-            Commands.runOnce(() -> driveController.setRumble(RumbleType.kBothRumble, 0.0))
-        );
+            Commands.waitSeconds(kRumbleTime)
+        )
+        .finallyDo(() -> driveController.setRumble(RumbleType.kBothRumble, 0.0));
     }
     
     private void bindSysIdTriggers() {

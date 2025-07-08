@@ -58,13 +58,12 @@ public final class Constants {
 
         public static final double kOverrideAutomationThreshold = 0.1;
         public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
+        public static final double kHasCoralDebounceTime = 0.1;//Seconds 
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
-        public static final double kSlowSpeed = kMaxSpeed * 0.15;
         public static final double kRotationRate = 4 * Math.PI;
-        public static final double kSlowRotationRate = kRotationRate * 0.15;
 
-        public static final double kRumbleTime = 0.5;
+        public static final double kRumbleTime = 0.3;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * 0.01) 
@@ -374,7 +373,7 @@ public final class Constants {
         public static final double kArmClimbPos = 0.09;
         public static final double kArmCoralPreparedToScorePos = 0.17;
         public static final double kArmLowL1PreparedToScorePos = -0.06;
-        public static final double kArmHighL1PreparedToScorePos = -0.06;
+        public static final double kArmHighL1PreparedToScorePos = -0.03;
 
         public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;

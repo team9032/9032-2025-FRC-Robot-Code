@@ -68,7 +68,7 @@ public class Compositions {
         );
     }
 
-    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
+    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt, Command rumbleCommand) {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring"),
             elevatorArmIntakeHandler.moveToStowPositions(),
@@ -79,7 +79,8 @@ public class Compositions {
                     .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(reefLevelSup))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
-            placeCoralOnBranch(reefLevelSup)
+            placeCoralOnBranch(reefLevelSup),
+            rumbleCommand
         )
         .until(shouldInterrupt)
         .andThen(
@@ -100,9 +101,11 @@ public class Compositions {
             .alongWith(endEffector.placeCoralOnBranch(reefLevelSup));
     } 
 
-    public Command scoreL1() {
+    public Command scoreL1(boolean isHigh) {
         return Commands.sequence(
-            Commands.print("Scoring L1"),
+            Commands.print("Scoring L1 - is high " + isHigh),
+            elevatorArmIntakeHandler.prepareForHighL1()
+                .onlyIf(() -> isHigh),
             endEffector.placeCoralInTrough(),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
             elevatorArmIntakeHandler.moveToIntakePosition()   

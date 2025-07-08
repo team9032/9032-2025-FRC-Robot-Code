@@ -85,7 +85,7 @@ public class Arm extends SubsystemBase {
     }
 
     public Command moveToPreparedToScoreHighL1Pos() {
-        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmLowL1PreparedToScorePos)));
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmHighL1PreparedToScorePos)));
     }
 
     public Command moveToStowPos() {
