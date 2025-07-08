@@ -35,7 +35,9 @@ public class Compositions {
 
     public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
         return Commands.sequence(
+            Commands.print("Getting coral from source"),
             PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
+            Commands.print("Pathing to reef branch after source coral"),
             PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
         )                
         .alongWith(
@@ -52,7 +54,7 @@ public class Compositions {
 
     public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Aligning to reef and scoring preload"),
+            Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
             elevatorArmIntakeHandler.moveToStowPositions(),
             PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
@@ -68,7 +70,7 @@ public class Compositions {
 
     public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
+            Commands.print("Aligning to reef and scoring"),
             elevatorArmIntakeHandler.moveToStowPositions(),
             PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
@@ -100,6 +102,7 @@ public class Compositions {
 
     public Command scoreL1() {
         return Commands.sequence(
+            Commands.print("Scoring L1"),
             endEffector.placeCoralInTrough(),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
             elevatorArmIntakeHandler.moveToIntakePosition()   
@@ -109,7 +112,7 @@ public class Compositions {
 
     public Command intakeNearestCoral() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Started intaking nearest coral"),
+            Commands.print("Started intaking nearest coral"),
             PathfindingHandler.pathToNearestCoral(swerve)
                 .alongWith(intakeCoralToEndEffector())
         );
@@ -117,7 +120,7 @@ public class Compositions {
 
     public Command pulseIntake() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Pulsing intake"),
+            Commands.print("Pulsing intake"),
             cancelIntake(),
             Commands.waitSeconds(0.08),
             intakeCoralToEndEffector()
@@ -127,7 +130,7 @@ public class Compositions {
 
     public Command intakeCoralToCradle() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Started intaking to cradle"),
+            Commands.print("Started intaking to cradle"),
             intake.moveToGround(),
             Commands.waitUntil(intake::canRunRollers),
             intake.intakeCoral(),
@@ -138,7 +141,7 @@ public class Compositions {
 
     public Command intakeCoralToEndEffector() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Started intaking"),
+            Commands.print("Started intaking"),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
                 .andThen(elevatorArmIntakeHandler.moveToIntakePosition())//Don't hit the reef when moving to intake position
                     .alongWith(
@@ -167,7 +170,7 @@ public class Compositions {
 
     public Command cancelIntake() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Canceled intaking"),
+            Commands.print("Canceled intaking"),
             elevatorArmIntakeHandler.moveIntakeUp(),
             intake.ejectCoral()
                 .alongWith(transfer.eject())
@@ -176,7 +179,7 @@ public class Compositions {
 
     public Command ejectIntake() {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Ejected intake"),
+            Commands.print("Ejected intake"),
             stopRollers(),
             intake.ejectCoral()
         );
@@ -204,6 +207,7 @@ public class Compositions {
 
     public Command scoreAlgaeInNet(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
+            Commands.print("Scoring algae in the net"),
             PathfindingHandler.pathToBarge(swerve).asProxy()
                 .alongWith(
                     Commands.sequence(
@@ -221,6 +225,7 @@ public class Compositions {
 
     public Command intakeGroundAlgae() {
         return Commands.sequence(
+            Commands.print("Intaking ground algae"),
             elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
             endEffector.intakeAlgae(),
             elevatorArmIntakeHandler.moveToStowPositions()  
@@ -230,6 +235,7 @@ public class Compositions {
 
     public Command climb() {
         return Commands.sequence(
+            Commands.print("Climbing"),
             stopRollers(),
             elevatorArmIntakeHandler.prepareForClimbing(),
             climber.intakeCageAndClimb()
@@ -237,12 +243,16 @@ public class Compositions {
     }
 
     public Command cancelClimbAndStow() {
-        return elevatorArmIntakeHandler.moveToStowPositions()
-            .andThen(climber.moveToStowPosition());
+        return Commands.sequence(
+            Commands.print("Cancelling climb and stowing"),
+            elevatorArmIntakeHandler.moveToStowPositions(),
+            climber.moveToStowPosition()
+        );
     }
 
     public Command initClimberIfNeeded() {
         return Commands.sequence(
+            Commands.print("Initing climber"),
             elevatorArmIntakeHandler.moveIntakeDown(),
             Commands.waitUntil(intake::canRunRollers),
             climber.moveToStowPosition()            
@@ -259,8 +269,11 @@ public class Compositions {
     }
 
     public Command coastAll() {
-        return elevatorArmIntakeHandler.coastAll()
-            .andThen(climber.coastArm())
-            .ignoringDisable(true);
+        return Commands.sequence(
+            elevatorArmIntakeHandler.coastAll(),
+            climber.coastArm(),
+            ElasticUtil.sendInfoCommand("Coasted All Motors")
+        )
+        .ignoringDisable(true);
     }
 }

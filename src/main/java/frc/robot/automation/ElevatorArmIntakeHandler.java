@@ -9,7 +9,6 @@ import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.utils.ElasticUtil;
 
 public class ElevatorArmIntakeHandler {
     private final Elevator elevator;
@@ -40,7 +39,8 @@ public class ElevatorArmIntakeHandler {
             arm.holdPosition(),
             elevator.moveToOverCradlePosition(),
             Commands.waitUntil(elevator::atSetpoint)
-        ).onlyIf(() -> !arm.overCradle());
+        )
+        .onlyIf(() -> !arm.overCradle());
     }       
 
     public Command moveToIntakePosition() {
@@ -49,7 +49,7 @@ public class ElevatorArmIntakeHandler {
             arm.moveToCradlePos(),
             elevator.moveToOverCradlePosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Moved to intake position")
+            Commands.print("[E.A.I.H.] Moved to intake position")
         ); 
     }
 
@@ -60,7 +60,7 @@ public class ElevatorArmIntakeHandler {
             Commands.waitUntil(arm::overCradle),
             elevator.moveToStowPosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Moved to stow")
+            Commands.print("[E.A.I.H.] Moved to stow")
         );
     }
 
@@ -70,7 +70,7 @@ public class ElevatorArmIntakeHandler {
             Commands.waitUntil(arm::atSetpoint),
             elevator.moveToStowPosition(),
             Commands.waitUntil(elevator::atSetpoint),
-            ElasticUtil.sendInfoCommand("Moved to stow from net")
+            Commands.print("[E.A.I.H.] Moved to stow from net")
         );
     }
 
@@ -82,7 +82,7 @@ public class ElevatorArmIntakeHandler {
                 .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             arm.moveToPreparedToScoreCoralPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring")
+            Commands.print("[E.A.I.H.] Prepared for coral scoring")
         );
     }
 
@@ -92,7 +92,7 @@ public class ElevatorArmIntakeHandler {
             elevator.moveToCoralScoreLevel(() -> ReefLevel.L1),
             arm.moveToPreparedToScoreLowL1Pos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for L1 scoring")
+            Commands.print("[E.A.I.H.] Prepared for L1 scoring")
         );
     }
 
@@ -107,7 +107,7 @@ public class ElevatorArmIntakeHandler {
                 isHighAlgaeSup
             ),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for algae reef intaking")
+            Commands.print("[E.A.I.H.] Prepared for algae reef intaking")
         );          
     }
 
@@ -117,7 +117,7 @@ public class ElevatorArmIntakeHandler {
             arm.moveToAlgaeGroundPos(),
             elevator.moveToAlgaeGroundPosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for algae ground intaking")
+            Commands.print("[E.A.I.H.] Prepared for algae ground intaking")
         );          
     }
 
@@ -130,7 +130,7 @@ public class ElevatorArmIntakeHandler {
             Commands.waitUntil(elevator::closeToNetPosition),
             arm.moveToNetPos(),
             Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for net algae scoring")
+            Commands.print("[E.A.I.H.] Prepared for net algae scoring")
         );
     }
 
@@ -140,7 +140,7 @@ public class ElevatorArmIntakeHandler {
             elevator.moveToProcessorPosition(),
             arm.moveToProcessorPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for processor algae scoring")
+            Commands.print("[E.A.I.H.] Prepared for processor algae scoring")
         );
     }
 
@@ -151,7 +151,9 @@ public class ElevatorArmIntakeHandler {
             Commands.waitUntil(arm::overCradle),
             elevator.moveToClimbPosition(),
             intake.returnToStowPosition(),
-            Commands.waitUntil(() -> elevatorAndArmAtSetpoints() && intake.readyForClimbing())
+            Commands.waitUntil(() -> elevatorAndArmAtSetpoints() && intake.readyForClimbing()),
+            Commands.print("[E.A.I.H.] Prepared for climbing")
+
         );
     }
 
