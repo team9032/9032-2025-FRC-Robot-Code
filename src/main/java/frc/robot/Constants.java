@@ -133,6 +133,7 @@ public final class Constants {
         public static final double kPRotation = 0.15;
         public static final double kDRotation = 0.002;
         public static final double kRotationSetpoint = 13.3;
+        public static final double kEndDistanceToCoral = Units.feetToMeters(4);//TODO Find
 
         /* Translational */
         public static final double kPTranslation = 0.25;

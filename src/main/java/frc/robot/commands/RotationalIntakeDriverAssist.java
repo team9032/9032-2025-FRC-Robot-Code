@@ -65,7 +65,7 @@ public class RotationalIntakeDriverAssist extends Command {
         double xSpeed = xSpeedSupplier.getAsDouble() * kMaxSpeed;
         double ySpeed = ySpeedSupplier.getAsDouble() * kMaxSpeed;
 
-        double magnitude = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+        double magnitude = Math.hypot(xSpeed, ySpeed);
 
         /* Gets the robot relative speeds as if we are driving normally */
         var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -93,6 +93,17 @@ public class RotationalIntakeDriverAssist extends Command {
         }
 
         return localization.getNearestObjectOfType(ObjectType.CORAL);
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (lastCoralTarget != null) {
+            double distanceToCoral = lastCoralTarget.getFieldPosition().getTranslation().getDistance(swerve.getLocalization().getCurrentPose().getTranslation());
+
+            return distanceToCoral < kEndDistanceToCoral;
+        }
+
+        return false;
     }
 
     @Override
