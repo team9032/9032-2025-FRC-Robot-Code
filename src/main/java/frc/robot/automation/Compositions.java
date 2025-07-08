@@ -50,9 +50,10 @@ public class Compositions {
         .andThen(placeCoralOnBranch(() -> reefLevel));
     }
 
-    public Command alignToReefAndScoreFromPreset(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
+    public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
         return Commands.sequence(
-            ElasticUtil.sendInfoCommand("Aligning to reef and scoring from preset"),
+            ElasticUtil.sendInfoCommand("Aligning to reef and scoring preload"),
+            endEffector.startRollersForPickup(),
             elevatorArmIntakeHandler.moveToStowPositions(),
             PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
                 /* Moves the elevator and arm when the robot is close enough to the reef */
@@ -139,7 +140,7 @@ public class Compositions {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
-                .andThen(elevatorArmIntakeHandler.moveToIntakePosition())//Don't hit the reef when moving to stow
+                .andThen(elevatorArmIntakeHandler.moveToIntakePosition())//Don't hit the reef when moving to intake position
                     .alongWith(
                         Commands.sequence(
                             intake.moveToGround(),

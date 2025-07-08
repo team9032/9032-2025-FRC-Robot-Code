@@ -14,6 +14,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.CANivoreReader;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
@@ -91,6 +92,7 @@ public class RobotContainer {
     private Trigger algaeCyclingCommandScheduled;
 
     private final CANBus canBus = new CANBus(kCANBusName);
+    private final CANivoreReader canivoreReader = new CANivoreReader(canBus);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -284,12 +286,12 @@ public class RobotContainer {
 
         SmartDashboard.putNumber("Robot To Reef Distance", FieldUtil.getRobotToReefDistance(krakenSwerve.getLocalization()));
 
-        /* Display CAN errors on the LEDs *///TODO do this async to avoid blocking
-        // var currentCANStatus = canBus.getStatus();
-        // if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
-        //     led.displayError();
+        /* Display CAN errors on the LEDs */
+        var currentCANStatus = canivoreReader.getStatus();
+        if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
+            led.displayError();
 
-        // SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
+        SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
     }
 
     /** Bind robot mode triggers here */
