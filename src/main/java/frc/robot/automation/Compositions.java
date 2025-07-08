@@ -133,12 +133,14 @@ public class Compositions {
                         intake.moveToGround(),
                         Commands.waitUntil(intake::canRunRollers),
                         intake.intakeCoral(),
-                        transfer.receiveCoralFromIntake()
+                        endEffector.startRollersForPickup(),
+                        transfer.receiveCoralFromIntakeForPickup()
                     )
                 ),
             intake.stopIntaking(),
-            elevatorArmIntakeHandler.moveToCoralCradlePosition(),
-            endEffector.pickupCoralFromCradle(),
+            elevatorArmIntakeHandler.moveToCoralCradlePosition()
+                .alongWith(endEffector.pickupCoralFromCradle()),
+            transfer.stopRollers(),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),//Don't hit the reef when moving to stow
             /* Prepare for L1 early instead of stowing */
             Commands.either(

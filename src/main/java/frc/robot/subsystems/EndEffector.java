@@ -80,6 +80,10 @@ public class EndEffector extends SubsystemBase {
         );
     }
 
+    public Command startRollersForPickup() {
+        return setRollerMotorCurrent(kHoldCoralCurrent);
+    }
+
     public Command pickupCoralFromCradle() { 
         return Commands.sequence(
             setRollerMotorCurrent(kHoldCoralCurrent),

@@ -31,7 +31,8 @@ public class ElevatorArmIntakeHandler {
     }
 
     public Command moveToCoralCradlePosition() {
-        return elevator.moveToCradlePosition();
+        return elevator.moveToCradlePosition()
+            .andThen(Commands.waitUntil(elevator::atSetpoint));
     }
 
     private Command moveOutOfCradleIfNeeded() {

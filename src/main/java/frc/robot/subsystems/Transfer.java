@@ -34,6 +34,15 @@ public class Transfer extends SubsystemBase {
         return runOnce(() -> rollerMotor.set(0));
     }
 
+    public Command receiveCoralFromIntakeForPickup() {
+        return Commands.sequence(
+            spinRollers(),
+            Commands.waitUntil(this::hasCoral),
+            spinRollersSlowly()
+        )
+        .onlyIf(() -> !hasCoral());
+    }
+
     public Command receiveCoralFromIntake() {
         return Commands.sequence(
             spinRollers(),

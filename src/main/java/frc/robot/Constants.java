@@ -118,7 +118,7 @@ public final class Constants {
         public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
 
         /* Reef distances */
-        public static final double kPrepareForScoringReefDistance = 1.71;
+        public static final double kPrepareForScoringReefDistance = 1.8;
         public static final double kPrepareForAlgaeIntakingReefDistance = 2.04;
         public static final double kEndEffectorClearReefDistance = 1.55;
         public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;
@@ -277,7 +277,7 @@ public final class Constants {
         public static final double kTransferRollerPower = -1.0;
         public static final double kTransferRollerSlowPower = -0.2;
 
-        public static final double kTransferFromSensorWait = 0.15;//TODO tune
+        public static final double kTransferFromSensorWait = 0.25;
 
         public static final double kTransferEjectPower = 0.25;
         public static final double kTransferEjectWait = 1.0;
