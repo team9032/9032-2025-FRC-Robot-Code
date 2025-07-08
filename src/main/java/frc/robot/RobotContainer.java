@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import static frc.robot.Constants.DriverConstants.*;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusCode;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
@@ -87,6 +89,8 @@ public class RobotContainer {
     private final Trigger hasCoral = new Trigger(endEffector::hasCoral);
     private Trigger coralCyclingCommandScheduled;
     private Trigger algaeCyclingCommandScheduled;
+
+    private final CANBus canBus = new CANBus(kCANBusName);
 
     /** The container for the robot. Contains subsystems, IO devices, and commands. */
     public RobotContainer() {
@@ -282,9 +286,11 @@ public class RobotContainer {
         SmartDashboard.putNumber("Robot To Reef Distance", FieldUtil.getRobotToReefDistance(krakenSwerve.getLocalization()));
 
         /* Display CAN errors on the LEDs */
-        var currentCANStatus = RobotController.getCANStatus();
-        if (currentCANStatus.receiveErrorCount > 0 || currentCANStatus.transmitErrorCount > 0)
+        var currentCANStatus = canBus.getStatus();
+        if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
             led.displayError();
+
+        SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
     }
 
     /** Bind robot mode triggers here */

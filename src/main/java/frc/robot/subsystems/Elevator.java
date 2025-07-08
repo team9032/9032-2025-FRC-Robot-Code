@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.ElevatorConfigs.*;
 
 import java.util.Map;
@@ -32,13 +33,12 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         //The leader of a follower cannot have its bus utilization optimized
-        elevatorMotor = new TalonFX(kFrontElevatorID);
+        elevatorMotor = new TalonFX(kFrontElevatorID, kCANBusName);
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kElevatorConfig));
 
-        elevatorMotorFollower = new TalonFX(kBackElevatorID);
-        elevatorMotorFollower.optimizeBusUtilization();
+        elevatorMotorFollower = new TalonFX(kBackElevatorID, kCANBusName);
         ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kElevatorConfig));
 
         followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);

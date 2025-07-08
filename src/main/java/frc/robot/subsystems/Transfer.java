@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.TransferConstants.*;
 
 public class Transfer extends SubsystemBase {
@@ -19,10 +20,8 @@ public class Transfer extends SubsystemBase {
     private boolean hasCoralState = false;
 
     public Transfer() {
-        rollerMotor = new TalonFX(kTransferRollerID);
-        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kTransferRollerConfig));
-        
-        rollerMotor.optimizeBusUtilization();
+        rollerMotor = new TalonFX(kTransferRollerID, kCANBusName);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kTransferRollerConfig));        
     }
 
     private Command spinRollers() {

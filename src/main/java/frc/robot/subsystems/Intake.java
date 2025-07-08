@@ -12,6 +12,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
@@ -23,17 +24,14 @@ public class Intake extends SubsystemBase {
     private final StatusSignal<Angle> armMotorPosSignal;
 
     public Intake() {
-        intakeArmMotor = new TalonFX(kIntakeArmID);
+        intakeArmMotor = new TalonFX(kIntakeArmID, kCANBusName);
         ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeArmConfig));
 
         armMotorPosSignal = intakeArmMotor.getPosition();
-        armMotorPosSignal.setUpdateFrequency(50);
-        intakeArmMotor.optimizeBusUtilization();
+        armMotorPosSignal.setUpdateFrequency(100);
         
-        rollerMotor = new TalonFX(kIntakeRollerID);
-        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));
-        
-        rollerMotor.optimizeBusUtilization();        
+        rollerMotor = new TalonFX(kIntakeRollerID, kCANBusName);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));        
     }
 
     public Command holdPosition() {

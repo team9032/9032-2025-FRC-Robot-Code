@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.photonvision.estimation.TargetModel;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -49,6 +50,8 @@ import frc.robot.subsystems.swerve.SwerveConstants;
 public final class Constants {
     public static class DriverConstants {
         public static final boolean kRunSysId = false;
+
+        public static final String kCANBusName = "canivore";
 
         public static final double kLowStartingBatteryVoltage = 12.2;
 
@@ -501,7 +504,7 @@ public final class Constants {
 
     public static final class LEDConstants {
         public static final int kLEDPort = 0;
-        public static final int kLEDLength = 160;
+        public static final int kLEDLength = 99;
         public static final Distance kLedSpacing = Meters.of(1.0 / 120.0);
 
         //Patterns

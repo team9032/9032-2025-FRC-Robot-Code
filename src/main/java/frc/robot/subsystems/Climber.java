@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 import static frc.robot.Constants.ClimberConstants.*;
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 
 public class Climber extends SubsystemBase {
     private final TalonFX armMotor;
@@ -24,19 +25,17 @@ public class Climber extends SubsystemBase {
     private final StatusSignal<Current> intakeCurrentSignal;
 
     public Climber() {
-        armMotor = new TalonFX(kClimberArmID);
+        armMotor = new TalonFX(kClimberArmID, kCANBusName);
         
         armPosSignal = armMotor.getPosition();
-        armPosSignal.setUpdateFrequency(50);
-        armMotor.optimizeBusUtilization();
+        armPosSignal.setUpdateFrequency(100);
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kClimberArmMotorConfig));
 
-        intakeMotor = new TalonFX(kClimberIntakeID);
+        intakeMotor = new TalonFX(kClimberIntakeID, kCANBusName);
         
         intakeCurrentSignal = intakeMotor.getTorqueCurrent();
-        intakeCurrentSignal.setUpdateFrequency(50);
-        intakeMotor.optimizeBusUtilization();
+        intakeCurrentSignal.setUpdateFrequency(100);
 
         ElasticUtil.checkStatus(intakeMotor.getConfigurator().apply(kClimberIntakeMotorConfig));
     }

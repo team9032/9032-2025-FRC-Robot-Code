@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.EndEffectorConstants.*;
 
 import java.util.Map;
@@ -26,11 +27,10 @@ public class EndEffector extends SubsystemBase {
     private final TorqueCurrentFOC rollerCurrentRequest = new TorqueCurrentFOC(0);
 
     public EndEffector() {
-        rollerMotor = new TalonFX(kEndEffectorRollerMotorID);
+        rollerMotor = new TalonFX(kEndEffectorRollerMotorID, kCANBusName);
 
         rollerCurrentSignal = rollerMotor.getTorqueCurrent();
-        rollerCurrentSignal.setUpdateFrequency(50);
-        rollerMotor.optimizeBusUtilization();
+        rollerCurrentSignal.setUpdateFrequency(100);
         
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kEndEffectorRollerMotorConfig));
     }

@@ -17,6 +17,7 @@ import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -28,14 +29,13 @@ public class Arm extends SubsystemBase {
     private final StatusSignal<Angle> armPosSignal;
     
     public Arm() { 
-        armEncoder = new CANcoder(kArmEncoderId);
+        armEncoder = new CANcoder(kArmEncoderId, kCANBusName);
         ElasticUtil.checkStatus(armEncoder.getConfigurator().apply(kArmEncoderConfig));
 
-        armMotor = new TalonFX(kArmMotorId);
+        armMotor = new TalonFX(kArmMotorId, kCANBusName);
         
         armPosSignal = armMotor.getPosition();
         armPosSignal.setUpdateFrequency(100);
-        armMotor.optimizeBusUtilization();
 
         ElasticUtil.checkStatus(armMotor.getConfigurator().apply(kArmMotorConstants));
     }
