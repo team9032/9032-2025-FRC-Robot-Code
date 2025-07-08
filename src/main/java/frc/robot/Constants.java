@@ -70,8 +70,6 @@ public final class Constants {
             .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
-
-        public static final double kCloseCoralDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
     public static class PathFollowingConstants {

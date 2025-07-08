@@ -1,6 +1,5 @@
 package frc.robot.utils;
 
-import static frc.robot.Constants.DriverConstants.kCloseCoralDistanceToReefCenter;
 import static frc.robot.Constants.LocalizationConstants.kBackReefTagsStartingID;
 import static frc.robot.Constants.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.Constants.LocalizationConstants.kMinReefTagID;
@@ -17,7 +16,6 @@ import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
 
 import com.pathplanner.lib.util.FlippingUtil;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -49,12 +47,6 @@ public class FieldUtil {
         return localization.getCurrentPose().getTranslation().getDistance(reefCenter);
     }
 
-    public static boolean isCoralCloseToReef(Translation2d translation) {
-        var reefCenter = flipTranslationIfNeeded(kReefCenter);
-
-        return translation.getDistance(reefCenter) < kCloseCoralDistanceToReefCenter;
-    }
-
     public static boolean shouldPrepareToScoreCoral(Localization localization) {
         return getRobotToReefDistance(localization) < kPrepareForScoringReefDistance;
     }
@@ -78,37 +70,29 @@ public class FieldUtil {
     }
 
     public static Pose2d getClosestReefScoringLocation(Localization localization, boolean isLeftBranch) {
-        var tag = getClosestReefTag(localization);
-        var closestPoseID = tag.getSecond();
-        var closestPose = tag.getFirst();
-
-        /* Invert direction on the back reef faces so the perspective makes sense */
-        if (closestPoseID >= kBackReefTagsStartingID)
-            return closestPose.transformBy(isLeftBranch ? kRightScoringOffset : kLeftScoringOffset);
-
-        else 
-            return closestPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
+        var tagID = getClosestReefTagID(localization);
+        
+        return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID);
     } 
 
     public static Pose2d getClosestReefAlgaeIntakeLocation(Localization localization) {
-        var closestPose = getClosestReefTag(localization).getFirst();
+        var closestPose = flipPoseIfNeeded(localization.getTagPose(getClosestReefTagID(localization)));
 
         return closestPose.transformBy(kAlgaeReefIntakeOffset);
     } 
 
     public static boolean isClosestReefLocationHighAlgae(Localization localization) {
-        var closestTagID = getClosestReefTag(localization).getSecond();
+        var closestTagID = getClosestReefTagID(localization);
 
         return closestTagID % 2 == 0;//Even tags are high algae
     } 
 
-    private static Pair<Pose2d, Integer> getClosestReefTag(Localization localization) {
+    private static int getClosestReefTagID(Localization localization) {
         var currentPose = localization.getCurrentPose();
 
         /* Find the closest tag pose to the current pose */
         double closestPoseDistance = Double.MAX_VALUE;
         int closestPoseID = 0;
-        Pose2d closestPose = Pose2d.kZero;
         for (int id = kMinReefTagID; id <= kMaxReefTagID; id++) {
             var tagPose = flipPoseIfNeeded(localization.getTagPose(id));
 
@@ -116,16 +100,15 @@ public class FieldUtil {
 
             if (distance < closestPoseDistance) {
                 closestPoseDistance = distance;
-                closestPose = tagPose;
                 closestPoseID = id;
             }
         }
 
-        return Pair.of(closestPose, closestPoseID);
+        return closestPoseID;
     }
 
     public static Pose2d getReefScoringLocationFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
-        var tagPose = localization.getTagPose(tagID);
+        var tagPose = flipPoseIfNeeded(localization.getTagPose(tagID));
 
         /* Invert direction on the back reef faces so the perspective makes sense */
         if (tagID >= kBackReefTagsStartingID)
