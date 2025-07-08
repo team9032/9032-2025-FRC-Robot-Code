@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import java.util.Optional;
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -13,23 +12,21 @@ import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.IntakeDriverAssistConstants.*;
+import static frc.robot.Constants.PathFollowingConstants.kMaxDrivingSpeed;
 import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
-import static frc.robot.Constants.DriverConstants.kMaxSpeed;
+import static frc.robot.Constants.PathFollowingConstants.kSlowDistanceToCoral;
+import static frc.robot.Constants.PathFollowingConstants.kSlowDrivingSpeed;
 
-public class RotationalIntakeDriverAssist extends Command {
+public class RotationalDriveToCoral extends Command {
     private final KrakenSwerve swerve;
-    private final DoubleSupplier xSpeedSupplier;
-    private final DoubleSupplier ySpeedSupplier;
     private final Localization localization;
 
     private final PIDController rotationController;
 
     private TrackedObject lastCoralTarget;
 
-    public RotationalIntakeDriverAssist(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, KrakenSwerve swerve) {
+    public RotationalDriveToCoral(KrakenSwerve swerve) {
         this.swerve = swerve;
-        this.xSpeedSupplier = xSpeedSupplier;
-        this.ySpeedSupplier = ySpeedSupplier;
         
         localization = swerve.getLocalization();
 
@@ -62,23 +59,20 @@ public class RotationalIntakeDriverAssist extends Command {
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
-        double xSpeed = xSpeedSupplier.getAsDouble() * kMaxSpeed;
-        double ySpeed = ySpeedSupplier.getAsDouble() * kMaxSpeed;
+        double xSpeed = kMaxDrivingSpeed;
+        if (lastCoralTarget != null) {
+            double distanceToCoral = lastCoralTarget.getFieldPosition().getTranslation().getDistance(swerve.getLocalization().getCurrentPose().getTranslation());
 
-        double magnitude = Math.hypot(xSpeed, ySpeed);
+            if (distanceToCoral < kSlowDistanceToCoral) 
+                xSpeed = kSlowDrivingSpeed;//TODO prevent hitting wall
+        }
 
         /* Gets the robot relative speeds as if we are driving normally */
-        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        var speeds = new ChassisSpeeds(
             xSpeed, 
-            ySpeed,
-            rotationController.calculate(currentYaw),//Apply the rotation PID's output
-            localization.getCurrentPose().getRotation()
-                .minus(swerve.getOperatorPerspective())//Apply the operator perspective
+            0.0,
+            rotationController.calculate(currentYaw)//Apply the rotation PID's output
         );
-
-        /* Only drive straight */
-        speeds.vxMetersPerSecond = magnitude * Math.signum(speeds.vxMetersPerSecond);//Use the sign to determine if we are going forwards or backwards
-        speeds.vyMetersPerSecond = 0;
 
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
@@ -96,18 +90,9 @@ public class RotationalIntakeDriverAssist extends Command {
     }
 
     @Override
-    public boolean isFinished() {
-        if (lastCoralTarget != null) {
-            double distanceToCoral = lastCoralTarget.getFieldPosition().getTranslation().getDistance(swerve.getLocalization().getCurrentPose().getTranslation());
-
-            return distanceToCoral < kEndDistanceToCoral;
-        }
-
-        return false;
-    }
-
-    @Override
     public void end(boolean interrupted) {
+        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+
         rotationController.reset();
 
         lastCoralTarget = null;

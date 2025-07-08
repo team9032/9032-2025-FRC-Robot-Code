@@ -123,8 +123,8 @@ public class RobotContainer {
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("4 Coral Left", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
-        autoChooser.addOption("4 Coral Right", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
+        autoChooser.addOption("4 Coral Left", Autos.left4CoralAuto(compositions));
+        autoChooser.addOption("4 Coral Right", Autos.right4CoralAuto(compositions));
         autoChooser.addOption("1 Coral, 2 Algae Center", Commands.none());//TODO algae auto
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
@@ -209,13 +209,13 @@ public class RobotContainer {
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
                 compositions.scoreL1(),
-                compositions.alignToReefAndScoreInterruptable(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride), 
+                compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
 
         alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
-        Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScoreInterruptable(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
+        Command alignAndScoreCoralRightCommand = compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride);
         alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
 
         coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());
@@ -260,10 +260,7 @@ public class RobotContainer {
 
         buttonBoard.manual3.onTrue(elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel));
 
-        buttonBoard.manual6.onTrue(
-            endEffector.placeCoralOnBranch(buttonBoard::getSelectedReefLevel)
-                .alongWith(elevatorArmIntakeHandler.moveArmToReefBranchScorePos(buttonBoard::getSelectedReefLevel))
-        );
+        buttonBoard.manual6.onTrue(compositions.placeCoralOnBranch(buttonBoard::getSelectedReefLevel));
 
         buttonBoard.manual7.onTrue(compositions.cancelClimbAndStow());
 

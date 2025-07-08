@@ -122,14 +122,19 @@ public final class Constants {
         public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;
 
         public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(24.0);
-    }
 
+        /* Drive to coral */
+        public static final double kMaxDrivingSpeed = 3.0;
+        public static final double kSlowDrivingSpeed = 1.0;
+        public static final double kSlowDistanceToCoral = Units.feetToMeters(4);//TODO Find
+    }
+    
     public static final class IntakeDriverAssistConstants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
 
         /* Rotational */
-        public static final double kPRotation = 0.15;
-        public static final double kDRotation = 0.002;
+        public static final double kPRotationToObject = 0.15;
+        public static final double kDRotationToObject = 0.002;
         public static final double kRotationSetpoint = 13.3;
         public static final double kEndDistanceToCoral = Units.feetToMeters(4);//TODO Find
 

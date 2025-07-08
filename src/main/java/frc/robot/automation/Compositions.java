@@ -33,8 +33,21 @@ public class Compositions {
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
     }
 
-    public Command driveToSource() {
-        return Commands.none();//TODO stub
+    public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
+        return Commands.sequence(
+            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
+        )                
+        .alongWith(
+            Commands.sequence(
+                intakeCoralToEndEffector(true),
+                /* Moves the elevator and arm when the robot is close enough to the reef */
+                Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
+                elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel),
+                Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel))
+            )
+        )
+        .andThen(placeCoralOnBranch(() -> reefLevel));
     }
 
     public Command alignToReefAndScoreFromPreset(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
@@ -48,13 +61,11 @@ public class Compositions {
                     .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
-            elevatorArmIntakeHandler.moveArmToReefBranchScorePos(() -> reefLevel)
-                .alongWith(endEffector.placeCoralOnBranch(() -> reefLevel))
-        )
-        .onlyIf(endEffector::hasCoral);
+            placeCoralOnBranch(() -> reefLevel)
+        );
     }
 
-    public Command alignToReefAndScoreInterruptable(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
+    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Aligning to reef and scoring"),
             elevatorArmIntakeHandler.moveToStowPositions(),
@@ -65,8 +76,7 @@ public class Compositions {
                     .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(reefLevelSup))   
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
-            elevatorArmIntakeHandler.moveArmToReefBranchScorePos(reefLevelSup)
-                .alongWith(endEffector.placeCoralOnBranch(reefLevelSup))
+            placeCoralOnBranch(reefLevelSup)
         )
         .until(shouldInterrupt)
         .andThen(
@@ -82,6 +92,11 @@ public class Compositions {
         .onlyIf(endEffector::hasCoral);
     }
 
+    public Command placeCoralOnBranch(Supplier<ReefLevel> reefLevelSup) {
+        return elevatorArmIntakeHandler.moveArmToReefBranchScorePos(reefLevelSup)
+            .alongWith(endEffector.placeCoralOnBranch(reefLevelSup));
+    } 
+
     public Command scoreL1() {
         return Commands.sequence(
             endEffector.placeCoralInTrough(),
@@ -89,10 +104,6 @@ public class Compositions {
             elevatorArmIntakeHandler.moveToIntakePosition()   
         )
         .onlyIf(endEffector::hasCoral);
-    }
-
-    public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup) {
-        return alignToReefAndScoreInterruptable(isLeftBranch, reefLevelSup, () -> false);
     }
 
     public Command intakeNearestCoral(boolean moveToStow) {
@@ -127,16 +138,17 @@ public class Compositions {
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
-            elevatorArmIntakeHandler.moveToIntakePosition()
-                .alongWith(
-                    Commands.sequence(
-                        intake.moveToGround(),
-                        Commands.waitUntil(intake::canRunRollers),
-                        intake.intakeCoral(),
-                        endEffector.startRollersForPickup(),
-                        transfer.receiveCoralFromIntakeForPickup()
-                    )
-                ),
+            Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
+                .andThen(elevatorArmIntakeHandler.moveToIntakePosition())//Don't hit the reef when moving to stow
+                    .alongWith(
+                        Commands.sequence(
+                            intake.moveToGround(),
+                            Commands.waitUntil(intake::canRunRollers),
+                            intake.intakeCoral(),
+                            endEffector.startRollersForPickup(),
+                            transfer.receiveCoralFromIntakeForPickup()
+                        )
+                    ),
             intake.stopIntaking(),
             elevatorArmIntakeHandler.moveToCoralCradlePosition()
                 .alongWith(endEffector.pickupCoralFromCradle()),

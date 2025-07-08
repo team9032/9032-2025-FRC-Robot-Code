@@ -3,28 +3,34 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.automation.Compositions;
-import frc.robot.automation.ElevatorArmIntakeHandler;
-import frc.robot.automation.PathfindingHandler;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 
 public class Autos {
-    public static Command dynamicCoralAuto(Compositions compositions, ElevatorArmIntakeHandler elevatorArmIntakeHandler) {
-        return Commands.sequence(
-             /* Score preload, and move to source area while preparing for intaking */
+    public static Command left4CoralAuto(Compositions compositions) {
+        return Commands.sequence(//TODO branch if coral is missed
+            /* Score preload and init climber */
             compositions.alignToReefAndScoreFromPreset(20, true, ReefLevel.L4)
                 .alongWith(compositions.initClimberIfNeeded()),
-            PathfindingHandler.pathToSource(true)
-        // .alongWith(elevatorArmIntakeHandler.moveToIntakePosition())
-        //     /* Get coral 2 */
-        //     compositions.intakeNearestCoral(true),
-        //     /* Score coral 2 */
-        //     compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2L, ReefLevel.L4),
-        //     /* Get coral 3 */
-        //     compositions.intakeNearestCoral(true),
-        //     /* Score coral 3 */
-        //     compositions.alignToReefAndScoreFromPreset(ReefPath.TO_2R, ReefLevel.L4),
-        //     /* Stow */
-        //     elevatorArmIntakeHandler.moveToStowPositions()
+            /* Get and score coral 2 */
+            compositions.getCoralFromSourceThenScore(19, true, true, ReefLevel.L4),
+            /* Get and score coral 3 */
+            compositions.getCoralFromSourceThenScore(19, false, true, ReefLevel.L4),
+            /* Get and score coral 4 */
+            compositions.getCoralFromSourceThenScore(18, true, true, ReefLevel.L4)
+        );
+    }
+
+    public static Command right4CoralAuto(Compositions compositions) {
+        return Commands.sequence(
+            /* Score preload and init climber */
+            compositions.alignToReefAndScoreFromPreset(22, false, ReefLevel.L4)
+                .alongWith(compositions.initClimberIfNeeded()),
+            /* Get and score coral 2 */
+            compositions.getCoralFromSourceThenScore(17, false, false, ReefLevel.L4),
+            /* Get and score coral 3 */
+            compositions.getCoralFromSourceThenScore(17, true, false, ReefLevel.L4),
+            /* Get and score coral 4 */
+            compositions.getCoralFromSourceThenScore(18, false, false, ReefLevel.L4)
         );
     }
 }

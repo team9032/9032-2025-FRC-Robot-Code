@@ -2,10 +2,7 @@ package frc.robot.automation;
 
 import static frc.robot.Constants.PathFollowingConstants.*;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -13,11 +10,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
-import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
-
 import frc.robot.commands.DriveToMovingPose;
 import frc.robot.commands.DriveToPose;
+import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -26,13 +21,16 @@ import frc.robot.utils.FieldUtil;
 public class PathfindingHandler {
     private PathfindingHandler() {}
 
-    private static Command pathTo(String pathName) {
+    private static Command pathToStubPath(String pathName, boolean mirror) {
         try {
             PathPlannerPath pathToFollow = PathPlannerPath.fromPathFile(pathName);
+            
+            if (mirror)
+                pathToFollow = pathToFollow.mirrorPath();
 
             return AutoBuilder.pathfindThenFollowPath(pathToFollow, kDynamicPathConstraints);
         } catch (Exception e) {
-            ElasticUtil.sendError("Path " + pathName + " failed to load!", "Automatic cycling will not work");
+            ElasticUtil.sendError("Path " + pathName + " failed to load!", "Autos will not work");
 
             return Commands.none();
         }
@@ -94,18 +92,8 @@ public class PathfindingHandler {
         return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization())), Set.of(swerve));
     }
 
-    public static Command pathToSource(boolean isLeftSource) {
-        return Commands.none();//TODO stub
-    }
-
-    public static Command followAlgaeScorePath(Supplier<AlgaeScorePath> algaeScorePathSup) {
-        return new SelectCommand<AlgaeScorePath>(
-            Map.ofEntries(
-                Map.entry(AlgaeScorePath.NONE, Commands.none()),
-                Map.entry(AlgaeScorePath.TO_NET, pathTo("Barge")),
-                Map.entry(AlgaeScorePath.TO_PROCESSOR, pathTo("Processor"))
-            ),
-            algaeScorePathSup
-        );
+    public static Command pathToSourceThenCoral(KrakenSwerve swerve, boolean isLeftSource) {
+        return pathToStubPath("LSourceToCoral", !isLeftSource)
+            .andThen(new RotationalDriveToCoral(swerve));
     }
 }
