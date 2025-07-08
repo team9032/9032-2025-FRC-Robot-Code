@@ -123,10 +123,9 @@ public class RobotContainer {
 
         /* Allows us to choose from all autos in the deploy directory */
         autoChooser = new SendableChooser<>();
-        autoChooser.addOption("3 Coral Left", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, false));
-        autoChooser.addOption("3 Coral Right", Autos.fourCoralLeft(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions, true));
-        autoChooser.addOption("1 Coral, 2 Algae Center", Autos.oneCoralTwoAlgaeCenter(elevatorArmIntakeHandler, endEffector, krakenSwerve, compositions));
-        autoChooser.addOption("3 Coral Left Dynamic", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
+        autoChooser.addOption("4 Coral Left", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
+        autoChooser.addOption("4 Coral Right", Autos.dynamicCoralAuto(compositions, elevatorArmIntakeHandler));
+        autoChooser.addOption("1 Coral, 2 Algae Center", Commands.none());//TODO algae auto
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -157,8 +156,7 @@ public class RobotContainer {
                 krakenSwerve,
                 driveController::getRightX,
                 () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> false//TODO remove slowMode?
+                () -> -driveController.getLeftX()
             )
         );  
     }
@@ -289,7 +287,7 @@ public class RobotContainer {
 
         SmartDashboard.putNumber("Robot To Reef Distance", FieldUtil.getRobotToReefDistance(krakenSwerve.getLocalization()));
 
-        /* Display CAN errors on the LEDs */
+        /* Display CAN errors on the LEDs *///TODO do this async to avoid blocking
         // var currentCANStatus = canBus.getStatus();
         // if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
         //     led.displayError();

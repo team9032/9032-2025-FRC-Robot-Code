@@ -26,8 +26,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-//TODO import harshil.pande.TigerConstants;
-//TODO import evilharshel.pandez.EvilTiggerConstantz.*;
+//import harshil.pande.TigerConstants;
+//import evilharshel.pandez.EvilTigerConstantz.*;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -96,7 +96,7 @@ public final class Constants {
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
         /* Drive to pose constants */
-        public static final double kAlignmentXYkP = 10.0;//TODO Tune better
+        public static final double kAlignmentXYkP = 10.0;
         public static final double kAlignmentXYkD = 0.1;
         
         public static final double kAlignmentRotkP = 8.0;
@@ -224,7 +224,6 @@ public final class Constants {
             .withKV(0.6)
             .withKG(0.4)
             .withGravityType(kElevatorGravityType);
-        //FIXME hi HARSHIL PANDENATOR
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(60)
