@@ -113,6 +113,17 @@ public class Compositions {
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
 
+    public Command intakeCoralToCradle() {
+        return Commands.sequence(
+            ElasticUtil.sendInfoCommand("Started intaking to cradle"),
+            intake.moveToGround(),
+            Commands.waitUntil(intake::canRunRollers),
+            intake.intakeCoral(),
+            transfer.receiveCoralFromIntake(),
+            intake.stopIntaking()
+        );
+    }
+
     public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             ElasticUtil.sendInfoCommand("Started intaking"),
@@ -128,7 +139,6 @@ public class Compositions {
             intake.stopIntaking(),
             elevatorArmIntakeHandler.moveToCoralCradlePosition(),
             endEffector.pickupCoralFromCradle(),
-            transfer.setCoralRemoved(),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),//Don't hit the reef when moving to stow
             /* Prepare for L1 early instead of stowing */
             Commands.either(

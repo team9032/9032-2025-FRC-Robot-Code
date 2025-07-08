@@ -17,8 +17,6 @@ public class Transfer extends SubsystemBase {
 
     private final DigitalInput coralSensor = new DigitalInput(kTransferPhotoelectricSensorID); 
 
-    private boolean hasCoralState = false;
-
     public Transfer() {
         rollerMotor = new TalonFX(kTransferRollerID, kCANBusName);
         ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kTransferRollerConfig));        
@@ -39,37 +37,28 @@ public class Transfer extends SubsystemBase {
     public Command receiveCoralFromIntake() {
         return Commands.sequence(
             spinRollers(),
-            Commands.waitUntil(this::coralSensorTriggered),
+            Commands.waitUntil(this::hasCoral),
             spinRollersSlowly(),
-            Commands.waitUntil(() -> !coralSensorTriggered()),
-            stopRollers(),
-            runOnce(() -> hasCoralState = true)
-        );
+            Commands.waitSeconds(kTransferFromSensorWait),
+            stopRollers()
+        )
+        .onlyIf(() -> !hasCoral());
     }
 
     public Command eject() {
         return runOnce(() -> rollerMotor.set(kTransferEjectPower))
             .andThen(
                 Commands.waitSeconds(kTransferEjectWait),
-                stopRollers(),
-                setCoralRemoved()
+                stopRollers()
             );
     }
 
-    public Command setCoralRemoved() {
-        return runOnce(() -> hasCoralState = false);
-    }
-
     public boolean hasCoral() {
-        return hasCoralState;
-    }
-
-    private boolean coralSensorTriggered() {
         return !coralSensor.get();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Transfer Sensor", coralSensorTriggered());
+        SmartDashboard.putBoolean("Transfer Sensor", hasCoral());
     }
 }

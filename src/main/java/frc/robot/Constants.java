@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import org.photonvision.estimation.TargetModel;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -85,8 +84,8 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            1.0,
-            3.0, 
+            3.7,
+            3.5, 
             3 * Math.PI, 
             4 * Math.PI
         );
@@ -112,7 +111,7 @@ public final class Constants {
 
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
-        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);//TODO tune more
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
 
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
@@ -277,6 +276,8 @@ public final class Constants {
 
         public static final double kTransferRollerPower = -1.0;
         public static final double kTransferRollerSlowPower = -0.2;
+
+        public static final double kTransferFromSensorWait = 0.15;//TODO tune
 
         public static final double kTransferEjectPower = 0.25;
         public static final double kTransferEjectWait = 1.0;

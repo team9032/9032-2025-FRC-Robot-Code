@@ -182,7 +182,11 @@ public class RobotContainer {
         intakeDown.onTrue(
             Commands.either(
                 elevatorArmIntakeHandler.moveIntakeDown(), 
-                compositions.intakeCoralToEndEffector(true),
+                Commands.either(
+                    compositions.intakeCoralToCradle(), 
+                    compositions.intakeCoralToEndEffector(true), 
+                    endEffector::hasAlgae
+                ),
                 endEffector::hasCoral
             )
         );
@@ -286,11 +290,11 @@ public class RobotContainer {
         SmartDashboard.putNumber("Robot To Reef Distance", FieldUtil.getRobotToReefDistance(krakenSwerve.getLocalization()));
 
         /* Display CAN errors on the LEDs */
-        var currentCANStatus = canBus.getStatus();
-        if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
-            led.displayError();
+        // var currentCANStatus = canBus.getStatus();
+        // if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
+        //     led.displayError();
 
-        SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
+        // SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
     }
 
     /** Bind robot mode triggers here */
