@@ -125,7 +125,8 @@ public final class Constants {
         /* Drive to coral */
         public static final double kMaxDrivingSpeed = 3.0;
         public static final double kSlowDrivingSpeed = 1.0;
-        public static final double kSlowDistanceToCoral = Units.feetToMeters(4);//TODO Find
+        public static final double kSlowDistanceToCoral = 1.3;
+        public static final double kEndTime = 0.3;//Seconds
     }
     
     public static final class IntakeDriverAssistConstants {
@@ -134,8 +135,8 @@ public final class Constants {
         /* Rotational */
         public static final double kPRotationToObject = 0.15;
         public static final double kDRotationToObject = 0.002;
-        public static final double kRotationSetpoint = 13.3;
-        public static final double kEndDistanceToCoral = Units.feetToMeters(4);//TODO Find
+        public static final double kRotationSetpoint = 10.65;
+        public static final double kEndDistanceToCoral = 0.95;
 
         /* Translational */
         public static final double kPTranslation = 0.25;

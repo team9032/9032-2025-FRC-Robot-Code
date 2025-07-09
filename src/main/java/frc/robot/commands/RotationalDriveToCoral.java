@@ -5,6 +5,7 @@ import java.util.Optional;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
 import frc.robot.localization.TrackedObject;
@@ -12,6 +13,7 @@ import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.IntakeDriverAssistConstants.*;
+import static frc.robot.Constants.PathFollowingConstants.kEndTime;
 import static frc.robot.Constants.PathFollowingConstants.kMaxDrivingSpeed;
 import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 import static frc.robot.Constants.PathFollowingConstants.kSlowDistanceToCoral;
@@ -25,6 +27,10 @@ public class RotationalDriveToCoral extends Command {
 
     private TrackedObject lastCoralTarget;
 
+    private boolean shouldDriveSlow = false;
+
+    private final Timer endTimer;
+
     public RotationalDriveToCoral(KrakenSwerve swerve) {
         this.swerve = swerve;
         
@@ -32,6 +38,8 @@ public class RotationalDriveToCoral extends Command {
 
         rotationController = new PIDController(kPRotationToObject, 0, kDRotationToObject);
         rotationController.enableContinuousInput(-180.0, 180.0);
+
+        endTimer = new Timer();
 
         addRequirements(swerve);
     }
@@ -50,8 +58,8 @@ public class RotationalDriveToCoral extends Command {
 
         var coralTarget = getCoralTarget();
 
-        /* Update setpoint if we have a target */
-        if (coralTarget.isPresent()) {
+        /* Update setpoint if we have a target and we are not close to ending */
+        if (coralTarget.isPresent() && !endTimer.isRunning()) {
             lastCoralTarget = coralTarget.get();
 
             double rotationSetpoint = currentYaw - (coralTarget.get().getPhotonVisionData().yaw - kRotationSetpoint);
@@ -59,13 +67,17 @@ public class RotationalDriveToCoral extends Command {
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
-        double xSpeed = kMaxDrivingSpeed;
-        if (lastCoralTarget != null) {
+        if (lastCoralTarget != null) {//TODO prevent hitting wall
             double distanceToCoral = lastCoralTarget.getFieldPosition().getTranslation().getDistance(swerve.getLocalization().getCurrentPose().getTranslation());
 
             if (distanceToCoral < kSlowDistanceToCoral) 
-                xSpeed = kSlowDrivingSpeed;//TODO prevent hitting wall
+                shouldDriveSlow = true;//Persist slow mode
+
+            if (distanceToCoral < kEndDistanceToCoral)
+                endTimer.start();
         }
+
+        double xSpeed = shouldDriveSlow ? kSlowDrivingSpeed : kMaxDrivingSpeed;
 
         /* Gets the robot relative speeds as if we are driving normally */
         var speeds = new ChassisSpeeds(
@@ -90,11 +102,21 @@ public class RotationalDriveToCoral extends Command {
     }
 
     @Override
+    public boolean isFinished() {
+        return endTimer.isRunning() && endTimer.hasElapsed(kEndTime);
+    }
+
+    @Override
     public void end(boolean interrupted) {
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
 
         rotationController.reset();
 
         lastCoralTarget = null;
+
+        shouldDriveSlow = false;
+
+        endTimer.stop();
+        endTimer.reset();
     }
 }

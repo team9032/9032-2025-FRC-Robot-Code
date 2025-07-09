@@ -9,6 +9,7 @@ import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.commands.Autos;
+import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
@@ -105,7 +106,8 @@ public class RobotContainer {
 
         /* Setup automation */
         buttonBoard.getAutoIntakeTrigger().onTrue(
-            compositions.intakeNearestCoral()
+            new RotationalDriveToCoral(krakenSwerve)
+                .alongWith(compositions.intakeCoralToEndEffector())
             .until(this::driverWantsOverride)
         );     
 
