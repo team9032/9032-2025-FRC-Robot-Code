@@ -127,6 +127,10 @@ public final class Constants {
         public static final double kSlowDrivingSpeed = 1.0;
         public static final double kSlowDistanceToCoral = 1.3;
         public static final double kEndTime = 0.3;//Seconds
+
+        /* Pull Away */
+        public static final double kPullAwayVelocity = 1.0;
+        public static final double kPullAwayWait = 0.1;//Seconds
     }
     
     public static final class IntakeDriverAssistConstants {

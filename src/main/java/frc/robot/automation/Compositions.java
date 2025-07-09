@@ -1,11 +1,14 @@
 package frc.robot.automation;
 
+import static frc.robot.Constants.PathFollowingConstants.kPullAwayWait;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
+import frc.robot.commands.PullAway;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -42,14 +45,14 @@ public class Compositions {
         )                
         .alongWith(
             Commands.sequence(
-                intakeCoralToEndEffector(),
+                intakeCoralToEndEffector(false),
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
-                elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel),
+                elevatorArmIntakeHandler.prepareForBranchCoralScoringFromIntake(() -> reefLevel),
                 Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel))
             )
         )
-        .andThen(placeCoralOnBranch(() -> reefLevel));
+        .andThen(placeCoralAndPullAway(reefLevel));
     }
 
     public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
@@ -60,12 +63,23 @@ public class Compositions {
             PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
-                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization()))
-                    .andThen(elevatorArmIntakeHandler.prepareForBranchCoralScoring(() -> reefLevel))   
+                    Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
+                    elevatorArmIntakeHandler.prepareForBranchCoralScoringFromIntake(() -> reefLevel)
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
-            placeCoralOnBranch(() -> reefLevel)
+            placeCoralAndPullAway(reefLevel)
         );
+    }
+
+    private Command placeCoralAndPullAway(ReefLevel reefLevel) {
+        return placeCoralOnBranch(() -> reefLevel)
+            .alongWith(
+                Commands.sequence(
+                    Commands.waitSeconds(kPullAwayWait),
+                    Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
+                        .deadlineFor(new PullAway(swerve))   
+                )
+            );
     }
 
     public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt, Command rumbleCommand) {
@@ -143,6 +157,10 @@ public class Compositions {
     }
 
     public Command intakeCoralToEndEffector() {
+        return intakeCoralToEndEffector(true);
+    }
+
+    public Command intakeCoralToEndEffector(boolean moveToStow) {
         return Commands.sequence(
             Commands.print("Started intaking"),
             Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
@@ -167,6 +185,7 @@ public class Compositions {
                 elevatorArmIntakeHandler.moveToStowPositions(),
                 () -> buttonBoardHandler.getSelectedReefLevel().equals(ReefLevel.L1)
             )
+            .onlyIf(() -> moveToStow)
         )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
