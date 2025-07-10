@@ -38,6 +38,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -101,6 +102,9 @@ public final class Constants {
 
         public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.33);
         public static final double kRotAlignmentTolerance = Units.degreesToRadians(4);
+
+        public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.5, 3);
+        public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6;

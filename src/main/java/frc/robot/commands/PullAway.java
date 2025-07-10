@@ -12,6 +12,8 @@ public class PullAway extends Command {
 
     public PullAway(KrakenSwerve swerve) {
         this.swerve = swerve;
+
+        addRequirements(swerve);
     }
 
     @Override
