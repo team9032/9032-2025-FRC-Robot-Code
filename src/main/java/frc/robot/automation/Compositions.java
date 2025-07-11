@@ -47,8 +47,7 @@ public class Compositions {
             Commands.sequence(
                 intakeCoralToEndEffector(false),
                 /* Moves the elevator and arm when the robot is close enough to the reef */
-                // Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
-                elevatorArmIntakeHandler.prepareForBranchCoralScoringFromIntake(() -> reefLevel),
+                elevatorArmIntakeHandler.prepareForBranchCoralScoringFromCradle(() -> reefLevel),
                 Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel))
             )
         )
@@ -64,7 +63,7 @@ public class Compositions {
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
-                    elevatorArmIntakeHandler.prepareForBranchCoralScoringFromIntake(() -> reefLevel)
+                    elevatorArmIntakeHandler.prepareForBranchCoralScoringFromCradle(() -> reefLevel)
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
             placeCoralAndPullAway(reefLevel)

@@ -86,13 +86,13 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
-    public Command prepareForBranchCoralScoringFromIntake(Supplier<ReefLevel> reefLevelSup) {
+    public Command prepareForBranchCoralScoringFromCradle(Supplier<ReefLevel> reefLevelSup) {
         return Commands.sequence(
-            moveOutOfCradleIfNeeded(),
-            arm.moveToPreparedToScoreCoralPos(),
             elevator.moveToCoralScoreLevel(reefLevelSup),
+            Commands.waitUntil(elevator::overCradlePosition),
+            arm.moveToPreparedToScoreCoralPos(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            Commands.print("[E.A.I.H.] Prepared for coral scoring from intake")
+            Commands.print("[E.A.I.H.] Prepared for coral scoring from cradle")
         );
     }
 
