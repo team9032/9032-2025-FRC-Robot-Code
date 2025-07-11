@@ -286,7 +286,7 @@ public final class Constants {
         public static final int kTransferPhotoelectricSensorID = 0;
 
         public static final double kTransferRollerPower = -1.0;
-        public static final double kTransferRollerSlowPower = -0.2;
+        public static final double kTransferRollerSlowPower = -0.5;
 
         public static final double kTransferFromSensorWait = 0.25;
 
@@ -428,8 +428,8 @@ public final class Constants {
         public static final int kClimberIntakeID = 33;
 
         public static final double kClimberStowPos = 0.11;
-        public static final double kClimberCageIntakePos = 0.2;
-        public static final double kClimberClimbPos = -0.06;
+        public static final double kClimberCageIntakePos = 0.19;
+        public static final double kClimberClimbPos = -0.085;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(10000)
@@ -451,7 +451,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.25)
-            .withReverseSoftLimitThreshold(-0.08);
+            .withReverseSoftLimitThreshold(-0.1);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
