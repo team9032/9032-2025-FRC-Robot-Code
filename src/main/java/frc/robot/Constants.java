@@ -107,7 +107,7 @@ public final class Constants {
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
 
         /* Barge alignment constants */
-        public static final double kBargeAlignmentX = 7.6;
+        public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
 
         /* Intake offsets */

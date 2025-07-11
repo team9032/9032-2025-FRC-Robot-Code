@@ -57,7 +57,6 @@ public class RobotContainer {
     private final Trigger intakeUp = driveController.leftTrigger();
     private final Trigger algaeGroundIntake = driveController.a();
     private final Trigger algaeReefIntakeOrNetScore = driveController.b();
-    private final Trigger deployClimber = driveController.povRight().or(driveController.povLeft());
     private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
     private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
 
@@ -129,7 +128,7 @@ public class RobotContainer {
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("4 Coral Left", Autos.left4CoralAuto(compositions));
         autoChooser.addOption("4 Coral Right", Autos.right4CoralAuto(compositions));
-        autoChooser.addOption("1 Coral, 2 Algae Center", Commands.none());//TODO algae auto
+        autoChooser.addOption("1 Coral Center", Autos.center(compositions));//TODO algae auto
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -210,8 +209,6 @@ public class RobotContainer {
             )
         );
 
-        deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
-
         algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
         /* Coral cycling commands */
@@ -248,6 +245,8 @@ public class RobotContainer {
          * Manual 1 - eject coral from intake
          * Manual 2 - eject coral from indexer
          * Manual 3 - manual put arm and elevator to reef positions
+         * Manual 4 - reintake end effector
+         * Manual 5 - climb
          * Manual 6 - score coral
          * Manual 7 - return to stow positions
          * Manual 8 - intake up
@@ -268,6 +267,10 @@ public class RobotContainer {
         );
 
         buttonBoard.manual3.onTrue(elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel));
+
+        buttonBoard.manual4.onTrue(endEffector.startRollersForPickup());
+
+        buttonBoard.manual5.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
         buttonBoard.manual6.onTrue(compositions.placeCoralOnBranch(buttonBoard::getSelectedReefLevel));
 

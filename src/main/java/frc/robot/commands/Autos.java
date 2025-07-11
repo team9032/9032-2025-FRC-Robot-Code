@@ -9,7 +9,7 @@ public class Autos {
     public static Command left4CoralAuto(Compositions compositions) {
         return Commands.sequence(//TODO branch if coral is missed
             /* Score preload and init climber */
-            compositions.alignToReefAndScoreAutoPreload(20, true, ReefLevel.L4)
+            compositions.alignToReefAndScoreAutoPreload(20, true, ReefLevel.L4, true)
                 .alongWith(compositions.initClimberIfNeeded()),
             /* Get and score coral 2 */
             compositions.getCoralFromSourceThenScore(19, true, true, ReefLevel.L4),
@@ -23,7 +23,7 @@ public class Autos {
     public static Command right4CoralAuto(Compositions compositions) {
         return Commands.sequence(
             /* Score preload and init climber */
-            compositions.alignToReefAndScoreAutoPreload(22, false, ReefLevel.L4)
+            compositions.alignToReefAndScoreAutoPreload(22, false, ReefLevel.L4, true)
                 .alongWith(compositions.initClimberIfNeeded()),
             /* Get and score coral 2 */
             compositions.getCoralFromSourceThenScore(17, false, false, ReefLevel.L4),
@@ -32,5 +32,10 @@ public class Autos {
             /* Get and score coral 4 */
             compositions.getCoralFromSourceThenScore(18, false, false, ReefLevel.L4)
         );
+    }
+
+    public static Command center(Compositions compositions) {
+        return Commands.waitSeconds(1)
+            .andThen(compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, false));
     }
 }

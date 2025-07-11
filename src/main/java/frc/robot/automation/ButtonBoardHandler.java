@@ -36,6 +36,8 @@ public class ButtonBoardHandler {
     public final Trigger manual1 = buttonBoardController3.button(5);
     public final Trigger manual2 = buttonBoardController3.button(4);
     public final Trigger manual3 = buttonBoardController3.button(3);
+    public final Trigger manual4 = buttonBoardController3.button(9);
+    public final Trigger manual5 = buttonBoardController3.button(8);
     public final Trigger manual6 = buttonBoardController3.button(11);
     public final Trigger manual7 = buttonBoardController3.button(7);
     public final Trigger manual8 = buttonBoardController3.button(6);
@@ -44,8 +46,6 @@ public class ButtonBoardHandler {
     public final Trigger manual11 = buttonBoardController2.button(12);
     public final Trigger manual12 = buttonBoardController3.button(12);
     public final Trigger manual13 = buttonBoardController3.button(10);
-    public final Trigger manual14 = buttonBoardController3.button(9);
-    public final Trigger manual15 = buttonBoardController3.button(8);
     
     public ButtonBoardHandler() {
         bindButtons();

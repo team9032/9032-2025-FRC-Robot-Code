@@ -85,7 +85,7 @@ public class PathfindingHandler {
     }
 
     public static Command pathToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return new DriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID));
+        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)), Set.of(swerve));
     }
     
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {

@@ -54,7 +54,7 @@ public class Compositions {
         .andThen(placeCoralAndPullAway(reefLevel));
     }
 
-    public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel) {
+    public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel, boolean pullAway) {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
@@ -66,7 +66,11 @@ public class Compositions {
                     elevatorArmIntakeHandler.prepareForBranchCoralScoringFromCradle(() -> reefLevel)
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
-            placeCoralAndPullAway(reefLevel)
+            Commands.either(
+                placeCoralAndPullAway(reefLevel), 
+                placeCoralOnBranch(() -> reefLevel),
+                () -> pullAway
+            )
         );
     }
 
