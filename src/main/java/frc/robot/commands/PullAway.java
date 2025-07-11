@@ -9,9 +9,11 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 
 public class PullAway extends Command {
     private final KrakenSwerve swerve;
+    private final boolean stopOnEnd;
 
-    public PullAway(KrakenSwerve swerve) {
+    public PullAway(KrakenSwerve swerve, boolean stopOnEnd) {
         this.swerve = swerve;
+        this.stopOnEnd = stopOnEnd;
 
         addRequirements(swerve);
     }
@@ -21,5 +23,11 @@ public class PullAway extends Command {
         swerve.setControl(
             kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds(kPullAwayVelocity, 0, 0))
         );
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (stopOnEnd)
+            swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 }

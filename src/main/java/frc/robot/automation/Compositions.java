@@ -51,10 +51,10 @@ public class Compositions {
                 Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel))
             )
         )
-        .andThen(placeCoralAndPullAway(reefLevel));
+        .andThen(placeCoralAndPullAway(reefLevel, false));
     }
 
-    public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel, boolean pullAway) {
+    public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel, boolean endPullAway) {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
@@ -66,21 +66,17 @@ public class Compositions {
                     elevatorArmIntakeHandler.prepareForBranchCoralScoringFromCradle(() -> reefLevel)
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel)),
-            Commands.either(
-                placeCoralAndPullAway(reefLevel), 
-                placeCoralOnBranch(() -> reefLevel),
-                () -> pullAway
-            )
+            placeCoralAndPullAway(reefLevel, endPullAway)
         );
     }
 
-    private Command placeCoralAndPullAway(ReefLevel reefLevel) {
+    private Command placeCoralAndPullAway(ReefLevel reefLevel, boolean endPullAway) {
         return placeCoralOnBranch(() -> reefLevel)
             .alongWith(
                 Commands.sequence(
                     Commands.waitSeconds(kPullAwayWait),
                     Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
-                        .deadlineFor(new PullAway(swerve))   
+                        .deadlineFor(new PullAway(swerve, endPullAway))   
                 )
             );
     }
