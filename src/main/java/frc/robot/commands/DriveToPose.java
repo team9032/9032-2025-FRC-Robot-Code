@@ -7,4 +7,8 @@ public class DriveToPose extends DriveToMovingPose {
     public DriveToPose(KrakenSwerve swerve, Pose2d targetPose) {
         super(swerve, () -> targetPose);
     }
+
+    public DriveToPose(KrakenSwerve swerve, Pose2d targetPose, double endingXVelocity) {
+        super(swerve, () -> targetPose, endingXVelocity);
+    }
 }

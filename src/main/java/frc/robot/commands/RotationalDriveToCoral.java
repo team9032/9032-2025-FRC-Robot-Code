@@ -67,6 +67,8 @@ public class RotationalDriveToCoral extends Command {
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
 
+        double xSpeed = 0.0;//Default to not driving if coral was never seen
+
         if (lastCoralTarget != null) {//TODO prevent hitting wall
             double distanceToCoral = lastCoralTarget.getFieldPosition().getTranslation().getDistance(swerve.getLocalization().getCurrentPose().getTranslation());
 
@@ -75,9 +77,9 @@ public class RotationalDriveToCoral extends Command {
 
             if (distanceToCoral < kEndDistanceToCoral)
                 endTimer.start();
-        }
 
-        double xSpeed = shouldDriveSlow ? kSlowDrivingSpeed : kMaxDrivingSpeed;
+            xSpeed = shouldDriveSlow ? kSlowDrivingSpeed : kMaxDrivingSpeed;
+        }
 
         /* Gets the robot relative speeds as if we are driving normally */
         var speeds = new ChassisSpeeds(

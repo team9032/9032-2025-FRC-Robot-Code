@@ -429,7 +429,7 @@ public final class Constants {
 
         public static final double kClimberStowPos = 0.11;
         public static final double kClimberCageIntakePos = 0.2;
-        public static final double kClimberClimbPos = -0.08;
+        public static final double kClimberClimbPos = -0.06;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(10000)
