@@ -1,5 +1,6 @@
 package frc.robot.automation;
 
+import static frc.robot.Constants.PathFollowingConstants.kAlgaeIntakeWait;
 import static frc.robot.Constants.PathFollowingConstants.kPullAwayWait;
 
 import java.util.function.BooleanSupplier;
@@ -84,6 +85,7 @@ public class Compositions {
     public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt, Command rumbleCommand) {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring"),
+            endEffector.startRollersForPickup(),
             elevatorArmIntakeHandler.moveToStowPositions(),
             PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
@@ -105,8 +107,7 @@ public class Compositions {
                 ),
                 endEffector::hasCoral
             )
-        )
-        .onlyIf(endEffector::hasCoral);
+        );
     }
 
     public Command placeCoralOnBranch(Supplier<ReefLevel> reefLevelSup) {
@@ -214,8 +215,11 @@ public class Compositions {
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve).asProxy()
                 .alongWith(endEffector.intakeAlgae()),
             Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization()))
-                .deadlineFor(new PullAway(swerve, true).asProxy())
-                    .onlyIf(() -> pullAway)
+                .deadlineFor(
+                    Commands.waitSeconds(kAlgaeIntakeWait)
+                    .andThen(new PullAway(swerve, true).asProxy())
+                )
+                .onlyIf(() -> pullAway)
         )
         .until(shouldInterrupt)
             .andThen(

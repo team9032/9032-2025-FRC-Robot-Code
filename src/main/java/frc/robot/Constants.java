@@ -110,7 +110,7 @@ public final class Constants {
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
         public static final double kBargeMaxY = 4.95;
-        
+
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
         public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
@@ -136,6 +136,8 @@ public final class Constants {
         /* Pull Away */
         public static final double kPullAwayVelocity = 1.0;
         public static final double kPullAwayWait = 0.1;//Seconds
+
+        public static final double kAlgaeIntakeWait = 0.075;
     }
     
     public static final class IntakeDriverAssistConstants {
