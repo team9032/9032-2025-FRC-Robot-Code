@@ -67,14 +67,8 @@ public class PathfindingHandler {
         return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
     }
 
-    private static Pose2d getBargeAlignmentPose(KrakenSwerve swerve) {
-        var bargePose = FieldUtil.flipPoseIfNeeded(new Pose2d(kBargeAlignmentX, 0, kBargeAlignmentRotation));
-
-        return new Pose2d(bargePose.getX(), swerve.getLocalization().getCurrentPose().getY(), bargePose.getRotation());
-    }
-
     public static Command pathToBarge(KrakenSwerve swerve) {
-        return Commands.defer(() -> new DriveToPose(swerve, getBargeAlignmentPose(swerve)), Set.of(swerve));
+        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getBargeAlignmentPose(swerve.getLocalization())), Set.of(swerve));
     }
 
     public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {

@@ -59,7 +59,7 @@ public class Compositions {
             Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
             elevatorArmIntakeHandler.moveToStowPositions(),
-            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
@@ -76,7 +76,7 @@ public class Compositions {
                 Commands.sequence(
                     Commands.waitSeconds(kPullAwayWait),
                     Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
-                        .deadlineFor(new PullAway(swerve, endPullAway))   
+                        .deadlineFor(new PullAway(swerve, endPullAway).asProxy())   
                 )
             );
     }
@@ -206,13 +206,16 @@ public class Compositions {
         );
     }
 
-    public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt) {
+    public Command intakeNearestAlgaeFromReef(BooleanSupplier shouldInterrupt, boolean pullAway) {
         return Commands.sequence(
             Commands.print("Intaking algae from the reef"),
             stopRollers(),
             elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
             PathfindingHandler.pathToClosestReefAlgaeIntake(swerve).asProxy()
-                .alongWith(endEffector.intakeAlgae())
+                .alongWith(endEffector.intakeAlgae()),
+            Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization()))
+                .deadlineFor(new PullAway(swerve, true).asProxy())
+                    .onlyIf(() -> pullAway)
         )
         .until(shouldInterrupt)
             .andThen(

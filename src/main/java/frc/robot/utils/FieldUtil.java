@@ -6,12 +6,14 @@ import static frc.robot.Constants.LocalizationConstants.kMinReefTagID;
 import static frc.robot.Constants.LocalizationConstants.kReefCenter;
 import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
 import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
+import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistanceWithAlgae;
 import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefDistance;
+import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentRotation;
 import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
 
 import com.pathplanner.lib.util.FlippingUtil;
@@ -40,7 +42,7 @@ public class FieldUtil {
 
         return translation;
     }
-    
+
     public static double getRobotToReefDistance(Localization localization) {
         var reefCenter = flipTranslationIfNeeded(kReefCenter);
 
@@ -67,6 +69,19 @@ public class FieldUtil {
         var bargeLine = flipTranslationIfNeeded(new Translation2d(kBargeAlignmentX, 0));
 
         return Math.abs(localization.getCurrentPose().getTranslation().getX() - bargeLine.getX()) < kPrepareForNetAlgaeScoringDistance;
+    }
+
+    public static Pose2d getBargeAlignmentPose(Localization localization) {
+        double currentY = localization.getCurrentPose().getY();
+
+        var bargePoseFlipped = flipPoseIfNeeded(new Pose2d(kBargeAlignmentX, currentY, kBargeAlignmentRotation));
+    
+        double targetY = currentY;
+        /* If we are not in front of the correct barge, align to the edge of the correct one */
+        if (bargePoseFlipped.getY() < kBargeMaxY) 
+            targetY = flipTranslationIfNeeded(new Translation2d(0, kBargeMaxY)).getY();
+
+        return new Pose2d(bargePoseFlipped.getX(), targetY, bargePoseFlipped.getRotation());
     }
 
     public static Pose2d getClosestReefScoringLocation(Localization localization, boolean isLeftBranch) {

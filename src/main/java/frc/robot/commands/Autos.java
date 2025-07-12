@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
+import frc.robot.subsystems.swerve.KrakenSwerve;
 
 public class Autos {
     public static Command left4CoralAuto(Compositions compositions) {
@@ -34,10 +35,14 @@ public class Autos {
         );
     }
 
-    public static Command center(Compositions compositions) {
+    public static Command center1Coral1AlgaeAuto(Compositions compositions, KrakenSwerve swerve) {
         return Commands.sequence(
             Commands.waitSeconds(1),
-            compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, true)
+            compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, true),
+            compositions.intakeNearestAlgaeFromReef(() -> false, true),
+            compositions.scoreAlgaeInNet(() -> false),
+            Commands.waitSeconds(3.0)
+                .deadlineFor(new PullAway(swerve, true, -1.0).asProxy())
         );
     }
 }

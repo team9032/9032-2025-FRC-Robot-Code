@@ -128,7 +128,7 @@ public class RobotContainer {
         autoChooser = new SendableChooser<>();
         autoChooser.addOption("4 Coral Left", Autos.left4CoralAuto(compositions));
         autoChooser.addOption("4 Coral Right", Autos.right4CoralAuto(compositions));
-        autoChooser.addOption("1 Coral Center", Autos.center(compositions));//TODO algae auto
+        autoChooser.addOption("1 Coral, 1 algae center", Autos.center1Coral1AlgaeAuto(compositions, krakenSwerve));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -233,7 +233,7 @@ public class RobotContainer {
         /* Algae cycling commands */
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
             compositions.scoreAlgaeInNet(this::driverWantsOverride), 
-            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride), 
+            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride, false), 
             endEffector::hasAlgae
         );
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);

@@ -103,13 +103,14 @@ public final class Constants {
         public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.33);
         public static final double kRotAlignmentTolerance = Units.degreesToRadians(4);
 
-        public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.5, 3);
+        public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
-
+        public static final double kBargeMaxY = 4.95;
+        
         /* Intake offsets */
         public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
         public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
