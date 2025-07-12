@@ -51,6 +51,7 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger resetPerspective = driveController.povDown();
+    private final Trigger deployClimber = driveController.povUp();
     private final Trigger ejectIntake = driveController.x();
     private final Trigger stowAndCancelClimb = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
@@ -211,6 +212,8 @@ public class RobotContainer {
 
         algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
+        deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
@@ -233,7 +236,7 @@ public class RobotContainer {
         /* Algae cycling commands */
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
             compositions.scoreAlgaeInNet(this::driverWantsOverride), 
-            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride, false), 
+            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride, true), 
             endEffector::hasAlgae
         );
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
