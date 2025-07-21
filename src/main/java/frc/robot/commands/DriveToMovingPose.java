@@ -4,13 +4,13 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
-import static frc.robot.Constants.PathplannerConfig.*;
+import static frc.robot.Constants.PathFollowingConstants.*;
 
 import java.util.function.Supplier;
 
@@ -26,17 +26,13 @@ public class DriveToMovingPose extends Command {
     private final StructPublisher<Pose2d> setpointPublisher;
 
     public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
-        TrapezoidProfile.Constraints kXAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
-        TrapezoidProfile.Constraints kYAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxVelocityMPS(), kDynamicPathConstraints.maxAccelerationMPSSq());
-        TrapezoidProfile.Constraints kRotAlignWithPoseContraints = new TrapezoidProfile.Constraints(kDynamicPathConstraints.maxAngularVelocityRadPerSec(), kDynamicPathConstraints.maxAngularAccelerationRadPerSecSq());
-
-        alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kXAlignWithPoseContraints);
+        alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
         alignmentXPID.setTolerance(kXYAlignmentTolerance);
 
-        alignmentYPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kYAlignWithPoseContraints);
+        alignmentYPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
         alignmentYPID.setTolerance(kXYAlignmentTolerance);
 
-        alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kRotAlignWithPoseContraints);
+        alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kDriveToPoseRotationConstraints);
         alignmentRotationPID.setTolerance(kRotAlignmentTolerance);
         alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -47,6 +43,8 @@ public class DriveToMovingPose extends Command {
         setpointPublisher = NetworkTableInstance.getDefault()
             .getStructTopic("Drive to moving pose setpoint", Pose2d.struct)
             .publish();
+
+        addRequirements(swerve);
     }
 
     @Override
@@ -80,6 +78,8 @@ public class DriveToMovingPose extends Command {
         setpointPublisher.set(
             new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position))
         );
+
+        SmartDashboard.putBoolean("Drive To Moving Pose At Goal", atGoal());
     }
 
     private void updateControllerGoals() {
@@ -93,8 +93,12 @@ public class DriveToMovingPose extends Command {
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 
+    private boolean atGoal() {
+        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
+    }
+
     @Override
     public boolean isFinished() {
-        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
+        return atGoal();
     }
 }

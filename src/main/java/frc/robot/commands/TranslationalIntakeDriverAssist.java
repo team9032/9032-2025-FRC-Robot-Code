@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.localization.Localization;
@@ -12,61 +11,61 @@ import frc.robot.localization.TrackedObject;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
-import static frc.robot.Constants.ObjectAimingConstants.*;
-import static frc.robot.Constants.PathplannerConfig.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.Constants.IntakeDriverAssistConstants.*;
+import static frc.robot.Constants.DriverConstants.kMaxSpeed;
+import static frc.robot.Constants.DriverConstants.kRotationRate;
+import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
 
-public class DriverAssistedAutoIntake extends Command {
+public class TranslationalIntakeDriverAssist extends Command {
     private final KrakenSwerve swerve;
-    private final DoubleSupplier xSpeedSupplier;
-    private final DoubleSupplier ySpeedSupplier;
-    private final Localization localization;
 
-    private final PIDController rotationController;
+    private final DoubleSupplier rotSup;
+    private final DoubleSupplier translationSup;
+    private final DoubleSupplier strafeSup;
+
+    private final Localization localization;
 
     private TrackedObject lastCoralTarget;
 
-    public DriverAssistedAutoIntake(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, KrakenSwerve swerve) {
+    public TranslationalIntakeDriverAssist(KrakenSwerve swerve, DoubleSupplier rotSup, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
         this.swerve = swerve;
-        this.xSpeedSupplier = xSpeedSupplier;
-        this.ySpeedSupplier = ySpeedSupplier;
+
+        this.rotSup = rotSup;
+        this.translationSup = translationSup;
+        this.strafeSup = strafeSup;
         
         localization = swerve.getLocalization();
-
-        rotationController = new PIDController(kPRotation, 0, kDRotation);
-        rotationController.enableContinuousInput(-180.0, 180.0);
 
         addRequirements(swerve);
     }
 
     @Override
-    public void initialize() {
-        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
-
-        /* Prevent rotating on init if no target is seen */
-        rotationController.setSetpoint(currentYaw);
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
-        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
-
         var coralTarget = getCoralTarget();
 
-        /* Update setpoint if we have a target */
-        if (coralTarget != null) {
-            double rotationSetpoint = currentYaw - (coralTarget.getPhotonVisionData().yaw - kRotationSetpoint);
+        /* Gets the robot relative speeds as if we are driving normally */
+        var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            translationSup.getAsDouble() * kMaxSpeed, 
+            strafeSup.getAsDouble() * kMaxSpeed,
+            rotSup.getAsDouble() * kRotationRate,
+            localization.getCurrentPose().getRotation()
+                .minus(swerve.getOperatorPerspective())//Apply the operator perspective
+        );
 
-            rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
+        if (coralTarget != null) {
+            double magnitude = Math.sqrt(Math.pow(translationSup.getAsDouble(), 2) + Math.pow(strafeSup.getAsDouble(), 2));
+
+            speeds.vyMetersPerSecond = MathUtil.clamp(-coralTarget.getPhotonVisionData().yaw * kPTranslation, -magnitude, magnitude);
         }
 
-        double magnitude = Math.sqrt(Math.pow(xSpeedSupplier.getAsDouble(), 2) + Math.pow(ySpeedSupplier.getAsDouble(), 2));
+        else if (lastCoralTarget != null) {
+            double magnitude = Math.sqrt(Math.pow(translationSup.getAsDouble(), 2) + Math.pow(strafeSup.getAsDouble(), 2));
 
-        /* Drive based on desired speed and the rotation PID's output */
-        var speeds = new ChassisSpeeds(
-            magnitude * kMaxDrivingSpeed,
-            0.0,
-            rotationController.calculate(currentYaw)
-        );
+            speeds.vyMetersPerSecond = MathUtil.clamp(-lastCoralTarget.getPhotonVisionData().yaw * kPTranslation, -magnitude, magnitude);
+        }
 
         swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(speeds));
     }
@@ -119,8 +118,6 @@ public class DriverAssistedAutoIntake extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        rotationController.reset();
-
         lastCoralTarget = null;
     }
 }

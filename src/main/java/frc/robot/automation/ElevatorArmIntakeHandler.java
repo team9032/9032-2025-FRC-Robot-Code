@@ -5,12 +5,10 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.utils.ElasticUtil;
 
 public class ElevatorArmIntakeHandler {
     private final Elevator elevator;
@@ -31,133 +29,157 @@ public class ElevatorArmIntakeHandler {
         return intake.moveToGround();
     }
 
+    public Command moveToCoralCradlePosition() {
+        return elevator.moveToCradlePosition()
+            .andThen(Commands.waitUntil(elevator::atSetpoint));
+    }
+
+    private Command moveOutOfCradleIfNeeded() {
+        return Commands.sequence(
+            arm.holdPosition(),
+            elevator.moveToOverCradlePosition(),
+            Commands.waitUntil(elevator::atSetpoint)
+        )
+        .onlyIf(() -> !arm.overCradle());
+    }       
+
     public Command moveToIntakePosition() {
-        return Commands.either(
-            Commands.sequence(
-                    /* Don't deep climb the reef */
-                    elevator.moveToCoralScoreLevel(() -> ReefLevel.L4)
-                    .andThen(
-                        Commands.waitUntil(elevator::atSetpoint),
-                        arm.moveToStowPos(),
-                        Commands.waitUntil(arm::atSetpoint)
-                    )
-                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
-                arm.moveToStowPos(),
-                elevator.moveToOverIndexerPosition(),
-                intake.moveToGround(),
-                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.overIndexPosition()),
-                arm.moveToIndexerPos(),
-                Commands.waitUntil(arm::atSetpoint),
-                elevator.moveToIndexerPosition(),
-                Commands.waitUntil(() -> elevator.atSetpoint() && intake.canRunRollers()),
-                ElasticUtil.sendInfoCommand("Moved to index position")
-            ),
-            Commands.sequence(
-                elevator.moveToIndexerPosition(),
-                arm.moveToIndexerPos(),
-                intake.moveToGround(),
-                Commands.waitUntil(() -> elevator.atSetpoint() && arm.atSetpoint()),
-                ElasticUtil.sendInfoCommand("Moved to index position from index position")
-            ),
-            () -> !arm.closeToIndexPosition()
-        );  
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            arm.moveToCradlePos(),
+            elevator.moveToOverCradlePosition(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Moved to intake position")
+        ); 
     }
 
     public Command moveToStowPositions() {
-        return Commands.either(
-            Commands.sequence(
-                elevator.moveToOverIndexerPosition(),
-                intake.moveToGround(),
-                Commands.waitUntil(() -> intake.endEffectorCanMovePast() && elevator.atSetpoint()),
-                arm.moveToStowPos(),
-                Commands.waitUntil(arm::overIntake),
-                elevator.moveToStowPosition(),
-                Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-                ElasticUtil.sendInfoCommand("Moved to stow from index")
-            ),
-            Commands.sequence(
-                    /* Don't deep climb the reef */
-                    elevator.moveToCoralScoreLevel(() -> ReefLevel.L4)
-                        .andThen(
-                            Commands.waitUntil(elevator::atSetpoint),
-                            arm.moveToStowPos(),
-                            Commands.waitUntil(arm::atSetpoint)
-                        )
-                    .onlyIf(() -> arm.closeToL4() && elevator.overHighAlgae()),
-                arm.moveToStowPos(),
-                elevator.moveToStowPosition(),
-                Commands.waitUntil(() -> arm.atSetpoint() && elevator.atSetpoint()),
-                ElasticUtil.sendInfoCommand("Moved to stow")
-            ),
-            arm::closeToIndexPosition
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            arm.moveToStowPos(),
+            Commands.waitUntil(arm::overCradle),
+            elevator.moveToStowPosition(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Moved to stow")
         );
     }
 
-    public Command prepareForCoralScoring(Supplier<ReefLevel> reefLevelSup) {
+    public Command moveToStowPositionsFromNet() {
         return Commands.sequence(
-            moveToStowPositions()
-                .onlyIf(() -> !reefLevelSup.get().equals(ReefLevel.L1)),
-            elevator.moveToCoralScoreLevel(reefLevelSup),
-            Commands.waitUntil(elevator::atSetpoint),
-            arm.moveToCoralScoreLevel(reefLevelSup),
+            arm.moveToStowPos(),
             Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for coral scoring")
-        );
-    }
-
-    public Command prepareForAutoCoralScoring(BooleanSupplier moveElevatorTrigger) {//TODO remove this method
-        return Commands.sequence(
-            moveToStowPositions(),
-            Commands.waitUntil(moveElevatorTrigger),
-            elevator.moveToCoralScoreLevel(() -> ReefLevel.L4),
+            elevator.moveToStowPosition(),
             Commands.waitUntil(elevator::atSetpoint),
-            arm.moveToCoralScoreLevel(() -> ReefLevel.L4),
-            Commands.waitUntil(arm::atSetpoint)
+            Commands.print("[E.A.I.H.] Moved to stow from net")
         );
     }
 
-    public Command prepareForAlgaeReefIntaking(BooleanSupplier isLowAlgaeSup) {
+    public Command prepareForBranchCoralScoring(Supplier<ReefLevel> reefLevelSup) {
         return Commands.sequence(
-            moveToStowPositions()
-                .onlyIf(arm::closeToIndexPosition),
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToCoralScoreLevel(reefLevelSup),
+            Commands.waitUntil(elevator::atSetpoint)
+                .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
+            arm.moveToPreparedToScoreCoralPos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for coral scoring")
+        );
+    }
+
+    public Command prepareForBranchCoralScoringFromCradle(Supplier<ReefLevel> reefLevelSup) {
+        return Commands.sequence(
+            elevator.moveToCoralScoreLevel(reefLevelSup),
+            Commands.waitUntil(elevator::overCradlePosition),
+            arm.moveToPreparedToScoreCoralPos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for coral scoring from cradle")
+        );
+    }
+
+    public Command prepareForL1() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToCoralScoreLevel(() -> ReefLevel.L1),
+            arm.moveToPreparedToScoreLowL1Pos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for L1 scoring")
+        );
+    }
+
+    public Command prepareForHighL1() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToCoralScoreLevel(() -> ReefLevel.L1),
+            arm.moveToPreparedToScoreHighL1Pos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for High L1 scoring")
+        );
+    }
+
+    public Command prepareForAlgaeReefIntaking(BooleanSupplier isHighAlgaeSup) {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
             Commands.either(
-                elevator.moveToLowAlgaePosition()
-                    .andThen(arm.moveToLowAlgaePos()), 
                 elevator.moveToHighAlgaePosition()
                     .andThen(arm.moveToHighAlgaePos()), 
-                isLowAlgaeSup
+                elevator.moveToLowAlgaePosition()
+                    .andThen(arm.moveToLowAlgaePos()), 
+                isHighAlgaeSup
             ),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for algae reef intaking")
+            Commands.print("[E.A.I.H.] Prepared for algae reef intaking")
         );          
     }
 
     public Command prepareForAlgaeGroundIntaking() {
         return Commands.sequence(
-            moveToStowPositions()
-                .onlyIf(arm::closeToIndexPosition),
+            moveOutOfCradleIfNeeded(),
             arm.moveToAlgaeGroundPos(),
             elevator.moveToAlgaeGroundPosition(),
             Commands.waitUntil(this::elevatorAndArmAtSetpoints),
-            ElasticUtil.sendInfoCommand("Prepared for algae ground intaking")
+            Commands.print("[E.A.I.H.] Prepared for algae ground intaking")
         );          
     }
 
-    public Command prepareForAlgaeScoring(Supplier<AlgaeScorePath> algaeScorePathSup) {
+    public Command prepareForNetAlgaeScoring() {
         return Commands.sequence(
-            Commands.either(
-                elevator.moveToNetPosition()
-                    .andThen(
-                        Commands.waitUntil(elevator::closeToNetPosition),
-                        arm.moveToNetPos()
-                    ),
-                elevator.moveToProcessorPosition()
-                    .andThen(arm.moveToProcessorPos()),
-                () -> algaeScorePathSup.get().equals(AlgaeScorePath.TO_NET)
-            ),
+            moveOutOfCradleIfNeeded(),
+            arm.moveToStowPos(),
             Commands.waitUntil(arm::atSetpoint),
-            ElasticUtil.sendInfoCommand("Prepared for algae scoring")
+            elevator.moveToNetPosition(),
+            Commands.waitUntil(elevator::closeToNetPosition),
+            arm.moveToNetPos(),
+            Commands.waitUntil(arm::atSetpoint),
+            Commands.print("[E.A.I.H.] Prepared for net algae scoring")
         );
+    }
+
+    public Command prepareForProcessorAlgaeScoring() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            elevator.moveToProcessorPosition(),
+            arm.moveToProcessorPos(),
+            Commands.waitUntil(this::elevatorAndArmAtSetpoints),
+            Commands.print("[E.A.I.H.] Prepared for processor algae scoring")
+        );
+    }
+
+    public Command prepareForClimbing() {
+        return Commands.sequence(
+            moveOutOfCradleIfNeeded(),
+            arm.moveToClimbPos(),
+            Commands.waitUntil(arm::overCradle),
+            elevator.moveToClimbPosition(),
+            intake.returnToStowPosition(),
+            Commands.waitUntil(() -> elevatorAndArmAtSetpoints() && intake.readyForClimbing()),
+            Commands.print("[E.A.I.H.] Prepared for climbing")
+
+        );
+    }
+
+    public Command moveArmToReefBranchScorePos(Supplier<ReefLevel> reefLevelSup) {
+        return arm.moveToReefBranchScorePos(reefLevelSup)
+            .andThen(Commands.waitUntil(arm::atSetpoint));
     }
 
     public Command holdPositions() {
@@ -172,18 +194,15 @@ public class ElevatorArmIntakeHandler {
         return elevator.atSetpoint() && arm.atSetpoint();
     }
 
-    public boolean readyToScoreCoral(ReefLevel reefLevel) {
-        if (reefLevel.equals(ReefLevel.L1))
-            return arm.atTrough() && elevator.atTrough();
-
-        else if (reefLevel.equals(ReefLevel.L2))
-            return arm.atL1() && elevator.atL1();
+    public boolean readyToScoreCoralOnBranch(ReefLevel reefLevel) {
+        if (reefLevel.equals(ReefLevel.L2))
+            return arm.atCoralPreparedToScorePos() && elevator.atL2();
 
         else if (reefLevel.equals(ReefLevel.L3))
-            return arm.atL2() && elevator.atL2();
+            return arm.atCoralPreparedToScorePos() && elevator.atL3();
 
         else if (reefLevel.equals(ReefLevel.L4))
-            return arm.atL3() && elevator.atL3();
+            return arm.atCoralPreparedToScorePos() && elevator.atL4();
         
         return false;
     }

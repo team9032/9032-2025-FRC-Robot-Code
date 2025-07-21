@@ -1,8 +1,8 @@
 package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
@@ -64,7 +64,6 @@ public class SwerveConstants {
 
     // CAN bus that the devices are located on;
     // All swerve devices must share the same CAN bus
-    public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
 
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot
@@ -91,7 +90,7 @@ public class SwerveConstants {
     private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
     public static final SwerveDrivetrainConstants kDrivetrainConstants = new SwerveDrivetrainConstants()
-            .withCANBusName(kCANBus.getName())
+            .withCANBusName(kCANBusName)
             .withPigeon2Id(kPigeonId)
             .withPigeon2Configs(pigeonConfigs);
 

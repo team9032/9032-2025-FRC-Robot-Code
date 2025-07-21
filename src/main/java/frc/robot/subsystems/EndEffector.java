@@ -1,231 +1,136 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.playingwithfusion.TimeOfFlight;
-import com.playingwithfusion.TimeOfFlight.Status;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.automation.ButtonBoardHandler.AlgaeScorePath;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.EndEffectorConstants.*;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class EndEffector extends SubsystemBase {
-    private final TalonFX endEffectorMainMotor;
-    private final TalonFX endEffectorSecondaryMotor;
+    private final TalonFX rollerMotor;
 
-    private final DigitalInput indexerPhotoelectricSensor = new DigitalInput(kIndexerPhotoelectricSensorID); 
-    private final DigitalInput sourcePhotoelectricSensor = new DigitalInput(kSourcePhotoelectricSensorID); 
-    private final TimeOfFlight algaeDistSensor = new TimeOfFlight(kAlgaeDistSensorID); 
+    private final StatusSignal<Current> rollerCurrentSignal;
 
-    private boolean lastHasAlgae = false;
-    private int loopCyclesSinceTOFReading = 0;
+    private final TorqueCurrentFOC rollerCurrentRequest = new TorqueCurrentFOC(0);
 
     public EndEffector() {
-        endEffectorMainMotor = new TalonFX(kMainEndEffectorID);
-        endEffectorSecondaryMotor = new TalonFX(kSecondaryEndEffectorID);
+        rollerMotor = new TalonFX(kEndEffectorRollerMotorID, kCANBusName);
 
-        endEffectorMainMotor.optimizeBusUtilization();
-        endEffectorSecondaryMotor.optimizeBusUtilization();
+        rollerCurrentSignal = rollerMotor.getTorqueCurrent();
+        rollerCurrentSignal.setUpdateFrequency(100);
         
-        ElasticUtil.checkStatus(endEffectorMainMotor.getConfigurator().apply(kMainEndEffectorConfig));
-        ElasticUtil.checkStatus(endEffectorSecondaryMotor.getConfigurator().apply(kSecondaryEndEffectorConfig));
-
-        algaeDistSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 50);
-        algaeDistSensor.setRangeOfInterest(8, 8, 12, 12);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kEndEffectorRollerMotorConfig));
     }
 
-    private Command setEndEffectorMainMotor(double power) {
-        return runOnce(() -> endEffectorMainMotor.set(power));
+    private Command setRollerMotorPower(double power) {
+        return runOnce(() -> rollerMotor.set(power));
     }
 
-    private Command setEndEffectorSecondaryMotor(double power) {
-        return runOnce(() -> endEffectorSecondaryMotor.set(power));
+    private Command setRollerMotorCurrent(double current) {
+        return runOnce(() -> rollerMotor.setControl(rollerCurrentRequest.withOutput(current)));
     }
 
-    private void setEndEffectorMotorsAlgae(double power) {
-        endEffectorMainMotor.set(power);
-        endEffectorSecondaryMotor.set(-power);
-    }
-
-    private void setEndEffectorMotors(double power) {
-        endEffectorMainMotor.set(power);
-        endEffectorSecondaryMotor.set(power);
-    }
-
-    private Command setEndEffectorMotorsCommand(double power) {
-        return runOnce(() -> setEndEffectorMotors(power));
-    }
-
-    public Command scoreCoral(Supplier<ReefLevel> reefLevelSup) {
-        return Commands.either(placeCoralInTrough(), placeCoral(), () -> reefLevelSup.get().equals(ReefLevel.L1));
-    }
-
-    private Command placeCoral() {
-        return Commands.sequence(
-            setEndEffectorMotorsCommand(kCoralOuttakePower),
-            Commands.waitSeconds(kCoralOuttakeWait),
-            setEndEffectorMotorsCommand(0.0)
-        );
-    }
-
-    private Command placeCoralInTrough() {
-        return Commands.sequence(
-            setEndEffectorMotorsCommand(kCoralOuttakeToTrough),
-            Commands.waitSeconds(kCoralOuttakeWaitToTrough),
-            setEndEffectorMotorsCommand(0.0)
-        );
-    }
-
-    public Command pickupCoralFromSource() {
-        return Commands.sequence(
-            setEndEffectorMotorsCommand(kIntakeFromSourcePower),
-            Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
-            setEndEffectorMotorsCommand(kSlowIntakeFromSourcePower),
-            Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
-            setEndEffectorMotorsCommand(0.0)
-        );
-    }
-
-    public Command holdCoral() { 
-        return run(() -> {
-            if (!getSourcePhotoelectricSensor()) {
-                setEndEffectorMotors(kSlowReceiveFromIndexerPower);
-            }
-
-            else if (!getIndexerPhotoelectricSensor())
-                setEndEffectorMotors(kSlowIntakeFromSourcePower);
-            
-            else if (hasCoralCentered())
-                setEndEffectorMotors(0.0);
-        });
-    }
-
-    public Command holdAlgae() {
-        return run(() -> {
-            if (hasAlgaeNearby() && !hasAlgae())
-                setEndEffectorMotorsAlgae(kIntakeAlgaeSlowPower);
-
-            else    
-                setEndEffectorMotorsAlgae(kHoldAlgaePower);
-        });
-    }
-
-    public Command receiveCoralFromIndexer() {
-        return Commands.sequence(
-            setEndEffectorMotorsCommand(kReceiveFromIndexerPower),
-            Commands.waitUntil(() -> getIndexerPhotoelectricSensor()),
-            setEndEffectorMotorsCommand(kSlowReceiveFromIndexerPower),
-            Commands.waitUntil(() -> getSourcePhotoelectricSensor()),
-            setEndEffectorMotorsCommand(0.0)
-        );
-    }
-
-    public Command pickupAlgae() {
-        return Commands.sequence(
-            setEndEffectorMainMotor(kIntakeAlgaePower),
-            setEndEffectorSecondaryMotor(-kIntakeAlgaePower), 
-            Commands.waitUntil(this::hasAlgaeNearby),
-            new ScheduleCommand(holdAlgae())
-        );
-    }
-
-    public Command scoreAlgae(Supplier<AlgaeScorePath> algaeScorePathSup) {
-        return new SelectCommand<AlgaeScorePath>(
-            Map.ofEntries(
-                Map.entry(AlgaeScorePath.NONE, Commands.none()),
-                Map.entry(AlgaeScorePath.TO_NET, outtakeNetAlgae()),
-                Map.entry(AlgaeScorePath.TO_PROCESSOR, outtakeProcessorAlgae())
+    public Command placeCoralOnBranch(Supplier<ReefLevel> reefLevelSup) {
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries (
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, Commands.none()),
+                Map.entry(ReefLevel.L2, placeCoralOnMiddleBranch()),
+                Map.entry(ReefLevel.L3, placeCoralOnMiddleBranch()),
+                Map.entry(ReefLevel.L4, placeCoralOnL4())
             ),
-            algaeScorePathSup
-        ); 
+            reefLevelSup
+        );
+    }
+
+    private Command placeCoralOnMiddleBranch() {
+        return Commands.sequence(
+            setRollerMotorPower(kCoralOuttakePower),
+            Commands.waitSeconds(kCoralOuttakeWait),
+            setRollerMotorPower(0.0)
+        );
+    }
+
+    public Command placeCoralInTrough() {
+        return Commands.sequence(
+            setRollerMotorPower(kCoralOuttakeToTroughPower),
+            Commands.waitSeconds(kCoralOuttakeWaitToTrough),
+            setRollerMotorPower(0.0)
+        );
+    }
+
+    private Command placeCoralOnL4() {
+        return Commands.sequence(
+            setRollerMotorPower(kCoralOuttakeToL4Power),
+            Commands.waitSeconds(kCoralOuttakeWaitToL4),
+            setRollerMotorPower(0.0)
+        );
+    }
+
+    public Command startRollersForPickup() {
+        return setRollerMotorCurrent(kHoldCoralCurrent);
+    }
+
+    public Command pickupCoralFromCradle() { 
+        return Commands.sequence(
+            setRollerMotorCurrent(kHoldCoralCurrent),
+            Commands.waitUntil(this::hasCoral)
+        );
+    }
+
+    public Command intakeAlgae() {
+        return Commands.sequence(
+            setRollerMotorCurrent(kHoldAlgaeCurrent),
+            Commands.waitUntil(this::hasAlgae)
+        );
     }
 
     public Command outtakeProcessorAlgae() {
         return Commands.sequence(
-            setEndEffectorMainMotor(kProcessorOuttakePower), 
-            setEndEffectorSecondaryMotor(-kProcessorOuttakePower),
+            setRollerMotorPower(kProcessorOuttakePower), 
             Commands.waitSeconds(kAlgaeOuttakeWait),
-            setEndEffectorMotorsCommand(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     public Command outtakeNetAlgae() {
         return Commands.sequence(
-            setEndEffectorMainMotor(kNetOuttakePower),
-            setEndEffectorSecondaryMotor(-kNetOuttakePower),
+            setRollerMotorPower(kNetOuttakePower),
             Commands.waitSeconds(kAlgaeOuttakeWait),
-            setEndEffectorMotorsCommand(0.0)
+            setRollerMotorPower(0.0)
         );
     }
 
     public Command stopRollers() {
-        return setEndEffectorMotorsCommand(0.0);
+        return setRollerMotorPower(0.0);
     }
 
     public boolean hasAlgae() {
-        return lastHasAlgae;
-    }
-
-    public boolean hasAlgaeNearby() {
-        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
-            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeNearbyDist && !hasCoral() && algaeDistSensor.getRange() != 0;
-
-            return hasAlgae;
-        }
-
-        return false;
-    }
-
-    public boolean hasCoralCentered() {
-        return getIndexerPhotoelectricSensor() && getSourcePhotoelectricSensor();
+        return rollerCurrentSignal.getValueAsDouble() < kHasAlgaeCurrent;
     }
 
     public boolean hasCoral() {
-        return getSourcePhotoelectricSensor() || getIndexerPhotoelectricSensor();
-    }
-
-    private boolean getSourcePhotoelectricSensor() {
-        return !sourcePhotoelectricSensor.get();
-    }
-
-    private boolean getIndexerPhotoelectricSensor() {
-        return !indexerPhotoelectricSensor.get();
+        return rollerCurrentSignal.getValueAsDouble() < kHasCoralCurrent && rollerCurrentSignal.getValueAsDouble() > kHasAlgaeCurrent;
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from indexer)", getIndexerPhotoelectricSensor());
-        SmartDashboard.putBoolean("End Effector Photoelectric Sensor (first from source)", getSourcePhotoelectricSensor());
-        SmartDashboard.putNumber("Algae Sensor Dist", algaeDistSensor.getRange());
+        rollerCurrentSignal.refresh();
+
         SmartDashboard.putBoolean("Has Algae", hasAlgae());
         SmartDashboard.putBoolean("End Effector Has Coral", hasCoral());
-
-        if (algaeDistSensor.getStatus().equals(Status.Valid)) {
-            boolean hasAlgae = algaeDistSensor.getRange() < kHasAlgaeDist && !hasCoral() && algaeDistSensor.getRange() != 0;
-
-            lastHasAlgae = hasAlgae;
-            loopCyclesSinceTOFReading = 0;
-        }
-
-        else {
-            loopCyclesSinceTOFReading++;
-
-            if (loopCyclesSinceTOFReading > kCycleAmountForTOFToExpire) {
-                loopCyclesSinceTOFReading = 0;
-
-                lastHasAlgae = false;
-            }
-        }
     }
 }

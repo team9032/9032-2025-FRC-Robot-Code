@@ -5,9 +5,14 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 
 import static frc.robot.Constants.LEDConstants.*;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class LED extends SubsystemBase {
     public static enum State {
@@ -21,7 +26,7 @@ public class LED extends SubsystemBase {
         L4(kL4Pattern),
         ALGAE(kAlgaePattern),
         ERROR(kError),
-        CORAL_BLOCKING_ALIGNMENT(kCoralBlockingAlignment);
+        CLIMBING(kClimbing);
 
         public final LEDPattern statePattern;
 
@@ -66,6 +71,19 @@ public class LED extends SubsystemBase {
 
     public void displayError() {
         hasError = true;
+    }
+
+    public Command setStateFromReefLevel(Supplier<ReefLevel> reefLevelSup) {
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries (
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, setStateCommand(State.L1)),
+                Map.entry(ReefLevel.L2, setStateCommand(State.L2)),
+                Map.entry(ReefLevel.L3, setStateCommand(State.L3)),
+                Map.entry(ReefLevel.L4, setStateCommand(State.L4))
+            ),
+            reefLevelSup
+        );
     }
 
     @Override

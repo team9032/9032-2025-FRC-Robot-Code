@@ -26,7 +26,7 @@ import frc.robot.utils.ElasticUtil;
 
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Inches;
-import static frc.robot.Constants.PathplannerConfig.*;
+import static frc.robot.Constants.PathFollowingConstants.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class KrakenSwerve extends SubsystemBase {
@@ -173,5 +173,9 @@ public class KrakenSwerve extends SubsystemBase {
 
     public Localization getLocalization() {
         return localization;
+    }
+
+    public Rotation2d getOperatorPerspective() {
+        return drivetrain.getOperatorForwardDirection();
     }
 }

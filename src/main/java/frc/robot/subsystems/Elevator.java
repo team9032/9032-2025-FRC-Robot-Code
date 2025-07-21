@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.ElevatorConfigs.*;
 
 import java.util.Map;
@@ -32,13 +33,12 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         //The leader of a follower cannot have its bus utilization optimized
-        elevatorMotor = new TalonFX(kFrontElevatorID);
+        elevatorMotor = new TalonFX(kFrontElevatorID, kCANBusName);
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kElevatorConfig));
 
-        elevatorMotorFollower = new TalonFX(kBackElevatorID);
-        elevatorMotorFollower.optimizeBusUtilization();
+        elevatorMotorFollower = new TalonFX(kBackElevatorID, kCANBusName);
         ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kElevatorConfig));
 
         followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
@@ -53,19 +53,19 @@ public class Elevator extends SubsystemBase {
         return MathUtil.isNear(position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
     }
 
-    public boolean atTrough() {
+    public boolean atL1() {
         return atPosition(kElevatorL1);
     }
 
-    public boolean atL1() {
+    public boolean atL2() {
         return atPosition(kElevatorL2);
     }
 
-    public boolean atL2() {
+    public boolean atL3() {
         return atPosition(kElevatorL3);
     }
 
-    public boolean atL3() {
+    public boolean atL4() {
         return atPosition(kElevatorL4);
     }
     
@@ -73,8 +73,8 @@ public class Elevator extends SubsystemBase {
         return atPosition(motionMagic.Position);
     }
 
-    public boolean overIndexPosition() {
-        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverIndexer - kElevatorTolerance);
+    public boolean overCradlePosition() {
+        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverCradle - kElevatorTolerance);
     }
 
     public boolean closeToNetPosition() {
@@ -89,12 +89,8 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorStow));
     }
 
-    public Command moveToIndexerPosition() {
-        return runOnce(() -> moveElevator(kElevatorIndexerPos));
-    }
-
-    public Command moveToSourcePosition() {
-        return runOnce(() -> moveElevator(kElevatorSource));
+    public Command moveToCradlePosition() {
+        return runOnce(() -> moveElevator(kElevatorCradlePos));
     }
 
     public Command moveToLowAlgaePosition() {
@@ -103,6 +99,10 @@ public class Elevator extends SubsystemBase {
 
     public Command moveToHighAlgaePosition() {
         return runOnce(() -> moveElevator(kElevatorHighAlgae));
+    }
+
+    public Command moveToClimbPosition() {
+        return runOnce(() -> moveElevator(kElevatorClimb));
     }
 
     public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {
@@ -126,8 +126,8 @@ public class Elevator extends SubsystemBase {
         return runOnce(() -> moveElevator(kElevatorNet));
     }
 
-    public Command moveToOverIndexerPosition() {
-        return runOnce(() -> moveElevator(kElevatorOverIndexer));
+    public Command moveToOverCradlePosition() {
+        return runOnce(() -> moveElevator(kElevatorOverCradle));
     }
 
     public Command moveToAlgaeGroundPosition() {
@@ -147,6 +147,6 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         elevatorPosSignal.refresh();
 
-        SmartDashboard.putBoolean("Elevator at setpoint", atSetpoint());
+        SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
     }
 }

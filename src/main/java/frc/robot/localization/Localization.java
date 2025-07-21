@@ -46,7 +46,7 @@ public class Localization {
     private VisionSystemSim simulatedLocalization;
 
     private Pose2d predictedPose;
-    private Pose2d currentPose;
+    private Pose2d currentPose = new Pose2d();
     private ChassisSpeeds currentVelocity;
 
     private AprilTagFieldLayout aprilTagLayout;
@@ -225,6 +225,16 @@ public class Localization {
         return Optional.of(closestObject);
     } 
 
+    /** Gets the object with the specified tracking id, or returns an empty optional. */
+    public Optional<TrackedObject> getTrackedObjectWithTrackingID(int id) {
+        for (var object : trackedObjects) {
+            if (object.getTrackingId() == id)
+                return Optional.of(object);
+        }
+
+        return Optional.empty();
+    }
+
     public List<TrackedObject> getTrackedObjectsOfType(ObjectType objectType) {
         return trackedObjects
             .stream()
@@ -250,6 +260,10 @@ public class Localization {
         /* Poses use a global blue origin with (0, 0) at the lower left */
         return 0 < pose.getY() && pose.getY() < aprilTagLayout.getFieldWidth()
             && 0 < pose.getX() && pose.getX() < aprilTagLayout.getFieldLength();
+    }
+
+    public Pose2d getTagPose(int tagID) {
+        return aprilTagLayout.getTagPose(tagID).get().toPose2d();
     }
 }
    

@@ -3,20 +3,22 @@ package frc.robot;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
 import org.photonvision.estimation.TargetModel;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
@@ -24,8 +26,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-//TODO import harshil.pande.TigerConstants;
-//TODO import evilharshel.pandez.EvilTiggerConstantz.*;
+//import harshil.pande.TigerConstants;
+//import evilharshel.pandez.EvilTigerConstantz.*;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,11 +38,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.localization.CameraConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
@@ -49,28 +51,29 @@ public final class Constants {
     public static class DriverConstants {
         public static final boolean kRunSysId = false;
 
+        public static final String kCANBusName = "canivore";
+
         public static final double kLowStartingBatteryVoltage = 12.2;
 
         public static final int kDriveControllerPort = 0;
 
         public static final double kOverrideAutomationThreshold = 0.1;
+        public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
+        public static final double kHasCoralDebounceTime = 0.1;//Seconds 
 
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
-        public static final double kSlowSpeed = kMaxSpeed * 0.15;
         public static final double kRotationRate = 4 * Math.PI;
-        public static final double kSlowRotationRate = kRotationRate * 0.15;
 
-        public static final double kRumbleTime = 0.5;
+        public static final double kRumbleTime = 0.3;
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * 0.01) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
-
-        public static final double kCloseDistanceToReefCenter = Units.inchesToMeters(12);
     }
 
-    public static class PathplannerConfig {
+    public static class PathFollowingConstants {
+        /* Pathplanner constants */
         public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
@@ -79,10 +82,10 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            4.0,
-            4.5, 
+            3.7,
+            3.5, 
             3 * Math.PI, 
-            3 * Math.PI
+            4 * Math.PI
         );
 
         public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
@@ -90,34 +93,64 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
-        public static final double kAlignmentXYkP = 5.0;//TODO Tune better
-        public static final double kAlignmentXYkD = 0;
+        /* Drive to pose constants */
+        public static final double kAlignmentXYkP = 10.0;
+        public static final double kAlignmentXYkD = 0.1;
         
-        public static final double kAlignmentRotkP = 10.0;
-        public static final double kAlignmentRotkD = 0;
+        public static final double kAlignmentRotkP = 8.0;
+        public static final double kAlignmentRotkD = 0.1;
 
-        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.25);
-        public static final double kRotAlignmentTolerance = Units.degreesToRadians(2);
+        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.33);
+        public static final double kRotAlignmentTolerance = Units.degreesToRadians(4);
+
+        public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
+        public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
+
+        /* Barge alignment constants */
+        public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
+        public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
+        public static final double kBargeMaxY = 4.95;
+
+        /* Intake offsets */
+        public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
+
+        /* Scoring offsets */
+        public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
+        public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
+
+        /* Reef distances */
+        public static final double kPrepareForScoringReefDistance = 1.8;
+        public static final double kPrepareForAlgaeIntakingReefDistance = 2.04;
+        public static final double kEndEffectorClearReefDistance = 1.55;
+        public static final double kEndEffectorClearReefDistanceWithAlgae = 1.7;
+
+        public static final double kPrepareForNetAlgaeScoringDistance = Units.inchesToMeters(24.0);
+
+        /* Drive to coral */
+        public static final double kMaxDrivingSpeed = 3.0;
+        public static final double kSlowDrivingSpeed = 1.0;
+        public static final double kSlowDistanceToCoral = 1.3;
+        public static final double kEndTime = 0.3;//Seconds
+
+        /* Pull Away */
+        public static final double kPullAwayVelocity = 1.0;
+        public static final double kPullAwayWait = 0.1;//Seconds
+
+        public static final double kAlgaeIntakeWait = 0.075;
     }
-
-    public static final class ObjectAimingConstants {
+    
+    public static final class IntakeDriverAssistConstants {
         public static final String kObjectTrackingCameraName = "FrontCenterCamera";
-        public static final String kGroundCoralTrackingCameraName = "GroundCamera";
 
-        /* For intake driver assist */
-        public static final double kRotationSetpoint = 13.3;
-        public static final double kMaxDrivingSpeed = kMaxSpeed;//Meters per second
+        /* Rotational */
+        public static final double kPRotationToObject = 0.15;
+        public static final double kDRotationToObject = 0.002;
+        public static final double kRotationSetpoint = 10.65;
+        public static final double kEndDistanceToCoral = 0.95;
 
-        /* PID Constants */
-        public static final double kPRotation = 0.15;
-        public static final double kDRotation = 0.002;
-
-        /* Class Ids */
-        public static final int kCoralId = 1;
-        public static final int kAlgaeId = 0;
-
-        /* Intake offset */
-        public static final Transform2d kIntakeOffset = new Transform2d(0, 0, Rotation2d.kZero);//TODO find
+        /* Translational */
+        public static final double kPTranslation = 0.25;
     }
 
     public static final class LocalizationConstants {
@@ -133,6 +166,10 @@ public final class Constants {
         /* Object tracking constants */
         public static final double kObjectExpireTime = 0.5;//Seconds
         public static final double kSameObjectDistance = Units.inchesToMeters(6);
+
+        /* Class Ids */
+        public static final int kCoralId = 1;
+        public static final int kAlgaeId = 0;
 
         public static final double kPoseLookaheadTime = 0.15;//Seconds
         
@@ -166,11 +203,11 @@ public final class Constants {
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
-            new CameraConstants("BackRightCamera", new Transform3d(
-                new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
-                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-                false
-            ),
+            // new CameraConstants("BackRightCamera", new Transform3d(
+            //     new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
+            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
+            //     false
+            // ),
             // new CameraConstants("GroundCamera", new Transform3d(
             //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
             //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
@@ -181,6 +218,9 @@ public final class Constants {
         /* Field constants from the game manual */
         public static final Translation2d kReefCenter = new Translation2d(Units.inchesToMeters(176.746), 8.052 / 2.0);
         public static final TargetModel kCoralModel = new TargetModel(Units.inchesToMeters(11.875), Units.inchesToMeters(4.5), Units.inchesToMeters(4.5));
+        public static final int kMinReefTagID = 17;
+        public static final int kMaxReefTagID = 22;
+        public static final int kBackReefTagsStartingID = 20;
     }
 
     public static class ElevatorConfigs {
@@ -194,12 +234,11 @@ public final class Constants {
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(15)
-            .withKD(0)
+            .withKP(13)
+            .withKD(1)
             .withKV(0.6)
-            .withKG(0.45)
+            .withKG(0.4)
             .withGravityType(kElevatorGravityType);
-        //FIXME hi HARSHIL PANDENATOR
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(60)
@@ -227,39 +266,43 @@ public final class Constants {
 
         public static final double kElevatorTolerance = 0.05;
 
-        public static final double kElevatorL1 = 2.9;
-        public static final double kElevatorL2 = 1;
-        public static final double kElevatorL3 = 3.2;
-        public static final double kElevatorL4 = 8.70;
-        public static final double kElevatorLowAlgae = 2.4;
-        public static final double kElevatorHighAlgae = 4.4;
-        public static final double kElevatorIndexerPos = 1.6;
+        public static final double kElevatorL1 = 3.1;
+        public static final double kElevatorL2 = 1.3;
+        public static final double kElevatorL3 = 3.7;
+        public static final double kElevatorL4 = 6.7;
+        public static final double kElevatorLowAlgae = 3.5;
+        public static final double kElevatorHighAlgae = 5.7;
+        public static final double kElevatorCradlePos = 2.3;
         public static final double kElevatorProcessor = 0; 
-        public static final double kElevatorSource = 4.311;
-        public static final double kElevatorNet = 9.5;
-        public static final double kElevatorAlgaeGround = 0.9;
+        public static final double kElevatorNet = 9.1;
+        public static final double kElevatorAlgaeGround = 2.0;
+        public static final double kElevatorClimb = 0.05;
 
-        public static final double kElevatorOverIndexer = 2.7;
+        public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
         public static final double kElevatorStow = 1.6; 
-        public static final double kElevatorCloseToNet = 9.2;
+        public static final double kElevatorCloseToNet = 8.8;
     }
 
-    public static final class IndexerConstants {
-        public static final int kIndexerRollerID = 15;
+    public static final class TransferConstants {
+        public static final int kTransferRollerID = 15;
+        public static final int kTransferPhotoelectricSensorID = 0;
 
-        public static final double kIndexerRollerPower = -1.0;
+        public static final double kTransferRollerPower = -1.0;
+        public static final double kTransferRollerSlowPower = -0.5;
 
-        public static final double kIndexerEjectPower = 0.25;
-        public static final double kIndexerEjectWait = 1.0;
+        public static final double kTransferFromSensorWait = 0.25;
 
-        public static final CurrentLimitsConfigs kIndexerRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
+        public static final double kTransferEjectPower = 0.25;
+        public static final double kTransferEjectWait = 1.0;
+
+        public static final CurrentLimitsConfigs kTransferRollerCurrentLimitConfigs = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(40)
             .withStatorCurrentLimit(120);
 
-        public static final TalonFXConfiguration kIndexerRollerConfig = new TalonFXConfiguration()
+        public static final TalonFXConfiguration kTransferRollerConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
-            .withCurrentLimits(kIndexerRollerCurrentLimitConfigs);
+            .withCurrentLimits(kTransferRollerCurrentLimitConfigs);
     }
 
     public static final class IntakeConstants {
@@ -278,7 +321,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.0)
-            .withReverseSoftLimitThreshold(-95.0); 
+            .withReverseSoftLimitThreshold(-120.0); 
 
         public static final MotionMagicConfigs kIntakeArmMotionMagicConfigs = new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(300)
@@ -311,38 +354,40 @@ public final class Constants {
 
         public static final double kIntakePower = -1.0;
 
-        public static final double kGroundPosition = -120.0;
-        public static final double kStowPosition = -23.0;
-        public static final double kEndEffectorMovePosition = -90.0;
+        public static final double kGroundPosition = -130.0;
+        public static final double kStowPosition = -27.0;
+        public static final double kEndEffectorMovePosition = -94.0;
 
-        public static final double kRunRollersPosition = -100;
+        public static final double kRunRollersPosition = -104;
 
-        public static final int kObstacleSensorID = 36;
-        public static final double kDefaultObstacleDistance = 10.0;
+        public static final double kCanClimbPosition = -34.0;
     }
 
     public static class ArmConstants {
         public static final int kArmMotorId = 18;
 
-        public static final double kArmEncoderRange = 1.0;
-        public static final boolean kInvertAbsEncoder = true;
-        public static final int kArmEncoderPort = 2; 
-        public static final double kArmEncoderZeroPos = 0.447; 
+        public static final int kArmEncoderId = 38;
+        public static final MagnetSensorConfigs kArmEncoderConfig = new MagnetSensorConfigs()
+            .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+            .withAbsoluteSensorDiscontinuityPoint(0.5)
+            .withMagnetOffset(-0.1032);
 
         public static final double kArmStowPos = 0.2;
-        public static final double kArmIndexerPos = 0.75;
-        public static final double kArmL1Pos = 0.85;
-        public static final double kArmL2Pos = kArmStowPos; 
-        public static final double kArmL3Pos = kArmStowPos;
-        public static final double kArmL4Pos = 0.045;
-        public static final double kArmHighAlgaePos = 0.06;
-        public static final double kArmLowAlgaePos = 0.05;
+        public static final double kArmCradlePos = -0.25;
+        public static final double kArmL2ScorePos = 0.03; 
+        public static final double kArmL3ScorePos = 0.01;
+        public static final double kArmL4ScorePos = 0.05;
+        public static final double kArmHighAlgaePos = 0.0;
+        public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
-        public static final double kArmSourcePos = 0.0;
-        public static final double kArmNetPos = 0.35;
-        public static final double kArmAlgaeGroundPos = -0.06;
+        public static final double kArmNetPos = 0.38;
+        public static final double kArmAlgaeGroundPos = -0.1;
+        public static final double kArmClimbPos = 0.09;
+        public static final double kArmCoralPreparedToScorePos = 0.17;
+        public static final double kArmLowL1PreparedToScorePos = -0.06;
+        public static final double kArmHighL1PreparedToScorePos = -0.03;
 
-        public static final double kArmOverIntakePos = 0.5;
+        public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;
 
         public static final CurrentLimitsConfigs kArmMotorCurrentLimit = new CurrentLimitsConfigs()
@@ -352,45 +397,45 @@ public final class Constants {
         public static final GravityTypeValue kArmGravityType = GravityTypeValue.Arm_Cosine;
 
         public static final Slot0Configs kArmMotorPidConstants = new Slot0Configs()
-            .withKG(0.28)
-            .withKP(130.0)
-            .withKD(10.0)
-            .withKV(11.5)
+            .withKG(0.3)
+            .withKP(130)
+            .withKD(0.1)
+            .withKA(0.25)
+            .withKV(4.5)
             .withGravityType(kArmGravityType);
 
         public static final MotionMagicConfigs kArmMotionMagicConfigs = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(0.9)
-            .withMotionMagicAcceleration(5.0); 
+            .withMotionMagicExpo_kV(2.5)
+            .withMotionMagicExpo_kA(1.5); 
 
         public static final FeedbackConfigs kArmFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(94.5);
-
-        public static final SoftwareLimitSwitchConfigs kArmSoftLimit = new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(0.86) 
-            .withReverseSoftLimitThreshold(-0.12);
+            .withSensorToMechanismRatio(1.0)
+            .withRotorToSensorRatio(162240.0 / 3456.0)
+            .withFeedbackRemoteSensorID(kArmEncoderId)
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
         public static final TalonFXConfiguration kArmMotorConstants = new TalonFXConfiguration()
             .withCurrentLimits(kArmMotorCurrentLimit)
             .withMotorOutput(
                 new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake)
             )
             .withSlot0(kArmMotorPidConstants)
             .withMotionMagic(kArmMotionMagicConfigs)
-            .withSoftwareLimitSwitch(kArmSoftLimit)
             .withFeedback(kArmFeedbackConfigs);
     }
     
     public static class ClimberConstants {
-        public static final int kMotorID = 19;
+        public static final int kClimberArmID = 32;
+        public static final int kClimberIntakeID = 33;
 
-        public static final int kClimberUp = 580;
-        public static final int kClimberDown = -50;
+        public static final double kClimberStowPos = 0.11;
+        public static final double kClimberCageIntakePos = 0.19;
+        public static final double kClimberClimbPos = -0.085;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
-            .withKP(2)
+            .withKP(10000)
             .withKD(0)
             .withKV(0)
             .withKA(0)
@@ -398,77 +443,72 @@ public final class Constants {
             .withKG(0);
         //FIXME hi HARSHIL PANDENATOR
 
-        public static final CurrentLimitsConfigs kClimberCurrentLimits = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kClimberArmCurrentLimits = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(70)
             .withStatorCurrentLimit(120);
             
-        public static final FeedbackConfigs kClimberFeedbackConfigs = new FeedbackConfigs()
-            .withSensorToMechanismRatio(125.0 / 360.0); //TODO find true value
+        public static final FeedbackConfigs kClimberArmFeedbackConfigs = new FeedbackConfigs()
+            .withSensorToMechanismRatio(432.0); 
 
         public static final SoftwareLimitSwitchConfigs kClimberSoftLimit = new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
-            .withForwardSoftLimitThreshold(580)
-            .withReverseSoftLimitThreshold(-50);
+            .withForwardSoftLimitThreshold(0.25)
+            .withReverseSoftLimitThreshold(-0.1);
 
-        public static final TalonFXConfiguration kClimberMotorConfig = new TalonFXConfiguration()
+        public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
             .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
-            .withFeedback(kClimberFeedbackConfigs)
-            .withCurrentLimits(kClimberCurrentLimits)
+            .withFeedback(kClimberArmFeedbackConfigs)
+            .withCurrentLimits(kClimberArmCurrentLimits)
             .withSoftwareLimitSwitch(kClimberSoftLimit);
+
+        public static final TalonFXConfiguration kClimberIntakeMotorConfig = new TalonFXConfiguration()
+            .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                .withStatorCurrentLimit(120)
+                .withSupplyCurrentLimit(40)
+            );
+
+        public static final double kClimberIntakeVolts = 6.0;
+        public static final int kHasCageCurrent = 94;
+        public static final double kCageIntakeDelay = 0.5;
+
+        public static final double kClimberArmTolerance = 0.005;
     }
 
     public static final class EndEffectorConstants {
-        public static final int kMainEndEffectorID = 20;
+        public static final int kEndEffectorRollerMotorID = 20;
 
-        public static final int kSecondaryEndEffectorID = 21;
+        public static final double kProcessorOuttakePower = 1.0;
+        public static final double kNetOuttakePower = 1.0;
 
-        public static final int kAlgaeDistSensorID = 35;
-        public static final int kSourcePhotoelectricSensorID = 0;        
-        public static final int kIndexerPhotoelectricSensorID = 1;
+        public static final double kCoralOuttakePower = 0.02;
+        public static final double kCoralOuttakeToL4Power = 0.5;
+        public static final double kCoralOuttakeToTroughPower = 0.5;
 
-        public static final double kProcessorOuttakePower = -1.0;
-        public static final double kNetOuttakePower = -1.0;
-        public static final double kIntakeAlgaeSlowPower = 0.3;
-        public static final double kIntakeAlgaePower = 1.0;
-        public static final double kHoldAlgaePower = 0.05;
-
-        public static final double kCoralOuttakePower = 1.0;
-        public static final double kCoralOuttakeToTrough = -0.4;
-        public static final double kIntakeFromSourcePower = 0.8;
-        public static final double kReceiveFromIndexerPower = -1.0;
-        public static final double kSlowIntakeFromSourcePower = 0.4; 
-        public static final double kSlowReceiveFromIndexerPower = -0.5; 
-
-        public static final double kCoralOuttakeWait = 0.25;
+        public static final double kCoralOuttakeWait = 0.05;
         public static final double kCoralOuttakeWaitToTrough = 0.5;
+        public static final double kCoralOuttakeWaitToL4 = 0.2;
         public static final double kAlgaeOuttakeWait = 0.5;
 
-        public static final double kHasAlgaeDist = 175;
-        public static final double kHasAlgaeNearbyDist = 230;
+        public static final double kHoldAlgaeCurrent = -60;
+        public static final double kHoldCoralCurrent = -15;
 
-        public static final int kCycleAmountForTOFToExpire = 5;
+        public static final int kHasCoralCurrent = -14;
+        public static final int kHasAlgaeCurrent = -57;
 
-        public static final CurrentLimitsConfigs kCurrentLimits = new CurrentLimitsConfigs()
+        public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
             .withSupplyCurrentLimit(40);
 
-        public static final MotorOutputConfigs kMainEndEffectorOutputConfigs = new MotorOutputConfigs()
+        public static final MotorOutputConfigs kEndEffectorOutputConfigs = new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake); 
 
-        public static final MotorOutputConfigs kSecondaryEndEffectorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake); 
-
-        public static final TalonFXConfiguration kMainEndEffectorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kCurrentLimits)
-            .withMotorOutput(kMainEndEffectorOutputConfigs);
-
-        public static final TalonFXConfiguration kSecondaryEndEffectorConfig = new TalonFXConfiguration()
-            .withCurrentLimits(kCurrentLimits)
-            .withMotorOutput(kSecondaryEndEffectorOutputConfigs);
+        public static final TalonFXConfiguration kEndEffectorRollerMotorConfig = new TalonFXConfiguration()
+            .withCurrentLimits(kEndEffectorCurrentLimits)
+            .withMotorOutput(kEndEffectorOutputConfigs);
     }
 
     public static final class ButtonBoardConstants {
@@ -479,15 +519,13 @@ public final class Constants {
 
     public static final class LEDConstants {
         public static final int kLEDPort = 0;
-        public static final int kLEDLength = 160;
+        public static final int kLEDLength = 99;
         public static final Distance kLedSpacing = Meters.of(1.0 / 120.0);
 
         //Patterns
         public static final LEDPattern kError = LEDPattern.solid(Color.kDarkRed);
 
-        public static final LEDPattern kCoralBlockingAlignment = LEDPattern.gradient(GradientType.kContinuous, Color.kBrown, Color.kRed, Color.kLawnGreen)
-            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
-            .blink(Seconds.of(0.1));
+        public static final LEDPattern kClimbing = LEDPattern.rainbow(255, 255);
 
         public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple);
 

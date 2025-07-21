@@ -8,13 +8,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.playingwithfusion.TimeOfFlight;
-import com.playingwithfusion.TimeOfFlight.RangingMode;
-import com.playingwithfusion.TimeOfFlight.Status;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
+import static frc.robot.Constants.DriverConstants.kCANBusName;
 import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
@@ -25,24 +23,15 @@ public class Intake extends SubsystemBase {
 
     private final StatusSignal<Angle> armMotorPosSignal;
 
-    private final TimeOfFlight obstacleSensor = new TimeOfFlight(kObstacleSensorID);
-
-    private double lastObstacleSensorDistance = kDefaultObstacleDistance;
-
     public Intake() {
-        intakeArmMotor = new TalonFX(kIntakeArmID);
+        intakeArmMotor = new TalonFX(kIntakeArmID, kCANBusName);
         ElasticUtil.checkStatus(intakeArmMotor.getConfigurator().apply(kIntakeArmConfig));
 
         armMotorPosSignal = intakeArmMotor.getPosition();
         armMotorPosSignal.setUpdateFrequency(100);
-        intakeArmMotor.optimizeBusUtilization();
         
-        rollerMotor = new TalonFX(kIntakeRollerID);
-        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));
-        
-        rollerMotor.optimizeBusUtilization();
-        
-        obstacleSensor.setRangingMode(RangingMode.Medium, 40);
+        rollerMotor = new TalonFX(kIntakeRollerID, kCANBusName);
+        ElasticUtil.checkStatus(rollerMotor.getConfigurator().apply(kIntakeRollerConfig));        
     }
 
     public Command holdPosition() {
@@ -93,17 +82,8 @@ public class Intake extends SubsystemBase {
         return getArmPosition() < kEndEffectorMovePosition;
     }
 
-    public double getObstacleSensorDistance() {
-        /* Only return a distance if it's valid - default to last distance */
-        double distance = obstacleSensor.getStatus().equals(Status.Valid) ? obstacleSensor.getRange() / 1000.0 : lastObstacleSensorDistance;
-
-        lastObstacleSensorDistance = distance;
-
-        return distance;
-    }
-
-    public Command resetLastObstacleDistance() {
-        return Commands.runOnce(() -> lastObstacleSensorDistance = kDefaultObstacleDistance);
+    public boolean readyForClimbing() {
+        return getArmPosition() > kRunRollersPosition;
     }
 
     public Command coast() {
@@ -115,7 +95,6 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         armMotorPosSignal.refresh();
 
-        SmartDashboard.putNumber("Obstacle sensor distance", getObstacleSensorDistance());
-        SmartDashboard.putBoolean("Can run rollers", canRunRollers());
+        SmartDashboard.putBoolean("Can Run Rollers", canRunRollers());
     }
 }
