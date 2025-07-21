@@ -41,7 +41,7 @@ public class Autos {
             compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, true),
             compositions.intakeNearestAlgaeFromReef(() -> false, true),
             compositions.scoreAlgaeInNet(() -> false),
-            Commands.waitSeconds(3.0)
+            Commands.waitSeconds(3.0)//TODO make this drive to a pose
                 .deadlineFor(new PullAway(swerve, true, -1.0).asProxy())
         );
     }

@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,13 +25,7 @@ public class DriveToMovingPose extends Command {
 
     private final StructPublisher<Pose2d> setpointPublisher;
 
-    private final double endingXVelocity;
-
     public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
-        this(swerve, targetPoseSup, 0.0);
-    }
-
-    public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup, double endingXVelocity) {
         alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
         alignmentXPID.setTolerance(kXYAlignmentTolerance);
 
@@ -46,7 +39,6 @@ public class DriveToMovingPose extends Command {
         this.swerve = swerve;
 
         this.targetPoseSup = targetPoseSup;      
-        this.endingXVelocity = endingXVelocity;
 
         setpointPublisher = NetworkTableInstance.getDefault()
             .getStructTopic("Drive to moving pose setpoint", Pose2d.struct)
@@ -91,8 +83,8 @@ public class DriveToMovingPose extends Command {
     }
 
     private void updateControllerGoals() {
-        alignmentXPID.setGoal(new State(targetPoseSup.get().getX(), endingXVelocity)); //TODO ending velocity really doesn't work (should be robot centric)
-        alignmentYPID.setGoal(new State(targetPoseSup.get().getY(), endingXVelocity)); 
+        alignmentXPID.setGoal(targetPoseSup.get().getX()); 
+        alignmentYPID.setGoal(targetPoseSup.get().getY()); 
         alignmentRotationPID.setGoal(targetPoseSup.get().getRotation().getRadians());
     }
 
