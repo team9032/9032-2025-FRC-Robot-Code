@@ -2,10 +2,13 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.DriverConstants.*;
+import static frc.robot.Constants.PathFollowingConstants.kAlignmentRotkD;
+import static frc.robot.Constants.PathFollowingConstants.kAlignmentRotkP;
 
 public class TeleopSwerve extends Command {
     private final KrakenSwerve swerve;
@@ -14,6 +17,8 @@ public class TeleopSwerve extends Command {
     private final DoubleSupplier translationSup;
     private final DoubleSupplier strafeSup;
 
+    private final PIDController headingController;
+
     public TeleopSwerve(KrakenSwerve swerve, DoubleSupplier rotSup, DoubleSupplier translationSup, DoubleSupplier strafeSup) {
         this.swerve = swerve;
 
@@ -21,7 +26,15 @@ public class TeleopSwerve extends Command {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
 
+        headingController = new PIDController(kAlignmentRotkP, 0, kAlignmentRotkD);
+        headingController.enableContinuousInput(-Math.PI, Math.PI);
+
         addRequirements(swerve);
+    }
+
+    @Override
+    public void initialize() {
+        headingController.reset();
     }
 
     @Override
@@ -35,6 +48,16 @@ public class TeleopSwerve extends Command {
         translationVal *= kMaxSpeed;
         strafeVal *= kMaxSpeed;
         rotationVal *= kRotationRate;
+
+        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getRadians();
+
+        /* Update setpoint if input is being applied */
+        if (rotationVal > kJoystickDeadband * kRotationRate) 
+            headingController.setSetpoint(currentYaw);
+
+        /* Maintain current heading if no input is being applied */
+        else 
+            rotationVal = headingController.calculate(currentYaw);
 
         swerve.setControl(
             kDriveRequest.withVelocityX(translationVal)

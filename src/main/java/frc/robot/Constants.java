@@ -56,6 +56,7 @@ public final class Constants {
         public static final double kLowStartingBatteryVoltage = 12.2;
 
         public static final int kDriveControllerPort = 0;
+        public static final double kRumbleTime = 0.3;
 
         public static final double kOverrideAutomationThreshold = 0.1;
         public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
@@ -64,10 +65,10 @@ public final class Constants {
         public static final double kMaxSpeed = SwerveConstants.kSpeedAt12Volts.magnitude();
         public static final double kRotationRate = 4 * Math.PI;
 
-        public static final double kRumbleTime = 0.3;
+        public static final double kJoystickDeadband = 0.01;//Percent of velocity
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
-            .withDeadband(kMaxSpeed * 0.01) 
+            .withDeadband(kMaxSpeed * kJoystickDeadband) 
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
     }
