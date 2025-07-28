@@ -40,6 +40,8 @@ public class KrakenSwerve extends SubsystemBase {
 
     private MapleSimSwerveDrivetrain simulatedDrivetrain;
 
+    private RobotConfig pathplannerConfig;
+
     public KrakenSwerve() {
         drivetrain = new SwerveDrivetrain<>(
             TalonFX::new, TalonFX::new, CANcoder::new,
@@ -65,7 +67,7 @@ public class KrakenSwerve extends SubsystemBase {
         localization = new Localization(drivetrain);
 
         try {
-            var pathplannerConfig = RobotConfig.fromGUISettings();
+            pathplannerConfig = RobotConfig.fromGUISettings();
 
             /* Configure PathPlanner */
             AutoBuilder.configure(
@@ -120,7 +122,7 @@ public class KrakenSwerve extends SubsystemBase {
         return sysId.sysIdQuasistatic(direction);
     }
 
-    private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
+    public void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
         drivetrain.setControl(
             kRobotRelativeClosedLoopDriveRequest.withSpeeds(setpoint)
             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
@@ -177,5 +179,9 @@ public class KrakenSwerve extends SubsystemBase {
 
     public Rotation2d getOperatorPerspective() {
         return drivetrain.getOperatorForwardDirection();
+    }
+
+    public RobotConfig getPathplannerConfig() {
+        return pathplannerConfig;
     }
 }

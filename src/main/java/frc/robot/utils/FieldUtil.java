@@ -25,19 +25,21 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.localization.Localization;
 
 public class FieldUtil {
-    public static Pose2d flipPoseIfNeeded(Pose2d pose) {
+    public static boolean shouldFlipCoordinates() {
         var optionalAlliance = DriverStation.getAlliance();
 
-        if (optionalAlliance.isPresent() && optionalAlliance.get().equals(Alliance.Red))
+        return optionalAlliance.isPresent() && optionalAlliance.get().equals(Alliance.Red);
+    }
+
+    public static Pose2d flipPoseIfNeeded(Pose2d pose) {
+        if (shouldFlipCoordinates())
             return FlippingUtil.flipFieldPose(pose);
         
         return pose; 
     }
 
     public static Translation2d flipTranslationIfNeeded(Translation2d translation) {
-        var optionalAlliance = DriverStation.getAlliance();
-
-        if (optionalAlliance.isPresent() && optionalAlliance.get().equals(Alliance.Red))
+        if (shouldFlipCoordinates())
             return FlippingUtil.flipFieldPosition(translation);
 
         return translation;
