@@ -49,11 +49,11 @@ public class KrakenSwerve extends SubsystemBase {
 
         if (RobotBase.isSimulation()) {
             simulatedDrivetrain = new MapleSimSwerveDrivetrain(
-                Pounds.of(115),
-                Inches.of(30),
-                Inches.of(30),
-                DCMotor.getKrakenX60(1),
-                DCMotor.getKrakenX60(1),
+                Pounds.of(150),
+                Inches.of(34),
+                Inches.of(34),
+                DCMotor.getKrakenX60Foc(1),
+                DCMotor.getKrakenX60Foc(1),
                 1.4,
                 drivetrain.getModuleLocations(),
                 drivetrain.getPigeon2(),
