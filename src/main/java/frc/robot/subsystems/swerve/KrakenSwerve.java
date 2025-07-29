@@ -25,6 +25,7 @@ import frc.robot.simulation.MapleSimSwerveDrivetrain;
 import frc.robot.utils.ElasticUtil;
 
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.PathFollowingConstants.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
@@ -177,5 +178,19 @@ public class KrakenSwerve extends SubsystemBase {
 
     public Rotation2d getOperatorPerspective() {
         return drivetrain.getOperatorForwardDirection();
+    }
+
+    public double getWheelPositionRadians(int moduleIndex) {
+        return drivetrain.getModules()[moduleIndex].getDriveMotor().getPosition().getValue().in(Radians);
+    }
+
+    /** In radians */
+    public double getGyroYaw() {
+        return drivetrain.getPigeon2().getYaw().getValue().in(Radians);
+    }
+
+    /** Gets the distance from the center of the swerve to the modules' wheels assuming the drivetrain is square */
+    public double getDrivebaseRadius() {
+        return drivetrain.getModuleLocations()[0].getNorm();
     }
 }
