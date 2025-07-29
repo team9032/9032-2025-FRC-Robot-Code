@@ -19,7 +19,7 @@ import frc.robot.utils.CANivoreReader;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
-
+import frc.robot.utils.WheelRadiusFinder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -376,6 +376,8 @@ public class RobotContainer {
         sysIdQuasistatic.and(sysIdReverse).whileTrue(
             krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
         );
+
+        driveController.a().onTrue(new WheelRadiusFinder(krakenSwerve).findRadius());
     }
 
     /** Use this to pass the autonomous command */

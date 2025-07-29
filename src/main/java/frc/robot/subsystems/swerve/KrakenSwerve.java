@@ -30,6 +30,9 @@ import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.PathFollowingConstants.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 public class KrakenSwerve extends SubsystemBase {
     private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
     
@@ -180,8 +183,10 @@ public class KrakenSwerve extends SubsystemBase {
         return drivetrain.getOperatorForwardDirection();
     }
 
-    public double getWheelPositionRadians(int moduleIndex) {
-        return drivetrain.getModules()[moduleIndex].getDriveMotor().getPosition().getValue().in(Radians);
+    public List<Double> getWheelPositionsRadians() {
+        return Stream.of(drivetrain.getModules())
+            .map((module) ->  module.getDriveMotor().getPosition().getValue().in(Radians))
+            .toList();
     }
 
     /** In radians */

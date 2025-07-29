@@ -66,6 +66,7 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public static final double kJoystickDeadband = 0.01;//Percent of velocity
+        public static final double kNoHeadingCorrectionRotRate = Math.PI / 4.0;//Radians / second
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * kJoystickDeadband) 

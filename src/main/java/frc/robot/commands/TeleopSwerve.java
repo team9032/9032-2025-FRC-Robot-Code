@@ -35,6 +35,7 @@ public class TeleopSwerve extends Command {
     @Override
     public void initialize() {
         headingController.reset();
+        headingController.setSetpoint(swerve.getLocalization().getCurrentPose().getRotation().getRadians());
     }
 
     @Override
@@ -50,9 +51,10 @@ public class TeleopSwerve extends Command {
         rotationVal *= kRotationRate;
 
         double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getRadians();
+        double currentRotRate = swerve.getLocalization().getCurrentVelocity().omegaRadiansPerSecond;
 
-        /* Update setpoint if input is being applied */
-        if (rotationVal > kJoystickDeadband * kRotationRate) 
+        /* Update setpoint if input is being applied or the chassis is still rotating to prevent jittering */
+        if (Math.abs(rotationVal) > kJoystickDeadband * kRotationRate || Math.abs(currentRotRate) > kNoHeadingCorrectionRotRate) 
             headingController.setSetpoint(currentYaw);
 
         /* Maintain current heading if no input is being applied */
