@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.PathFollowingConstants.*;
 
 import java.util.function.Supplier;
@@ -27,13 +29,13 @@ public class DriveToMovingPose extends Command {
 
     public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
         alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
-        alignmentXPID.setTolerance(kXYAlignmentTolerance);
+        alignmentXPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
         alignmentYPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
-        alignmentYPID.setTolerance(kXYAlignmentTolerance);
+        alignmentYPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
         alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kDriveToPoseRotationConstraints);
-        alignmentRotationPID.setTolerance(kRotAlignmentTolerance);
+        alignmentRotationPID.setTolerance(kRotAlignmentTolerance.in(Radians));
         alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerve = swerve;

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
@@ -26,6 +28,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
+import com.therekrab.autopilot.APConstraints;
+
 //import harshil.pande.TigerConstants;
 //import evilharshel.pandez.EvilTigerConstantz.*;
 import edu.wpi.first.math.Matrix;
@@ -40,6 +44,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
@@ -102,11 +107,15 @@ public final class Constants {
         public static final double kAlignmentRotkP = 8.0;
         public static final double kAlignmentRotkD = 0.1;
 
-        public static final double kXYAlignmentTolerance = Units.inchesToMeters(0.33);
-        public static final double kRotAlignmentTolerance = Units.degreesToRadians(4);
+        public static final Distance kXYAlignmentTolerance = Inches.of(0.33);
+        public static final Angle kRotAlignmentTolerance = Degrees.of(4);
 
         public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
+
+        /* Autopilot constants */
+        public static final Distance kBeelineRadius = Inches.of(4);
+        public static final APConstraints kAPConstraints = new APConstraints(4, 9, 80);
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
