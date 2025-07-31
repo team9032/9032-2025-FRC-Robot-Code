@@ -2,6 +2,9 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.PathFollowingConstants.*;
 
+import java.util.Set;
+import java.util.function.Supplier;
+
 import com.therekrab.autopilot.APProfile;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
@@ -13,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 public class AutopilotDriveToPose extends Command {
@@ -23,16 +27,9 @@ public class AutopilotDriveToPose extends Command {
 
     private final ProfiledPIDController rotationController;
 
-    public AutopilotDriveToPose(KrakenSwerve swerve, Pose2d targetPose, Rotation2d entryAngle) {
-        this(swerve, targetPose, entryAngle, 0.0);
-    }
-
-    public AutopilotDriveToPose(KrakenSwerve swerve, Pose2d targetPose, Rotation2d entryAngle, double endingVelocity) {
+    public AutopilotDriveToPose(KrakenSwerve swerve, APTarget target) {
         this.swerve = swerve;
-
-        target = new APTarget(targetPose)
-            .withEntryAngle(entryAngle)
-            .withVelocity(endingVelocity);
+        this.target = target;
 
         var profile = new APProfile(kAPConstraints)
             .withErrorXY(kXYAlignmentTolerance)
@@ -47,8 +44,22 @@ public class AutopilotDriveToPose extends Command {
         addRequirements(swerve);
     }
 
-    public AutopilotDriveToPose enterAtTargetAngle(KrakenSwerve swerve, Pose2d targetPose) {
-        return new AutopilotDriveToPose(swerve, targetPose, targetPose.getRotation().unaryMinus());
+    /** Drives to the pose with a specifed entry angle - Automatically defers for easy use */
+    public static Command drive(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup, Supplier<Rotation2d> entryAngleSup) {
+        return Commands.defer(
+            () -> {
+                APTarget target = new APTarget(targetPoseSup.get())
+                    .withEntryAngle(entryAngleSup.get());
+
+                return new AutopilotDriveToPose(swerve, target);
+            },
+            Set.of(swerve)
+        );
+    }
+
+    /** Drives to the pose and enters at the pose's rotation - Automatically defers for easy use */
+    public static Command enterAtTargetRotation(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
+        return drive(swerve, targetPoseSup, () -> targetPoseSup.get().getRotation());
     }
 
     @Override

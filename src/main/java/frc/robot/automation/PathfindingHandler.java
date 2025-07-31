@@ -2,7 +2,6 @@ package frc.robot.automation;
 
 import static frc.robot.Constants.PathFollowingConstants.*;
 
-import java.util.Set;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -10,8 +9,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.AutopilotDriveToPose;
 import frc.robot.commands.DriveToMovingPose;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -60,30 +59,30 @@ public class PathfindingHandler {
     }
 
     public static Command pathToNearestCoral(KrakenSwerve swerve) {
-        return Commands.defer(() -> new DriveToPose(swerve, getCoralAlignmentPose(swerve)), Set.of(swerve));
+        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> getCoralAlignmentPose(swerve));
     }
 
-    public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {
+    public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {//TODO this method is broken
         return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
     }
 
     public static Command pathToBarge(KrakenSwerve swerve) {
-        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getBargeAlignmentPose(swerve.getLocalization())), Set.of(swerve));
+        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> FieldUtil.getBargeAlignmentPose(swerve.getLocalization()));
     }
 
     public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
-        return Commands.defer(() -> 
-            new DriveToPose(swerve, FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch)), 
-            Set.of(swerve)
-        );
+        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch));
     }
 
     public static Command pathToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)), Set.of(swerve));
+        return AutopilotDriveToPose.enterAtTargetRotation(
+            swerve, 
+            () -> FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)
+        );
     }
     
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
-        return Commands.defer(() -> new DriveToPose(swerve, FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization())), Set.of(swerve));
+        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()));
     }
 
     public static Command pathToSourceThenCoral(KrakenSwerve swerve, boolean isLeftSource) {
