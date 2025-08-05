@@ -91,12 +91,12 @@ public class KrakenSwerve extends SubsystemBase {
         }
         
         /* Allow drive motor constants to be updated from the dashboard */
-        SmartDashboard.putNumber("Drive kP", 0.0);
-        SmartDashboard.putNumber("Drive kI", 0.0);
-        SmartDashboard.putNumber("Drive kD", 0.0);
-        SmartDashboard.putNumber("Drive kV", 0.0);
-        SmartDashboard.putNumber("Drive kA", 0.0);
-        SmartDashboard.putNumber("Drive kS", 0.0);
+        SmartDashboard.putNumber("Drive kP", driveGains.kP);
+        SmartDashboard.putNumber("Drive kI", driveGains.kI);
+        SmartDashboard.putNumber("Drive kD", driveGains.kD);
+        SmartDashboard.putNumber("Drive kV", driveGains.kV);
+        SmartDashboard.putNumber("Drive kA", driveGains.kA);
+        SmartDashboard.putNumber("Drive kS", driveGains.kS);
 
         SmartDashboard.putData(
             Commands.runOnce(this::updateDriveMotorConstants, this)

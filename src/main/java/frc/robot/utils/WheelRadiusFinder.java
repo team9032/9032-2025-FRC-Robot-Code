@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
-public class WheelRadiusFinder {
+public class WheelRadiusFinder {//TODO this is broken
     private final KrakenSwerve swerve;
 
     private double initialYaw;

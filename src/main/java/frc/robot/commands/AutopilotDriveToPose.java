@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -59,7 +60,7 @@ public class AutopilotDriveToPose extends Command {
 
     /** Drives to the pose and enters at the pose's rotation - Automatically defers for easy use */
     public static Command enterAtTargetRotation(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
-        return drive(swerve, targetPoseSup, () -> targetPoseSup.get().getRotation());
+        return drive(swerve, targetPoseSup, () -> targetPoseSup.get().getRotation().rotateBy(Rotation2d.k180deg));
     }
 
     @Override
@@ -88,6 +89,9 @@ public class AutopilotDriveToPose extends Command {
                 .withVelocityY(result.vy())
                 .withRotationalRate(angularVelocity)
         );
+
+        SmartDashboard.putNumber("Autopilot X Speed Setpoint", result.vx().baseUnitMagnitude());
+        SmartDashboard.putNumber("Swerve X Speed", velocityTranslation.getX());
     }
 
     @Override

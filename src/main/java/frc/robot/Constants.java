@@ -115,7 +115,7 @@ public final class Constants {
 
         /* Autopilot constants */
         public static final Distance kBeelineRadius = Inches.of(4);
-        public static final APConstraints kAPConstraints = new APConstraints(4, 9, 80);
+        public static final APConstraints kAPConstraints = new APConstraints(4, 5, 80);//TODO tune
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
