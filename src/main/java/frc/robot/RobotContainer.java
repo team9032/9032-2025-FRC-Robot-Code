@@ -102,6 +102,8 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
+        led.setStateCommand(State.ALGAE);
+
         /* Warm up PathPlanner */
         PathfindingCommand.warmupCommand().schedule();
         FollowPathCommand.warmupCommand().schedule();
@@ -120,8 +122,8 @@ public class RobotContainer {
         else {
             configureButtonTriggers();
 
-            bindTeleopTriggers();   
-        }
+            //bindTeleopTriggers();   
+        } 
         
         configureDefaultCommands();
 
@@ -161,8 +163,8 @@ public class RobotContainer {
             new TeleopSwerve(
                 krakenSwerve,
                 driveController::getRightX,
-                () -> -0.1*driveController.getLeftY(),
-                () -> -0.1*driveController.getLeftX() //speed divided by 10
+                () -> -0.25*driveController.getLeftY(),
+                () -> -0.25*driveController.getLeftX() //speed divided by 10
             )
         );  
     }
@@ -319,8 +321,8 @@ public class RobotContainer {
         teleopEnabled.onTrue(
             compositions.stopRollers()
             .andThen(
-                elevatorArmIntakeHandler.holdPositions(),
-                compositions.initClimberIfNeeded()
+                elevatorArmIntakeHandler.holdPositions()
+                //compositions.initClimberIfNeeded()
             )
         );
 
@@ -333,7 +335,7 @@ public class RobotContainer {
         );
     }
 
-    private void bindTeleopTriggers() {
+    /* private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
 
         coralCyclingCommandScheduled.onTrue(led.setStateFromReefLevel(buttonBoard::getSelectedReefLevel));
@@ -353,7 +355,7 @@ public class RobotContainer {
                 enabled
             )
         );
-    }
+    } */
 
     private Command rumble() {
         return Commands.sequence(

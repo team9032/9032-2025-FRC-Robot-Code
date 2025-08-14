@@ -154,6 +154,14 @@ public class ElevatorArmIntakeHandler {
         );
     }
 
+    public Command prepareToThrowAlgae() {
+        return Commands.sequence(
+            elevator.moveToAlgaeThrowPosition(),
+            Commands.waitUntil(elevator::closeToAlgaeThrowPosition),
+            arm.moveToAlgaeThrowPos()
+        );
+    }
+
     public Command prepareForProcessorAlgaeScoring() {
         return Commands.sequence(
             moveOutOfCradleIfNeeded(),
@@ -216,10 +224,5 @@ public class ElevatorArmIntakeHandler {
         .ignoringDisable(true);
     }
 
-    public Command prepareToThrowAlgae() {
-        return Commands.sequence(
-            elevator.moveToAlgaeThrowPosition(),
-            arm.moveToAlgaeThrowPos()
-        );
-    }
+    
 }

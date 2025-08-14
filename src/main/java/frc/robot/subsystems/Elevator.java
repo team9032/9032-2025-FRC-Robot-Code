@@ -85,6 +85,10 @@ public class Elevator extends SubsystemBase {
         return elevatorPosSignal.getValueAsDouble() > kElevatorCloseToNet;
     }
 
+    public boolean closeToAlgaeThrowPosition() {
+        return elevatorPosSignal.getValueAsDouble() > kElevatorCloseToAlgaeThrow;
+    }
+
     public Command holdPosition() {
         return runOnce(() -> moveElevator(elevatorPosSignal.getValueAsDouble()));
     }

@@ -283,6 +283,7 @@ public final class Constants {
         public static final double kElevatorOverHighAlgae = 4.5;
         public static final double kElevatorStow = 1.6; 
         public static final double kElevatorCloseToNet = 8.8;
+        public static final double kElevatorCloseToAlgaeThrow = 2.8;
     }
 
     public static final class TransferConstants {
@@ -387,7 +388,7 @@ public final class Constants {
         public static final double kArmCoralPreparedToScorePos = 0.17;
         public static final double kArmLowL1PreparedToScorePos = -0.06;
         public static final double kArmHighL1PreparedToScorePos = -0.03;
-        public static final double kArmAlgaeThrowPos = 0.05; //TODO tune
+        public static final double kArmAlgaeThrowPos = 0.2; //TODO tune
 
         public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;
@@ -499,6 +500,8 @@ public final class Constants {
 
         public static final int kHasCoralCurrent = -14;
         public static final int kHasAlgaeCurrent = -57;
+
+        public static final double kEndEffectorThrowAlgaeDelay = 0.3; //TODO utne
 
         public static final CurrentLimitsConfigs kEndEffectorCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
