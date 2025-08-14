@@ -215,4 +215,11 @@ public class ElevatorArmIntakeHandler {
         )
         .ignoringDisable(true);
     }
+
+    public Command prepareToThrowAlgae() {
+        return Commands.sequence(
+            elevator.moveToAlgaeThrowPosition(),
+            arm.moveToAlgaeThrowPos()
+        );
+    }
 }

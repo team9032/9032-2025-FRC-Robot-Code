@@ -304,4 +304,19 @@ public class Compositions {
         )
         .ignoringDisable(true);
     }
+    
+    public Command pickupAlgae() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.prepareForAlgaeGroundIntaking(),
+            endEffector.intakeAlgae()
+        );
+    }
+
+    public Command throwAlgae() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.prepareToThrowAlgae(),
+            endEffector.outtakeNetAlgae()
+        )
+        .onlyIf(() -> endEffector.hasAlgae());
+    }
 }

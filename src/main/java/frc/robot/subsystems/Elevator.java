@@ -68,6 +68,10 @@ public class Elevator extends SubsystemBase {
     public boolean atL4() {
         return atPosition(kElevatorL4);
     }
+
+    public boolean atAlgaeThrow() {
+        return atPosition(kElevatorAlgaeThrow);
+    }
     
     public boolean atSetpoint() {
         return atPosition(motionMagic.Position);
@@ -103,6 +107,10 @@ public class Elevator extends SubsystemBase {
 
     public Command moveToClimbPosition() {
         return runOnce(() -> moveElevator(kElevatorClimb));
+    }
+
+    public Command moveToAlgaeThrowPosition() {
+        return runOnce(() -> moveElevator(kElevatorAlgaeThrow));
     }
 
     public Command moveToCoralScoreLevel(Supplier<ReefLevel> reefLevelSup) {

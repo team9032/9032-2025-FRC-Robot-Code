@@ -228,8 +228,8 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicExpo_kV(0.2)
-            .withMotionMagicExpo_kA(0.16);
+            .withMotionMagicExpo_kV(0.4)
+            .withMotionMagicExpo_kA(0.32); //TODO tune; is this slow enough/too slow?
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
@@ -277,6 +277,7 @@ public final class Constants {
         public static final double kElevatorNet = 9.1;
         public static final double kElevatorAlgaeGround = 2.0;
         public static final double kElevatorClimb = 0.05;
+        public static final double kElevatorAlgaeThrow = 3.1; //TODO tune
 
         public static final double kElevatorOverCradle = 3;
         public static final double kElevatorOverHighAlgae = 4.5;
@@ -386,6 +387,7 @@ public final class Constants {
         public static final double kArmCoralPreparedToScorePos = 0.17;
         public static final double kArmLowL1PreparedToScorePos = -0.06;
         public static final double kArmHighL1PreparedToScorePos = -0.03;
+        public static final double kArmAlgaeThrowPos = 0.05; //TODO tune
 
         public static final double kArmOverCradlePos = 0.0;
         public static final double kArmPositionTolerance = 0.005;

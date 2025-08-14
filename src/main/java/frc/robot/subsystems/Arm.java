@@ -120,6 +120,10 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeGroundPos)));
     }
 
+    public Command moveToAlgaeThrowPos() {
+        return runOnce(() -> armMotor.setControl(armRequest.withPosition(kArmAlgaeThrowPos)));
+    }
+
     public Command moveToReefBranchScorePos(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (

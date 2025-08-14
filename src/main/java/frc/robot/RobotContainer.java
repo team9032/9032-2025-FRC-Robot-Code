@@ -51,15 +51,17 @@ public class RobotContainer {
 
     /* Drive Controller Buttons */
     private final Trigger resetPerspective = driveController.povDown();
-    private final Trigger deployClimber = driveController.povUp();
-    private final Trigger ejectIntake = driveController.x();
-    private final Trigger stowAndCancelClimb = driveController.y();
-    private final Trigger intakeDown = driveController.rightTrigger();
-    private final Trigger intakeUp = driveController.leftTrigger();
-    private final Trigger algaeGroundIntake = driveController.a();
-    private final Trigger algaeReefIntakeOrNetScore = driveController.b();
-    private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
-    private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
+    //private final Trigger deployClimber = driveController.povUp();
+    //private final Trigger ejectIntake = driveController.x();
+    //private final Trigger stowAndCancelClimb = driveController.y();
+    //private final Trigger intakeDown = driveController.rightTrigger();
+    //private final Trigger intakeUp = driveController.leftTrigger();
+    //private final Trigger algaeGroundIntake = driveController.a();
+    //private final Trigger algaeReefIntakeOrNetScore = driveController.b();
+    //private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
+    //private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
+    private final Trigger pickupAlgae = driveController.a();
+    private final Trigger algaeThrow = driveController.b();
 
     /* Operator Controller Buttons */
 
@@ -159,8 +161,8 @@ public class RobotContainer {
             new TeleopSwerve(
                 krakenSwerve,
                 driveController::getRightX,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX()
+                () -> -0.1*driveController.getLeftY(),
+                () -> -0.1*driveController.getLeftX() //speed divided by 10
             )
         );  
     }
@@ -173,15 +175,15 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        ejectIntake.onTrue(
+        /* ejectIntake.onTrue(
             compositions.ejectIntake()
         );
 
         stowAndCancelClimb.onTrue(
             compositions.cancelClimbAndStow()
-        );
+        ); */
 
-        intakeDown.onTrue(
+        /* intakeDown.onTrue(
             Commands.either(
                 elevatorArmIntakeHandler.moveIntakeDown(), 
                 Commands.either(
@@ -192,27 +194,27 @@ public class RobotContainer {
                 endEffector::hasCoral
             )
         );
-
-        intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
+ */
+        /* intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
             new RotationalIntakeDriverAssist(
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 krakenSwerve
             )
             .onlyIf(() -> !endEffector.hasCoral())
-        );
+        ); */
 
-        intakeUp.onTrue(
+        /* intakeUp.onTrue(
             Commands.either(
                 elevatorArmIntakeHandler.moveIntakeUp(), 
                 compositions.cancelIntake(),
                 () -> endEffector.hasCoral() || endEffector.hasAlgae()
             )
-        );
+        ); */
 
-        algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
+        //algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
-        deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+        //deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
@@ -221,7 +223,7 @@ public class RobotContainer {
                 compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
-        alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
+        //alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
 
         Command alignAndScoreCoralRightCommand = 
             Commands.either(
@@ -229,19 +231,24 @@ public class RobotContainer {
                 compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
-        alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
+        //alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
 
         coralCyclingCommandScheduled = new Trigger(() -> alignAndScoreCoralRightCommand.isScheduled() || alignAndScoreCoralLeftCommand.isScheduled());
 
         /* Algae cycling commands */
-        Command algaeReefIntakeOrNetScoreCommand = Commands.either(
+        /* Command algaeReefIntakeOrNetScoreCommand = Commands.either(
             compositions.scoreAlgaeInNet(this::driverWantsOverride), 
             compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride, true), 
             endEffector::hasAlgae
         );
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
+        */
 
-        algaeCyclingCommandScheduled = new Trigger(() -> algaeReefIntakeOrNetScoreCommand.isScheduled());
+        //algaeCyclingCommandScheduled = new Trigger(() -> algaeReefIntakeOrNetScoreCommand.isScheduled());
+
+        pickupAlgae.onTrue(compositions.pickupAlgae());
+
+        algaeThrow.onTrue(compositions.throwAlgae());
 
         /* Manual Controls:
          * 
