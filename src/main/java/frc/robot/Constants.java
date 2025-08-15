@@ -356,7 +356,7 @@ public final class Constants {
 
         public static final double kIntakePower = -1.0;
 
-        public static final double kGroundPosition = -130.0;
+        public static final double kGroundPosition = -119.0; //reduced so intake doesnt slam into ground
         public static final double kStowPosition = -27.0;
         public static final double kEndEffectorMovePosition = -94.0;
 

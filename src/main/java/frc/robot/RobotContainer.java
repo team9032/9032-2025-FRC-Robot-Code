@@ -50,12 +50,14 @@ public class RobotContainer {
     private final CommandXboxController driveController = new CommandXboxController(kDriveControllerPort);
 
     /* Drive Controller Buttons */
+    
     private final Trigger resetPerspective = driveController.povDown();
-    //private final Trigger deployClimber = driveController.povUp();
+    private final Trigger retractClimber = driveController.povLeft();
+    private final Trigger deployClimber = driveController.povRight();
     //private final Trigger ejectIntake = driveController.x();
     //private final Trigger stowAndCancelClimb = driveController.y();
-    //private final Trigger intakeDown = driveController.rightTrigger();
-    //private final Trigger intakeUp = driveController.leftTrigger();
+    private final Trigger intakeDown = driveController.rightTrigger();
+    private final Trigger intakeUp = driveController.leftTrigger();
     //private final Trigger algaeGroundIntake = driveController.a();
     //private final Trigger algaeReefIntakeOrNetScore = driveController.b();
     //private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
@@ -113,7 +115,7 @@ public class RobotContainer {
             new RotationalDriveToCoral(krakenSwerve)
                 .alongWith(compositions.intakeCoralToEndEffector())
             .until(this::driverWantsOverride)
-        );     
+        );
 
         /* Bind Triggers */
         if(kRunSysId)
@@ -162,7 +164,7 @@ public class RobotContainer {
         krakenSwerve.setDefaultCommand(
             new TeleopSwerve(
                 krakenSwerve,
-                driveController::getRightX,
+                () -> 0.25*driveController.getRightX(),
                 () -> -0.25*driveController.getLeftY(),
                 () -> -0.25*driveController.getLeftX() //speed divided by 10
             )
@@ -185,18 +187,8 @@ public class RobotContainer {
             compositions.cancelClimbAndStow()
         ); */
 
-        /* intakeDown.onTrue(
-            Commands.either(
-                elevatorArmIntakeHandler.moveIntakeDown(), 
-                Commands.either(
-                    compositions.intakeCoralToCradle(), 
-                    compositions.intakeCoralToEndEffector(), 
-                    endEffector::hasAlgae
-                ),
-                endEffector::hasCoral
-            )
-        );
- */
+        intakeDown.onTrue(elevatorArmIntakeHandler.moveIntakeDown());
+
         /* intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
             new RotationalIntakeDriverAssist(
                 () -> -driveController.getLeftY(),
@@ -206,17 +198,13 @@ public class RobotContainer {
             .onlyIf(() -> !endEffector.hasCoral())
         ); */
 
-        /* intakeUp.onTrue(
-            Commands.either(
-                elevatorArmIntakeHandler.moveIntakeUp(), 
-                compositions.cancelIntake(),
-                () -> endEffector.hasCoral() || endEffector.hasAlgae()
-            )
-        ); */
+        intakeUp.onTrue(elevatorArmIntakeHandler.moveIntakeUp());
 
         //algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
-        //deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+        retractClimber.onTrue(climber.moveToClimbPosition());
+
+        deployClimber.onTrue(climber.moveToStowPosition());
 
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
