@@ -65,7 +65,7 @@ public class Climber extends SubsystemBase {
         return moveClimber(kClimberStowPos);
     }
 
-    private Command moveToClimbPosition() {
+    public Command moveToClimbPosition() {
         return moveClimber(kClimberClimbPos);
     }
 
