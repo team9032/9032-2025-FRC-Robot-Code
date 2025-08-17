@@ -1,56 +1,53 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
-import frc.robot.subsystems.Elevator;
-import frc.robot.utils.ElasticUtil;
+import frc.robot.subsystems.elevator.Elevator;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.DriverConstants.kCANBusName;
-import static frc.robot.Constants.ElevatorConfigs.*;
+import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class Elevator extends SubsystemBase {
-    private final TalonFX elevatorMotor;
-    private final TalonFX elevatorMotorFollower;
-
     private final MotionMagicExpoVoltage motionMagic = new MotionMagicExpoVoltage(0);
-    private final Follower followerMotorControl;
-    private final StatusSignal<Angle> elevatorPosSignal;
+
+    private final ElevatorIO io;
+
+    private final Mechanism2d visualizer;
+    private final MechanismLigament2d ligament;
 
     public Elevator() {
-        //The leader of a follower cannot have its bus utilization optimized
-        elevatorMotor = new TalonFX(kFrontElevatorID, kCANBusName);
-        elevatorPosSignal = elevatorMotor.getPosition();
-        elevatorPosSignal.setUpdateFrequency(100);
-        ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kElevatorConfig));
+        if (RobotBase.isSimulation())
+            io = new ElevatorIOSim();
 
-        elevatorMotorFollower = new TalonFX(kBackElevatorID, kCANBusName);
-        ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kElevatorConfig));
+        else 
+            io = new ElevatorIOReal();
 
-        followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
-        elevatorMotorFollower.setControl(followerMotorControl);
+        visualizer = new Mechanism2d(3.0, 3.0);
+        ligament = new MechanismLigament2d("1st stage", 0.0, 90.0);
+        visualizer.getRoot("Elevator", 1.3, 0.0)
+            .append(ligament);
+
+        SmartDashboard.putData("Elevator visualizer", visualizer);
     }
 
     private void moveElevator(double pos) {
-        elevatorMotor.setControl(motionMagic.withPosition(pos));
+        io.setControl(motionMagic.withPosition(pos));
     }
 
     private boolean atPosition(double position) {
-        return MathUtil.isNear(position, elevatorPosSignal.getValueAsDouble(), kElevatorTolerance);
+        return MathUtil.isNear(position, io.getPosition(), kElevatorTolerance);
     }
 
     public boolean atL1() {
@@ -74,15 +71,15 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean overCradlePosition() {
-        return elevatorPosSignal.getValueAsDouble() > (kElevatorOverCradle - kElevatorTolerance);
+        return io.getPosition() > (kElevatorOverCradle - kElevatorTolerance);
     }
 
     public boolean closeToNetPosition() {
-        return elevatorPosSignal.getValueAsDouble() > kElevatorCloseToNet;
+        return io.getPosition() > kElevatorCloseToNet;
     }
 
     public Command holdPosition() {
-        return runOnce(() -> moveElevator(elevatorPosSignal.getValueAsDouble()));
+        return runOnce(() -> moveElevator(io.getPosition()));
     }
 
     public Command moveToStowPosition() {
@@ -135,18 +132,20 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean overHighAlgae() {
-        return elevatorPosSignal.getValueAsDouble() > kElevatorOverHighAlgae;
+        return io.getPosition() > kElevatorOverHighAlgae;
     }
 
     public Command coast() {
-        return runOnce(() -> elevatorMotor.setControl(new CoastOut()))
+        return runOnce(() -> io.setControl(new CoastOut()))
             .ignoringDisable(true);
     }
 
     @Override
     public void periodic() {
-        elevatorPosSignal.refresh();
+        io.periodic();
 
         SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
+
+        ligament.setLength(io.getPosition() + 0.25);
     }
 }

@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.elevator.Elevator;
 
 public class ElevatorArmIntakeHandler {
     private final Elevator elevator;

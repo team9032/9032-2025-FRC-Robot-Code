@@ -14,6 +14,7 @@ import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.LED.State;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.CANivoreReader;
 import frc.robot.utils.ElasticUtil;
@@ -174,7 +175,7 @@ public class RobotContainer {
         );
 
         ejectIntake.onTrue(
-            compositions.ejectIntake()
+            elevator.moveToHighAlgaePosition()//compositions.ejectIntake()
         );
 
         stowAndCancelClimb.onTrue(
