@@ -104,7 +104,7 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        led.setStateCommand(State.ALGAE);
+        led.setStateCommand(State.DISABLED);
 
         /* Warm up PathPlanner */
         PathfindingCommand.warmupCommand().schedule();
