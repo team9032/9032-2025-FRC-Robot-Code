@@ -63,7 +63,9 @@ public class RobotContainer {
     //private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
     //private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
     private final Trigger pickupAlgae = driveController.a();
-    private final Trigger algaeThrow = driveController.b();
+    private final Trigger strongAlgaeThrow = driveController.b();
+    private final Trigger weakAlgaeThrow = driveController.y();
+    private final Trigger ejectAndStopIntaking = driveController.x();
 
     /* Operator Controller Buttons */
 
@@ -200,6 +202,8 @@ public class RobotContainer {
 
         intakeUp.onTrue(elevatorArmIntakeHandler.moveIntakeUp());
 
+        ejectAndStopIntaking.onTrue(endEffector.outtakeNetAlgae());
+
         //algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
         retractClimber.onTrue(climber.moveToClimbPosition());
@@ -238,7 +242,9 @@ public class RobotContainer {
 
         pickupAlgae.onTrue(compositions.pickupAlgae());
 
-        algaeThrow.onTrue(compositions.throwAlgae());
+        strongAlgaeThrow.onTrue(compositions.throwStrongAlgae());
+
+        weakAlgaeThrow.onTrue(compositions.throwWeakAlgae());
 
         /* Manual Controls:
          * 

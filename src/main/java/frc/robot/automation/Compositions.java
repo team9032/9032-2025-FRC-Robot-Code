@@ -1,6 +1,7 @@
 package frc.robot.automation;
 
 import static frc.robot.Constants.EndEffectorConstants.kEndEffectorThrowAlgaeDelay;
+import static frc.robot.Constants.EndEffectorConstants.kEndEffectorThrowWeakAlgaeDelay;
 import static frc.robot.Constants.PathFollowingConstants.kAlgaeIntakeWait;
 import static frc.robot.Constants.PathFollowingConstants.kPullAwayWait;
 
@@ -314,10 +315,19 @@ public class Compositions {
         );
     }
 
-    public Command throwAlgae() {
+    public Command throwStrongAlgae() {
         return Commands.sequence(
             elevatorArmIntakeHandler.prepareToThrowAlgae(),
             Commands.waitSeconds(kEndEffectorThrowAlgaeDelay),
+            endEffector.outtakeNetAlgae()
+        )
+        .onlyIf(() -> endEffector.hasAlgae());
+    }
+
+    public Command throwWeakAlgae() {
+        return Commands.sequence(
+            elevatorArmIntakeHandler.prepareToThrowAlgae(),
+            Commands.waitSeconds(kEndEffectorThrowWeakAlgaeDelay),
             endEffector.outtakeNetAlgae()
         )
         .onlyIf(() -> endEffector.hasAlgae());
