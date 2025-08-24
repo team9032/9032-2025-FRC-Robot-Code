@@ -532,9 +532,11 @@ public final class Constants {
         //Patterns
         public static final LEDPattern kError = LEDPattern.solid(Color.kDarkRed);
 
-        public static final LEDPattern kClimbing = LEDPattern.rainbow(255, 255);
+        public static final LEDPattern kClimbing = LEDPattern.rainbow(255, 255)
+        .scrollAtAbsoluteSpeed(InchesPerSecond.of(12.0), kLedSpacing);
 
-        public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple);
+        public static final LEDPattern kBootingUp = LEDPattern.solid(Color.kPurple)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(10.0), kLedSpacing);
 
         public static final LEDPattern kDisabledPattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kBlue, Color.kAquamarine)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(8.0), kLedSpacing)

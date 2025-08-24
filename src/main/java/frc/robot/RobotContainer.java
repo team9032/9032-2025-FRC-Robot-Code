@@ -54,6 +54,7 @@ public class RobotContainer {
     private final Trigger resetPerspective = driveController.povDown();
     private final Trigger retractClimber = driveController.povLeft();
     private final Trigger deployClimber = driveController.povRight();
+    private final Trigger intakeDownNoRoll = driveController.povUp();
     //private final Trigger ejectIntake = driveController.x();
     //private final Trigger stowAndCancelClimb = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
@@ -149,11 +150,11 @@ public class RobotContainer {
         SmartDashboard.putData(compositions.coastAll().withName("Coast All"));
 
         /* Switch LEDs to disabled or low battery */
-        if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
-            led.setState(State.LOW_BATTERY); 
+        //if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
+        //    led.setState(State.LOW_BATTERY); 
 
-        else
-            led.setState(State.DISABLED); 
+        //else
+            led.setState(State.CLIMBING); 
     }
 
     private boolean driverWantsOverride() {
@@ -166,7 +167,7 @@ public class RobotContainer {
         krakenSwerve.setDefaultCommand(
             new TeleopSwerve(
                 krakenSwerve,
-                () -> 0.25*driveController.getRightX(),
+                () -> 0.80*driveController.getRightX(),
                 () -> -0.25*driveController.getLeftY(),
                 () -> -0.25*driveController.getLeftX() //speed divided by 10
             )
@@ -189,16 +190,18 @@ public class RobotContainer {
             compositions.cancelClimbAndStow()
         ); */
 
-        intakeDown.onTrue(elevatorArmIntakeHandler.moveIntakeDown());
+        intakeDown.onTrue(compositions.intakeCoralToEndEffector());
 
-        /* intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
+        intakeDownNoRoll.onTrue(elevatorArmIntakeHandler.moveIntakeDown());
+
+        intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
             new RotationalIntakeDriverAssist(
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 krakenSwerve
             )
             .onlyIf(() -> !endEffector.hasCoral())
-        ); */
+        ); 
 
         intakeUp.onTrue(elevatorArmIntakeHandler.moveIntakeUp());
 
@@ -321,11 +324,11 @@ public class RobotContainer {
         );
 
         enabled.onTrue(
-            led.setStateCommand(State.ENABLED)
+            led.setStateCommand(State.CLIMBING)
         );
 
         disabled.onTrue(
-            led.setStateCommand(State.DISABLED)
+            led.setStateCommand(State.CLIMBING)
         );
     }
 
