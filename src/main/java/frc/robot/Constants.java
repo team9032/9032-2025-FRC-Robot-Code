@@ -228,8 +228,8 @@ public final class Constants {
         public static final int kBackElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
-            .withMotionMagicExpo_kV(0.4)
-            .withMotionMagicExpo_kA(0.32); //TODO tune; is this slow enough/too slow?
+            .withMotionMagicExpo_kV(0.2)
+            .withMotionMagicExpo_kA(0.16);
 
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 

@@ -55,8 +55,8 @@ public class RobotContainer {
     private final Trigger retractClimber = driveController.povLeft();
     private final Trigger deployClimber = driveController.povRight();
     private final Trigger intakeDownNoRoll = driveController.povUp();
-    //private final Trigger ejectIntake = driveController.x();
-    //private final Trigger stowAndCancelClimb = driveController.y();
+    // private final Trigger ejectIntake = driveController.x();
+    private final Trigger stowAndCancelClimb = driveController.y();
     private final Trigger intakeDown = driveController.rightTrigger();
     private final Trigger intakeUp = driveController.leftTrigger();
     //private final Trigger algaeGroundIntake = driveController.a();
@@ -65,7 +65,7 @@ public class RobotContainer {
     //private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
     private final Trigger pickupAlgae = driveController.a();
     private final Trigger strongAlgaeThrow = driveController.b();
-    private final Trigger weakAlgaeThrow = driveController.y();
+    private final Trigger weakAlgaeThrow = driveController.rightBumper();
     private final Trigger ejectAndStopIntaking = driveController.x();
 
     /* Operator Controller Buttons */
@@ -127,6 +127,7 @@ public class RobotContainer {
         else {
             configureButtonTriggers();
 
+
             //bindTeleopTriggers();   
         } 
         
@@ -167,9 +168,9 @@ public class RobotContainer {
         krakenSwerve.setDefaultCommand(
             new TeleopSwerve(
                 krakenSwerve,
-                () -> 0.80*driveController.getRightX(),
-                () -> -0.25*driveController.getLeftY(),
-                () -> -0.25*driveController.getLeftX() //speed divided by 10
+                () -> driveController.getRightX(),
+                () -> -0.6*driveController.getLeftY(),
+                () -> -0.6*driveController.getLeftX() //speed divided by 10
             )
         );  
     }
@@ -182,13 +183,13 @@ public class RobotContainer {
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
         );
 
-        /* ejectIntake.onTrue(
-            compositions.ejectIntake()
-        );
+        // ejectIntake.onTrue(
+        //     compositions.ejectIntake()
+        // );
 
         stowAndCancelClimb.onTrue(
             compositions.cancelClimbAndStow()
-        ); */
+        ); 
 
         intakeDown.onTrue(compositions.intakeCoralToEndEffector());
 
