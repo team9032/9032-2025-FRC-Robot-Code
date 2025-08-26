@@ -24,8 +24,8 @@ public class SwerveConstants {
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     public static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(0.1739).withKI(0).withKD(0)//All gains are from SysId - rotational kA is 0.01126
-        .withKS(0.14932).withKA(0.017787).withKV(0.12218);
+        .withKP(0.3).withKI(0).withKD(0)
+        .withKS(0.26).withKA(0.0).withKV(0.12);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors

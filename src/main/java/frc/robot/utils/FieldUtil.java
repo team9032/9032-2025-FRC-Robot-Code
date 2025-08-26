@@ -28,7 +28,7 @@ public class FieldUtil {
     public static boolean shouldFlipCoordinates() {
         var optionalAlliance = DriverStation.getAlliance();
 
-        return optionalAlliance.get().equals(Alliance.Red);
+        return optionalAlliance.orElseGet(() -> Alliance.Blue).equals(Alliance.Red);
     }
 
     public static Pose2d flipPoseIfNeeded(Pose2d pose) {
