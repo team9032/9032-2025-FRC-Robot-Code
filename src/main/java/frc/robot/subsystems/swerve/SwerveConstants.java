@@ -73,9 +73,9 @@ public class SwerveConstants {
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5714285714285716;
 
-    private static final double kDriveGearRatio = 6.746031746031747;
+    public static final double kDriveGearRatio = 6.746031746031747;
     private static final double kSteerGearRatio = 21.428571428571427;
-    private static final Distance kWheelRadius = Inches.of(2);
+    private static final Distance kWheelRadius = Meters.of(0.04804179357711672);//Calculated using wheel radius finder
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;

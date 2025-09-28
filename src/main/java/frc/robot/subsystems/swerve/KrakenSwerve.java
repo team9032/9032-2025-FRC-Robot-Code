@@ -185,7 +185,7 @@ public class KrakenSwerve extends SubsystemBase {
 
     public List<Double> getWheelPositionsRadians() {
         return Stream.of(drivetrain.getModules())
-            .map((module) ->  module.getDriveMotor().getPosition().getValue().in(Radians))
+            .map((module) ->  module.getDriveMotor().getPosition().getValue().in(Radians) / kDriveGearRatio)
             .toList();
     }
 

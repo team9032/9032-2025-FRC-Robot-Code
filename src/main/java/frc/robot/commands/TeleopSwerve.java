@@ -58,8 +58,8 @@ public class TeleopSwerve extends Command {
             headingController.setSetpoint(currentYaw);
 
         /* Maintain current heading if no input is being applied */
-        else 
-            rotationVal = headingController.calculate(currentYaw);
+        // else 
+        //     rotationVal = headingController.calculate(currentYaw);
 
         swerve.setControl(
             kDriveRequest.withVelocityX(translationVal)
