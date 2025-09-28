@@ -77,6 +77,8 @@ public final class Constants {
             .withDeadband(kMaxSpeed * kJoystickDeadband) 
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+        public static final boolean kUseAutoIntake = true;
     }
 
     public static class PathFollowingConstants {

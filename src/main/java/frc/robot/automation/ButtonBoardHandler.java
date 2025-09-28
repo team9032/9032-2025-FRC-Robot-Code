@@ -99,6 +99,38 @@ public class ButtonBoardHandler {
         return autoIntake;
     }
 
+    public void incrementReefLevel() {
+        switch (reefLevelTarget) {
+            case L1:
+            reefLevelTarget = ReefLevel.L2;
+                break;
+            case L2:
+            reefLevelTarget = ReefLevel.L3;
+                break;
+            case L3:
+            reefLevelTarget = ReefLevel.L4;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void decrementReefLevel() {
+        switch (reefLevelTarget) {
+            case L2:
+            reefLevelTarget = ReefLevel.L1;
+                break;
+            case L3:
+            reefLevelTarget = ReefLevel.L2;
+                break;
+            case L4:
+            reefLevelTarget = ReefLevel.L3;
+                break;
+            default:
+                break;
+        }
+    }
+
     public void update() {
         toNetPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_NET));
         toProcessorPub.set(algaeScorePathTarget.equals(AlgaeScorePath.TO_PROCESSOR));
