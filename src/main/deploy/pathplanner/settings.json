@@ -4,8 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "1 Coral Center",
-    "4 Coral Left",
-    "Stubs"
+    "4 Coral Left"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.1,

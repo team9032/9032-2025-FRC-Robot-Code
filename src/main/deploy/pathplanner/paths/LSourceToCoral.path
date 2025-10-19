@@ -52,7 +52,7 @@
     "rotation": 119.35775354279133
   },
   "reversed": false,
-  "folder": "Stubs",
+  "folder": null,
   "idealStartingState": {
     "velocity": 3.0,
     "rotation": 119.99999999999999
