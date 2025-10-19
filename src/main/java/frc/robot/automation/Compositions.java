@@ -42,7 +42,7 @@ public class Compositions {
             Commands.print("Getting coral from source"),
             PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
             Commands.print("Pathing to reef branch after source coral"),
-            PathfindingHandler.pathToReefBranchDynamic(reefTagID, swerve, isLeftBranch)
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
         )                
         .alongWith(
             Commands.sequence(
@@ -60,7 +60,7 @@ public class Compositions {
             Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
             elevatorArmIntakeHandler.moveToStowPositions(),
-            PathfindingHandler.pathToReefBranchDynamic(reefTagID, swerve, isLeftBranch).asProxy()
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     Commands.waitUntil(() -> FieldUtil.shouldPrepareToScoreCoral(swerve.getLocalization())),
