@@ -28,7 +28,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import com.therekrab.autopilot.APConstraints;
 
 //import harshil.pande.TigerConstants;
 //import evilharshel.pandez.EvilTigerConstantz.*;
@@ -116,10 +115,6 @@ public final class Constants {
 
         public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
-
-        /* Autopilot constants */
-        public static final Distance kBeelineRadius = Inches.of(4);
-        public static final APConstraints kAPConstraints = new APConstraints(4, 3, 40);//TODO tune
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);

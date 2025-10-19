@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.AutopilotDriveToPose;
 import frc.robot.commands.DriveToMovingPose;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.localization.TrackedObject.ObjectType;
@@ -104,7 +103,13 @@ public class PathfindingHandler {
     }
 
     public static Command pathToNearestCoral(KrakenSwerve swerve) {
-        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> getCoralAlignmentPose(swerve));
+        return Commands.defer(
+            () -> pathToPose(
+                getCoralAlignmentPose(swerve), 
+                swerve.getLocalization().getCurrentPose()
+            ), 
+            Set.of(swerve)
+        );        
     }
 
     public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {//TODO this method is broken
@@ -146,7 +151,13 @@ public class PathfindingHandler {
     }
     
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
-        return AutopilotDriveToPose.enterAtTargetRotation(swerve, () -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()));
+        return Commands.defer(
+            () -> pathToPoseWithIntermediate(
+                FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()),
+                swerve.getLocalization().getCurrentPose()
+            ), 
+            Set.of(swerve)
+        ); 
     }
 
     public static Command pathToSourceThenCoral(KrakenSwerve swerve, boolean isLeftSource) {
