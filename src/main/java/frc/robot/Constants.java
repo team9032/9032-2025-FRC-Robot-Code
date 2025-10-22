@@ -74,7 +74,7 @@ public final class Constants {
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * kJoystickDeadband) 
-            .withDriveRequestType(DriveRequestType.Velocity)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final boolean kUseAutoIntake = true;
