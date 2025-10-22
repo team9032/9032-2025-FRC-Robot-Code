@@ -25,9 +25,13 @@ import frc.robot.simulation.MapleSimSwerveDrivetrain;
 import frc.robot.utils.ElasticUtil;
 
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Inches;
 import static frc.robot.Constants.PathFollowingConstants.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public class KrakenSwerve extends SubsystemBase {
     private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
@@ -49,11 +53,11 @@ public class KrakenSwerve extends SubsystemBase {
 
         if (RobotBase.isSimulation()) {
             simulatedDrivetrain = new MapleSimSwerveDrivetrain(
-                Pounds.of(115),
-                Inches.of(30),
-                Inches.of(30),
-                DCMotor.getKrakenX60(1),
-                DCMotor.getKrakenX60(1),
+                Pounds.of(150),
+                Inches.of(34),
+                Inches.of(34),
+                DCMotor.getKrakenX60Foc(1),
+                DCMotor.getKrakenX60Foc(1),
                 1.4,
                 drivetrain.getModuleLocations(),
                 drivetrain.getPigeon2(),
@@ -87,12 +91,12 @@ public class KrakenSwerve extends SubsystemBase {
         }
         
         /* Allow drive motor constants to be updated from the dashboard */
-        SmartDashboard.putNumber("Drive kP", 0.0);
-        SmartDashboard.putNumber("Drive kI", 0.0);
-        SmartDashboard.putNumber("Drive kD", 0.0);
-        SmartDashboard.putNumber("Drive kV", 0.0);
-        SmartDashboard.putNumber("Drive kA", 0.0);
-        SmartDashboard.putNumber("Drive kS", 0.0);
+        SmartDashboard.putNumber("Drive kP", driveGains.kP);
+        SmartDashboard.putNumber("Drive kI", driveGains.kI);
+        SmartDashboard.putNumber("Drive kD", driveGains.kD);
+        SmartDashboard.putNumber("Drive kV", driveGains.kV);
+        SmartDashboard.putNumber("Drive kA", driveGains.kA);
+        SmartDashboard.putNumber("Drive kS", driveGains.kS);
 
         SmartDashboard.putData(
             Commands.runOnce(this::updateDriveMotorConstants, this)
@@ -177,5 +181,21 @@ public class KrakenSwerve extends SubsystemBase {
 
     public Rotation2d getOperatorPerspective() {
         return drivetrain.getOperatorForwardDirection();
+    }
+
+    public List<Double> getWheelPositionsRadians() {
+        return Stream.of(drivetrain.getModules())
+            .map((module) ->  module.getDriveMotor().getPosition().getValue().in(Radians) / kDriveGearRatio)
+            .toList();
+    }
+
+    /** In radians */
+    public double getGyroYaw() {
+        return drivetrain.getPigeon2().getYaw().getValue().in(Radians);
+    }
+
+    /** Gets the distance from the center of the swerve to the modules' wheels assuming the drivetrain is square */
+    public double getDrivebaseRadius() {
+        return drivetrain.getModuleLocations()[0].getNorm();
     }
 }

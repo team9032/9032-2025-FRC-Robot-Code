@@ -19,7 +19,7 @@ import frc.robot.utils.CANivoreReader;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
-
+import frc.robot.utils.WheelRadiusFinder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -60,6 +60,9 @@ public class RobotContainer {
     private final Trigger algaeReefIntakeOrNetScore = driveController.b();
     private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
     private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
+
+    private final Trigger reefLevelUp = driveController.rightStick();
+    private final Trigger reefLevelDown = driveController.leftStick();
 
     /* Operator Controller Buttons */
 
@@ -193,12 +196,16 @@ public class RobotContainer {
             )
         );
 
-        intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
+        Command intakeCommand = kUseAutoIntake ? 
+            new RotationalDriveToCoral(krakenSwerve) : 
             new RotationalIntakeDriverAssist(
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 krakenSwerve
-            )
+        );
+
+        intakeDown.debounce(kIntakeDriverAssistStartTime).whileTrue(
+            intakeCommand
             .onlyIf(() -> !endEffector.hasCoral())
         );
 
@@ -214,11 +221,14 @@ public class RobotContainer {
 
         deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
+        reefLevelDown.onTrue(Commands.runOnce(() -> buttonBoard.decrementReefLevel()).ignoringDisable(true));
+        reefLevelUp.onTrue(Commands.runOnce(() -> buttonBoard.incrementReefLevel()).ignoringDisable(true));
+
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
                 compositions.scoreL1(false),
-                compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
+                compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, () -> !alignAndScoreCoralLeft.getAsBoolean(), rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
         alignAndScoreCoralLeft.onTrue(alignAndScoreCoralLeftCommand);
@@ -226,7 +236,7 @@ public class RobotContainer {
         Command alignAndScoreCoralRightCommand = 
             Commands.either(
                 compositions.scoreL1(true),
-                compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, this::driverWantsOverride, rumble()), 
+                compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, () -> !alignAndScoreCoralRight.getAsBoolean(), rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
         alignAndScoreCoralRight.onTrue(alignAndScoreCoralRightCommand);
@@ -376,6 +386,8 @@ public class RobotContainer {
         sysIdQuasistatic.and(sysIdReverse).whileTrue(
             krakenSwerve.runSysIdQuasistatic(Direction.kReverse)
         );
+
+        driveController.a().onTrue(new WheelRadiusFinder(krakenSwerve).findRadius());
     }
 
     /** Use this to pass the autonomous command */

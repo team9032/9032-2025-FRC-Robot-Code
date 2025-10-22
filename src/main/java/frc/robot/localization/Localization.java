@@ -121,6 +121,8 @@ public class Localization {
 
         field.setRobotPose(currentPose);
 
+        SmartDashboard.putNumber("Current Speed", Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond));
+
         /* Predict where the robot will be */
         predictedPose = currentPose.exp(currentVelocity.toTwist2d(kPoseLookaheadTime));
     } 
