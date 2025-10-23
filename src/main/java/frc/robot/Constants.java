@@ -90,7 +90,7 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            3.7,
+            3,//TODO tune
             3.5, 
             3 * Math.PI, 
             4 * Math.PI

@@ -72,14 +72,14 @@ public class Compositions {
     }
 
     private Command placeCoralAndPullAway(Supplier<ReefLevel> reefLevelSup, boolean endPullAway) {
-        return placeCoralOnBranch(reefLevelSup)
-            .alongWith(
-                Commands.sequence(
-                    Commands.waitSeconds(kPullAwayWait),
-                    Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
-                        .deadlineFor(new PullAway(swerve, endPullAway).asProxy())   
-                )
-            );
+        return placeCoralOnBranch(reefLevelSup);//TODO fix pull away
+            // .alongWith(
+            //     Commands.sequence(
+            //         Commands.waitSeconds(kPullAwayWait),
+            //         Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
+            //             .deadlineFor(new PullAway(swerve, endPullAway).asProxy())   
+            //     )
+            // );
     }
 
     public Command alignToReefAndScore(boolean isLeftBranch, Supplier<ReefLevel> reefLevelSup, BooleanSupplier shouldInterrupt, Command rumbleCommand) {
