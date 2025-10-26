@@ -105,14 +105,7 @@ public class RobotContainer {
 
         /* Warm up PathPlanner */
         PathfindingCommand.warmupCommand().schedule();
-        FollowPathCommand.warmupCommand().schedule();
-
-        /* Setup automation */
-        buttonBoard.getAutoIntakeTrigger().onTrue(
-            new RotationalDriveToCoral(krakenSwerve)
-                .alongWith(compositions.intakeCoralToEndEffector())
-            .until(this::driverWantsOverride)
-        );     
+        FollowPathCommand.warmupCommand().schedule(); 
 
         /* Bind Triggers */
         if(kRunSysId)
@@ -149,12 +142,6 @@ public class RobotContainer {
 
         else
             led.setState(State.DISABLED); 
-    }
-
-    private boolean driverWantsOverride() {
-        return Math.abs(driveController.getRightX()) > kOverrideAutomationThreshold || 
-            Math.abs(driveController.getLeftX()) > kOverrideAutomationThreshold ||    
-            Math.abs(driveController.getLeftY()) > kOverrideAutomationThreshold;
     }
 
     private void configureDefaultCommands() {
@@ -245,8 +232,8 @@ public class RobotContainer {
 
         /* Algae cycling commands */
         Command algaeReefIntakeOrNetScoreCommand = Commands.either(
-            compositions.scoreAlgaeInNet(this::driverWantsOverride), 
-            compositions.intakeNearestAlgaeFromReef(this::driverWantsOverride, true), 
+            compositions.scoreAlgaeInNet(() -> !algaeReefIntakeOrNetScore.getAsBoolean()), 
+            compositions.intakeNearestAlgaeFromReef(() -> !algaeReefIntakeOrNetScore.getAsBoolean()), 
             endEffector::hasAlgae
         );
         algaeReefIntakeOrNetScore.onTrue(algaeReefIntakeOrNetScoreCommand);
@@ -255,6 +242,7 @@ public class RobotContainer {
 
         /* Manual Controls:
          * 
+         * Auto Intake (hold) - drive to coral while intaking
          * Manual 1 - eject coral from intake
          * Manual 2 - eject coral from indexer
          * Manual 3 - manual put arm and elevator to reef positions
@@ -269,6 +257,11 @@ public class RobotContainer {
          * Manual 12 - intake down
          * 
         */
+        buttonBoard.getAutoIntakeTrigger().whileTrue(
+            new RotationalDriveToCoral(krakenSwerve)
+                .alongWith(compositions.intakeCoralToEndEffector())
+        );    
+
         buttonBoard.manual1.onTrue(compositions.ejectIntake());
 
         buttonBoard.manual2.onTrue(

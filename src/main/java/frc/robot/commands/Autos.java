@@ -39,7 +39,7 @@ public class Autos {
         return Commands.sequence(
             Commands.waitSeconds(1),
             compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, true),
-            compositions.intakeNearestAlgaeFromReef(() -> false, true),
+            compositions.intakeNearestAlgaeFromReef(() -> false),
             compositions.scoreAlgaeInNet(() -> false),
             Commands.waitSeconds(3.0)//TODO make this drive to a pose
                 .deadlineFor(new PullAway(swerve, true, -1.0).asProxy())

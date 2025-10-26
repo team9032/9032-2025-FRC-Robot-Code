@@ -44,15 +44,15 @@ public class Arm extends SubsystemBase {
         return runOnce(() -> armMotor.setControl(armRequest.withPosition(getPosition())));
     }
     
-    public boolean atL2() {
+    public boolean atL2ScorePos() {
         return atPosition(kArmL2ScorePos);
     }
 
-    public boolean atL3() {
+    public boolean atL3ScorePos() {
         return atPosition(kArmL3ScorePos);
     }
 
-    public boolean atL4() {
+    public boolean atL4ScorePos() {
         return atPosition(kArmL4ScorePos);
     }
 

@@ -145,7 +145,6 @@ public final class Constants {
 
         /* Pull Away */
         public static final double kPullAwayVelocity = 1.0;
-        public static final double kPullAwayWait = 0.1;//Seconds
 
         public static final double kAlgaeIntakeWait = 0.075;
     }
