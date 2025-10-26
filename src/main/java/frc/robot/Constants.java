@@ -542,20 +542,32 @@ public final class Constants {
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(8.0), kLedSpacing)
             .breathe(Seconds.of(2));
 
-        public static final LEDPattern kEnabledPattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kLimeGreen, Color.kDarkGreen)
+        public static final LEDPattern kEnabledL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kWhite, Color.kBlack)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
             .synchronizedBlink(() -> RobotController.getRSLState());
 
-        public static final LEDPattern kL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kBlack)
+        public static final LEDPattern kEnabledL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kYellow, Color.kLightGoldenrodYellow)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kEnabledL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kEnabledL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kBlueViolet)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kScoringL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kBlack)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow)
+        public static final LEDPattern kScoringL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
+        public static final LEDPattern kScoringL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
+        public static final LEDPattern kScoringL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
         public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kDarkBlue, Color.kPurple, Color.kDarkViolet)

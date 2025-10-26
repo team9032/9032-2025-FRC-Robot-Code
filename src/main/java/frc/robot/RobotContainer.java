@@ -61,8 +61,8 @@ public class RobotContainer {
     private final Trigger alignAndScoreCoralLeft = driveController.leftBumper();
     private final Trigger alignAndScoreCoralRight = driveController.rightBumper();
 
-    private final Trigger reefLevelUp = driveController.rightStick();
-    private final Trigger reefLevelDown = driveController.leftStick();
+    private final Trigger reefLevelUp = driveController.rightStick().and(alignAndScoreCoralLeft.or(alignAndScoreCoralRight).negate());
+    private final Trigger reefLevelDown = driveController.leftStick().and(alignAndScoreCoralLeft.or(alignAndScoreCoralRight).negate());
 
     /* Operator Controller Buttons */
 
@@ -210,6 +210,7 @@ public class RobotContainer {
 
         reefLevelDown.onTrue(Commands.runOnce(() -> buttonBoard.decrementReefLevel()).ignoringDisable(true));
         reefLevelUp.onTrue(Commands.runOnce(() -> buttonBoard.incrementReefLevel()).ignoringDisable(true));
+        reefLevelDown.or(reefLevelUp).onTrue(setLEDEnabledState());
 
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
@@ -321,7 +322,7 @@ public class RobotContainer {
         );
 
         enabled.onTrue(
-            led.setStateCommand(State.ENABLED)
+            led.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel)
         );
 
         disabled.onTrue(
@@ -332,22 +333,17 @@ public class RobotContainer {
     private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
 
-        coralCyclingCommandScheduled.onTrue(led.setStateFromReefLevel(buttonBoard::getSelectedReefLevel));
-        coralCyclingCommandScheduled.onFalse(
-            Commands.either(
-                led.setStateCommand(State.ENABLED), 
-                led.setStateCommand(State.DISABLED),
-                enabled
-            )
-        );
-
+        coralCyclingCommandScheduled.onTrue(led.setScoringStateFromReefLevel(buttonBoard::getSelectedReefLevel));
+        coralCyclingCommandScheduled.onFalse(setLEDEnabledState());
         algaeCyclingCommandScheduled.onTrue(led.setStateCommand(State.ALGAE));
-        algaeCyclingCommandScheduled.onFalse(
-            Commands.either(
-                led.setStateCommand(State.ENABLED), 
-                led.setStateCommand(State.DISABLED),
-                enabled
-            )
+        algaeCyclingCommandScheduled.onFalse(setLEDEnabledState());
+    }
+
+    private Command setLEDEnabledState() {
+        return Commands.either(
+            led.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel), 
+            led.setStateCommand(State.DISABLED),
+            enabled
         );
     }
 

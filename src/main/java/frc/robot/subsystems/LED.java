@@ -19,11 +19,14 @@ public class LED extends SubsystemBase {
         LOW_BATTERY(kBatteryLowPattern),
         BOOTING(kBootingUp),
         DISABLED(kDisabledPattern),
-        ENABLED(kEnabledPattern),
-        L1(kL1Pattern),
-        L2(kL2Pattern),
-        L3(kL3Pattern),
-        L4(kL4Pattern),
+        ENABLED_L1(kEnabledL1Pattern),
+        ENABLED_L2(kEnabledL2Pattern),
+        ENABLED_L3(kEnabledL3Pattern),
+        ENABLED_L4(kEnabledL4Pattern),
+        SCORING_L1(kScoringL1Pattern),
+        SCORING_L2(kScoringL2Pattern),
+        SCORING_L3(kScoringL3Pattern),
+        SCORING_L4(kScoringL4Pattern),
         ALGAE(kAlgaePattern),
         ERROR(kError),
         CLIMBING(kClimbing);
@@ -73,14 +76,27 @@ public class LED extends SubsystemBase {
         hasError = true;
     }
 
-    public Command setStateFromReefLevel(Supplier<ReefLevel> reefLevelSup) {
+    public Command setEnabledStateFromReefLevel(Supplier<ReefLevel> reefLevelSup) {
         return new SelectCommand<ReefLevel>(
             Map.ofEntries (
                 Map.entry(ReefLevel.NONE, Commands.none()),
-                Map.entry(ReefLevel.L1, setStateCommand(State.L1)),
-                Map.entry(ReefLevel.L2, setStateCommand(State.L2)),
-                Map.entry(ReefLevel.L3, setStateCommand(State.L3)),
-                Map.entry(ReefLevel.L4, setStateCommand(State.L4))
+                Map.entry(ReefLevel.L1, setStateCommand(State.ENABLED_L1)),
+                Map.entry(ReefLevel.L2, setStateCommand(State.ENABLED_L2)),
+                Map.entry(ReefLevel.L3, setStateCommand(State.ENABLED_L3)),
+                Map.entry(ReefLevel.L4, setStateCommand(State.ENABLED_L4))
+            ),
+            reefLevelSup
+        );
+    } 
+
+    public Command setScoringStateFromReefLevel(Supplier<ReefLevel> reefLevelSup) {
+        return new SelectCommand<ReefLevel>(
+            Map.ofEntries (
+                Map.entry(ReefLevel.NONE, Commands.none()),
+                Map.entry(ReefLevel.L1, setStateCommand(State.SCORING_L1)),
+                Map.entry(ReefLevel.L2, setStateCommand(State.SCORING_L2)),
+                Map.entry(ReefLevel.L3, setStateCommand(State.SCORING_L3)),
+                Map.entry(ReefLevel.L4, setStateCommand(State.SCORING_L4))
             ),
             reefLevelSup
         );
