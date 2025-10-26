@@ -90,8 +90,8 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            3,//TODO tune
-            3.5, 
+            4,//TODO tune
+            4, 
             3 * Math.PI, 
             4 * Math.PI
         );
@@ -233,8 +233,7 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
-        public static final int kFrontElevatorID = 13; 
-        public static final int kBackElevatorID = 14; 
+        public static final int kFrontElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicExpo_kV(0.2)
@@ -243,15 +242,16 @@ public final class Constants {
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(13)
+            .withKP(30)
             .withKD(1)
-            .withKV(0.6)
-            .withKG(0.4)
+            .withKV(0.775)
+            .withKA(0)
+            .withKG(0.8)
             .withGravityType(kElevatorGravityType);
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(120);
+            .withSupplyCurrentLimit(70)
+            .withStatorCurrentLimit(200);
 
         public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(5.0);
@@ -266,7 +266,7 @@ public final class Constants {
             .withMotorOutput(
                 new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive))
+                .withInverted(InvertedValue.CounterClockwise_Positive))
             .withMotionMagic(kElevatorMotionMagicConfig)
             .withSlot0(kElevatorPIDConfig)
             .withCurrentLimits(kElevatorCurrentLimits)
@@ -554,7 +554,7 @@ public final class Constants {
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
             .synchronizedBlink(() -> RobotController.getRSLState());
 
-        public static final LEDPattern kEnabledL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kBlueViolet)
+        public static final LEDPattern kEnabledL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kBlue, Color.kAquamarine)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
             .synchronizedBlink(() -> RobotController.getRSLState());
 
@@ -567,7 +567,7 @@ public final class Constants {
         public static final LEDPattern kScoringL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kScoringL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
+        public static final LEDPattern kScoringL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlue, Color.kAquamarine)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
         public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kDarkBlue, Color.kPurple, Color.kDarkViolet)

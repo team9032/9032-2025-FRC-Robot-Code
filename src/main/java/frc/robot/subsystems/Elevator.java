@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -25,24 +24,17 @@ import java.util.function.Supplier;
 
 public class Elevator extends SubsystemBase {
     private final TalonFX elevatorMotor;
-    private final TalonFX elevatorMotorFollower;
 
     private final MotionMagicExpoVoltage motionMagic = new MotionMagicExpoVoltage(0);
-    private final Follower followerMotorControl;
     private final StatusSignal<Angle> elevatorPosSignal;
 
     public Elevator() {
-        //The leader of a follower cannot have its bus utilization optimized
         elevatorMotor = new TalonFX(kFrontElevatorID, kCANBusName);
+        
         elevatorPosSignal = elevatorMotor.getPosition();
         elevatorPosSignal.setUpdateFrequency(100);
+
         ElasticUtil.checkStatus(elevatorMotor.getConfigurator().apply(kElevatorConfig));
-
-        elevatorMotorFollower = new TalonFX(kBackElevatorID, kCANBusName);
-        ElasticUtil.checkStatus(elevatorMotorFollower.getConfigurator().apply(kElevatorConfig));
-
-        followerMotorControl = new Follower(elevatorMotor.getDeviceID(), true);
-        elevatorMotorFollower.setControl(followerMotorControl);
     }
 
     private void moveElevator(double pos) {
