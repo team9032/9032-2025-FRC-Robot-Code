@@ -38,6 +38,10 @@ public class PathfindingHandler {
     }
 
     private static PathPlannerPath getPathWithIntermediate(Pose2d endPose, Pose2d startPose) {
+        /* Don't use intermediate waypoint when close */
+        if (startPose.getTranslation().getDistance(endPose.getTranslation()) < kIntermediateStartDistance)
+            return getPath(endPose, startPose);
+
         var intermediatePose = endPose.transformBy(kIntermediatePointOffset);
 
         var directionToIntermediate = startPose.getTranslation().minus(intermediatePose.getTranslation()).getAngle().plus(Rotation2d.k180deg);

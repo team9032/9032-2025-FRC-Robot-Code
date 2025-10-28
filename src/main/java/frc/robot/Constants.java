@@ -102,6 +102,7 @@ public final class Constants {
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
         public static final Transform2d kIntermediatePointOffset = new Transform2d(Units.inchesToMeters(16), 0, Rotation2d.kZero);
+        public static final double kIntermediateStartDistance = Units.inchesToMeters(30);
 
         /* Drive to pose constants */
         public static final double kAlignmentXYkP = 10.0;

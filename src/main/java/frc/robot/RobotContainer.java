@@ -64,9 +64,6 @@ public class RobotContainer {
     private final Trigger reefLevelUp = driveController.rightStick().and(alignAndScoreCoralLeft.or(alignAndScoreCoralRight).negate());
     private final Trigger reefLevelDown = driveController.leftStick().and(alignAndScoreCoralLeft.or(alignAndScoreCoralRight).negate());
 
-    /* Operator Controller Buttons */
-
-
     /* Subsystems */
     private final LED led = new LED();
     private final Intake intake = new Intake();
