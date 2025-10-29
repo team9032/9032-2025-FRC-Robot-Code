@@ -73,7 +73,7 @@ public class Compositions {
     }
 
     private Command placeCoralAndPullAway(Supplier<ReefLevel> reefLevelSup, boolean endPullAway) {
-        return placeCoralOnBranch(reefLevelSup)//TODO test pull away
+        return placeCoralOnBranch(reefLevelSup)
             .alongWith(
                 Commands.sequence(
                     Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToPullAway(reefLevelSup.get())),

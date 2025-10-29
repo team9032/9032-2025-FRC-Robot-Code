@@ -88,7 +88,7 @@ public class Localization {
      *  then adds the result of the photonPoseEstimator to the swerve one. 
      *  For object tracking, gets the latest object tracking results from each camera, estimates the objects position on the field, and updates the list of tracked objects.
      *  Call this method once every loop. */
-    public void updateLocalization() {
+    public void updateLocalization() {//TODO remove excessive tracked objects
         /* Update all pose estimation cameras */
         for (LocalizationCamera camera : localizationCameras) {
             camera.addResultsToDrivetrain(drivetrain, field);
