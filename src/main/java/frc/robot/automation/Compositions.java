@@ -39,9 +39,9 @@ public class Compositions {
     public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
         return Commands.sequence(
             Commands.print("Getting coral from source"),
-            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
+            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource).asProxy(),
             Commands.print("Pathing to reef branch after source coral"),
-            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
         )                
         .alongWith(
             Commands.sequence(

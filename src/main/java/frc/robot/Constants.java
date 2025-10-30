@@ -82,7 +82,7 @@ public final class Constants {
 
     public static class PathFollowingConstants {
         /* Pathplanner constants */
-        public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
+        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
         public static final ApplyRobotSpeeds kRobotRelativeClosedLoopDriveRequest = new ApplyRobotSpeeds()
