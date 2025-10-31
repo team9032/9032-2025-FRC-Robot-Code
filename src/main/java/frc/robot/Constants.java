@@ -213,11 +213,11 @@ public final class Constants {
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
-            // new CameraConstants("BackRightCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
-            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-            //     false
-            // ),
+            new CameraConstants("BackRightCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-3.25),Units.inchesToMeters(-13.8125),Units.inchesToMeters(11.625)),
+                new Rotation3d(0,Units.degreesToRadians(-10),Math.PI)),
+                false
+            ),
             // new CameraConstants("GroundCamera", new Transform3d(
             //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
             //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
