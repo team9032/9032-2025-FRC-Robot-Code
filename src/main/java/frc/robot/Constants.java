@@ -279,7 +279,7 @@ public final class Constants {
 
         public static final double kElevatorL1 = 3.1;
         public static final double kElevatorL2 = 1.3;
-        public static final double kElevatorL3 = 3.7;
+        public static final double kElevatorL3 = 3.6;
         public static final double kElevatorL4 = 6.7;
         public static final double kElevatorLowAlgae = 3.5;
         public static final double kElevatorHighAlgae = 5.7;
@@ -494,12 +494,14 @@ public final class Constants {
         public static final double kProcessorOuttakePower = 1.0;
         public static final double kNetOuttakePower = 1.0;
 
-        public static final double kCoralOuttakePower = 0.3;
-        public static final double kCoralOuttakeToL4Power = 0.75;
         public static final double kCoralOuttakeToTroughPower = 0.5;
+        public static final double kCoralOuttakeToL2Power = 0.3;
+        public static final double kCoralOuttakeToL3Power = 0.3;
+        public static final double kCoralOuttakeToL4Power = 0.75;
 
-        public static final double kCoralOuttakeWait = 0.1;
-        public static final double kCoralOuttakeWaitToTrough = 0.5;
+        public static final double kCoralOuttakeWaitToTrough = 0.5;        
+        public static final double kCoralOuttakeWaitToL2 = 0.1;
+        public static final double kCoralOuttakeWaitToL3 = 0.1;
         public static final double kCoralOuttakeWaitToL4 = 0.1;
         public static final double kAlgaeOuttakeWait = 0.5;
 

@@ -48,18 +48,26 @@ public class EndEffector extends SubsystemBase {
             Map.ofEntries (
                 Map.entry(ReefLevel.NONE, Commands.none()),
                 Map.entry(ReefLevel.L1, Commands.none()),
-                Map.entry(ReefLevel.L2, placeCoralOnMiddleBranch()),
-                Map.entry(ReefLevel.L3, placeCoralOnMiddleBranch()),
+                Map.entry(ReefLevel.L2, placeCoralOnL2()),
+                Map.entry(ReefLevel.L3, placeCoralOnL3()),
                 Map.entry(ReefLevel.L4, placeCoralOnL4())
             ),
             reefLevelSup
         );
     }
 
-    private Command placeCoralOnMiddleBranch() {
+    private Command placeCoralOnL2() {
         return Commands.sequence(
-            setRollerMotorPower(kCoralOuttakePower),
-            Commands.waitSeconds(kCoralOuttakeWait),
+            setRollerMotorPower(kCoralOuttakeToL2Power),
+            Commands.waitSeconds(kCoralOuttakeWaitToL2),
+            setRollerMotorPower(0.0)
+        );
+    }
+
+    private Command placeCoralOnL3() {
+        return Commands.sequence(
+            setRollerMotorPower(kCoralOuttakeToL3Power),
+            Commands.waitSeconds(kCoralOuttakeWaitToL3),
             setRollerMotorPower(0.0)
         );
     }
