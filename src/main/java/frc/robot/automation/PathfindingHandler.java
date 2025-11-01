@@ -12,8 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.DriveToMovingPose;
-import frc.robot.commands.DriveToPose;
+import frc.robot.commands.SimpleDriveToPose;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -137,7 +136,7 @@ public class PathfindingHandler {
     }
 
     public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {//TODO this method is broken
-        return new DriveToMovingPose(swerve, () -> getCoralAlignmentPose(swerve));
+        return new SimpleDriveToPose(swerve, getCoralAlignmentPose(swerve));
     }
 
     public static Command pathToBarge(KrakenSwerve swerve) {
@@ -152,13 +151,13 @@ public class PathfindingHandler {
         return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
     }
 
-    public static Command pathToReefBranchOffset(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationOffsetFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
+    public static Command pathToOffsetReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
+        return pathToPoseWithIntermediate(() -> FieldUtil.getOffsetReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
     }
 
-    public static Command pathToReefBranchOffsetFinal(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
+    public static Command simpleDriveToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
         return Commands.defer(
-            () -> new DriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)),
+            () -> new SimpleDriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)),
             Set.of(swerve)
         );
     }

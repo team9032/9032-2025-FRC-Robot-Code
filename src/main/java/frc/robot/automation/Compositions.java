@@ -41,7 +41,7 @@ public class Compositions {
             Commands.print("Getting coral from source"),
             PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource).asProxy(),
             Commands.print("Pathing to reef branch after source coral"),
-            PathfindingHandler.pathToReefBranchOffset(reefTagID, swerve, isLeftBranch).asProxy()
+            PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
         )                
         .alongWith(
             Commands.sequence(
@@ -52,7 +52,7 @@ public class Compositions {
             )
         )
         .andThen(
-            PathfindingHandler.pathToReefBranchOffsetFinal(reefTagID, swerve, isLeftBranch).asProxy(),
+            PathfindingHandler.simpleDriveToReefBranch(reefTagID, swerve, isLeftBranch).asProxy(),
             placeCoralAndPullAway(() -> reefLevel, false)
         );
     }

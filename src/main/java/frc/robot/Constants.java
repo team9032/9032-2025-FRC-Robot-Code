@@ -129,6 +129,7 @@ public final class Constants {
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
         public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
+        public static final Transform2d kBackwardsScoringOffset = new Transform2d(Units.inchesToMeters(6.0), 0, Rotation2d.kZero);
 
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = 1.8;
