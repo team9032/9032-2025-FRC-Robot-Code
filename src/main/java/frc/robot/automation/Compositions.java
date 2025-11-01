@@ -41,7 +41,7 @@ public class Compositions {
             Commands.print("Getting coral from source"),
             PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource).asProxy(),
             Commands.print("Pathing to reef branch after source coral"),
-            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
+            PathfindingHandler.pathToReefBranchOffset(reefTagID, swerve, isLeftBranch).asProxy()
         )                
         .alongWith(
             Commands.sequence(
@@ -51,7 +51,10 @@ public class Compositions {
                 Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevel))
             )
         )
-        .andThen(placeCoralAndPullAway(() -> reefLevel, false));
+        .andThen(
+            PathfindingHandler.pathToReefBranchOffsetFinal(reefTagID, swerve, isLeftBranch).asProxy(),
+            placeCoralAndPullAway(() -> reefLevel, false)
+        );
     }
 
     public Command alignToReefAndScoreAutoPreload(int reefTagID, boolean isLeftBranch, ReefLevel reefLevel, boolean endPullAway) {

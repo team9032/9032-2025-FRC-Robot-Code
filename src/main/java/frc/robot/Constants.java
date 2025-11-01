@@ -90,8 +90,8 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
-            4,//TODO tune
-            4, 
+            3.7,
+            3.5, 
             3 * Math.PI, 
             4 * Math.PI
         );
@@ -441,8 +441,8 @@ public final class Constants {
         public static final int kClimberIntakeID = 33;
 
         public static final double kClimberStowPos = 0.11;
-        public static final double kClimberCageIntakePos = 0.19;
-        public static final double kClimberClimbPos = -0.085;
+        public static final double kClimberCageIntakePos = 0.18;
+        public static final double kClimberClimbPos = -0.09;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(10000)
@@ -464,7 +464,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.25)
-            .withReverseSoftLimitThreshold(-0.1);
+            .withReverseSoftLimitThreshold(-0.12);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)

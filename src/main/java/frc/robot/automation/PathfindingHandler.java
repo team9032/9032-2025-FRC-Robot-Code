@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToMovingPose;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -129,7 +130,7 @@ public class PathfindingHandler {
         /* If no coral is seen, maintain the current pose */
         else    
             return swerve.getLocalization().getCurrentPose();
-    }
+    } 
 
     public static Command pathToNearestCoral(KrakenSwerve swerve) {
         return pathToPose(() -> getCoralAlignmentPose(swerve), swerve); 
@@ -149,6 +150,17 @@ public class PathfindingHandler {
 
     public static Command pathToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
         return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
+    }
+
+    public static Command pathToReefBranchOffset(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
+        return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationOffsetFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
+    }
+
+    public static Command pathToReefBranchOffsetFinal(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
+        return Commands.defer(
+            () -> new DriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)),
+            Set.of(swerve)
+        );
     }
 
     public static PathPlannerPath getReefBranchPath(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch, Pose2d startPose) {

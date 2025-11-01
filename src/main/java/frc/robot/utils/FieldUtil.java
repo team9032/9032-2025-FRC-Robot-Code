@@ -19,7 +19,10 @@ import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
 import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.localization.Localization;
@@ -133,5 +136,16 @@ public class FieldUtil {
 
         else 
             return tagPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
+    }   
+
+    public static Pose2d getReefScoringLocationOffsetFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
+        var tagPose = flipPoseIfNeeded(localization.getTagPose(tagID));
+
+        /* Invert direction on the back reef faces so the perspective makes sense */
+        if (tagID >= kBackReefTagsStartingID)
+            return tagPose.transformBy(isLeftBranch ? kRightScoringOffset : kLeftScoringOffset).transformBy(new Transform2d(Units.inchesToMeters(6.0), 0, Rotation2d.kZero));
+
+        else 
+            return tagPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset).transformBy(new Transform2d(Units.inchesToMeters(6.0), 0, Rotation2d.kZero));
     }   
 }
