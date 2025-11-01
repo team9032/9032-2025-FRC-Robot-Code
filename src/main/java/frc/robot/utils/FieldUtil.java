@@ -93,6 +93,12 @@ public class FieldUtil {
         return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID);
     } 
 
+    public static Pose2d getClosestOffsetReefScoringLocation(Localization localization, boolean isLeftBranch) {
+        var tagID = getClosestReefTagID(localization);
+        
+        return getOffsetReefScoringLocationFromTagID(localization, isLeftBranch, tagID);
+    } 
+
     public static Pose2d getClosestReefAlgaeIntakeLocation(Localization localization) {
         var closestPose = flipPoseIfNeeded(localization.getTagPose(getClosestReefTagID(localization)));
 

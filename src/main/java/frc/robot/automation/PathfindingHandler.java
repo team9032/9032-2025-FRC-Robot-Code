@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,7 +38,7 @@ public class PathfindingHandler {
         }
     }
 
-    private static PathPlannerPath getPathWithIntermediate(Pose2d endPose, Pose2d startPose) {
+    private static PathPlannerPath getPathWithIntermediate(Pose2d endPose, Pose2d startPose, boolean slow) {
         /* Don't use intermediate waypoint when close */
         if (startPose.getTranslation().getDistance(endPose.getTranslation()) < kIntermediateStartDistance)
             return getPath(endPose, startPose);
@@ -56,7 +57,7 @@ public class PathfindingHandler {
 
         var path = new PathPlannerPath(
             waypoints, 
-            kDynamicPathConstraints, 
+            slow ? new PathConstraints(2, 3, 3 * Math.PI, 4 * Math.PI) : kDynamicPathConstraints, 
             null, 
             new GoalEndState(0, endPose.getRotation())
         );
@@ -65,12 +66,13 @@ public class PathfindingHandler {
         return path;
     }
 
-    private static Command pathToPoseWithIntermediate(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve) {
+    private static Command pathToPoseWithIntermediate(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve, boolean slow) {
         return Commands.defer(
             () -> AutoBuilder.followPath(
                 getPathWithIntermediate(
                     endPoseSup.get(),
-                    swerve.getLocalization().getCurrentPose()
+                    swerve.getLocalization().getCurrentPose(),
+                    slow
                 )
             ),
             Set.of(swerve)
@@ -144,20 +146,30 @@ public class PathfindingHandler {
     }
 
     public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch), swerve);
+        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch), swerve, true);
+    }
+
+    public static Command pathToClosestOffsetReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
+        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestOffsetReefScoringLocation(swerve.getLocalization(), isLeftBranch), swerve, true);
     }
 
     public static Command pathToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
+        return pathToPoseWithIntermediate(() -> FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve, true);
     }
 
     public static Command pathToOffsetReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getOffsetReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
+        return pathToPoseWithIntermediate(() -> FieldUtil.getOffsetReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve, false);
     }
 
     public static Command simpleDriveToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
         return Commands.defer(
             () -> new SimpleDriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)),
+            Set.of(swerve)
+        );
+    }
+    public static Command simpleDriveClosestToReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
+        return Commands.defer(
+            () -> new SimpleDriveToPose(swerve, FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch)),
             Set.of(swerve)
         );
     }
@@ -167,7 +179,7 @@ public class PathfindingHandler {
     }
     
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()), swerve);
+        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()), swerve, false);
     }
 
     public static Command pathToSourceThenCoral(KrakenSwerve swerve, boolean isLeftSource) {

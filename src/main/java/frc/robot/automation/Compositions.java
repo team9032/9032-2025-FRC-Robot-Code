@@ -90,7 +90,11 @@ public class Compositions {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring"),
             endEffector.startRollersForPickup(),
-            PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy()
+            Commands.either(
+                PathfindingHandler.pathToClosestOffsetReefBranch(swerve, isLeftBranch).asProxy(), 
+                PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy(), 
+                () -> reefLevelSup.get().equals(ReefLevel.L4)
+            )               
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     elevatorArmIntakeHandler.moveToStowPositions()
@@ -100,6 +104,8 @@ public class Compositions {
                         ) 
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
+            PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch).asProxy()
+                .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             placeCoralAndPullAway(reefLevelSup, true),
             rumbleCommand
         )

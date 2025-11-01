@@ -105,7 +105,7 @@ public final class Constants {
         public static final double kIntermediateStartDistance = Units.inchesToMeters(30);
 
         /* Drive to pose constants */
-        public static final double kAlignmentXYkP = 10.0;
+        public static final double kAlignmentXYkP = 7.0;
         public static final double kAlignmentXYkD = 0.1;
         
         public static final double kAlignmentRotkP = 8.0;
