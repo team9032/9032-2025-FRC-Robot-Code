@@ -255,40 +255,40 @@ public class RobotContainer {
          * Manual 12 - intake down
          * 
         */
-        // buttonBoard.getAutoIntakeTrigger().whileTrue(
-        //     new RotationalDriveToCoral(krakenSwerve)
-        //         .alongWith(compositions.intakeCoralToEndEffector())
-        // );    
+        buttonBoard.getAutoIntakeTrigger().whileTrue(
+            new RotationalDriveToCoral(krakenSwerve)
+                .alongWith(compositions.intakeCoralToEndEffector())
+        );    
 
-        // buttonBoard.manual1.onTrue(compositions.ejectIntake());
+        buttonBoard.manual1.onTrue(compositions.ejectIntake());
 
-        // buttonBoard.manual2.onTrue(
-        //     Commands.sequence(
-        //         intake.returnToStowPosition(),
-        //         Commands.waitSeconds(0.5),
-        //         transfer.eject()
-        //     )
-        // );
+        buttonBoard.manual2.onTrue(
+            Commands.sequence(
+                intake.returnToStowPosition(),
+                Commands.waitSeconds(0.5),
+                transfer.eject()
+            )
+        );
 
-        // buttonBoard.manual3.onTrue(elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel));
+        buttonBoard.manual3.onTrue(elevatorArmIntakeHandler.prepareForBranchCoralScoring(buttonBoard::getSelectedReefLevel));
 
-        // buttonBoard.manual4.onTrue(endEffector.startRollersForPickup());
+        buttonBoard.manual4.onTrue(endEffector.startRollersForPickup());
 
-        // buttonBoard.manual5.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+        buttonBoard.manual5.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
-        // buttonBoard.manual6.onTrue(compositions.placeCoralOnBranch(buttonBoard::getSelectedReefLevel));
+        buttonBoard.manual6.onTrue(compositions.placeCoralOnBranch(buttonBoard::getSelectedReefLevel));
 
-        // buttonBoard.manual7.onTrue(compositions.cancelClimbAndStow());
+        buttonBoard.manual7.onTrue(compositions.cancelClimbAndStow());
 
-        // buttonBoard.manual8.onTrue(compositions.cancelIntake());
+        buttonBoard.manual8.onTrue(compositions.cancelIntake());
 
-        // buttonBoard.manual9.onTrue(endEffector.outtakeProcessorAlgae());
+        buttonBoard.manual9.onTrue(endEffector.outtakeProcessorAlgae());
 
-        // buttonBoard.manual10.onTrue(elevatorArmIntakeHandler.prepareForNetAlgaeScoring());
+        buttonBoard.manual10.onTrue(elevatorArmIntakeHandler.prepareForNetAlgaeScoring());
 
-        // buttonBoard.manual11.onTrue(compositions.intakeGroundAlgae());
+        buttonBoard.manual11.onTrue(compositions.intakeGroundAlgae());
 
-        // buttonBoard.manual12.onTrue(compositions.intakeCoralToEndEffector());
+        buttonBoard.manual12.onTrue(compositions.intakeCoralToEndEffector());
     }
 
     /** Runs every loop cycle */

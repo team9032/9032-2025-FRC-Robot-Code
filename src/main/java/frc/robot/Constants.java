@@ -62,7 +62,6 @@ public final class Constants {
         public static final int kDriveControllerPort = 0;
         public static final double kRumbleTime = 0.3;
 
-        public static final double kOverrideAutomationThreshold = 0.1;
         public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
         public static final double kHasCoralDebounceTime = 0.1;//Seconds 
 
@@ -70,7 +69,6 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public static final double kJoystickDeadband = 0.01;//Percent of velocity
-        public static final double kNoHeadingCorrectionRotRate = Math.PI / 4.0;//Radians / second
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * kJoystickDeadband) 
@@ -89,10 +87,17 @@ public final class Constants {
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
+        public static final PathConstraints kNormalPathConstraints = new PathConstraints(
             3.7,
             3.5, 
             3 * Math.PI, 
+            4 * Math.PI
+        );
+
+        public static final PathConstraints kSlowPathConstraints = new PathConstraints(
+            2, 
+            3, 
+            3 * Math.PI,
             4 * Math.PI
         );
 
@@ -502,6 +507,7 @@ public final class Constants {
         public static final double kCoralOuttakeWaitToTrough = 0.5;        
         public static final double kCoralOuttakeWaitToL2 = 0.1;
         public static final double kCoralOuttakeWaitToL3 = 0.1;
+        public static final double kCoralOuttakeWaitBeforeL4 = 0.05;
         public static final double kCoralOuttakeWaitToL4 = 0.1;
         public static final double kAlgaeOuttakeWait = 0.5;
 

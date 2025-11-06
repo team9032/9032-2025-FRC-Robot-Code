@@ -83,7 +83,7 @@ public class EndEffector extends SubsystemBase {
     private Command placeCoralOnL4() {
         return Commands.sequence(
             setRollerMotorPower(0.0),
-            Commands.waitSeconds(0.05),
+            Commands.waitSeconds(kCoralOuttakeWaitBeforeL4),
             setRollerMotorPower(kCoralOuttakeToL4Power),
             Commands.waitSeconds(kCoralOuttakeWaitToL4),
             setRollerMotorPower(0.0)

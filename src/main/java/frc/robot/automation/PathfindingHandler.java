@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,7 +29,7 @@ public class PathfindingHandler {
             if (mirror)
                 pathToFollow = pathToFollow.mirrorPath();
 
-            return AutoBuilder.pathfindThenFollowPath(pathToFollow, kDynamicPathConstraints);
+            return AutoBuilder.pathfindThenFollowPath(pathToFollow, kNormalPathConstraints);
         } catch (Exception e) {
             ElasticUtil.sendError("Path " + pathName + " failed to load!", "Autos will not work");
 
@@ -57,7 +56,7 @@ public class PathfindingHandler {
 
         var path = new PathPlannerPath(
             waypoints, 
-            slow ? new PathConstraints(2, 3, 3 * Math.PI, 4 * Math.PI) : kDynamicPathConstraints, 
+            slow ? kSlowPathConstraints : kNormalPathConstraints, 
             null, 
             new GoalEndState(0, endPose.getRotation())
         );
@@ -89,7 +88,7 @@ public class PathfindingHandler {
 
         var path = new PathPlannerPath(
             waypoints, 
-            kDynamicPathConstraints, 
+            kNormalPathConstraints, 
             null, 
             new GoalEndState(0, endPose.getRotation())
         );
