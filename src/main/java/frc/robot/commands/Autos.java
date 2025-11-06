@@ -17,7 +17,7 @@ public class Autos {
             /* Get and score coral 3 */
             compositions.getCoralFromSourceThenScore(19, false, true, ReefLevel.L4),
             /* Get and score coral 4 */
-            compositions.getCoralFromSourceThenScore(18, true, true, ReefLevel.L4)
+            compositions.getCoralFromSourceThenScore(18, true, true, ReefLevel.L2)
         );
     }
 
@@ -31,7 +31,7 @@ public class Autos {
             /* Get and score coral 3 */
             compositions.getCoralFromSourceThenScore(17, true, false, ReefLevel.L4),
             /* Get and score coral 4 */
-            compositions.getCoralFromSourceThenScore(18, false, false, ReefLevel.L4)
+            compositions.getCoralFromSourceThenScore(18, false, false, ReefLevel.L2)
         );
     }
 
@@ -39,7 +39,7 @@ public class Autos {
         return Commands.sequence(
             Commands.waitSeconds(1),
             compositions.alignToReefAndScoreAutoPreload(21, true, ReefLevel.L4, true),
-            compositions.intakeNearestAlgaeFromReef(() -> false, true),
+            compositions.intakeNearestAlgaeFromReef(() -> false),
             compositions.scoreAlgaeInNet(() -> false),
             Commands.waitSeconds(3.0)//TODO make this drive to a pose
                 .deadlineFor(new PullAway(swerve, true, -1.0).asProxy())

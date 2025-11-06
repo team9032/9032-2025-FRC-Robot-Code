@@ -28,7 +28,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import com.therekrab.autopilot.APConstraints;
 
 //import harshil.pande.TigerConstants;
 //import evilharshel.pandez.EvilTigerConstantz.*;
@@ -63,7 +62,6 @@ public final class Constants {
         public static final int kDriveControllerPort = 0;
         public static final double kRumbleTime = 0.3;
 
-        public static final double kOverrideAutomationThreshold = 0.1;
         public static final double kIntakeDriverAssistStartTime = 0.25;//Seconds 
         public static final double kHasCoralDebounceTime = 0.1;//Seconds 
 
@@ -71,7 +69,6 @@ public final class Constants {
         public static final double kRotationRate = 4 * Math.PI;
 
         public static final double kJoystickDeadband = 0.01;//Percent of velocity
-        public static final double kNoHeadingCorrectionRotRate = Math.PI / 4.0;//Radians / second
 
         public final static FieldCentric kDriveRequest = new FieldCentric()
             .withDeadband(kMaxSpeed * kJoystickDeadband) 
@@ -83,17 +80,24 @@ public final class Constants {
 
     public static class PathFollowingConstants {
         /* Pathplanner constants */
-        public static final PIDConstants kTranslationPID = new PIDConstants(10.0);
+        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);
         public static final PIDConstants kRotationPID = new PIDConstants(7.0);
 
         public static final ApplyRobotSpeeds kRobotRelativeClosedLoopDriveRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-        public static final PathConstraints kDynamicPathConstraints = new PathConstraints(
+        public static final PathConstraints kNormalPathConstraints = new PathConstraints(
             3.7,
             3.5, 
             3 * Math.PI, 
+            4 * Math.PI
+        );
+
+        public static final PathConstraints kSlowPathConstraints = new PathConstraints(
+            2, 
+            3, 
+            3 * Math.PI,
             4 * Math.PI
         );
 
@@ -102,8 +106,11 @@ public final class Constants {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
+        public static final Transform2d kIntermediatePointOffset = new Transform2d(Units.inchesToMeters(16), 0, Rotation2d.kZero);
+        public static final double kIntermediateStartDistance = Units.inchesToMeters(30);
+
         /* Drive to pose constants */
-        public static final double kAlignmentXYkP = 10.0;
+        public static final double kAlignmentXYkP = 7.0;
         public static final double kAlignmentXYkD = 0.1;
         
         public static final double kAlignmentRotkP = 8.0;
@@ -114,10 +121,6 @@ public final class Constants {
 
         public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
-
-        /* Autopilot constants */
-        public static final Distance kBeelineRadius = Inches.of(4);
-        public static final APConstraints kAPConstraints = new APConstraints(4, 3, 40);//TODO tune
 
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
@@ -131,6 +134,7 @@ public final class Constants {
         /* Scoring offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
         public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
+        public static final Transform2d kBackwardsScoringOffset = new Transform2d(Units.inchesToMeters(6.0), 0, Rotation2d.kZero);
 
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = 1.8;
@@ -148,7 +152,6 @@ public final class Constants {
 
         /* Pull Away */
         public static final double kPullAwayVelocity = 1.0;
-        public static final double kPullAwayWait = 0.1;//Seconds
 
         public static final double kAlgaeIntakeWait = 0.075;
     }
@@ -216,11 +219,11 @@ public final class Constants {
                new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
                false
             ),
-            // new CameraConstants("BackRightCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-0.25),Units.inchesToMeters(-13.5625),Units.inchesToMeters(7.875)),
-            //     new Rotation3d(0,Units.degreesToRadians(-20),Math.PI)),
-            //     false
-            // ),
+            new CameraConstants("BackRightCamera", new Transform3d(
+                new Translation3d(Units.inchesToMeters(-3.25),Units.inchesToMeters(-13.8125),Units.inchesToMeters(11.625)),
+                new Rotation3d(0,Units.degreesToRadians(-10),Math.PI)),
+                false
+            ),
             // new CameraConstants("GroundCamera", new Transform3d(
             //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
             //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
@@ -237,8 +240,7 @@ public final class Constants {
     }
 
     public static class ElevatorConfigs {
-        public static final int kFrontElevatorID = 13; 
-        public static final int kBackElevatorID = 14; 
+        public static final int kFrontElevatorID = 14; 
 
         private static final MotionMagicConfigs kElevatorMotionMagicConfig = new MotionMagicConfigs()
             .withMotionMagicExpo_kV(0.2)
@@ -247,15 +249,16 @@ public final class Constants {
         public static final GravityTypeValue kElevatorGravityType = GravityTypeValue.Elevator_Static;
 
         private static final Slot0Configs kElevatorPIDConfig = new Slot0Configs()
-            .withKP(13)
+            .withKP(30)
             .withKD(1)
-            .withKV(0.6)
-            .withKG(0.4)
+            .withKV(0.775)
+            .withKA(0)
+            .withKG(0.8)
             .withGravityType(kElevatorGravityType);
 
         public static final CurrentLimitsConfigs kElevatorCurrentLimits = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(120);
+            .withSupplyCurrentLimit(70)
+            .withStatorCurrentLimit(200);
 
         public static final FeedbackConfigs kElevatorFeedbackConfigs = new FeedbackConfigs()
             .withSensorToMechanismRatio(5.0);
@@ -270,7 +273,7 @@ public final class Constants {
             .withMotorOutput(
                 new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive))
+                .withInverted(InvertedValue.CounterClockwise_Positive))
             .withMotionMagic(kElevatorMotionMagicConfig)
             .withSlot0(kElevatorPIDConfig)
             .withCurrentLimits(kElevatorCurrentLimits)
@@ -281,7 +284,7 @@ public final class Constants {
 
         public static final double kElevatorL1 = 3.1;
         public static final double kElevatorL2 = 1.3;
-        public static final double kElevatorL3 = 3.7;
+        public static final double kElevatorL3 = 3.6;
         public static final double kElevatorL4 = 6.7;
         public static final double kElevatorLowAlgae = 3.5;
         public static final double kElevatorHighAlgae = 5.7;
@@ -387,9 +390,9 @@ public final class Constants {
 
         public static final double kArmStowPos = 0.2;
         public static final double kArmCradlePos = -0.25;
-        public static final double kArmL2ScorePos = 0.03; 
-        public static final double kArmL3ScorePos = 0.01;
-        public static final double kArmL4ScorePos = 0.05;
+        public static final double kArmL2ScorePos = 0.05; 
+        public static final double kArmL3ScorePos = 0.05;
+        public static final double kArmL4ScorePos = 0.09;
         public static final double kArmHighAlgaePos = 0.0;
         public static final double kArmLowAlgaePos = 0.0;
         public static final double kArmProcessorPos = 0;
@@ -444,8 +447,8 @@ public final class Constants {
         public static final int kClimberIntakeID = 33;
 
         public static final double kClimberStowPos = 0.11;
-        public static final double kClimberCageIntakePos = 0.19;
-        public static final double kClimberClimbPos = -0.085;
+        public static final double kClimberCageIntakePos = 0.18;
+        public static final double kClimberClimbPos = -0.09;
 
         private static final Slot0Configs kClimberPIDConfig = new Slot0Configs()
             .withKP(10000)
@@ -467,7 +470,7 @@ public final class Constants {
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(0.25)
-            .withReverseSoftLimitThreshold(-0.1);
+            .withReverseSoftLimitThreshold(-0.12);
 
         public static final TalonFXConfiguration kClimberArmMotorConfig = new TalonFXConfiguration()
             .withSlot0(kClimberPIDConfig)
@@ -496,13 +499,16 @@ public final class Constants {
         public static final double kProcessorOuttakePower = 1.0;
         public static final double kNetOuttakePower = 1.0;
 
-        public static final double kCoralOuttakePower = 0.02;
-        public static final double kCoralOuttakeToL4Power = 0.5;
         public static final double kCoralOuttakeToTroughPower = 0.5;
+        public static final double kCoralOuttakeToL2Power = 0.3;
+        public static final double kCoralOuttakeToL3Power = 0.3;
+        public static final double kCoralOuttakeToL4Power = 0.75;
 
-        public static final double kCoralOuttakeWait = 0.05;
-        public static final double kCoralOuttakeWaitToTrough = 0.5;
-        public static final double kCoralOuttakeWaitToL4 = 0.2;
+        public static final double kCoralOuttakeWaitToTrough = 0.5;        
+        public static final double kCoralOuttakeWaitToL2 = 0.1;
+        public static final double kCoralOuttakeWaitToL3 = 0.1;
+        public static final double kCoralOuttakeWaitBeforeL4 = 0.05;
+        public static final double kCoralOuttakeWaitToL4 = 0.1;
         public static final double kAlgaeOuttakeWait = 0.5;
 
         public static final double kHoldAlgaeCurrent = -60;
@@ -546,20 +552,32 @@ public final class Constants {
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(8.0), kLedSpacing)
             .breathe(Seconds.of(2));
 
-        public static final LEDPattern kEnabledPattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kLimeGreen, Color.kDarkGreen)
+        public static final LEDPattern kEnabledL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kWhite, Color.kBlack)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
             .synchronizedBlink(() -> RobotController.getRSLState());
 
-        public static final LEDPattern kL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kBlack)
+        public static final LEDPattern kEnabledL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kYellow, Color.kLightGoldenrodYellow)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kEnabledL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kEnabledL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kDarkBlue, Color.kBlue, Color.kAquamarine)
+            .scrollAtAbsoluteSpeed(InchesPerSecond.of(20.0), kLedSpacing)
+            .synchronizedBlink(() -> RobotController.getRSLState());
+
+        public static final LEDPattern kScoringL1Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kWhite, Color.kBlack)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow)
+        public static final LEDPattern kScoringL2Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kYellow, Color.kLightGoldenrodYellow)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
+        public static final LEDPattern kScoringL3Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkOliveGreen, Color.kDarkGreen)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
-        public static final LEDPattern kL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlueViolet)
+        public static final LEDPattern kScoringL4Pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kDarkBlue, Color.kBlue, Color.kAquamarine)
             .scrollAtAbsoluteSpeed(InchesPerSecond.of(100.0), kLedSpacing);
 
         public static final LEDPattern kAlgaePattern = LEDPattern.gradient(LEDPattern.GradientType.kContinuous,  Color.kDarkBlue, Color.kPurple, Color.kDarkViolet)

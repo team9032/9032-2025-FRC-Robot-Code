@@ -194,6 +194,19 @@ public class ElevatorArmIntakeHandler {
         return elevator.atSetpoint() && arm.atSetpoint();
     }
 
+    public boolean readyToPullAway(ReefLevel reefLevel) {
+        if (reefLevel.equals(ReefLevel.L2))
+            return arm.atL2ScorePos();
+
+        else if (reefLevel.equals(ReefLevel.L3))
+            return arm.atL3ScorePos();
+
+        else if (reefLevel.equals(ReefLevel.L4))
+            return arm.atL4ScorePos();
+        
+        return false;
+    }
+
     public boolean readyToScoreCoralOnBranch(ReefLevel reefLevel) {
         if (reefLevel.equals(ReefLevel.L2))
             return arm.atCoralPreparedToScorePos() && elevator.atL2();

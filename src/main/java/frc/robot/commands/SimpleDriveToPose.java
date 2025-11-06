@@ -1,11 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -14,24 +12,20 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.PathFollowingConstants.*;
 
-import java.util.function.Supplier;
-
-public class DriveToMovingPose extends Command {
-    private final ProfiledPIDController alignmentXPID;
-    private final ProfiledPIDController alignmentYPID;
+public class SimpleDriveToPose extends Command {
+    private final PIDController alignmentXPID;
+    private final PIDController alignmentYPID;
     private final ProfiledPIDController alignmentRotationPID;
 
     private final KrakenSwerve swerve;
 
-    private final Supplier<Pose2d> targetPoseSup;
+    private final Pose2d targetPose;
 
-    private final StructPublisher<Pose2d> setpointPublisher;
-
-    public DriveToMovingPose(KrakenSwerve swerve, Supplier<Pose2d> targetPoseSup) {
-        alignmentXPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
+    public SimpleDriveToPose(KrakenSwerve swerve, Pose2d targetPose) {
+        alignmentXPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
         alignmentXPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
-        alignmentYPID = new ProfiledPIDController(kAlignmentXYkP, 0, kAlignmentXYkD, kDriveToPoseTranslationConstraints);
+        alignmentYPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
         alignmentYPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
         alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kDriveToPoseRotationConstraints);
@@ -40,11 +34,7 @@ public class DriveToMovingPose extends Command {
 
         this.swerve = swerve;
 
-        this.targetPoseSup = targetPoseSup;      
-
-        setpointPublisher = NetworkTableInstance.getDefault()
-            .getStructTopic("Drive to moving pose setpoint", Pose2d.struct)
-            .publish();
+        this.targetPose = targetPose;      
 
         addRequirements(swerve);
     }
@@ -54,19 +44,21 @@ public class DriveToMovingPose extends Command {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
         ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
 
-        alignmentXPID.reset(currentPose.getX(), currentVelocity.vxMetersPerSecond);
-        alignmentYPID.reset(currentPose.getY(), currentVelocity.vyMetersPerSecond);
+        alignmentXPID.setSetpoint(targetPose.getX()); 
+        alignmentYPID.setSetpoint(targetPose.getY()); 
+        alignmentRotationPID.setGoal(targetPose.getRotation().getRadians());
+
+        alignmentXPID.reset();
+        alignmentYPID.reset();
         alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
     }
 
     @Override
     public void execute() {
-        updateControllerGoals();
-
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
 
-        double x = alignmentXPID.calculate(currentPose.getX()) + alignmentXPID.getSetpoint().velocity;
-        double y = alignmentYPID.calculate(currentPose.getY()) + alignmentYPID.getSetpoint().velocity;
+        double x = alignmentXPID.calculate(currentPose.getX());
+        double y = alignmentYPID.calculate(currentPose.getY());
         double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
 
         swerve.setControl(
@@ -76,18 +68,7 @@ public class DriveToMovingPose extends Command {
                 .withRotationalRate(rot)
         );
 
-        /* Publish the motion profile's setpoint for tuning and debugging purposes */
-        setpointPublisher.set(
-            new Pose2d(alignmentXPID.getSetpoint().position, alignmentYPID.getSetpoint().position, Rotation2d.fromRadians(alignmentRotationPID.getSetpoint().position))
-        );
-
-        SmartDashboard.putBoolean("Drive To Moving Pose At Goal", atGoal());
-    }
-
-    private void updateControllerGoals() {
-        alignmentXPID.setGoal(targetPoseSup.get().getX()); 
-        alignmentYPID.setGoal(targetPoseSup.get().getY()); 
-        alignmentRotationPID.setGoal(targetPoseSup.get().getRotation().getRadians());
+        SmartDashboard.putBoolean("Drive To Moving Pose At Goal", atGoal());//TODO change this
     }
 
     @Override
@@ -96,7 +77,7 @@ public class DriveToMovingPose extends Command {
     }
 
     private boolean atGoal() {
-        return alignmentRotationPID.atGoal() && alignmentXPID.atGoal() && alignmentYPID.atGoal();
+        return alignmentRotationPID.atGoal() && alignmentXPID.atSetpoint() && alignmentYPID.atSetpoint();
     }
 
     @Override

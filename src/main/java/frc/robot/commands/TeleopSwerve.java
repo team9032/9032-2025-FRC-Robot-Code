@@ -26,20 +26,25 @@ public class TeleopSwerve extends Command {
 
     @Override
     public void execute() {     
-        /* Curve inputs to allow for more control closer to the lower range of the joystick */
-        double translationVal = applyInputCurve(translationSup.getAsDouble());
-        double strafeVal = applyInputCurve(strafeSup.getAsDouble());
-        double rotationVal = applyInputCurve(rotSup.getAsDouble());
+        double xCoord = translationSup.getAsDouble();
+        double yCoord = strafeSup.getAsDouble();
 
-        /* Multiply by max speed to get the velocity values in m/s */
-        translationVal *= kMaxSpeed;
-        strafeVal *= kMaxSpeed;
-        rotationVal *= kRotationRate;
+        /* Convert cartesian joystick coordinates to polar */
+        double angle = Math.atan2(yCoord, xCoord);
+        double magnitude = Math.hypot(xCoord, yCoord);
+
+        /* Curve magnitude to allow for more control closer to the lower range of the joystick */
+        double curvedMagnitude = applyInputCurve(magnitude) * kMaxSpeed;
+        double rotationMagnitude = applyInputCurve(rotSup.getAsDouble()) * kRotationRate;
+
+        /* Convert polar to cartesian */
+        double translationVal = curvedMagnitude * Math.cos(angle);
+        double strafeVal = curvedMagnitude * Math.sin(angle);
 
         swerve.setControl(
             kDriveRequest.withVelocityX(translationVal)
             .withVelocityY(strafeVal)
-            .withRotationalRate(rotationVal) 
+            .withRotationalRate(rotationMagnitude) 
         );
     }
 

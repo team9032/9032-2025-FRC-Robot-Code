@@ -10,6 +10,7 @@ import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistanceWithAlgae;
 import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
+import static frc.robot.Constants.PathFollowingConstants.kBackwardsScoringOffset;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
 import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefDistance;
@@ -92,6 +93,12 @@ public class FieldUtil {
         return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID);
     } 
 
+    public static Pose2d getClosestOffsetReefScoringLocation(Localization localization, boolean isLeftBranch) {
+        var tagID = getClosestReefTagID(localization);
+        
+        return getOffsetReefScoringLocationFromTagID(localization, isLeftBranch, tagID);
+    } 
+
     public static Pose2d getClosestReefAlgaeIntakeLocation(Localization localization) {
         var closestPose = flipPoseIfNeeded(localization.getTagPose(getClosestReefTagID(localization)));
 
@@ -133,5 +140,9 @@ public class FieldUtil {
 
         else 
             return tagPose.transformBy(isLeftBranch ? kLeftScoringOffset : kRightScoringOffset);
+    }   
+
+    public static Pose2d getOffsetReefScoringLocationFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
+        return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID).transformBy(kBackwardsScoringOffset);
     }   
 }
