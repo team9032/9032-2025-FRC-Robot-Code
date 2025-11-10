@@ -127,14 +127,11 @@ public final class Constants {
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;
         public static final double kBargeMaxY = 4.95;
 
-        /* Intake offsets */
-        public static final Transform2d kCoralIntakeOffset = new Transform2d(-0.6, 0, Rotation2d.kZero);//TODO find
-        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
-
-        /* Scoring offsets */
+        /* Scoring and intaking offsets */
         public static final Transform2d kLeftScoringOffset = new Transform2d(0.585, -0.125, Rotation2d.kZero);
         public static final Transform2d kRightScoringOffset = new Transform2d(0.585, 0.225, Rotation2d.kZero);
         public static final Transform2d kBackwardsScoringOffset = new Transform2d(Units.inchesToMeters(6.0), 0, Rotation2d.kZero);
+        public static final Transform2d kAlgaeReefIntakeOffset = new Transform2d(0.64, 0.0, Rotation2d.kZero);
 
         /* Reef distances */
         public static final double kPrepareForScoringReefDistance = 1.8;

@@ -139,14 +139,6 @@ public class Compositions {
         .onlyIf(endEffector::hasCoral);
     }
 
-    public Command intakeNearestCoral() {
-        return Commands.sequence(
-            Commands.print("Started intaking nearest coral"),
-            PathfindingHandler.pathToNearestCoral(swerve)
-                .alongWith(intakeCoralToEndEffector())
-        );
-    }
-
     public Command pulseIntake() {
         return Commands.sequence(
             Commands.print("Pulsing intake"),

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,7 +55,8 @@ public class RotationalDriveToCoral extends Command {
 
     @Override
     public void execute() {
-        double currentYaw = swerve.getLocalization().getCurrentPose().getRotation().getDegrees();
+        var currentPose = swerve.getLocalization().getCurrentPose();
+        double currentYaw = currentPose.getRotation().getDegrees();
 
         var coralTarget = getCoralTarget();
 
@@ -62,7 +64,11 @@ public class RotationalDriveToCoral extends Command {
         if (coralTarget.isPresent() && !endTimer.isRunning()) {
             lastCoralTarget = coralTarget.get();
 
-            double rotationSetpoint = currentYaw - (coralTarget.get().getPhotonVisionData().yaw - kRotationSetpoint);
+            /* Find the angle that points the robot towards the coral */
+            double rotationSetpoint = currentPose.getTranslation().minus(lastCoralTarget.getFieldPosition().getTranslation())
+                .getAngle().plus(Rotation2d.k180deg).getDegrees();
+            /* Apply the rotation setpoint in robot space */
+            rotationSetpoint += kRotationSetpoint;//TODO test this
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
