@@ -179,10 +179,15 @@ public final class Constants {
         /* Object tracking constants */
         public static final double kObjectExpireTime = 0.5;//Seconds
         public static final double kSameObjectDistance = Units.inchesToMeters(6);
+        public static final int kExcessiveObjectAmount = 20;
 
         /* Class Ids */
         public static final int kCoralId = 1;
         public static final int kAlgaeId = 0;
+
+        /* Object heights */
+        public static final double kCoralHeight = Units.inchesToMeters(4.5);
+        public static final double kAlgaeHeight = Units.inchesToMeters(10.0);//TODO find
 
         public static final double kPoseLookaheadTime = 0.15;//Seconds
         
@@ -220,12 +225,7 @@ public final class Constants {
                 new Translation3d(Units.inchesToMeters(-3.25),Units.inchesToMeters(-13.8125),Units.inchesToMeters(11.625)),
                 new Rotation3d(0,Units.degreesToRadians(-10),Math.PI)),
                 false
-            ),
-            // new CameraConstants("GroundCamera", new Transform3d(
-            //     new Translation3d(Units.inchesToMeters(-14.375),Units.inchesToMeters(5.875), Units.inchesToMeters(30.875)),
-            //     new Rotation3d(0,Units.degreesToRadians(-20), Math.PI)),
-            //     true//TODO find offsets for this camera
-            // )
+            )
         };
 
         /* Field constants from the game manual */

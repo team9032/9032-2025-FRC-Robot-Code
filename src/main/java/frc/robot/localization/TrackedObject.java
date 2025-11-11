@@ -1,6 +1,8 @@
 package frc.robot.localization;
 
+import static frc.robot.Constants.LocalizationConstants.kAlgaeHeight;
 import static frc.robot.Constants.LocalizationConstants.kAlgaeId;
+import static frc.robot.Constants.LocalizationConstants.kCoralHeight;
 import static frc.robot.Constants.LocalizationConstants.kCoralId;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -17,9 +19,15 @@ public class TrackedObject {
     private final int trackingId;
 
     public static enum ObjectType {
-        CORAL,
-        ALGAE,
-        UNKNOWN;
+        CORAL(kCoralHeight),
+        ALGAE(kAlgaeHeight),
+        UNKNOWN(0);
+
+        private final double height;
+
+        private ObjectType(double height) {
+            this.height = height;
+        }
 
         public static ObjectType fromClassId(int classId) {
             if (classId == kCoralId)
@@ -30,6 +38,10 @@ public class TrackedObject {
 
             else 
                 return ObjectType.UNKNOWN;
+        }
+
+        public double getHeight() {
+            return height;
         }
     }
 

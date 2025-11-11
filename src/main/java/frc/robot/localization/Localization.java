@@ -88,7 +88,7 @@ public class Localization {
      *  then adds the result of the photonPoseEstimator to the swerve one. 
      *  For object tracking, gets the latest object tracking results from each camera, estimates the objects position on the field, and updates the list of tracked objects.
      *  Call this method once every loop. */
-    public void updateLocalization() {//TODO remove excessive tracked objects
+    public void updateLocalization() {
         /* Update all pose estimation cameras */
         for (LocalizationCamera camera : localizationCameras) {
             camera.addResultsToDrivetrain(drivetrain, field);
@@ -105,6 +105,13 @@ public class Localization {
 
         /* Remove objects that are off the field */
         trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
+
+        /* If there is an excessive amount of tracked objects, something has likely gone wrong, so clear the list to avoid filling the memory */
+        if (trackedObjects.size() > kExcessiveObjectAmount) {
+            trackedObjects.clear();
+
+            ElasticUtil.sendError("Excessive amount of tracked objects detected", "Something has likely gone wrong with object tracking");
+        }
 
         /* Publish each object's pose */
         var objectPoses = new Pose3d[trackedObjects.size()];
