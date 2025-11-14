@@ -425,7 +425,8 @@
             "properties": {
               "topic": "/SmartDashboard/Update Drive Constants",
               "period": 0.06,
-              "show_type": false
+              "show_type": false,
+              "maximize_button_space": false
             }
           },
           {
@@ -552,7 +553,8 @@
             "properties": {
               "topic": "/SmartDashboard/Coast All",
               "period": 0.06,
-              "show_type": false
+              "show_type": false,
+              "maximize_button_space": true
             }
           },
           {

@@ -68,7 +68,7 @@ public class RotationalDriveToCoral extends Command {
             double rotationSetpoint = currentPose.getTranslation().minus(lastCoralTarget.getFieldPosition().getTranslation())
                 .getAngle().plus(Rotation2d.k180deg).getDegrees();
             /* Apply the rotation setpoint in robot space */
-            rotationSetpoint += kRotationSetpoint;//TODO test this
+            rotationSetpoint += kRotationSetpoint;
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
