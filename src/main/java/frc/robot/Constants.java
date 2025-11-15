@@ -109,7 +109,7 @@ public final class Constants {
         public static final Transform2d kIntermediatePointOffset = new Transform2d(Units.inchesToMeters(16), 0, Rotation2d.kZero);
         public static final double kIntermediateStartDistance = Units.inchesToMeters(30);
 
-        /* Drive to pose constants */
+        /* Simple drive to pose constants */
         public static final double kAlignmentXYkP = 7.0;
         public static final double kAlignmentXYkD = 0.1;
         
@@ -119,7 +119,6 @@ public final class Constants {
         public static final Distance kXYAlignmentTolerance = Inches.of(0.33);
         public static final Angle kRotAlignmentTolerance = Degrees.of(4);
 
-        public static final Constraints kDriveToPoseTranslationConstraints = new Constraints(3.2, 3);
         public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
 
         /* Barge alignment constants */
@@ -187,7 +186,7 @@ public final class Constants {
 
         /* Object heights */
         public static final double kCoralHeight = Units.inchesToMeters(4.5);
-        public static final double kAlgaeHeight = Units.inchesToMeters(10.0);//TODO find
+        public static final double kAlgaeHeight = Units.inchesToMeters(16.25);
 
         public static final double kPoseLookaheadTime = 0.15;//Seconds
         

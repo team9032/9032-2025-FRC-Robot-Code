@@ -640,23 +640,6 @@
             }
           },
           {
-            "title": "Drive To Moving Pose At Goal",
-            "x": 64.0,
-            "y": 128.0,
-            "width": 352.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Drive To Moving Pose At Goal",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "End Effector Arm Position",
             "x": 64.0,
             "y": 256.0,
@@ -700,6 +683,23 @@
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
+            }
+          },
+          {
+            "title": "Simple Drive To Pose At Goal",
+            "x": 64.0,
+            "y": 128.0,
+            "width": 352.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Simple Drive To Pose At Goal",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
