@@ -145,7 +145,7 @@ public class Localization {
                 var camera = new ObjectTrackingCamera(constants);
                 objectTrackingCameras.add(camera); 
 
-                var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                var properties = new SimCameraProperties();//TODO put constants in seperate file
                 properties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
                 properties.setCalibError(0.35, 0.10);
                 properties.setFPS(30);
@@ -156,7 +156,7 @@ public class Localization {
                 var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
                 cameraSim.enableDrawWireframe(false);
                 cameraSim.enableRawStream(false);
-                cameraSim.enableProcessedStream(true);
+                cameraSim.enableProcessedStream(false);
 
                 simulatedObjectTracking.addCamera(cameraSim, constants.robotToCameraTransform());
             }
@@ -165,7 +165,7 @@ public class Localization {
                 var camera = new LocalizationCamera(constants, aprilTagLayout);
                 localizationCameras.add(camera); 
 
-                var properties = new SimCameraProperties();//TODO constants - there are more than this!
+                var properties = new SimCameraProperties();
                 properties.setCalibration(800, 600, Rotation2d.fromDegrees(60));
                 properties.setCalibError(0.35, 0.10);
                 properties.setFPS(30);
@@ -187,7 +187,7 @@ public class Localization {
     public void updateSimulation(Pose2d simulatedRobotPose) {
         simulatedObjectTracking.clearVisionTargets();
 
-        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO don't clear objects every loop and add algae
+        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO Add algae
             .stream()
             .map((coralPose) -> new VisionTargetSim(coralPose, kCoralModel))
             .forEach((target) -> simulatedObjectTracking.addVisionTargets("Coral", target));

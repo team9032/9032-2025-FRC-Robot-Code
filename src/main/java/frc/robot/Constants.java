@@ -187,7 +187,7 @@ public final class Constants {
 
         /* Object heights */
         public static final double kCoralHeight = Units.inchesToMeters(4.5);
-        public static final double kAlgaeHeight = Units.inchesToMeters(10.0);//TODO find
+        public static final double kAlgaeHeight = Units.inchesToMeters(16.25);
 
         public static final double kPoseLookaheadTime = 0.15;//Seconds
         

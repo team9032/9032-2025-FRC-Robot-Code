@@ -68,7 +68,7 @@ public class SimpleDriveToPose extends Command {
                 .withRotationalRate(rot)
         );
 
-        SmartDashboard.putBoolean("Drive To Moving Pose At Goal", atGoal());//TODO change this
+        SmartDashboard.putBoolean("Simple Drive To Pose At Goal", atGoal());
     }
 
     @Override
