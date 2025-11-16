@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.endeffector;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -14,7 +14,7 @@ import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.DriverConstants.kCANBusName;
-import static frc.robot.Constants.EndEffectorConstants.*;
+import static frc.robot.subsystems.endeffector.EndEffectorConstants.*;
 
 import java.util.Map;
 import java.util.function.Supplier;

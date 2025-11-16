@@ -10,8 +10,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.commands.PullAway;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.transfer.Transfer;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
 

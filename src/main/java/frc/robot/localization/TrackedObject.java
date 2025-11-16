@@ -1,9 +1,9 @@
 package frc.robot.localization;
 
-import static frc.robot.Constants.LocalizationConstants.kAlgaeHeight;
-import static frc.robot.Constants.LocalizationConstants.kAlgaeId;
-import static frc.robot.Constants.LocalizationConstants.kCoralHeight;
-import static frc.robot.Constants.LocalizationConstants.kCoralId;
+import static frc.robot.localization.LocalizationConstants.kAlgaeHeight;
+import static frc.robot.localization.LocalizationConstants.kAlgaeId;
+import static frc.robot.localization.LocalizationConstants.kCoralHeight;
+import static frc.robot.localization.LocalizationConstants.kCoralId;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 

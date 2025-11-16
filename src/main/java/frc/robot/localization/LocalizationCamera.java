@@ -19,7 +19,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import static frc.robot.Constants.LocalizationConstants.*;
+import static frc.robot.localization.LocalizationConstants.*;
 
 public class LocalizationCamera {
     private final PhotonCamera camera;

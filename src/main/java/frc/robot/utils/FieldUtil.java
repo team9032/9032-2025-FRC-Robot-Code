@@ -1,9 +1,9 @@
 package frc.robot.utils;
 
-import static frc.robot.Constants.LocalizationConstants.kBackReefTagsStartingID;
-import static frc.robot.Constants.LocalizationConstants.kMaxReefTagID;
-import static frc.robot.Constants.LocalizationConstants.kMinReefTagID;
-import static frc.robot.Constants.LocalizationConstants.kReefCenter;
+import static frc.robot.localization.LocalizationConstants.kBackReefTagsStartingID;
+import static frc.robot.localization.LocalizationConstants.kMaxReefTagID;
+import static frc.robot.localization.LocalizationConstants.kMinReefTagID;
+import static frc.robot.localization.LocalizationConstants.kReefCenter;
 import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
 import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
 import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;

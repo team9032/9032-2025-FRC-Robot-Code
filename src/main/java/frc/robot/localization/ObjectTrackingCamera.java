@@ -1,6 +1,6 @@
 package frc.robot.localization;
 
-import static frc.robot.Constants.LocalizationConstants.kSameObjectDistance;
+import static frc.robot.localization.LocalizationConstants.kSameObjectDistance;
 
 import java.util.List;
 

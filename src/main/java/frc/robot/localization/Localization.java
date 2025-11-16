@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.utils.ElasticUtil;
 
-import static frc.robot.Constants.LocalizationConstants.*;
+import static frc.robot.localization.LocalizationConstants.*;
 import java.util.List;
 import java.util.Optional;
 

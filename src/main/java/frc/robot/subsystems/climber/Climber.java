@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
-import static frc.robot.Constants.ClimberConstants.*;
+
+import static frc.robot.subsystems.climber.ClimberConstants.*;
 import static frc.robot.Constants.DriverConstants.kCANBusName;
 
 public class Climber extends SubsystemBase {

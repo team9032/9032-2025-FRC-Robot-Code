@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 
-import static frc.robot.Constants.LEDConstants.*;
+import static frc.robot.subsystems.leds.LEDConstants.*;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class LED extends SubsystemBase {
+public class LEDs extends SubsystemBase {
     public static enum State {
         LOW_BATTERY(kBatteryLowPattern),
         BOOTING(kBootingUp),
@@ -45,7 +45,7 @@ public class LED extends SubsystemBase {
     private final AddressableLED ledStrip;
     private final AddressableLEDBuffer ledBuffer;
 
-    public LED() {
+    public LEDs() {
         ledStrip = new AddressableLED(kLEDPort);
         ledStrip.setLength(kLEDLength);
 

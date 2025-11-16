@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
@@ -6,7 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.utils.ElasticUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.DriverConstants.kCANBusName;
-import static frc.robot.Constants.ElevatorConfigs.*;
+import static frc.robot.subsystems.elevator.ElevatorConstants.*;
 
 import java.util.Map;
 import java.util.function.Supplier;

@@ -12,9 +12,15 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.*;
-import frc.robot.subsystems.LED.State;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.LEDs.State;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.transfer.Transfer;
 import frc.robot.utils.CANivoreReader;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
@@ -65,7 +71,7 @@ public class RobotContainer {
     private final Trigger reefLevelDown = driveController.leftStick().and(alignAndScoreCoralLeft.or(alignAndScoreCoralRight).negate());
 
     /* Subsystems */
-    private final LED led = new LED();
+    private final LEDs leds = new LEDs();
     private final Intake intake = new Intake();
     private final Arm arm = new Arm();
     private final KrakenSwerve krakenSwerve = new KrakenSwerve();
@@ -135,10 +141,10 @@ public class RobotContainer {
 
         /* Switch LEDs to disabled or low battery */
         if (RobotController.getBatteryVoltage() < kLowStartingBatteryVoltage)
-            led.setState(State.LOW_BATTERY); 
+            leds.setState(State.LOW_BATTERY); 
 
         else
-            led.setState(State.DISABLED); 
+            leds.setState(State.DISABLED); 
     }
 
     private void configureDefaultCommands() {
@@ -203,7 +209,7 @@ public class RobotContainer {
 
         algaeGroundIntake.onTrue(compositions.intakeGroundAlgae());
 
-        deployClimber.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+        deployClimber.onTrue(leds.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
         reefLevelDown.onTrue(Commands.runOnce(() -> buttonBoard.decrementReefLevel()).ignoringDisable(true));
         reefLevelUp.onTrue(Commands.runOnce(() -> buttonBoard.incrementReefLevel()).ignoringDisable(true));
@@ -274,7 +280,7 @@ public class RobotContainer {
 
         buttonBoard.manual4.onTrue(endEffector.startRollersForPickup());
 
-        buttonBoard.manual5.onTrue(led.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
+        buttonBoard.manual5.onTrue(leds.setStateCommand(State.CLIMBING).andThen(compositions.climb()));
 
         buttonBoard.manual6.onTrue(compositions.placeCoralOnBranch(buttonBoard::getSelectedReefLevel));
 
@@ -303,7 +309,7 @@ public class RobotContainer {
         /* Display CAN errors on the LEDs */
         var currentCANStatus = canivoreReader.getStatus();
         if (!currentCANStatus.Status.equals(StatusCode.OK) || currentCANStatus.TEC > 0 || currentCANStatus.REC > 0)
-            led.displayError();
+            leds.displayError();
 
         SmartDashboard.putNumber("CAN Usage", currentCANStatus.BusUtilization);
     }
@@ -319,27 +325,27 @@ public class RobotContainer {
         );
 
         enabled.onTrue(
-            led.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel)
+            leds.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel)
         );
 
         disabled.onTrue(
-            led.setStateCommand(State.DISABLED)
+            leds.setStateCommand(State.DISABLED)
         );
     }
 
     private void bindTeleopTriggers() {
         hasCoral.onTrue(rumble());
 
-        coralCyclingCommandScheduled.onTrue(led.setScoringStateFromReefLevel(buttonBoard::getSelectedReefLevel));
+        coralCyclingCommandScheduled.onTrue(leds.setScoringStateFromReefLevel(buttonBoard::getSelectedReefLevel));
         coralCyclingCommandScheduled.onFalse(setLEDEnabledState());
-        algaeCyclingCommandScheduled.onTrue(led.setStateCommand(State.ALGAE));
+        algaeCyclingCommandScheduled.onTrue(leds.setStateCommand(State.ALGAE));
         algaeCyclingCommandScheduled.onFalse(setLEDEnabledState());
     }
 
     private Command setLEDEnabledState() {
         return Commands.either(
-            led.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel), 
-            led.setStateCommand(State.DISABLED),
+            leds.setEnabledStateFromReefLevel(buttonBoard::getSelectedReefLevel), 
+            leds.setStateCommand(State.DISABLED),
             enabled
         );
     }
