@@ -1,9 +1,11 @@
 package frc.robot.localization;
 
 import org.photonvision.estimation.TargetModel;
+import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -80,4 +82,19 @@ public final class LocalizationConstants {
     public static final int kMinReefTagID = 17;
     public static final int kMaxReefTagID = 22;
     public static final int kBackReefTagsStartingID = 20;
+
+    /* Simulation camera properties */
+    public static final SimCameraProperties kObjectTrackingSimCameraProperties = new SimCameraProperties()
+        .setCalibration(800, 600, Rotation2d.fromDegrees(70))
+        .setCalibError(0.35, 0.10)
+        .setFPS(30)
+        .setAvgLatencyMs(20)
+        .setLatencyStdDevMs(5);
+
+    public static final SimCameraProperties kLocalizationSimCameraProperties = new SimCameraProperties()
+        .setCalibration(800, 600, Rotation2d.fromDegrees(60))
+        .setCalibError(0.35, 0.10)
+        .setFPS(30)
+        .setAvgLatencyMs(20)
+        .setLatencyStdDevMs(5);
 }

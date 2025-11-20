@@ -7,7 +7,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -24,7 +23,6 @@ import java.util.Optional;
 
 import org.ironmaple.simulation.SimulatedArena;
 import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 
@@ -144,16 +142,9 @@ public class Localization {
             if (constants.isObjectTracking()) {
                 var camera = new ObjectTrackingCamera(constants);
                 objectTrackingCameras.add(camera); 
-
-                var properties = new SimCameraProperties()//TODO put constants in seperate file
-                    .setCalibration(800, 600, Rotation2d.fromDegrees(70))
-                    .setCalibError(0.35, 0.10)
-                    .setFPS(30)
-                    .setAvgLatencyMs(20)
-                    .setLatencyStdDevMs(5);
                 
                 /* Links the simulated camera to the localization camera */
-                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), kObjectTrackingSimCameraProperties);
                 cameraSim.enableDrawWireframe(false);
                 cameraSim.enableRawStream(false);
                 cameraSim.enableProcessedStream(false);
@@ -164,16 +155,9 @@ public class Localization {
             else {
                 var camera = new LocalizationCamera(constants, aprilTagLayout);
                 localizationCameras.add(camera); 
-
-                var properties = new SimCameraProperties()
-                    .setCalibration(800, 600, Rotation2d.fromDegrees(60))
-                    .setCalibError(0.35, 0.10)
-                    .setFPS(30)
-                    .setAvgLatencyMs(20)
-                    .setLatencyStdDevMs(5);
                 
                 /* Links the simulated camera to the localization camera */
-                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), kLocalizationSimCameraProperties);
                 cameraSim.enableDrawWireframe(false);
                 cameraSim.enableRawStream(false);
                 cameraSim.enableProcessedStream(false);

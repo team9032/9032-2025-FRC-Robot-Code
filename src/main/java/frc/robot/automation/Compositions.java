@@ -111,7 +111,7 @@ public class Compositions {
             PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch).asProxy()
                 .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             placeCoralAndPullAway(reefLevelSup, true),
-            new ScheduleCommand(rumbleCommand)//TODO test this??
+            new ScheduleCommand(rumbleCommand)
         )
         .until(shouldInterrupt)
         .andThen(
