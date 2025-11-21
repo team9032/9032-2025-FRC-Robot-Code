@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SimpleDriveToPose;
 import frc.robot.commands.RotationalDriveToCoral;
-import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
@@ -107,37 +106,6 @@ public class PathfindingHandler {
             ),
             Set.of(swerve)
         );
-    }
-
-    private static Pose2d getCoralAlignmentPose(KrakenSwerve swerve) {
-        var optionalCoral = swerve.getLocalization().getNearestObjectOfType(ObjectType.CORAL);
-
-        if (optionalCoral.isPresent()) {
-            var robotTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
-            var coralTranslation = optionalCoral.get().getFieldPosition().getTranslation();
-
-            /* Find the angle that points the robot towards the coral */
-            var rotationSetpoint = robotTranslation.minus(coralTranslation).getAngle()//TODO this causes stability problems while driving if done in real time
-                .plus(Rotation2d.k180deg);
-
-            var targetPose = new Pose2d(coralTranslation, rotationSetpoint)
-                /* Apply the intake's offset  */
-                .transformBy(kCoralIntakeOffset);
-
-            return targetPose;
-        }
-
-        /* If no coral is seen, maintain the current pose */
-        else    
-            return swerve.getLocalization().getCurrentPose();
-    } 
-
-    public static Command pathToNearestCoral(KrakenSwerve swerve) {
-        return pathToPose(() -> getCoralAlignmentPose(swerve), swerve); 
-    }
-
-    public static Command pathToNearestMovingCoral(KrakenSwerve swerve) {//TODO this method is broken
-        return new SimpleDriveToPose(swerve, getCoralAlignmentPose(swerve));
     }
 
     public static Command pathToBarge(KrakenSwerve swerve) {

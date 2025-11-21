@@ -7,7 +7,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -18,13 +17,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.utils.ElasticUtil;
 
-import static frc.robot.Constants.LocalizationConstants.*;
+import static frc.robot.localization.LocalizationConstants.*;
 import java.util.List;
 import java.util.Optional;
 
 import org.ironmaple.simulation.SimulatedArena;
 import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 
@@ -88,7 +86,7 @@ public class Localization {
      *  then adds the result of the photonPoseEstimator to the swerve one. 
      *  For object tracking, gets the latest object tracking results from each camera, estimates the objects position on the field, and updates the list of tracked objects.
      *  Call this method once every loop. */
-    public void updateLocalization() {//TODO remove excessive tracked objects
+    public void updateLocalization() {
         /* Update all pose estimation cameras */
         for (LocalizationCamera camera : localizationCameras) {
             camera.addResultsToDrivetrain(drivetrain, field);
@@ -105,6 +103,13 @@ public class Localization {
 
         /* Remove objects that are off the field */
         trackedObjects.removeIf((object) -> !isPoseOnField(object.getFieldPosition()));
+
+        /* If there is an excessive amount of tracked objects, something has likely gone wrong, so clear the list to avoid filling the memory */
+        if (trackedObjects.size() > kExcessiveObjectAmount) {
+            trackedObjects.clear();
+
+            ElasticUtil.sendError("Excessive amount of tracked objects detected", "Something has likely gone wrong with object tracking");
+        }
 
         /* Publish each object's pose */
         var objectPoses = new Pose3d[trackedObjects.size()];
@@ -137,19 +142,12 @@ public class Localization {
             if (constants.isObjectTracking()) {
                 var camera = new ObjectTrackingCamera(constants);
                 objectTrackingCameras.add(camera); 
-
-                var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                properties.setCalibration(800, 600, Rotation2d.fromDegrees(70));
-                properties.setCalibError(0.35, 0.10);
-                properties.setFPS(30);
-                properties.setAvgLatencyMs(20);
-                properties.setLatencyStdDevMs(5);
                 
                 /* Links the simulated camera to the localization camera */
-                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), kObjectTrackingSimCameraProperties);
                 cameraSim.enableDrawWireframe(false);
                 cameraSim.enableRawStream(false);
-                cameraSim.enableProcessedStream(true);
+                cameraSim.enableProcessedStream(false);
 
                 simulatedObjectTracking.addCamera(cameraSim, constants.robotToCameraTransform());
             }
@@ -157,16 +155,9 @@ public class Localization {
             else {
                 var camera = new LocalizationCamera(constants, aprilTagLayout);
                 localizationCameras.add(camera); 
-
-                var properties = new SimCameraProperties();//TODO constants - there are more than this!
-                properties.setCalibration(800, 600, Rotation2d.fromDegrees(60));
-                properties.setCalibError(0.35, 0.10);
-                properties.setFPS(30);
-                properties.setAvgLatencyMs(20);
-                properties.setLatencyStdDevMs(5);
                 
                 /* Links the simulated camera to the localization camera */
-                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), properties);
+                var cameraSim = new PhotonCameraSim(camera.getPhotonCamera(), kLocalizationSimCameraProperties);
                 cameraSim.enableDrawWireframe(false);
                 cameraSim.enableRawStream(false);
                 cameraSim.enableProcessedStream(false);
@@ -180,7 +171,7 @@ public class Localization {
     public void updateSimulation(Pose2d simulatedRobotPose) {
         simulatedObjectTracking.clearVisionTargets();
 
-        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO don't clear objects every loop and add algae
+        SimulatedArena.getInstance().getGamePiecesByType("Coral")//TODO Add algae
             .stream()
             .map((coralPose) -> new VisionTargetSim(coralPose, kCoralModel))
             .forEach((target) -> simulatedObjectTracking.addVisionTargets("Coral", target));

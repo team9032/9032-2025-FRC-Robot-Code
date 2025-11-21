@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,7 +13,7 @@ import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import static frc.robot.Constants.DriverConstants.kCANBusName;
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
     private final MotionMagicVoltage armControlRequest = new MotionMagicVoltage(0.0);

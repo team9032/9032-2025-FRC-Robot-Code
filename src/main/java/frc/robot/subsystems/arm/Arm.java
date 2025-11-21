@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.arm;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.CoastOut;
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.utils.ElasticUtil;
 
-import static frc.robot.Constants.ArmConstants.*;
+import static frc.robot.subsystems.arm.ArmConstants.*;
 import static frc.robot.Constants.DriverConstants.kCANBusName;
 
 import java.util.Map;

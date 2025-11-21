@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.transfer;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.ElasticUtil;
 
 import static frc.robot.Constants.DriverConstants.kCANBusName;
-import static frc.robot.Constants.TransferConstants.*;
+import static frc.robot.subsystems.transfer.TransferConstants.*;
 
 public class Transfer extends SubsystemBase {
     private final TalonFX rollerMotor;

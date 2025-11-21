@@ -7,10 +7,14 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.commands.PullAway;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.subsystems.transfer.Transfer;
 import frc.robot.utils.ElasticUtil;
 import frc.robot.utils.FieldUtil;
 
@@ -107,7 +111,7 @@ public class Compositions {
             PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch).asProxy()
                 .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             placeCoralAndPullAway(reefLevelSup, true),
-            rumbleCommand
+            new ScheduleCommand(rumbleCommand)
         )
         .until(shouldInterrupt)
         .andThen(
@@ -137,14 +141,6 @@ public class Compositions {
             elevatorArmIntakeHandler.moveToIntakePosition()   
         )
         .onlyIf(endEffector::hasCoral);
-    }
-
-    public Command intakeNearestCoral() {
-        return Commands.sequence(
-            Commands.print("Started intaking nearest coral"),
-            PathfindingHandler.pathToNearestCoral(swerve)
-                .alongWith(intakeCoralToEndEffector())
-        );
     }
 
     public Command pulseIntake() {

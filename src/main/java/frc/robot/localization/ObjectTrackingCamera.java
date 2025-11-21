@@ -1,6 +1,6 @@
 package frc.robot.localization;
 
-import static frc.robot.Constants.LocalizationConstants.kSameObjectDistance;
+import static frc.robot.localization.LocalizationConstants.kSameObjectDistance;
 
 import java.util.List;
 
@@ -51,10 +51,11 @@ public class ObjectTrackingCamera {
         Transform3d robotToCamera = constants.robotToCameraTransform();
 
         double targetYaw = Units.degreesToRadians(target.getYaw());
+        var targetType = ObjectType.fromClassId(target.getDetectedObjectClassID());
 
         /* Find the distance from the camera's lense to the object using target pitch and yaw */
         double cameraToTargetDistance = 
-            (Units.inchesToMeters(2.25) - robotToCamera.getZ())//TODO compensate for lollipop coral and algae height
+            ((targetType.getHeight() / 2.0) - robotToCamera.getZ())//TODO compensate for lollipop coral height
                 / Math.tan(-robotToCamera.getRotation().getY() + Units.degreesToRadians(target.getPitch()))
                 / Math.cos(-targetYaw);
 
@@ -81,7 +82,7 @@ public class ObjectTrackingCamera {
         boolean updatedObject = false;
         for (var object : objectList) {
             boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance;
-            boolean sameType = object.getObjectType().equals(ObjectType.fromClassId(target.getDetectedObjectClassID()));//TODO fix class ids in sim
+            boolean sameType = object.getObjectType().equals(targetType);//TODO fix class ids in sim
 
             /* If an object is close to a previous detection with the same object type, assume it's the same object 
                 and update the previous detection */
