@@ -43,9 +43,9 @@ public class Compositions {
     public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
         return Commands.sequence(
             Commands.print("Getting coral from source"),
-            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource).asProxy(),
+            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
             Commands.print("Pathing to reef branch after source coral"),
-            PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
+            PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch)
         )                
         .alongWith(
             Commands.sequence(
@@ -56,7 +56,7 @@ public class Compositions {
             )
         )
         .andThen(
-            PathfindingHandler.simpleDriveToReefBranch(reefTagID, swerve, isLeftBranch).asProxy(),
+            PathfindingHandler.simpleDriveToReefBranch(reefTagID, swerve, isLeftBranch),
             placeCoralAndPullAway(() -> reefLevel, false)
         );
     }
@@ -65,7 +65,7 @@ public class Compositions {
         return Commands.sequence(
             Commands.print("Aligning to reef and scoring preload"),
             endEffector.startRollersForPickup(),
-            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch).asProxy()
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch)
                 /* Moves the elevator and arm when the robot is close enough to the reef */
                 .alongWith(
                     elevatorArmIntakeHandler.moveToStowPositions()
@@ -85,7 +85,7 @@ public class Compositions {
                 Commands.sequence(
                     Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToPullAway(reefLevelSup.get())),
                     Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization()))
-                        .deadlineFor(new PullAway(swerve, endPullAway).asProxy())   
+                        .deadlineFor(new PullAway(swerve, endPullAway))   
                 )
             );
     }
@@ -95,8 +95,8 @@ public class Compositions {
             Commands.print("Aligning to reef and scoring"),
             endEffector.startRollersForPickup(),
             Commands.either(
-                PathfindingHandler.pathToClosestOffsetReefBranch(swerve, isLeftBranch).asProxy(), 
-                PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch).asProxy(), 
+                PathfindingHandler.pathToClosestOffsetReefBranch(swerve, isLeftBranch), 
+                PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch), 
                 () -> reefLevelSup.get().equals(ReefLevel.L4)
             )               
                 /* Moves the elevator and arm when the robot is close enough to the reef */
@@ -108,20 +108,22 @@ public class Compositions {
                         ) 
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
-            PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch).asProxy()
+            PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch)
                 .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             placeCoralAndPullAway(reefLevelSup, true),
             new ScheduleCommand(rumbleCommand)
         )
         .until(shouldInterrupt)
         .andThen(
-            Commands.either(
-                elevatorArmIntakeHandler.moveToStowPositions(),
-                Commands.sequence(
-                    Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
-                    elevatorArmIntakeHandler.moveToIntakePosition()   
-                ),
-                endEffector::hasCoral
+            new ScheduleCommand(
+                Commands.either(
+                    elevatorArmIntakeHandler.moveToStowPositions(),
+                    Commands.sequence(
+                        Commands.waitUntil(() -> FieldUtil.endEffectorCanClearReef(swerve.getLocalization())),
+                        elevatorArmIntakeHandler.moveToIntakePosition()   
+                    ),
+                    endEffector::hasCoral
+                )
             )
         );
     }
@@ -220,22 +222,24 @@ public class Compositions {
             Commands.print("Intaking algae from the reef"),
             stopRollers(),
             elevatorArmIntakeHandler.prepareForAlgaeReefIntaking(() -> FieldUtil.isClosestReefLocationHighAlgae(swerve.getLocalization())),
-            PathfindingHandler.pathToClosestReefAlgaeIntake(swerve).asProxy()
+            PathfindingHandler.pathToClosestReefAlgaeIntake(swerve)
                 .alongWith(endEffector.intakeAlgae()),
             Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization()))
                 .deadlineFor(
                     Commands.waitSeconds(kAlgaeIntakeWait)
-                    .andThen(new PullAway(swerve, true).asProxy())
+                    .andThen(new PullAway(swerve, true))
                 )
         )
         .until(shouldInterrupt)
             .andThen(
-                Commands.either(
-                    Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization())),
-                    endEffector.stopRollers(),
-                    endEffector::hasAlgae
-                ),
-                elevatorArmIntakeHandler.moveToStowPositions()
+                new ScheduleCommand(
+                    Commands.either(
+                        Commands.waitUntil(() -> FieldUtil.endEffectorWithAlgaeCanClearReef(swerve.getLocalization())),
+                        endEffector.stopRollers(),
+                        endEffector::hasAlgae
+                    ),
+                    elevatorArmIntakeHandler.moveToStowPositions()
+                )
             )
         .onlyIf(() -> !endEffector.hasCoral() && !endEffector.hasAlgae());
     }
@@ -243,7 +247,7 @@ public class Compositions {
     public Command scoreAlgaeInNet(BooleanSupplier shouldInterrupt) {
         return Commands.sequence(
             Commands.print("Scoring algae in the net"),
-            PathfindingHandler.pathToBarge(swerve).asProxy()
+            PathfindingHandler.pathToBarge(swerve)
                 .alongWith(
                     Commands.sequence(
                         elevatorArmIntakeHandler.moveToStowPositions(),
