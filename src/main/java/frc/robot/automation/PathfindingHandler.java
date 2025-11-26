@@ -2,6 +2,7 @@ package frc.robot.automation;
 
 import static frc.robot.Constants.PathFollowingConstants.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -10,9 +11,13 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SimpleDriveToPose;
+import frc.robot.pathing.BezierCurvePath;
+import frc.robot.pathing.BezierCurvePoint;
+import frc.robot.pathing.BezierTrajectory;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -152,5 +157,23 @@ public class PathfindingHandler {
     public static Command pathToSourceThenCoral(KrakenSwerve swerve, boolean isLeftSource) {
         return pathToStubPath("LSourceToCoral", !isLeftSource)
             .andThen(new RotationalDriveToCoral(swerve));
+    }
+
+    public static void testPath(KrakenSwerve swerve) {
+        BezierCurvePath path = new BezierCurvePath(
+            List.of(
+                BezierCurvePoint.fromControlLengths(
+                    new Pose2d(6.605, 7.394, Rotation2d.kZero), 0, 1.2, Rotation2d.fromDegrees(-177)
+                ),
+                BezierCurvePoint.fromControlLengths(
+                    new Pose2d(4.8, 6.7, Rotation2d.kZero), 1.01, 1.89, Rotation2d.fromDegrees(-103)
+                ),
+                BezierCurvePoint.fromControlLengths(
+                    new Pose2d(3.5, 5.7, Rotation2d.k180deg), 1.2, 0, Rotation2d.fromDegrees(-87)
+                )
+            ), 
+            0.0);
+
+        new BezierTrajectory(path, new ChassisSpeeds()).graphTrajectory();
     }
 }

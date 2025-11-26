@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 
 public class BezierTrajectory {
     private final BezierCurvePath path;
@@ -22,6 +24,8 @@ public class BezierTrajectory {
     private final State finalRotationState;
 
     private double timeToFollow;
+
+    private final StructArrayPublisher<Pose2d> trajectoryPublisher;
 
     public BezierTrajectory(BezierCurvePath path, ChassisSpeeds initialSpeeds) {
         this(path, initialSpeeds, kDefaultTranslationConstraints, kDefaultRotationConstraints);
@@ -54,6 +58,10 @@ public class BezierTrajectory {
         }
 
         timeToFollow = translationTime;
+
+        trajectoryPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("Bezier Trajectory", Pose2d.struct)
+            .publish();
     }
 
     public BezierTrajectoryState sampleTrajectory(double time) {
@@ -75,5 +83,17 @@ public class BezierTrajectory {
 
     public double getTimeRequiredToFollow() {
         return timeToFollow;
+    }
+
+    public void graphTrajectory() {
+        int amt = 50;
+        Pose2d[] poses = new Pose2d[amt];
+        for (int i = 0; i < amt; i++) {
+            double time = ((double) i / amt) * getTimeRequiredToFollow();
+
+            poses[i] = sampleTrajectory(time).targetPose();
+        }
+
+        trajectoryPublisher.accept(poses);
     }
 }

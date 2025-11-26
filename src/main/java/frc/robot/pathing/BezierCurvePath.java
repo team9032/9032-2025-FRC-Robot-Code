@@ -27,12 +27,15 @@ public class BezierCurvePath {
         int curveAmount = points.size() - 1;
 
         double totalDistance = 0.0;
+        Translation2d previousCurveEndTranslation = Translation2d.kZero;
         for (int i = 0; i < curveAmount; i++) {
-            var curve = new BezierCurve(points.get(i), points.get(i + 1), xLookupTable, yLookupTable, distanceToTimeLookupTable, i, totalDistance, distanceToDirectionMap);
+            var curve = new BezierCurve(points.get(i), points.get(i + 1), xLookupTable, yLookupTable, distanceToTimeLookupTable, i, totalDistance, distanceToDirectionMap, previousCurveEndTranslation);
 
             curves.add(curve);
 
             totalDistance += curve.getLength();
+
+            previousCurveEndTranslation = curve.getEndPoint().targetPose().getTranslation();
         }
 
         length = totalDistance;
@@ -48,6 +51,14 @@ public class BezierCurvePath {
     }
 
     public Translation2d samplePathDirection(double distance) {
+        if (distance > length)
+            throw new IllegalArgumentException("Distance must be less than " + length);
+
+        System.out.println("dd " + distance);//TODO fix direction lookups
+        if (distanceToDirectionMap.ceilingEntry(distance) == null) {
+            System.out.println("d " + distance + " total " + length + " c1 " + curves.get(0).getLength());
+            return new Translation2d();
+        }
         return distanceToDirectionMap.ceilingEntry(distance).getValue();
     }
 
@@ -64,10 +75,10 @@ public class BezierCurvePath {
     }
 
     public Rotation2d getInitialRotation() {
-        return curves.get(0).getStartPoint().targetRotation();
+        return curves.get(0).getStartPoint().targetPose().getRotation();
     }
 
     public Rotation2d getFinalRotation() {
-        return curves.get(curves.size() - 1).getEndPoint().targetRotation();
+        return curves.get(curves.size() - 1).getEndPoint().targetPose().getRotation();
     }
 }
