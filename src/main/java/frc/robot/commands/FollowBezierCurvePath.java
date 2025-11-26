@@ -6,22 +6,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.pathing.BezierCurvePath;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.PathFollowingConstants.*;
 
-public class AdvancedDriveToPose extends Command {
+public class FollowBezierCurvePath extends Command {
     private final PIDController alignmentXPID;
     private final PIDController alignmentYPID;
     private final ProfiledPIDController alignmentRotationPID;
 
     private final KrakenSwerve swerve;
 
-    private final Pose2d targetPose;
+    private final BezierCurvePath path;
 
-    public AdvancedDriveToPose(KrakenSwerve swerve, Pose2d targetPose) {//TODO implement
+    public FollowBezierCurvePath(KrakenSwerve swerve, BezierCurvePath path) {
         alignmentXPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
         alignmentXPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
@@ -34,7 +35,7 @@ public class AdvancedDriveToPose extends Command {
 
         this.swerve = swerve;
 
-        this.targetPose = targetPose;      
+        this.path = path;      
 
         addRequirements(swerve);
     }
@@ -44,10 +45,6 @@ public class AdvancedDriveToPose extends Command {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
         ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
 
-        alignmentXPID.setSetpoint(targetPose.getX()); 
-        alignmentYPID.setSetpoint(targetPose.getY()); 
-        alignmentRotationPID.setGoal(targetPose.getRotation().getRadians());
-
         alignmentXPID.reset();
         alignmentYPID.reset();
         alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
@@ -56,6 +53,8 @@ public class AdvancedDriveToPose extends Command {
     @Override
     public void execute() {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
+
+        double speedSetpoint = 
 
         double x = alignmentXPID.calculate(currentPose.getX());
         double y = alignmentYPID.calculate(currentPose.getY());
@@ -67,8 +66,6 @@ public class AdvancedDriveToPose extends Command {
                 .withVelocityY(y)
                 .withRotationalRate(rot)
         );
-
-        SmartDashboard.putBoolean("Simple Drive To Pose At Goal", atGoal());
     }
 
     @Override

@@ -2,11 +2,18 @@ package frc.robot.pathing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class BezierCurvePath {
     private final List<BezierCurve> curves = new ArrayList<>();
+
+    private final InterpolatingDoubleTreeMap xLookupTable = new InterpolatingDoubleTreeMap();
+    private final InterpolatingDoubleTreeMap yLookupTable = new InterpolatingDoubleTreeMap();
+    private final InterpolatingDoubleTreeMap distanceToTimeLookupTable = new InterpolatingDoubleTreeMap();
+    private final TreeMap<Double, Translation2d> distanceToDirectionMap = new TreeMap<>();
 
     public BezierCurvePath(BezierCurvePoint startPoint, BezierCurvePoint endPoint) {
         this(List.of(startPoint, endPoint));
@@ -22,14 +29,28 @@ public class BezierCurvePath {
 
         int curveAmount = points.size() - 1;
 
+        double totalDistance = 0.0;
         for (int i = 0; i < curveAmount; i++) {
-            curves.add(new BezierCurve(points.get(i), points.get(i + 1)));
+            var curve = new BezierCurve(points.get(i), points.get(i + 1), xLookupTable, yLookupTable, distanceToTimeLookupTable, i, totalDistance, distanceToDirectionMap);
+
+            curves.add(curve);
+
+            totalDistance += curve.getLength();
         }
     }
 
-    public Translation2d samplePath(double time) {
-        int index = (int) Math.floor(time);
+    public Translation2d samplePathPosition(double time) {
+        if (time > curves.size())
+            throw new IllegalArgumentException();
 
-        return curves.get(index).sampleCurve(time - index);
+        return new Translation2d(xLookupTable.get(time), yLookupTable.get(time));
+    }
+
+    public Translation2d samplePathDirection(double distance) {
+        return distanceToDirectionMap.ceilingEntry(distance).getValue();
+    }
+
+    public double getTimeFromDistance(double distance) {
+        return distanceToTimeLookupTable.get(distance);
     }
 }
