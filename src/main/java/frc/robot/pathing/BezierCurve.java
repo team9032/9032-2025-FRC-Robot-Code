@@ -5,11 +5,11 @@ import java.util.TreeMap;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
+import static frc.robot.pathing.PathingConstants.kCurveSampleAmount;;
+
 public class BezierCurve {
     private final BezierCurvePoint startPoint;
     private final BezierCurvePoint endPoint;
-
-    private static final double kCurveSampleAmount = 20;//TODO move 
 
     private final double length;
 
@@ -47,6 +47,14 @@ public class BezierCurve {
 
     public double getLength() {
         return length;
+    }
+
+    public BezierCurvePoint getStartPoint() {
+        return startPoint;
+    }
+
+    public BezierCurvePoint getEndPoint() {
+        return endPoint;
     }
 
     private double sampleRawCurveX(double time) {

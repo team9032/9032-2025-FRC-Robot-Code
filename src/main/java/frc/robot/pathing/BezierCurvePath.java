@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
@@ -15,15 +16,11 @@ public class BezierCurvePath {
     private final InterpolatingDoubleTreeMap distanceToTimeLookupTable = new InterpolatingDoubleTreeMap();
     private final TreeMap<Double, Translation2d> distanceToDirectionMap = new TreeMap<>();
 
-    public BezierCurvePath(BezierCurvePoint startPoint, BezierCurvePoint endPoint) {
-        this(List.of(startPoint, endPoint));
-    }
+    private final double length;
 
-    public BezierCurvePath(BezierCurvePoint startPoint, BezierCurvePoint intermediatePoint, BezierCurvePoint endPoint) {
-        this(List.of(startPoint, intermediatePoint, endPoint));
-    }
+    private final double finalSpeed;
 
-    public BezierCurvePath(List<BezierCurvePoint> points) {
+    public BezierCurvePath(List<BezierCurvePoint> points, double finalSpeed) {
         if (points.size() < 2)
             throw new IllegalArgumentException("2 or more points are needed");
 
@@ -37,11 +34,15 @@ public class BezierCurvePath {
 
             totalDistance += curve.getLength();
         }
+
+        length = totalDistance;
+
+        this.finalSpeed = finalSpeed;
     }
 
     public Translation2d samplePathPosition(double time) {
         if (time > curves.size())
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Time must be less than " + curves.size());
 
         return new Translation2d(xLookupTable.get(time), yLookupTable.get(time));
     }
@@ -52,5 +53,21 @@ public class BezierCurvePath {
 
     public double getTimeFromDistance(double distance) {
         return distanceToTimeLookupTable.get(distance);
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public double getFinalSpeed() {
+        return finalSpeed;
+    }
+
+    public Rotation2d getInitialRotation() {
+        return curves.get(0).getStartPoint().targetRotation();
+    }
+
+    public Rotation2d getFinalRotation() {
+        return curves.get(curves.size() - 1).getEndPoint().targetRotation();
     }
 }

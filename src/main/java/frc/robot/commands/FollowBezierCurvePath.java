@@ -1,64 +1,78 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.pathing.BezierCurvePath;
+import frc.robot.pathing.BezierTrajectory;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import static frc.robot.Constants.PathFollowingConstants.*;
+import static frc.robot.Constants.PathFollowingConstants.kFieldCentricClosedLoopDriveRequest;
+import static frc.robot.pathing.PathingConstants.*;
 
 public class FollowBezierCurvePath extends Command {
-    private final PIDController alignmentXPID;
-    private final PIDController alignmentYPID;
-    private final ProfiledPIDController alignmentRotationPID;
+    private final PIDController xPID;
+    private final PIDController yPID;
+    private final PIDController alignmentRotationPID;
 
     private final KrakenSwerve swerve;
 
     private final BezierCurvePath path;
 
+    private BezierTrajectory trajectory;
+
+    private final Timer timer;
+
     public FollowBezierCurvePath(KrakenSwerve swerve, BezierCurvePath path) {
-        alignmentXPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
-        alignmentXPID.setTolerance(kXYAlignmentTolerance.in(Meters));
+        xPID = new PIDController(kTranslationKP, 0, kTranslationKD);
+        xPID.setTolerance(kTranslationTolerance.in(Meters));
 
-        alignmentYPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
-        alignmentYPID.setTolerance(kXYAlignmentTolerance.in(Meters));
+        yPID = new PIDController(kTranslationKP, 0, kTranslationKD);
+        yPID.setTolerance(kTranslationTolerance.in(Meters));
 
-        alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kDriveToPoseRotationConstraints);
-        alignmentRotationPID.setTolerance(kRotAlignmentTolerance.in(Radians));
+        alignmentRotationPID = new PIDController(kRotationKP, 0, kRotationKD);
+        alignmentRotationPID.setTolerance(kRotationTolerance.in(Radians));
         alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
-        this.swerve = swerve;
+        timer = new Timer();
 
-        this.path = path;      
+        this.swerve = swerve;
+        this.path = path;
 
         addRequirements(swerve);
     }
 
     @Override
     public void initialize() {
-        Pose2d currentPose = swerve.getLocalization().getCurrentPose();
-        ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
+        xPID.reset();
+        yPID.reset();
+        alignmentRotationPID.reset();
 
-        alignmentXPID.reset();
-        alignmentYPID.reset();
-        alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
+        trajectory = new BezierTrajectory(path, swerve.getLocalization().getCurrentVelocity());
+
+        timer.reset();
+        timer.start();
     }
 
     @Override
-    public void execute() {
+    public void execute() {//TODO implement acceleration?
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
 
-        double speedSetpoint = 
+        var targetState = trajectory.sampleTrajectory(timer.get());
 
-        double x = alignmentXPID.calculate(currentPose.getX());
-        double y = alignmentYPID.calculate(currentPose.getY());
-        double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
+        /* Update position PIDs */
+        Pose2d targetPose = targetState.targetPose();
+        xPID.setSetpoint(targetPose.getX());
+        yPID.setSetpoint(targetPose.getY());
+        alignmentRotationPID.setSetpoint(targetPose.getRotation().getRadians());
+
+        /* Find speeds using PID outputs and velocity setpoints */
+        double x = xPID.calculate(currentPose.getX()) + targetState.fieldCentricVelocity().getX();
+        double y = yPID.calculate(currentPose.getY()) + targetState.fieldCentricVelocity().getY();
+        double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + targetState.angularVelocity();
 
         swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
@@ -70,15 +84,30 @@ public class FollowBezierCurvePath extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
+        swerve.setControl(
+            kFieldCentricClosedLoopDriveRequest
+                .withVelocityX(0.0)
+                .withVelocityY(0.0)
+                .withRotationalRate(0.0)
+        );
     }
 
-    private boolean atGoal() {
-        return alignmentRotationPID.atGoal() && alignmentXPID.atSetpoint() && alignmentYPID.atSetpoint();
+    private boolean atSetpoint() {
+        return alignmentRotationPID.atSetpoint() && xPID.atSetpoint() && yPID.atSetpoint();
     }
 
     @Override
     public boolean isFinished() {
-        return atGoal();
+        /* If there is a final speed, being at the position setpoint is not important */
+        if (path.getFinalSpeed() > 0.01) {
+            return timer.hasElapsed(trajectory.getTimeRequiredToFollow());
+        }
+
+        else {
+            var velocity = swerve.getLocalization().getCurrentVelocity();
+            boolean slowEnough = Math.hypot(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond) < kAcceptableEndingVelocity;
+
+            return atSetpoint() && timer.hasElapsed(trajectory.getTimeRequiredToFollow()) && slowEnough;
+        }
     }
 }
