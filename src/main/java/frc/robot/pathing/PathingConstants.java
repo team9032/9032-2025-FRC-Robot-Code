@@ -9,10 +9,10 @@ import edu.wpi.first.units.measure.Distance;
 
 public class PathingConstants {
     /* Path following constants */
-    public static final double kTranslationKP = 0.0;//TODO need to tune
-    public static final double kTranslationKD = 0.0;
+    public static final double kTranslationKP = 4.0;//TODO need to tune
+    public static final double kTranslationKD = 0.1;
 
-    public static final double kRotationKP = 0.0;
+    public static final double kRotationKP = 1.0;
     public static final double kRotationKD = 0.0;
 
     public static final Distance kTranslationTolerance = Inches.of(0.33);
@@ -20,7 +20,7 @@ public class PathingConstants {
     public static final double kAcceptableEndingVelocity = 0.25;
 
     /* Path generation constants */
-    public static final double kCurveSampleAmount = 20;
+    public static final int kCurveSampleAmount = 20;
 
     /* Trajectory generation constants */
     public static final Constraints kDefaultTranslationConstraints = new Constraints(4, 5);

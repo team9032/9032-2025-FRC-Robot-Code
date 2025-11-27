@@ -146,8 +146,6 @@ public class RobotContainer {
 
         else
             leds.setState(State.DISABLED); 
-
-        PathfindingHandler.testPath(krakenSwerve);
     }
 
     private void configureDefaultCommands() {
@@ -164,6 +162,8 @@ public class RobotContainer {
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
         /* Driver Controls */      
+        driveController.povLeft().whileTrue(PathfindingHandler.testPathDefered(krakenSwerve));//TODO remove
+
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))

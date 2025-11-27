@@ -13,7 +13,7 @@ public class BezierCurve {
 
     private final double length;
 
-    public BezierCurve(BezierCurvePoint startPoint, BezierCurvePoint endPoint, InterpolatingDoubleTreeMap xLookupTable, InterpolatingDoubleTreeMap yLookupTable, InterpolatingDoubleTreeMap distanceToTimeLookupTable, int timeOffset, double distanceOffset, TreeMap<Double, Translation2d> distanceToDirectionMap, Translation2d previousCurveEndTranslation) {
+    public BezierCurve(BezierCurvePoint startPoint, BezierCurvePoint endPoint, InterpolatingDoubleTreeMap xLookupTable, InterpolatingDoubleTreeMap yLookupTable, double distanceOffset, TreeMap<Double, Translation2d> distanceToDirectionMap, Translation2d previousCurveEndTranslation) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
 
@@ -22,27 +22,27 @@ public class BezierCurve {
         for (int i = 0; i <= kCurveSampleAmount; i++) {
             double time = (double) i / kCurveSampleAmount;
 
-            /* Find x and y coordinates using the Bezier function */
+            /* Find x and y coordinates by sampling the curve */
             double x = sampleRawCurveX(time);
             double y = sampleRawCurveY(time);
             var currentTranslation = new Translation2d(x, y);
 
-            xLookupTable.put(time + timeOffset, x);
-            yLookupTable.put(time + timeOffset, y);
-
-            if (previousTranslation != Translation2d.kZero) {
+            if (previousTranslation != null) {
+                /* Find distance by approximating the path as line segments */
                 totalDistance += previousTranslation.getDistance(currentTranslation);
 
+                /* Find the path direction by subtracting the previous point from the current point */
                 var direction = currentTranslation.minus(previousTranslation);
                 distanceToDirectionMap.put(totalDistance, direction);
             }
 
-            distanceToTimeLookupTable.put(totalDistance, time + timeOffset);
+            xLookupTable.put(totalDistance, x);
+            yLookupTable.put(totalDistance, y);
 
             previousTranslation = currentTranslation;
         }
 
-        length = totalDistance;
+        length = totalDistance - distanceOffset;
     }
 
     public double getLength() {

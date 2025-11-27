@@ -52,6 +52,7 @@ public class FollowBezierCurvePath extends Command {
         alignmentRotationPID.reset();
 
         trajectory = new BezierTrajectory(path, swerve.getLocalization().getCurrentVelocity());
+        trajectory.graphTrajectory();//TODO no
 
         timer.reset();
         timer.start();

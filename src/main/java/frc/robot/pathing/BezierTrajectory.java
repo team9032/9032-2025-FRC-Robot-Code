@@ -1,5 +1,6 @@
 package frc.robot.pathing;
 
+import static frc.robot.pathing.PathingConstants.kCurveSampleAmount;
 import static frc.robot.pathing.PathingConstants.kDefaultRotationConstraints;
 import static frc.robot.pathing.PathingConstants.kDefaultTranslationConstraints;
 
@@ -44,7 +45,7 @@ public class BezierTrajectory {
         translationProfile.calculate(0, initialTranslationState, finalTranslationState);
         double translationTime = translationProfile.timeLeftUntil(finalTranslationState.position);        
 
-        /* Setup rotation profile */
+        /* Setup rotation profile *///TODO rotation is broken
         initialRotationState = new State(path.getInitialRotation().getRadians(), initialSpeeds.omegaRadiansPerSecond);
         finalRotationState = new State(path.getFinalRotation().getRadians(), 0.0);
         rotationProfile.calculate(0, initialRotationState, finalRotationState);
@@ -67,7 +68,7 @@ public class BezierTrajectory {
     public BezierTrajectoryState sampleTrajectory(double time) {
         var translationProfileState = translationProfile.calculate(time, initialTranslationState, finalTranslationState);
 
-        var pathPose = path.samplePathPosition(path.getTimeFromDistance(translationProfileState.position));
+        var pathPose = path.samplePathPosition(translationProfileState.position);
         var pathDirection = path.samplePathDirection(translationProfileState.position);
         var pathVelocity = pathDirection.div(pathDirection.getNorm()).times(translationProfileState.velocity);
 
@@ -86,10 +87,9 @@ public class BezierTrajectory {
     }
 
     public void graphTrajectory() {
-        int amt = 50;
-        Pose2d[] poses = new Pose2d[amt];
-        for (int i = 0; i < amt; i++) {
-            double time = ((double) i / amt) * getTimeRequiredToFollow();
+        Pose2d[] poses = new Pose2d[kCurveSampleAmount];
+        for (int i = 0; i < kCurveSampleAmount; i++) {
+            double time = ((double) i / kCurveSampleAmount) * getTimeRequiredToFollow();
 
             poses[i] = sampleTrajectory(time).targetPose();
         }
