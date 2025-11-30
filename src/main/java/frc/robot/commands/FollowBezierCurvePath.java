@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.pathing.BezierCurvePath;
 import frc.robot.pathing.BezierTrajectory;
@@ -81,6 +83,9 @@ public class FollowBezierCurvePath extends Command {
                 .withVelocityY(y)
                 .withRotationalRate(rot)
         );
+
+        SmartDashboard.putNumber("Path Following Error (in)", Units.metersToInches(targetPose.getTranslation().getDistance(currentPose.getTranslation())));
+        SmartDashboard.putNumber("Path Target Speed", targetState.fieldCentricVelocity().getNorm());
     }
 
     @Override
