@@ -8,11 +8,14 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SimpleDriveToPose;
+import frc.robot.pathing.CurvedPath;
+import frc.robot.commands.FollowCurvedPath;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.ElasticUtil;
@@ -113,7 +116,16 @@ public class PathfindingHandler {
     }
 
     public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
-        return pathToPoseWithIntermediate(() -> FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch), swerve, true);
+        var cmd = Commands.defer(
+            () -> {
+                var path = CurvedPath.enterAtFinalRotation(FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch));
+
+                return new FollowCurvedPath(swerve, path);
+            }, 
+            Set.of(swerve)
+        ); 
+        // Autopilot
+        return cmd;
     }
 
     public static Command pathToClosestOffsetReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {

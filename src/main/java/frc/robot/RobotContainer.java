@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.automation.ButtonBoardHandler;
 import frc.robot.automation.Compositions;
 import frc.robot.automation.ElevatorArmIntakeHandler;
+import frc.robot.automation.PathfindingHandler;
 import frc.robot.automation.ButtonBoardHandler.ReefLevel;
 import frc.robot.commands.Autos;
 import frc.robot.commands.RotationalDriveToCoral;
@@ -161,6 +162,8 @@ public class RobotContainer {
     /** Use this method to define your button trigger->command mappings. */
     private void configureButtonTriggers() {
         /* Driver Controls */      
+        driveController.povUp().onTrue(PathfindingHandler.pathToClosestReefBranch(krakenSwerve, true));
+
         resetPerspective.onTrue(
             krakenSwerve.resetPerspective()
             .andThen(ElasticUtil.sendInfoCommand("Reset perspective"))
