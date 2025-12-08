@@ -6,13 +6,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle) {
+public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double endingSpeed) {
+    public CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle) {
+        this(finalPose, finalEntryAngle, 0.0);
+    }
+
     public static CurvedPath enterAtFinalRotation(Pose2d finalPose) {
         return new CurvedPath(finalPose, finalPose.getRotation());
     }
 
-    public static CurvedPath createStraightPath(Translation2d initialPose, Pose2d finalPose) {
-        var entryAngle = finalPose.getTranslation().minus(initialPose).getAngle();
+    public static CurvedPath createStraightPath(Translation2d currentTranslation, Pose2d finalPose) {
+        var entryAngle = finalPose.getTranslation().minus(currentTranslation).getAngle();
 
         return new CurvedPath(finalPose, entryAngle);
     }

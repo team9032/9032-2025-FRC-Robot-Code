@@ -125,7 +125,7 @@ public class PathfindingHandler {
             }, 
             Set.of(swerve)
         ); 
-        // Autopilot
+        
         return cmd;
     }
 

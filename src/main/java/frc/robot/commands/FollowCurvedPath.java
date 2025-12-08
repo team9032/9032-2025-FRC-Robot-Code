@@ -47,7 +47,7 @@ public class FollowCurvedPath extends Command {
         alignmentRotationPID.setGoal(path.finalPose().getRotation().getRadians());
         alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
 
-        previousSpeed = Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
+        previousSpeed = swerve.getLocalization().getCurrentSpeed();
         previousTime = Utils.getCurrentTimeSeconds();
     }
 
@@ -59,7 +59,7 @@ public class FollowCurvedPath extends Command {
         double remaingPathDistance = path.getRemainingPathDistance(currentPose.getTranslation());
 
         /* Use kinematics to find the maximum drive speed that can be stopped with the max acceleration */
-        double driveSpeed = Math.sqrt(0.0 - (2.0 * kMaxAcceleration * -remaingPathDistance));//TODO final velocity
+        double driveSpeed = Math.sqrt(Math.pow(path.endingSpeed(), 2) - (2.0 * kMaxAcceleration * -remaingPathDistance));
 
         /* Apply speed limit */
         driveSpeed = Math.min(driveSpeed, kMaxSpeed);
@@ -69,26 +69,34 @@ public class FollowCurvedPath extends Command {
         double dt = currentTime - previousTime;
         double acceleration = (driveSpeed - previousSpeed) / dt;
 
-        double maxAcceleration = kMaxAcceleration;
-        if (driveSpeed > kTorqueLimitedSpeedStart) {
-            //TODO implement
+        double maxForwardAcceleration;
+        /* If we are in the torque limited part of the motor curve, limit forward acceleration based on available torque */
+        if (driveSpeed >= kTorqueLimitedSpeedStart) {
+            double currentSpeed = swerve.getLocalization().getCurrentSpeed();
+
+            maxForwardAcceleration = kMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
         }
 
-        /* Apply acceleration limit */
-        acceleration = MathUtil.clamp(acceleration, -maxAcceleration, maxAcceleration);
+        /* Use the true max acceleration since we are in the current limited part of the motor curves */
+        else 
+            maxForwardAcceleration = kMaxAcceleration;
+
+        /* Apply forward and reverse acceleration limit */
+        acceleration = MathUtil.clamp(acceleration, -kMaxAcceleration, maxForwardAcceleration);
         driveSpeed = previousSpeed + (acceleration * dt);
 
         /* Find x and y velocities */
         double xVelocity = driveSpeed * driveDirection.getX();
         double yVelocity = driveSpeed * driveDirection.getY();
 
-        double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
+        /* Find angular velocity by combining the profiled PID's output and its velocity setpoint */
+        double angularVelocity = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
 
         swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
-                .withRotationalRate(rot)
+                .withRotationalRate(angularVelocity)
         );
 
         previousSpeed = driveSpeed;
@@ -104,11 +112,9 @@ public class FollowCurvedPath extends Command {
         );
     }
 
-    private boolean shouldFinish() {
+    private boolean atSetpoint() {
         var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
-        ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
-
-        double currentSpeed = Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
+        double currentSpeed = swerve.getLocalization().getCurrentSpeed();
 
         return alignmentRotationPID.atGoal() 
             && currentTranslation.getDistance(path.finalPose().getTranslation()) < kXYAlignmentTolerance.in(Meters)
@@ -117,6 +123,13 @@ public class FollowCurvedPath extends Command {
 
     @Override
     public boolean isFinished() {
-        return shouldFinish();
+        if (path.endingSpeed() > 0.0) {
+            var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
+
+            return currentTranslation.getDistance(path.finalPose().getTranslation()) < kXYAlignmentTolerance.in(Meters);//TODO have a rougher tolerance here
+        }
+
+        else 
+            return atSetpoint();
     }
 }
