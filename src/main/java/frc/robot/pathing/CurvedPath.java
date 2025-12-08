@@ -11,8 +11,8 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
         this(finalPose, finalEntryAngle, 0.0);
     }
 
-    public static CurvedPath enterAtFinalRotation(Pose2d finalPose) {
-        return new CurvedPath(finalPose, finalPose.getRotation());
+    public static CurvedPath enterAtFinalRotation(Pose2d finalPose, boolean invertEntryAngle) {
+        return new CurvedPath(finalPose, finalPose.getRotation().rotateBy(invertEntryAngle ? Rotation2d.k180deg : Rotation2d.kZero));
     }
 
     public static CurvedPath createStraightPath(Translation2d currentTranslation, Pose2d finalPose) {

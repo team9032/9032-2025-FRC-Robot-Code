@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
-
 import java.util.List;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -9,6 +7,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+
+import static frc.robot.pathing.PathingConstants.kRobotRelativeClosedLoopDriveRequest;
 
 public class WheelRadiusFinder {
     private final KrakenSwerve swerve;

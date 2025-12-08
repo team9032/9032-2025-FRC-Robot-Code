@@ -42,8 +42,6 @@ import static frc.robot.Constants.DriverConstants.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathfindingCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -105,10 +103,6 @@ public class RobotContainer {
     public RobotContainer() {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
-
-        /* Warm up PathPlanner */
-        PathfindingCommand.warmupCommand().schedule();
-        FollowPathCommand.warmupCommand().schedule(); 
 
         /* Bind Triggers */
         if(kRunSysId)

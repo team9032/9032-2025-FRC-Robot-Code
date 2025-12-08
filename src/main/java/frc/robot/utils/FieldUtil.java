@@ -1,6 +1,8 @@
 package frc.robot.utils;
 
 import static frc.robot.localization.LocalizationConstants.kBackReefTagsStartingID;
+import static frc.robot.localization.LocalizationConstants.kFieldLength;
+import static frc.robot.localization.LocalizationConstants.kFieldWidth;
 import static frc.robot.localization.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.localization.LocalizationConstants.kMinReefTagID;
 import static frc.robot.localization.LocalizationConstants.kReefCenter;
@@ -17,9 +19,8 @@ import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefD
 import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentRotation;
 import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
 
-import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -33,15 +34,21 @@ public class FieldUtil {
     }
 
     public static Pose2d flipPoseIfNeeded(Pose2d pose) {
-        if (shouldFlipCoordinates())
-            return FlippingUtil.flipFieldPose(pose);
-        
+        if (shouldFlipCoordinates()) {
+            var translation = pose.getTranslation();
+
+            return new Pose2d(
+                new Translation2d(kFieldLength - translation.getX(), kFieldWidth - translation.getY()), 
+                pose.getRotation().plus(Rotation2d.k180deg)
+            );
+        }
+
         return pose; 
     }
 
     public static Translation2d flipTranslationIfNeeded(Translation2d translation) {
         if (shouldFlipCoordinates())
-            return FlippingUtil.flipFieldPosition(translation);
+            return new Translation2d(kFieldLength - translation.getX(), kFieldWidth - translation.getY());
 
         return translation;
     }

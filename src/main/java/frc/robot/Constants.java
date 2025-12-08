@@ -1,21 +1,11 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 import frc.robot.subsystems.swerve.SwerveConstants;
 
 public final class Constants {
@@ -46,48 +36,6 @@ public final class Constants {
     }
 
     public static class PathFollowingConstants {
-        /* Pathplanner constants */
-        public static final PIDConstants kTranslationPID = new PIDConstants(5.0);
-        public static final PIDConstants kRotationPID = new PIDConstants(7.0);
-
-        public static final ApplyRobotSpeeds kRobotRelativeClosedLoopDriveRequest = new ApplyRobotSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo);
-
-        public static final PathConstraints kNormalPathConstraints = new PathConstraints(
-            3.7,
-            3.5, 
-            3 * Math.PI, 
-            4 * Math.PI
-        );
-
-        public static final PathConstraints kSlowPathConstraints = new PathConstraints(
-            2, 
-            3, 
-            3 * Math.PI,
-            4 * Math.PI
-        );
-
-        public static final FieldCentric kFieldCentricClosedLoopDriveRequest = new FieldCentric()
-            .withDriveRequestType(DriveRequestType.Velocity)
-            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
-
-        public static final Transform2d kIntermediatePointOffset = new Transform2d(Units.inchesToMeters(16), 0, Rotation2d.kZero);
-        public static final double kIntermediateStartDistance = Units.inchesToMeters(30);
-
-        /* Simple drive to pose constants */
-        public static final double kAlignmentXYkP = 7.0;
-        public static final double kAlignmentXYkD = 0.1;
-        
-        public static final double kAlignmentRotkP = 8.0;
-        public static final double kAlignmentRotkD = 0.1;
-
-        public static final Distance kXYAlignmentTolerance = Inches.of(0.33);
-        public static final Angle kRotAlignmentTolerance = Degrees.of(4);
-
-        public static final Constraints kDriveToPoseRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
-
         /* Barge alignment constants */
         public static final double kBargeAlignmentX = 7.6 + Units.inchesToMeters(8);
         public static final Rotation2d kBargeAlignmentRotation = Rotation2d.kZero;

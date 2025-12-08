@@ -15,8 +15,6 @@ import static frc.robot.pathing.PathingConstants.*;
 
 import com.ctre.phoenix6.Utils;
 
-import static frc.robot.Constants.PathFollowingConstants.kFieldCentricClosedLoopDriveRequest;
-
 public class FollowCurvedPath extends Command {
     private final ProfiledPIDController alignmentRotationPID;
 
@@ -29,7 +27,7 @@ public class FollowCurvedPath extends Command {
 
     public FollowCurvedPath(KrakenSwerve swerve, CurvedPath path) {
         alignmentRotationPID = new ProfiledPIDController(kRotationkP, 0, kRotationkD, kRotationConstraints);
-        alignmentRotationPID.setTolerance(kRotAlignmentTolerance.in(Radians));
+        alignmentRotationPID.setTolerance(kRotationAlignmentTolerance.in(Radians));
         alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerve = swerve;
@@ -105,11 +103,7 @@ public class FollowCurvedPath extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerve.setControl(kFieldCentricClosedLoopDriveRequest
-            .withVelocityX(0.0)
-            .withVelocityY(0.0)
-            .withRotationalRate(0.0)
-        );
+        swerve.setControl(kRobotRelativeClosedLoopDriveRequest.withSpeeds(new ChassisSpeeds()));
     }
 
     private boolean atSetpoint() {
@@ -126,7 +120,7 @@ public class FollowCurvedPath extends Command {
         if (path.endingSpeed() > 0.0) {
             var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
 
-            return currentTranslation.getDistance(path.finalPose().getTranslation()) < kXYAlignmentTolerance.in(Meters);//TODO have a rougher tolerance here
+            return currentTranslation.getDistance(path.finalPose().getTranslation()) < kRoughXYAlignmentTolerance.in(Meters);
         }
 
         else 

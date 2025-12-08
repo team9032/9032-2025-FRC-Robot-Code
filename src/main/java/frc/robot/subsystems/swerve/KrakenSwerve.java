@@ -5,13 +5,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.DriveFeedforwards;
-
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -27,7 +21,6 @@ import frc.robot.utils.ElasticUtil;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Inches;
-import static frc.robot.Constants.PathFollowingConstants.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 import java.util.List;
@@ -67,28 +60,6 @@ public class KrakenSwerve extends SubsystemBase {
         }
 
         localization = new Localization(drivetrain);
-
-        try {
-            var pathplannerConfig = RobotConfig.fromGUISettings();
-
-            /* Configure PathPlanner */
-            AutoBuilder.configure(
-                () -> localization.getCurrentPose(), 
-                drivetrain::resetPose, 
-                () -> drivetrain.getState().Speeds, 
-                this::drivePathPlanner, 
-                new PPHolonomicDriveController(
-                    kTranslationPID, 
-                    kRotationPID
-                ), 
-                pathplannerConfig, 
-                /* Supplier for if the path should be mirrored for the red alliance - will always use blue for origin */
-                () -> DriverStation.getAlliance().orElseGet(() -> DriverStation.Alliance.Blue) == DriverStation.Alliance.Red, 
-                this
-            );
-        } catch (Exception e) {
-            ElasticUtil.sendError("Failed to load PathPlanner config", "Auto will commit die!");
-        }
         
         /* Allow drive motor constants to be updated from the dashboard */
         SmartDashboard.putNumber("Drive kP", driveGains.kP);
@@ -122,14 +93,6 @@ public class KrakenSwerve extends SubsystemBase {
 
     public Command runSysIdQuasistatic(Direction direction) {
         return sysId.sysIdQuasistatic(direction);
-    }
-
-    private void drivePathPlanner(ChassisSpeeds setpoint, DriveFeedforwards feedforwards) {
-        drivetrain.setControl(
-            kRobotRelativeClosedLoopDriveRequest.withSpeeds(setpoint)
-            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesX())
-            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())
-        );
     }
 
     private void updateDriveMotorConstants() {

@@ -43,7 +43,7 @@ public class Compositions {
     public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
         return Commands.sequence(
             Commands.print("Getting coral from source"),
-            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
+            // PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),//TODO this is broken now
             Commands.print("Pathing to reef branch after source coral"),
             PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch)
         )                

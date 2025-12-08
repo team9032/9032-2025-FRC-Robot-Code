@@ -14,7 +14,7 @@ import frc.robot.localization.TrackedObject.ObjectType;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static frc.robot.Constants.IntakeDriverAssistConstants.*;
-import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.pathing.PathingConstants.kRobotRelativeClosedLoopDriveRequest;
 import static frc.robot.Constants.DriverConstants.kMaxSpeed;
 
 public class RotationalIntakeDriverAssist extends Command {
@@ -58,7 +58,7 @@ public class RotationalIntakeDriverAssist extends Command {
         if (coralTarget.isPresent()) {
             lastCoralTarget = coralTarget.get();
 
-            double rotationSetpoint = currentYaw - (coralTarget.get().getPhotonVisionData().yaw - kRotationSetpoint);
+            double rotationSetpoint = currentYaw - (coralTarget.get().getPhotonVisionData().yaw - kRotationSetpoint);//TODO this is wrong!
 
             rotationController.setSetpoint(MathUtil.inputModulus(rotationSetpoint, -180.0, 180.0));
         }
