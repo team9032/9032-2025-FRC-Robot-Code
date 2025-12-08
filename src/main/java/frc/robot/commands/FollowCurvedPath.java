@@ -4,11 +4,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import static frc.robot.pathing.PathingConstants.*;
@@ -55,26 +55,32 @@ public class FollowCurvedPath extends Command {
     public void execute() {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
 
-        var driveDirection = path.getPathDirection(currentPose);
-        double remaingPathDistance = path.getRemainingPathDistance(currentPose);
+        var driveDirection = path.getPathDirection(currentPose.getTranslation());
+        double remaingPathDistance = path.getRemainingPathDistance(currentPose.getTranslation());
 
-        double profiledDriveSpeed = Math.sqrt(0.0 - (2.0 * kMaxAcceleration * -remaingPathDistance));//TODO final velocity
-        profiledDriveSpeed = Math.min(profiledDriveSpeed, kMaxSpeed);
+        /* Use kinematics to find the maximum drive speed that can be stopped with the max acceleration */
+        double driveSpeed = Math.sqrt(0.0 - (2.0 * kMaxAcceleration * -remaingPathDistance));//TODO final velocity
 
+        /* Apply speed limit */
+        driveSpeed = Math.min(driveSpeed, kMaxSpeed);
+
+        /* Find acceleration */
         double currentTime = Utils.getCurrentTimeSeconds();
         double dt = currentTime - previousTime;
-        double acceleration = (profiledDriveSpeed - previousSpeed) / dt;
+        double acceleration = (driveSpeed - previousSpeed) / dt;
 
         double maxAcceleration = kMaxAcceleration;
-        if (profiledDriveSpeed > kTorqueLimitedSpeedStart) {
+        if (driveSpeed > kTorqueLimitedSpeedStart) {
             //TODO implement
         }
 
+        /* Apply acceleration limit */
         acceleration = MathUtil.clamp(acceleration, -maxAcceleration, maxAcceleration);
-        profiledDriveSpeed = previousSpeed + (acceleration * dt);
+        driveSpeed = previousSpeed + (acceleration * dt);
 
-        double xVelocity = profiledDriveSpeed * driveDirection.getX();
-        double yVelocity = profiledDriveSpeed * driveDirection.getY();
+        /* Find x and y velocities */
+        double xVelocity = driveSpeed * driveDirection.getX();
+        double yVelocity = driveSpeed * driveDirection.getY();
 
         double rot = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
 
@@ -85,10 +91,8 @@ public class FollowCurvedPath extends Command {
                 .withRotationalRate(rot)
         );
 
-        previousSpeed = profiledDriveSpeed;
+        previousSpeed = driveSpeed;
         previousTime = currentTime;
-
-        SmartDashboard.putBoolean("Simple Drive To Pose At Goal", atGoal());
     }
 
     @Override
@@ -100,12 +104,19 @@ public class FollowCurvedPath extends Command {
         );
     }
 
-    private boolean atGoal() {
-        return alignmentRotationPID.atGoal();
+    private boolean shouldFinish() {
+        var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
+        ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
+
+        double currentSpeed = Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
+
+        return alignmentRotationPID.atGoal() 
+            && currentTranslation.getDistance(path.finalPose().getTranslation()) < kXYAlignmentTolerance.in(Meters)
+            && currentSpeed < kAcceptableEndingSpeed;
     }
 
     @Override
     public boolean isFinished() {
-        return false; //atGoal();
+        return shouldFinish();
     }
 }

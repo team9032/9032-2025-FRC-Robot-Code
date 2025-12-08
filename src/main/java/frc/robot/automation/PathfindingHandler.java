@@ -118,7 +118,8 @@ public class PathfindingHandler {
     public static Command pathToClosestReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
         var cmd = Commands.defer(
             () -> {
-                var path = CurvedPath.enterAtFinalRotation(FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch));
+                var pose = FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch);
+                var path = new CurvedPath(pose, pose.getRotation().rotateBy(Rotation2d.k180deg));
 
                 return new FollowCurvedPath(swerve, path);
             }, 

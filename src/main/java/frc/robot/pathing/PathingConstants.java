@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public class PathingConstants {
+    public static final double kStraightDriveDistance = Units.inchesToMeters(12);
+
     /* Constraints */
-    public static final Constraints kRotationConstraints = new Constraints(3 * Math.PI, 4 * Math.PI);
+    public static final Constraints kRotationConstraints = new Constraints(3 * Math.PI, 3 * Math.PI);
 
     public static final double kMaxAcceleration = 4.0;
     public static final double kMaxSpeed = 4.0;
@@ -23,4 +26,6 @@ public class PathingConstants {
     /* Tolerances */
     public static final Distance kXYAlignmentTolerance = Inches.of(0.33);
     public static final Angle kRotAlignmentTolerance = Degrees.of(4);
+
+    public static final double kAcceptableEndingSpeed = 0.25;
 }

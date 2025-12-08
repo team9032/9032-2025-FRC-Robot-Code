@@ -1,32 +1,46 @@
 package frc.robot.pathing;
 
+import static frc.robot.pathing.PathingConstants.kStraightDriveDistance;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle) {
     public static CurvedPath enterAtFinalRotation(Pose2d finalPose) {
-        return new CurvedPath(finalPose, finalPose.getRotation().rotateBy(Rotation2d.k180deg));
+        return new CurvedPath(finalPose, finalPose.getRotation());
     }
 
-    public static CurvedPath createStraightPath(Pose2d initialPose, Pose2d finalPose) {
-        var entryAngle = finalPose.getTranslation().minus(initialPose.getTranslation()).getAngle();
+    public static CurvedPath createStraightPath(Translation2d initialPose, Pose2d finalPose) {
+        var entryAngle = finalPose.getTranslation().minus(initialPose).getAngle();
 
         return new CurvedPath(finalPose, entryAngle);
     }
 
-    public Translation2d getPathDirection(Pose2d currentPose) {        
-        return findDirectionFromTheta(getThetaInTargetSpace(currentPose)).rotateBy(finalEntryAngle);
+    public Translation2d getPathDirection(Translation2d currentTranslation) {        
+        double straightDistance = currentTranslation.getDistance(finalPose.getTranslation());
+
+        if (straightDistance < kStraightDriveDistance) {
+            var direction = finalPose.getTranslation().minus(currentTranslation);
+            direction = direction.div(direction.getNorm());
+
+            return direction;
+        }
+
+        return findDirectionFromTheta(getThetaInTargetSpace(currentTranslation)).rotateBy(finalEntryAngle);
     }  
 
-    public double getRemainingPathDistance(Pose2d currentPose) {
-        double straightDistance = currentPose.getTranslation().getDistance(finalPose.getTranslation());
+    public double getRemainingPathDistance(Translation2d currentTranslation) {
+        double straightDistance = currentTranslation.getDistance(finalPose.getTranslation());
 
-        return findRemainingDistanceFromTheta(getThetaInTargetSpace(currentPose), straightDistance);
+        if (straightDistance < kStraightDriveDistance) 
+            return straightDistance;
+
+        return findRemainingDistanceFromTheta(getThetaInTargetSpace(currentTranslation), straightDistance);
     }
 
-    private double getThetaInTargetSpace(Pose2d currentPose) {
-        var currentTranslationInTargetSpace = finalPose.getTranslation().minus(currentPose.getTranslation()).rotateBy(finalEntryAngle.unaryMinus());//TODO not sure
+    private double getThetaInTargetSpace(Translation2d currentTranslation) {
+        var currentTranslationInTargetSpace = finalPose.getTranslation().minus(currentTranslation).rotateBy(finalEntryAngle.unaryMinus());
         
         return currentTranslationInTargetSpace.getAngle().getRadians();
     }
