@@ -50,13 +50,12 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
     }
 
     private double findRemainingDistanceFromTheta(double theta, double straightDistance) {
-        double b = Math.sqrt(1 + (theta * theta));
-        double a = (straightDistance / 2.0) * b;
-
         if (theta == 0)
-            return a;
+            return straightDistance;
 
-        return a + ((straightDistance / (2.0 * theta)) * Math.log(Math.abs(theta + b)));
+        double b = Math.sqrt(1 + (theta * theta));
+
+        return ((straightDistance / 2.0) * b) + ((straightDistance / (2.0 * theta)) * Math.log(Math.abs(theta + b)));
     }
 
     private Translation2d findDirectionFromTheta(double theta) {

@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.subsystems.swerve.KrakenSwerve;
@@ -62,6 +63,15 @@ public class FollowCurvedPath extends Command {
         /* Apply speed limit */
         driveSpeed = Math.min(driveSpeed, kMaxSpeed);
 
+        /* Find angular velocity by combining the profiled PID's output and its velocity setpoint */
+        double angularVelocity = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
+
+        /* Limit drive speed based on rotation speed */
+        double wheelSpeedFromAngularVelocity = swerve.getDrivebaseRadius() * angularVelocity;
+
+        SmartDashboard.putBoolean("Pathing/Rotation Limited", kTrueMaxSpeed - wheelSpeedFromAngularVelocity < driveSpeed);
+        driveSpeed = Math.min(driveSpeed, kTrueMaxSpeed - wheelSpeedFromAngularVelocity);
+
         /* Find acceleration */
         double currentTime = Utils.getCurrentTimeSeconds();
         double dt = currentTime - previousTime;
@@ -80,6 +90,8 @@ public class FollowCurvedPath extends Command {
             maxForwardAcceleration = kMaxAcceleration;
 
         /* Apply forward and reverse acceleration limit */
+        SmartDashboard.putBoolean("Pathing/Acceleration Limited", acceleration > maxForwardAcceleration || acceleration < -kMaxAcceleration);
+
         acceleration = MathUtil.clamp(acceleration, -kMaxAcceleration, maxForwardAcceleration);
         driveSpeed = previousSpeed + (acceleration * dt);
 
@@ -87,15 +99,16 @@ public class FollowCurvedPath extends Command {
         double xVelocity = driveSpeed * driveDirection.getX();
         double yVelocity = driveSpeed * driveDirection.getY();
 
-        /* Find angular velocity by combining the profiled PID's output and its velocity setpoint */
-        double angularVelocity = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
-
         swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
                 .withRotationalRate(angularVelocity)
         );
+
+        SmartDashboard.putNumber("Pathing/Target Acceleration", acceleration);
+        SmartDashboard.putNumber("Pathing/Target Speed", driveSpeed);
+        SmartDashboard.putNumber("Pathing/Target Angular Velocity", angularVelocity);
 
         previousSpeed = driveSpeed;
         previousTime = currentTime;
@@ -117,6 +130,7 @@ public class FollowCurvedPath extends Command {
 
     @Override
     public boolean isFinished() {
+        /* It is not important to be at setpoint if there is a nonzero ending speed since we are transitioning to another drive command */
         if (path.endingSpeed() > 0.0) {
             var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
 
