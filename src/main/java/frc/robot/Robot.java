@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.simulation.SimulationControls;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -107,12 +106,10 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    SimulationControls.init();
+    m_robotContainer.initSimulation();
   }
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {
-    SimulationControls.update();
-  }
+  public void simulationPeriodic() {}
 }

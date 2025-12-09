@@ -133,9 +133,11 @@ public class KrakenSwerve extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        simulatedDrivetrain.update();   
-
         localization.updateSimulation(simulatedDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+    }
+
+    public void updateDrivetrainSimulation() {
+        simulatedDrivetrain.update();
     }
 
     public Localization getLocalization() {

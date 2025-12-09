@@ -12,6 +12,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.simulation.SimulationControls;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator.Elevator;
@@ -27,6 +28,7 @@ import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
 import frc.robot.utils.WheelRadiusFinder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -379,5 +381,13 @@ public class RobotContainer {
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    @SuppressWarnings("resource")
+    public void initSimulation() {
+        SimulationControls.init(0.001);
+
+        new Notifier(() -> SimulationControls.update(krakenSwerve))
+            .startPeriodic(0.001);
     }
 }
