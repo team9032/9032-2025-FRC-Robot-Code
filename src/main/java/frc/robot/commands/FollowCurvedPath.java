@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.subsystems.swerve.KrakenSwerve;
+import frc.robot.utils.GeometryUtil;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
@@ -17,19 +18,19 @@ import static frc.robot.pathing.PathingConstants.*;
 import com.ctre.phoenix6.Utils;
 
 public class FollowCurvedPath extends Command {
-    private final ProfiledPIDController alignmentRotationPID;
+    private final ProfiledPIDController rotationPID;
 
     private final KrakenSwerve swerve;
 
     private final CurvedPath path;
     
-    private double previousSpeed;
+    private Translation2d previousVelocity;
     private double previousTime;
 
     public FollowCurvedPath(KrakenSwerve swerve, CurvedPath path) {
-        alignmentRotationPID = new ProfiledPIDController(kRotationkP, 0, kRotationkD, kRotationConstraints);
-        alignmentRotationPID.setTolerance(kRotationAlignmentTolerance.in(Radians));
-        alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
+        rotationPID = new ProfiledPIDController(kRotationkP, 0, kRotationkD, kRotationConstraints);
+        rotationPID.setTolerance(kRotationAlignmentTolerance.in(Radians));
+        rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerve = swerve;
 
@@ -43,16 +44,18 @@ public class FollowCurvedPath extends Command {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
         ChassisSpeeds currentVelocity = swerve.getLocalization().getCurrentVelocity();
 
-        alignmentRotationPID.setGoal(path.finalPose().getRotation().getRadians());
-        alignmentRotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
+        rotationPID.setGoal(path.finalPose().getRotation().getRadians());
+        rotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
 
-        previousSpeed = swerve.getLocalization().getCurrentSpeed();
+        previousVelocity = new Translation2d(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
         previousTime = Utils.getCurrentTimeSeconds();
     }
 
     @Override
     public void execute() {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
+        ChassisSpeeds currentSpeeds = swerve.getLocalization().getCurrentVelocity();
+        Translation2d currentVelocity = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
 
         var driveDirection = path.getPathDirection(currentPose.getTranslation());
         double remaingPathDistance = path.getRemainingPathDistance(currentPose.getTranslation());
@@ -64,7 +67,7 @@ public class FollowCurvedPath extends Command {
         driveSpeed = Math.min(driveSpeed, kMaxSpeed);
 
         /* Find angular velocity by combining the profiled PID's output and its velocity setpoint */
-        double angularVelocity = alignmentRotationPID.calculate(currentPose.getRotation().getRadians()) + alignmentRotationPID.getSetpoint().velocity;
+        double angularVelocity = rotationPID.calculate(currentPose.getRotation().getRadians()) + rotationPID.getSetpoint().velocity;
 
         /* Limit drive speed based on rotation speed */
         double wheelSpeedFromAngularVelocity = swerve.getDrivebaseRadius() * angularVelocity;
@@ -72,45 +75,44 @@ public class FollowCurvedPath extends Command {
         SmartDashboard.putBoolean("Pathing/Rotation Limited", kTrueMaxSpeed - wheelSpeedFromAngularVelocity < driveSpeed);
         driveSpeed = Math.min(driveSpeed, kTrueMaxSpeed - wheelSpeedFromAngularVelocity);
 
-        /* Find acceleration */
+        /* Find target velocity using drive speed and direction */
+        var targetVelocity = driveDirection.times(driveSpeed);
+
+        /* Find target acceleration */
         double currentTime = Utils.getCurrentTimeSeconds();
         double dt = currentTime - previousTime;
-        double acceleration = (driveSpeed - previousSpeed) / dt;
+        var targetAcceleration = (targetVelocity.minus(previousVelocity)).div(dt);
 
         double maxForwardAcceleration;
         /* If we are in the torque limited part of the motor curve, limit forward acceleration based on available torque */
-        if (driveSpeed >= kTorqueLimitedSpeedStart) {
-            double currentSpeed = swerve.getLocalization().getCurrentSpeed();
-
-            maxForwardAcceleration = kMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
-        }
+        SmartDashboard.putBoolean("Pathing/Torque Limited", currentVelocity.getNorm() >= kTorqueLimitedSpeedStart);
+        if (currentVelocity.getNorm() >= kTorqueLimitedSpeedStart) 
+            maxForwardAcceleration = kTrueMaxAcceleration * (1.0 - (currentVelocity.getNorm() / kTrueMaxSpeed));
 
         /* Use the true max acceleration since we are in the current limited part of the motor curves */
         else 
-            maxForwardAcceleration = kMaxAcceleration;
+            maxForwardAcceleration = kTrueMaxAcceleration;
 
         /* Apply forward and reverse acceleration limit */
-        SmartDashboard.putBoolean("Pathing/Acceleration Limited", acceleration > maxForwardAcceleration || acceleration < -kMaxAcceleration);
+        SmartDashboard.putBoolean("Pathing/Acceleration Limited", targetAcceleration.getNorm() > maxForwardAcceleration);
 
-        acceleration = MathUtil.clamp(acceleration, -kMaxAcceleration, maxForwardAcceleration);
-        driveSpeed = previousSpeed + (acceleration * dt);
-
-        /* Find x and y velocities */
-        double xVelocity = driveSpeed * driveDirection.getX();
-        double yVelocity = driveSpeed * driveDirection.getY();
+        double accelerationMagnitude = Math.min(targetAcceleration.getNorm(), maxForwardAcceleration);
+        targetAcceleration = GeometryUtil.normalize(targetAcceleration).times(accelerationMagnitude);
+        
+        targetVelocity = previousVelocity.plus(targetAcceleration.times(dt));
 
         swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
-                .withVelocityX(xVelocity)
-                .withVelocityY(yVelocity)
+                .withVelocityX(targetVelocity.getX())
+                .withVelocityY(targetVelocity.getY())
                 .withRotationalRate(angularVelocity)
         );
 
-        SmartDashboard.putNumber("Pathing/Target Acceleration", acceleration);
+        SmartDashboard.putNumber("Pathing/Target Acceleration Magnitude", targetAcceleration.getNorm());
         SmartDashboard.putNumber("Pathing/Target Speed", driveSpeed);
         SmartDashboard.putNumber("Pathing/Target Angular Velocity", angularVelocity);
 
-        previousSpeed = driveSpeed;
+        previousVelocity = targetVelocity;
         previousTime = currentTime;
     }
 
@@ -123,7 +125,7 @@ public class FollowCurvedPath extends Command {
         var currentTranslation = swerve.getLocalization().getCurrentPose().getTranslation();
         double currentSpeed = swerve.getLocalization().getCurrentSpeed();
 
-        return alignmentRotationPID.atGoal() 
+        return rotationPID.atGoal() 
             && currentTranslation.getDistance(path.finalPose().getTranslation()) < kXYAlignmentTolerance.in(Meters)
             && currentSpeed < kAcceptableEndingSpeed;
     }

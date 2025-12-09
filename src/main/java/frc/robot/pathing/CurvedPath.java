@@ -5,6 +5,7 @@ import static frc.robot.pathing.PathingConstants.kStraightDriveDistance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.utils.GeometryUtil;
 
 public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double endingSpeed) {
     public CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle) {
@@ -26,9 +27,8 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
 
         if (straightDistance < kStraightDriveDistance) {
             var direction = finalPose.getTranslation().minus(currentTranslation);
-            direction = direction.div(direction.getNorm());
 
-            return direction;
+            return GeometryUtil.normalize(direction);
         }
 
         return findDirectionFromTheta(getThetaInTargetSpace(currentTranslation)).rotateBy(finalEntryAngle);
@@ -53,9 +53,9 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
         if (theta == 0)
             return straightDistance;
 
-        double b = Math.sqrt(1 + (theta * theta));
-
-        return ((straightDistance / 2.0) * b) + ((straightDistance / (2.0 * theta)) * Math.log(Math.abs(theta + b)));
+        /* Use the closed form of the arc length of the polar curve r = theta */
+        double a = Math.sqrt(1 + (theta * theta));
+        return ((straightDistance / 2.0) * a) + ((straightDistance / (2.0 * theta)) * Math.log(Math.abs(theta + a)));
     }
 
     private Translation2d findDirectionFromTheta(double theta) {
@@ -63,7 +63,7 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
         double y = (theta * Math.cos(theta)) + Math.sin(theta);
 
         var direction = new Translation2d(x, y);
-        direction = direction.div(direction.getNorm());
+        direction = GeometryUtil.normalize(direction);
 
         return direction;
     }

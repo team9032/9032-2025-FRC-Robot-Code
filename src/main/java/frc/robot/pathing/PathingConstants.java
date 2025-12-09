@@ -21,7 +21,8 @@ public class PathingConstants {
     public static final Constraints kRotationConstraints = new Constraints(3 * Math.PI, 3 * Math.PI);
 
     public static final double kMaxAcceleration = 4.0;
-    public static final double kMaxSpeed = 4;
+    public static final double kTrueMaxAcceleration = 9.0;
+    public static final double kMaxSpeed = 4.4;
     public static final double kTrueMaxSpeed = 4.6;
 
     public static final double kTorqueLimitedSpeedStart = 4.0;//TODO no idea how to find
