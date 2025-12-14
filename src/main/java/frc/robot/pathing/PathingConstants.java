@@ -20,8 +20,9 @@ public class PathingConstants {
     /* Constraints */
     public static final Constraints kRotationConstraints = new Constraints(3 * Math.PI, 3 * Math.PI);
 
-    public static final double kMaxAcceleration = 4.0;
-    public static final double kTrueMaxAcceleration = 9.0;
+    public static final double kMaxDecceleration = 4.0;
+    public static final double kTorqueLimitedMaxAcceleration = 9.0;
+    public static final double kMaxDirectionChangeAcceleration = 7.0;
     public static final double kMaxSpeed = 4.4;
     public static final double kTrueMaxSpeed = 4.6;
 

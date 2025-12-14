@@ -54,14 +54,13 @@ public class FollowCurvedPath extends Command {
     @Override
     public void execute() {
         Pose2d currentPose = swerve.getLocalization().getCurrentPose();
-        ChassisSpeeds currentSpeeds = swerve.getLocalization().getCurrentVelocity();
-        Translation2d currentVelocity = new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+        double currentSpeed = swerve.getLocalization().getCurrentSpeed();
 
         var driveDirection = path.getPathDirection(currentPose.getTranslation());
         double remaingPathDistance = path.getRemainingPathDistance(currentPose.getTranslation());
 
         /* Use kinematics to find the maximum drive speed that can be stopped with the max acceleration */
-        double driveSpeed = Math.sqrt(Math.pow(path.endingSpeed(), 2) - (2.0 * kMaxAcceleration * -remaingPathDistance));
+        double driveSpeed = Math.sqrt(Math.pow(path.endingSpeed(), 2) - (2.0 * kMaxDecceleration * -remaingPathDistance));
 
         /* Apply speed limit */
         driveSpeed = Math.min(driveSpeed, kMaxSpeed);
@@ -83,22 +82,30 @@ public class FollowCurvedPath extends Command {
         double dt = currentTime - previousTime;
         var targetAcceleration = (targetVelocity.minus(previousVelocity)).div(dt);
 
-        double maxForwardAcceleration;
+        /* Break acceleration into components in the direction of and orthogonal to velocity */
+        Translation2d speedChangeAcceleration = GeometryUtil.project(targetAcceleration, driveDirection);
+        Translation2d directionChangeAcceleration = targetAcceleration.minus(speedChangeAcceleration);
+
+        double maxSpeedChangeAcceleration;
         /* If we are in the torque limited part of the motor curve, limit forward acceleration based on available torque */
-        SmartDashboard.putBoolean("Pathing/Torque Limited", currentVelocity.getNorm() >= kTorqueLimitedSpeedStart);
-        if (currentVelocity.getNorm() >= kTorqueLimitedSpeedStart) 
-            maxForwardAcceleration = kTrueMaxAcceleration * (1.0 - (currentVelocity.getNorm() / kTrueMaxSpeed));
+        SmartDashboard.putBoolean("Pathing/Torque Limited", currentSpeed >= kTorqueLimitedSpeedStart);
+        if (currentSpeed >= kTorqueLimitedSpeedStart) 
+            maxSpeedChangeAcceleration = kTorqueLimitedMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
 
         /* Use the true max acceleration since we are in the current limited part of the motor curves */
         else 
-            maxForwardAcceleration = kTrueMaxAcceleration;
+            maxSpeedChangeAcceleration = kTorqueLimitedMaxAcceleration;
 
-        /* Apply forward and reverse acceleration limit */
-        SmartDashboard.putBoolean("Pathing/Acceleration Limited", targetAcceleration.getNorm() > maxForwardAcceleration);
+        /* Apply acceleration component limits */
+        SmartDashboard.putBoolean("Pathing/Speed Acceleration Limited", speedChangeAcceleration.getNorm() > maxSpeedChangeAcceleration);
+        SmartDashboard.putBoolean("Pathing/Direction Acceleration Limited", directionChangeAcceleration.getNorm() > kMaxDirectionChangeAcceleration);
+        speedChangeAcceleration = GeometryUtil.limitMagnitude(speedChangeAcceleration, maxSpeedChangeAcceleration);
+        directionChangeAcceleration = GeometryUtil.limitMagnitude(directionChangeAcceleration, kMaxDirectionChangeAcceleration);
 
-        double accelerationMagnitude = Math.min(targetAcceleration.getNorm(), maxForwardAcceleration);
-        targetAcceleration = GeometryUtil.normalize(targetAcceleration).times(accelerationMagnitude);
-        
+        /* Go from acceleration components to target acceleration */
+        targetAcceleration = speedChangeAcceleration.plus(directionChangeAcceleration);
+
+        /* Integrate acceleration to find velocity */
         targetVelocity = previousVelocity.plus(targetAcceleration.times(dt));
 
         swerve.setControl(
