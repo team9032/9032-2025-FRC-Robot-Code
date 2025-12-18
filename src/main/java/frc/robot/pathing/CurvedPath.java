@@ -31,7 +31,7 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
             return GeometryUtil.normalize(direction);
         }
 
-        return findDirectionFromTheta(getThetaInTargetSpace(currentTranslation)).rotateBy(finalEntryAngle);
+        return findDirectionFromTheta(getThetaInTargetSpace(currentTranslation));
     }  
 
     public double getRemainingPathDistance(Translation2d currentTranslation) {
@@ -59,10 +59,13 @@ public record CurvedPath(Pose2d finalPose, Rotation2d finalEntryAngle, double en
     }
 
     private Translation2d findDirectionFromTheta(double theta) {
+        /* Use dx/dtheta and dy/dtheta of the polar curve r = theta */
         double x = (theta * -Math.sin(theta)) + Math.cos(theta);
         double y = (theta * Math.cos(theta)) + Math.sin(theta);
 
-        var direction = new Translation2d(x, y);
+        var direction = new Translation2d(x, y)
+            /* Return to field centric coordinates */
+            .rotateBy(finalEntryAngle);
         direction = GeometryUtil.normalize(direction);
 
         return direction;

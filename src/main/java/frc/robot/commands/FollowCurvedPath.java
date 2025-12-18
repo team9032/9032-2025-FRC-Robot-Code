@@ -6,16 +6,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.pathing.AccelerationLimiter;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.subsystems.swerve.KrakenSwerve;
-import frc.robot.utils.GeometryUtil;
-
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import static frc.robot.pathing.PathingConstants.*;
-
-import com.ctre.phoenix6.Utils;
 
 public class FollowCurvedPath extends Command {
     private final ProfiledPIDController rotationPID;
@@ -24,13 +21,14 @@ public class FollowCurvedPath extends Command {
 
     private final CurvedPath path;
     
-    private Translation2d previousVelocity;
-    private double previousTime;
+    private final AccelerationLimiter accelerationLimiter;
 
     public FollowCurvedPath(KrakenSwerve swerve, CurvedPath path) {
         rotationPID = new ProfiledPIDController(kRotationkP, 0, kRotationkD, kRotationConstraints);
         rotationPID.setTolerance(kRotationAlignmentTolerance.in(Radians));
         rotationPID.enableContinuousInput(-Math.PI, Math.PI);
+
+        accelerationLimiter = new AccelerationLimiter();
 
         this.swerve = swerve;
 
@@ -47,8 +45,7 @@ public class FollowCurvedPath extends Command {
         rotationPID.setGoal(path.finalPose().getRotation().getRadians());
         rotationPID.reset(currentPose.getRotation().getRadians(), currentVelocity.omegaRadiansPerSecond);
 
-        previousVelocity = new Translation2d(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
-        previousTime = Utils.getCurrentTimeSeconds();
+        accelerationLimiter.reset(new Translation2d(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond));
     }
 
     @Override
@@ -71,42 +68,26 @@ public class FollowCurvedPath extends Command {
         /* Limit drive speed based on rotation speed */
         double wheelSpeedFromAngularVelocity = swerve.getDrivebaseRadius() * angularVelocity;
 
-        SmartDashboard.putBoolean("Pathing/Rotation Limited", kTrueMaxSpeed - wheelSpeedFromAngularVelocity < driveSpeed);
-        driveSpeed = Math.min(driveSpeed, kTrueMaxSpeed - wheelSpeedFromAngularVelocity);
+        double availableDriveSpeed = kTrueMaxSpeed - wheelSpeedFromAngularVelocity;
+        SmartDashboard.putBoolean("Pathing/Rotation Limited", availableDriveSpeed < driveSpeed);
+        
+        driveSpeed = Math.min(driveSpeed, availableDriveSpeed);
 
         /* Find target velocity using drive speed and direction */
         var targetVelocity = driveDirection.times(driveSpeed);
 
-        /* Find target acceleration */
-        double currentTime = Utils.getCurrentTimeSeconds();
-        double dt = currentTime - previousTime;
-        var targetAcceleration = (targetVelocity.minus(previousVelocity)).div(dt);
-
-        /* Break acceleration into components in the direction of and orthogonal to velocity */
-        Translation2d speedChangeAcceleration = GeometryUtil.project(targetAcceleration, driveDirection);
-        Translation2d directionChangeAcceleration = targetAcceleration.minus(speedChangeAcceleration);
-
-        double maxSpeedChangeAcceleration;
+        double maxTangentialAcceleration;
         /* If we are in the torque limited part of the motor curve, limit forward acceleration based on available torque */
         SmartDashboard.putBoolean("Pathing/Torque Limited", currentSpeed >= kTorqueLimitedSpeedStart);
         if (currentSpeed >= kTorqueLimitedSpeedStart) 
-            maxSpeedChangeAcceleration = kTorqueLimitedMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
+            maxTangentialAcceleration = kTorqueLimitedMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
 
         /* Use the true max acceleration since we are in the current limited part of the motor curves */
         else 
-            maxSpeedChangeAcceleration = kTorqueLimitedMaxAcceleration;
+            maxTangentialAcceleration = kTorqueLimitedMaxAcceleration;
 
-        /* Apply acceleration component limits */
-        SmartDashboard.putBoolean("Pathing/Speed Acceleration Limited", speedChangeAcceleration.getNorm() > maxSpeedChangeAcceleration);
-        SmartDashboard.putBoolean("Pathing/Direction Acceleration Limited", directionChangeAcceleration.getNorm() > kMaxDirectionChangeAcceleration);
-        speedChangeAcceleration = GeometryUtil.limitMagnitude(speedChangeAcceleration, maxSpeedChangeAcceleration);
-        directionChangeAcceleration = GeometryUtil.limitMagnitude(directionChangeAcceleration, kMaxDirectionChangeAcceleration);
-
-        /* Go from acceleration components to target acceleration */
-        targetAcceleration = speedChangeAcceleration.plus(directionChangeAcceleration);
-
-        /* Integrate acceleration to find velocity */
-        targetVelocity = previousVelocity.plus(targetAcceleration.times(dt));
+        /* Apply acceleration limits */
+        targetVelocity = accelerationLimiter.applyLimits(targetVelocity, maxTangentialAcceleration, kMaxCentripetalAcceleration);
 
         swerve.setControl(
             kFieldCentricClosedLoopDriveRequest
@@ -115,12 +96,9 @@ public class FollowCurvedPath extends Command {
                 .withRotationalRate(angularVelocity)
         );
 
-        SmartDashboard.putNumber("Pathing/Target Acceleration Magnitude", targetAcceleration.getNorm());
+        accelerationLimiter.publishLimitingStatus("Pathing", maxTangentialAcceleration, kMaxCentripetalAcceleration);
         SmartDashboard.putNumber("Pathing/Target Speed", driveSpeed);
         SmartDashboard.putNumber("Pathing/Target Angular Velocity", angularVelocity);
-
-        previousVelocity = targetVelocity;
-        previousTime = currentTime;
     }
 
     @Override
