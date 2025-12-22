@@ -22,7 +22,7 @@ public class PathingConstants {
 
     public static final double kMaxDecceleration = 4.0;
     public static final double kTorqueLimitedMaxAcceleration = 9.0;
-    public static final double kMaxCentripetalAcceleration = 7.0;
+    public static final double kMaxCentripetalAcceleration = 11.0;
     public static final double kMaxSpeed = 4.4;
     public static final double kTrueMaxSpeed = 4.6;
 

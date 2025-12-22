@@ -10,7 +10,11 @@ public class GeometryUtil {
     }
 
     public static Translation2d project(Translation2d toProject, Translation2d projectedOnto) {
-        return normalize(projectedOnto).times(dotProduct(toProject, projectedOnto) / projectedOnto.getNorm());
+        double projectedOntoMagnitude = projectedOnto.getNorm();
+
+        return projectedOntoMagnitude > 1e-6 ?
+            normalize(projectedOnto).times(dotProduct(toProject, projectedOnto) / projectedOntoMagnitude)
+            : Translation2d.kZero;
     }
 
     public static double dotProduct(Translation2d translation1, Translation2d translation2) {
