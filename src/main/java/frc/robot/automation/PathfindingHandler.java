@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SimpleDriveToPose;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.commands.FollowCurvedPath;
+import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 import frc.robot.utils.FieldUtil;
 
@@ -25,14 +26,18 @@ public class PathfindingHandler {
         );
     }
 
-    private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve) {
+    private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve, double endingSpeed) {
         return Commands.defer(
             () -> new FollowCurvedPath(
                 swerve, 
-                CurvedPath.enterAtFinalRotation(endPoseSup.get(), true)
+                CurvedPath.enterAtFinalRotation(endPoseSup.get(), true, endingSpeed)
             ),
             Set.of(swerve)
         );
+    }
+
+    private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve) {
+        return pathToPoseWithCurvature(endPoseSup, swerve, 0.0);
     }
     
     public static Command pathToBarge(KrakenSwerve swerve) {
@@ -71,5 +76,10 @@ public class PathfindingHandler {
     
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
         return pathToPoseWithCurvature(() -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()), swerve);
+    }
+
+    public static Command pathToCoralFromSource(KrakenSwerve swerve, boolean isLeftSource) {
+        return pathToPoseWithCurvature(() -> FieldUtil.getAutoPreintakingPose(swerve.getLocalization(), isLeftSource), swerve, 3.0)//TODO constant
+            .andThen(new RotationalDriveToCoral(swerve));
     }
 }

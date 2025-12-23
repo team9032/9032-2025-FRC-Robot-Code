@@ -3,6 +3,8 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
@@ -60,6 +62,8 @@ public final class Constants {
         public static final double kSlowDrivingSpeed = 1.0;
         public static final double kSlowDistanceToCoral = 1.3;
         public static final double kEndTime = 0.3;//Seconds
+
+        public static final Pose2d kAutoPreintakingPose = new Pose2d();
 
         /* Pull Away */
         public static final double kPullAwayVelocity = 1.0;

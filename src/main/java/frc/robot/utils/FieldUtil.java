@@ -7,6 +7,7 @@ import static frc.robot.localization.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.localization.LocalizationConstants.kMinReefTagID;
 import static frc.robot.localization.LocalizationConstants.kReefCenter;
 import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
+import static frc.robot.Constants.PathFollowingConstants.kAutoPreintakingPose;
 import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
 import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;
 import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
@@ -51,6 +52,10 @@ public class FieldUtil {
             return new Translation2d(kFieldLength - translation.getX(), kFieldWidth - translation.getY());
 
         return translation;
+    }
+
+    public static Pose2d mirrorPoseOverXAxis(Pose2d pose) {
+        return new Pose2d(pose.getX(), kFieldWidth - pose.getY(), pose.getRotation().unaryMinus().rotateBy(Rotation2d.k180deg));
     }
 
     public static double getRobotToReefDistance(Localization localization) {
@@ -152,4 +157,10 @@ public class FieldUtil {
     public static Pose2d getOffsetReefScoringLocationFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
         return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID).transformBy(kBackwardsScoringOffset);
     }   
+
+    public static Pose2d getAutoPreintakingPose(Localization localization, boolean isLeftSource) {
+        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPose);
+        
+        return isLeftSource ? preintakingPose : mirrorPoseOverXAxis(preintakingPose);
+    }
 }
