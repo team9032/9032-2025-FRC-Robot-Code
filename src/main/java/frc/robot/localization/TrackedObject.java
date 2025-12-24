@@ -8,6 +8,7 @@ import static frc.robot.localization.LocalizationConstants.kCoralId;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class TrackedObject {
     private Pose2d fieldPosition;
@@ -30,7 +31,7 @@ public class TrackedObject {
         }
 
         public static ObjectType fromClassId(int classId) {
-            if (classId == kCoralId)
+            if (classId == kCoralId || RobotBase.isSimulation())//TODO fix class ids in sim
                 return ObjectType.CORAL;
         
             else if (classId == kAlgaeId)

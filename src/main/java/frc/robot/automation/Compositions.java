@@ -40,10 +40,14 @@ public class Compositions {
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
     }
 
-    public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
+    public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, boolean pathFromFarBranch, ReefLevel reefLevel) {
         return Commands.sequence(
             Commands.print("Getting coral from source"),
-            PathfindingHandler.pathToCoralFromSource(swerve, isLeftSource),
+            Commands.either(
+                PathfindingHandler.pathToCoralFromFarBranch(swerve, isLeftSource), 
+                PathfindingHandler.pathToCoralFromCloseBranch(swerve, isLeftSource),  
+                () -> pathFromFarBranch
+            ),
             Commands.print("Pathing to reef branch after source coral"),
             PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch)
         )                

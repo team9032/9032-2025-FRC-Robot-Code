@@ -63,7 +63,8 @@ public final class Constants {
         public static final double kSlowDistanceToCoral = 1.3;
         public static final double kEndTime = 0.3;//Seconds
 
-        public static final Pose2d kAutoPreintakingPose = new Pose2d();
+        public static final Pose2d kAutoPreintakingPoseFromFarBranch = new Pose2d(3.333, 6.506, Rotation2d.fromDegrees(163.0));
+        public static final Pose2d kAutoPreintakingPoseFromCloseBranch = new Pose2d(2.771, 5.724, Rotation2d.fromDegrees(120.0));
 
         /* Pull Away */
         public static final double kPullAwayVelocity = 1.0;

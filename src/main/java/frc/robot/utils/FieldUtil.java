@@ -6,19 +6,7 @@ import static frc.robot.localization.LocalizationConstants.kFieldWidth;
 import static frc.robot.localization.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.localization.LocalizationConstants.kMinReefTagID;
 import static frc.robot.localization.LocalizationConstants.kReefCenter;
-import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
-import static frc.robot.Constants.PathFollowingConstants.kAutoPreintakingPose;
-import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
-import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;
-import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistanceWithAlgae;
-import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
-import static frc.robot.Constants.PathFollowingConstants.kBackwardsScoringOffset;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentRotation;
-import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
+import static frc.robot.Constants.PathFollowingConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -158,8 +146,14 @@ public class FieldUtil {
         return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID).transformBy(kBackwardsScoringOffset);
     }   
 
-    public static Pose2d getAutoPreintakingPose(Localization localization, boolean isLeftSource) {
-        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPose);
+    public static Pose2d getAutoPreintakingPoseFromCloseBranch(Localization localization, boolean isLeftSource) {
+        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPoseFromCloseBranch);
+        
+        return isLeftSource ? preintakingPose : mirrorPoseOverXAxis(preintakingPose);
+    }
+
+    public static Pose2d getAutoPreintakingPoseFromFarBranch(Localization localization, boolean isLeftSource) {
+        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPoseFromFarBranch);
         
         return isLeftSource ? preintakingPose : mirrorPoseOverXAxis(preintakingPose);
     }

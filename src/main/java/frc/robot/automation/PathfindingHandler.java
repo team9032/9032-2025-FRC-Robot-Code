@@ -1,5 +1,7 @@
 package frc.robot.automation;
 
+import static frc.robot.Constants.PathFollowingConstants.kMaxDrivingSpeed;
+
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -26,18 +28,18 @@ public class PathfindingHandler {
         );
     }
 
-    private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve, double endingSpeed) {
+    private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve, double endingSpeed, boolean invertEntryAngle) {
         return Commands.defer(
             () -> new FollowCurvedPath(
                 swerve, 
-                CurvedPath.enterAtFinalRotation(endPoseSup.get(), true, endingSpeed)
+                CurvedPath.enterAtFinalRotation(endPoseSup.get(), invertEntryAngle, endingSpeed)
             ),
             Set.of(swerve)
         );
     }
 
     private static Command pathToPoseWithCurvature(Supplier<Pose2d> endPoseSup, KrakenSwerve swerve) {
-        return pathToPoseWithCurvature(endPoseSup, swerve, 0.0);
+        return pathToPoseWithCurvature(endPoseSup, swerve, 0.0, true);
     }
     
     public static Command pathToBarge(KrakenSwerve swerve) {
@@ -78,8 +80,13 @@ public class PathfindingHandler {
         return pathToPoseWithCurvature(() -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()), swerve);
     }
 
-    public static Command pathToCoralFromSource(KrakenSwerve swerve, boolean isLeftSource) {
-        return pathToPoseWithCurvature(() -> FieldUtil.getAutoPreintakingPose(swerve.getLocalization(), isLeftSource), swerve, 3.0)//TODO constant
+    public static Command pathToCoralFromFarBranch(KrakenSwerve swerve, boolean isLeftSource) {
+        return pathToPoseWithCurvature(() -> FieldUtil.getAutoPreintakingPoseFromFarBranch(swerve.getLocalization(), isLeftSource), swerve, kMaxDrivingSpeed, false)
+            .andThen(new RotationalDriveToCoral(swerve));
+    }
+
+    public static Command pathToCoralFromCloseBranch(KrakenSwerve swerve, boolean isLeftSource) {
+        return pathToPoseWithCurvature(() -> FieldUtil.getAutoPreintakingPoseFromCloseBranch(swerve.getLocalization(), isLeftSource), swerve, kMaxDrivingSpeed, false)
             .andThen(new RotationalDriveToCoral(swerve));
     }
 }

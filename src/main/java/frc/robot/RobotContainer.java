@@ -125,6 +125,7 @@ public class RobotContainer {
         autoChooser.addOption("4 Coral Left", Autos.left4CoralAuto(compositions));
         autoChooser.addOption("4 Coral Right", Autos.right4CoralAuto(compositions));
         autoChooser.addOption("1 Coral, 1 algae center", Autos.center1Coral1AlgaeAuto(compositions, krakenSwerve));
+        autoChooser.addOption("Test Pathing", Autos.test4CoralLeftPathing(krakenSwerve));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
