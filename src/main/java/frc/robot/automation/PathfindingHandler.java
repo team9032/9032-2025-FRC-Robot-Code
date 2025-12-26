@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.SimpleDriveToPose;
 import frc.robot.pathing.CurvedPath;
 import frc.robot.commands.FollowCurvedPath;
 import frc.robot.commands.RotationalDriveToCoral;
@@ -62,20 +61,6 @@ public class PathfindingHandler {
         return pathToPoseWithCurvature(() -> FieldUtil.getOffsetReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID), swerve);
     }
 
-    public static Command simpleDriveToReefBranch(int reefTagID, KrakenSwerve swerve, boolean isLeftBranch) {
-        return Commands.defer(
-            () -> new SimpleDriveToPose(swerve, FieldUtil.getReefScoringLocationFromTagID(swerve.getLocalization(), isLeftBranch, reefTagID)),
-            Set.of(swerve)
-        );
-    }
-    
-    public static Command simpleDriveClosestToReefBranch(KrakenSwerve swerve, boolean isLeftBranch) {
-        return Commands.defer(
-            () -> new SimpleDriveToPose(swerve, FieldUtil.getClosestReefScoringLocation(swerve.getLocalization(), isLeftBranch)),
-            Set.of(swerve)
-        );
-    }
-    
     public static Command pathToClosestReefAlgaeIntake(KrakenSwerve swerve) {
         return pathToPoseWithCurvature(() -> FieldUtil.getClosestReefAlgaeIntakeLocation(swerve.getLocalization()), swerve);
     }
