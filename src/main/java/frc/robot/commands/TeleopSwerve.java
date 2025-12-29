@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.KrakenSwerve;
 
@@ -21,11 +22,15 @@ public class TeleopSwerve extends Command {
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
 
+        SmartDashboard.putBoolean("Invert Rotation", false);
+
         addRequirements(swerve);
     }
 
     @Override
     public void execute() {     
+        boolean invertRotation = SmartDashboard.getBoolean("Invert Rotation", false);
+
         double xCoord = translationSup.getAsDouble();
         double yCoord = strafeSup.getAsDouble();
 
@@ -36,6 +41,9 @@ public class TeleopSwerve extends Command {
         /* Curve magnitude to allow for more control closer to the lower range of the joystick */
         double curvedMagnitude = applyInputCurve(magnitude) * kMaxSpeed;
         double rotationMagnitude = applyInputCurve(rotSup.getAsDouble()) * kRotationRate;
+
+        /* Invert rotation if needed */
+        rotationMagnitude *= invertRotation ? -1.0 : 1.0;
 
         /* Convert polar to cartesian */
         double translationVal = curvedMagnitude * Math.cos(angle);
