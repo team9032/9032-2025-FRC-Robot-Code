@@ -40,10 +40,14 @@ public class Compositions {
         this.elevatorArmIntakeHandler = elevatorArmIntakeHandler;
     }
 
-    public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, ReefLevel reefLevel) {
+    public Command getCoralFromSourceThenScore(int reefTagID, boolean isLeftBranch, boolean isLeftSource, boolean pathFromFarBranch, ReefLevel reefLevel) {
         return Commands.sequence(
             Commands.print("Getting coral from source"),
-            PathfindingHandler.pathToSourceThenCoral(swerve, isLeftSource),
+            Commands.either(
+                PathfindingHandler.pathToCoralFromFarBranch(swerve, isLeftSource), 
+                PathfindingHandler.pathToCoralFromCloseBranch(swerve, isLeftSource),  
+                () -> pathFromFarBranch
+            ),
             Commands.print("Pathing to reef branch after source coral"),
             PathfindingHandler.pathToOffsetReefBranch(reefTagID, swerve, isLeftBranch)
         )                
@@ -56,7 +60,7 @@ public class Compositions {
             )
         )
         .andThen(
-            PathfindingHandler.simpleDriveToReefBranch(reefTagID, swerve, isLeftBranch),
+            PathfindingHandler.pathToReefBranch(reefTagID, swerve, isLeftBranch),
             placeCoralAndPullAway(() -> reefLevel, false)
         );
     }
@@ -108,7 +112,7 @@ public class Compositions {
                         ) 
                 ),
             Commands.waitUntil(() -> elevatorArmIntakeHandler.readyToScoreCoralOnBranch(reefLevelSup.get())),
-            PathfindingHandler.simpleDriveClosestToReefBranch(swerve, isLeftBranch)
+            PathfindingHandler.pathToClosestReefBranch(swerve, isLeftBranch)
                 .onlyIf(() -> reefLevelSup.get().equals(ReefLevel.L4)),
             placeCoralAndPullAway(reefLevelSup, true),
             new ScheduleCommand(rumbleCommand)

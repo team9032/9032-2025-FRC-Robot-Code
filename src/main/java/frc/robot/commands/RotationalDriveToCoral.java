@@ -16,7 +16,7 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 import static frc.robot.Constants.IntakeDriverAssistConstants.*;
 import static frc.robot.Constants.PathFollowingConstants.kEndTime;
 import static frc.robot.Constants.PathFollowingConstants.kMaxDrivingSpeed;
-import static frc.robot.Constants.PathFollowingConstants.kRobotRelativeClosedLoopDriveRequest;
+import static frc.robot.pathing.PathingConstants.kRobotRelativeClosedLoopDriveRequest;
 import static frc.robot.Constants.PathFollowingConstants.kSlowDistanceToCoral;
 import static frc.robot.Constants.PathFollowingConstants.kSlowDrivingSpeed;
 

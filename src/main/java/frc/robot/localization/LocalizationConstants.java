@@ -82,6 +82,8 @@ public final class LocalizationConstants {
     public static final int kMinReefTagID = 17;
     public static final int kMaxReefTagID = 22;
     public static final int kBackReefTagsStartingID = 20;
+    public static final double kFieldLength = 17.548;
+    public static final double kFieldWidth = 8.052;
 
     /* Simulation camera properties */
     public static final SimCameraProperties kObjectTrackingSimCameraProperties = new SimCameraProperties()

@@ -12,6 +12,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.RotationalDriveToCoral;
 import frc.robot.commands.RotationalIntakeDriverAssist;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.simulation.SimulationControls;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator.Elevator;
@@ -27,12 +28,14 @@ import frc.robot.utils.FieldUtil;
 import frc.robot.utils.GitData;
 import frc.robot.utils.WheelRadiusFinder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,8 +45,6 @@ import static frc.robot.Constants.DriverConstants.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathfindingCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -106,10 +107,6 @@ public class RobotContainer {
         /* Stop spamming the logs if a controller is unplugged */
         DriverStation.silenceJoystickConnectionWarning(true);
 
-        /* Warm up PathPlanner */
-        PathfindingCommand.warmupCommand().schedule();
-        FollowPathCommand.warmupCommand().schedule(); 
-
         /* Bind Triggers */
         if(kRunSysId)
             bindSysIdTriggers();
@@ -129,6 +126,7 @@ public class RobotContainer {
         autoChooser.addOption("4 Coral Left", Autos.left4CoralAuto(compositions));
         autoChooser.addOption("4 Coral Right", Autos.right4CoralAuto(compositions));
         autoChooser.addOption("1 Coral, 1 algae center", Autos.center1Coral1AlgaeAuto(compositions, krakenSwerve));
+        autoChooser.addOption("Test Pathing", Autos.test4CoralLeftPathing(krakenSwerve));
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -218,7 +216,7 @@ public class RobotContainer {
         /* Coral cycling commands */
         Command alignAndScoreCoralLeftCommand = 
             Commands.either(
-                compositions.scoreL1(false),
+                new ScheduleCommand(compositions.scoreL1(false)),
                 compositions.alignToReefAndScore(true, buttonBoard::getSelectedReefLevel, () -> !alignAndScoreCoralLeft.getAsBoolean(), rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
@@ -226,7 +224,7 @@ public class RobotContainer {
 
         Command alignAndScoreCoralRightCommand = 
             Commands.either(
-                compositions.scoreL1(true),
+                new ScheduleCommand(compositions.scoreL1(true)),
                 compositions.alignToReefAndScore(false, buttonBoard::getSelectedReefLevel, () -> !alignAndScoreCoralRight.getAsBoolean(), rumble()), 
                 () -> buttonBoard.getSelectedReefLevel().equals(ReefLevel.L1)
             );
@@ -385,5 +383,13 @@ public class RobotContainer {
     /** Use this to pass the autonomous command */
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    @SuppressWarnings("resource")
+    public void initSimulation() {
+        SimulationControls.init(0.001);
+
+        new Notifier(() -> SimulationControls.update(krakenSwerve))
+            .startPeriodic(0.001);
     }
 }

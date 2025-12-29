@@ -126,7 +126,7 @@ public class Localization {
 
         field.setRobotPose(currentPose);
 
-        SmartDashboard.putNumber("Current Speed", Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond));
+        SmartDashboard.putNumber("Current Speed", getCurrentSpeed());
 
         /* Predict where the robot will be */
         predictedPose = currentPose.exp(currentVelocity.toTwist2d(kPoseLookaheadTime));
@@ -193,6 +193,11 @@ public class Localization {
     /** Gets the current velocity */
     public ChassisSpeeds getCurrentVelocity() {
         return currentVelocity;
+    }
+
+    /** Gets the current speed, which is the magnitude of the current velocity */
+    public double getCurrentSpeed() {
+        return Math.hypot(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond);
     }
 
     /** Finds the nearest object of the given type. If no objects of that type are detected, this returns an empty optional. */

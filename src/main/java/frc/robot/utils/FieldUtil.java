@@ -1,25 +1,15 @@
 package frc.robot.utils;
 
 import static frc.robot.localization.LocalizationConstants.kBackReefTagsStartingID;
+import static frc.robot.localization.LocalizationConstants.kFieldLength;
+import static frc.robot.localization.LocalizationConstants.kFieldWidth;
 import static frc.robot.localization.LocalizationConstants.kMaxReefTagID;
 import static frc.robot.localization.LocalizationConstants.kMinReefTagID;
 import static frc.robot.localization.LocalizationConstants.kReefCenter;
-import static frc.robot.Constants.PathFollowingConstants.kAlgaeReefIntakeOffset;
-import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentX;
-import static frc.robot.Constants.PathFollowingConstants.kBargeMaxY;
-import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kEndEffectorClearReefDistanceWithAlgae;
-import static frc.robot.Constants.PathFollowingConstants.kLeftScoringOffset;
-import static frc.robot.Constants.PathFollowingConstants.kBackwardsScoringOffset;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForAlgaeIntakingReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForNetAlgaeScoringDistance;
-import static frc.robot.Constants.PathFollowingConstants.kPrepareForScoringReefDistance;
-import static frc.robot.Constants.PathFollowingConstants.kBargeAlignmentRotation;
-import static frc.robot.Constants.PathFollowingConstants.kRightScoringOffset;
-
-import com.pathplanner.lib.util.FlippingUtil;
+import static frc.robot.Constants.PathFollowingConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -33,17 +23,27 @@ public class FieldUtil {
     }
 
     public static Pose2d flipPoseIfNeeded(Pose2d pose) {
-        if (shouldFlipCoordinates())
-            return FlippingUtil.flipFieldPose(pose);
-        
+        if (shouldFlipCoordinates()) {
+            var translation = pose.getTranslation();
+
+            return new Pose2d(
+                new Translation2d(kFieldLength - translation.getX(), kFieldWidth - translation.getY()), 
+                pose.getRotation().plus(Rotation2d.k180deg)
+            );
+        }
+
         return pose; 
     }
 
     public static Translation2d flipTranslationIfNeeded(Translation2d translation) {
         if (shouldFlipCoordinates())
-            return FlippingUtil.flipFieldPosition(translation);
+            return new Translation2d(kFieldLength - translation.getX(), kFieldWidth - translation.getY());
 
         return translation;
+    }
+
+    public static Pose2d mirrorPoseOverXAxis(Pose2d pose) {
+        return new Pose2d(pose.getX(), kFieldWidth - pose.getY(), pose.getRotation().unaryMinus().rotateBy(Rotation2d.k180deg));
     }
 
     public static double getRobotToReefDistance(Localization localization) {
@@ -145,4 +145,16 @@ public class FieldUtil {
     public static Pose2d getOffsetReefScoringLocationFromTagID(Localization localization, boolean isLeftBranch, int tagID) {
         return getReefScoringLocationFromTagID(localization, isLeftBranch, tagID).transformBy(kBackwardsScoringOffset);
     }   
+
+    public static Pose2d getAutoPreintakingPoseFromCloseBranch(Localization localization, boolean isLeftSource) {
+        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPoseFromCloseBranch);
+        
+        return isLeftSource ? preintakingPose : mirrorPoseOverXAxis(preintakingPose);
+    }
+
+    public static Pose2d getAutoPreintakingPoseFromFarBranch(Localization localization, boolean isLeftSource) {
+        var preintakingPose = flipPoseIfNeeded(kAutoPreintakingPoseFromFarBranch);
+        
+        return isLeftSource ? preintakingPose : mirrorPoseOverXAxis(preintakingPose);
+    }
 }

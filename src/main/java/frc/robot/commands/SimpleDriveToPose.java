@@ -10,7 +10,8 @@ import frc.robot.subsystems.swerve.KrakenSwerve;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import static frc.robot.Constants.PathFollowingConstants.*;
+
+import static frc.robot.pathing.PathingConstants.*;
 
 public class SimpleDriveToPose extends Command {
     private final PIDController alignmentXPID;
@@ -22,14 +23,14 @@ public class SimpleDriveToPose extends Command {
     private final Pose2d targetPose;
 
     public SimpleDriveToPose(KrakenSwerve swerve, Pose2d targetPose) {
-        alignmentXPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
+        alignmentXPID = new PIDController(kTranslationkP, 0, kTranslationkD);
         alignmentXPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
-        alignmentYPID = new PIDController(kAlignmentXYkP, 0, kAlignmentXYkD);
+        alignmentYPID = new PIDController(kTranslationkP, 0, kTranslationkD);
         alignmentYPID.setTolerance(kXYAlignmentTolerance.in(Meters));
 
-        alignmentRotationPID = new ProfiledPIDController(kAlignmentRotkP, 0, kAlignmentRotkD, kDriveToPoseRotationConstraints);
-        alignmentRotationPID.setTolerance(kRotAlignmentTolerance.in(Radians));
+        alignmentRotationPID = new ProfiledPIDController(kRotationkP, 0, kRotationkD, kRotationConstraints);
+        alignmentRotationPID.setTolerance(kRotationAlignmentTolerance.in(Radians));
         alignmentRotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerve = swerve;
