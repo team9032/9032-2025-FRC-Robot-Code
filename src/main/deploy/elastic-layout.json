@@ -903,6 +903,19 @@
               "rotation_turns": 0,
               "compression": 25
             }
+          },
+          {
+            "title": "Invert Rotation",
+            "x": 1312.0,
+            "y": 224.0,
+            "width": 224.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/Invert Rotation",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
           }
         ]
       }
