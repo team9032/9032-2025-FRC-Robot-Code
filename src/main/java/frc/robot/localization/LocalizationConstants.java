@@ -20,9 +20,11 @@ public final class LocalizationConstants {
     public static final double kNoisyDistanceMeters = 2.5;
     public static final double kDistanceWeight = 7;
 
-    /* Thresholds for when to reject an estimate */
-    public static final double kAmbiguityThreshold = 0.2;
+    /* Threshold for when to reject an estimate */
     public static final double kDistanceThreshold = 4.0;//Meters
+
+    /* Threshold for when to use trig estimation */
+    public static final double kAmbiguityThresholdForTrig = 0.1;//TODO Tune
 
     /* Object tracking constants */
     public static final double kObjectExpireTime = 0.5;//Seconds
@@ -39,11 +41,14 @@ public final class LocalizationConstants {
 
     public static final double kPoseLookaheadTime = 0.15;//Seconds
     
-    public static final Matrix<N3, N1> kSingleTagBaseStandardDeviations = VecBuilder.fill(
+    public static final Matrix<N3, N1> kSingleTagPNPBaseStandardDeviations = VecBuilder.fill(
         1,//X
         1,//Y
         1 * Math.PI//Theta
     );
+
+    public static final double kTrigBaseXStandardDeviation = 1.0;
+    public static final double kTrigBaseYStandardDeviation = 1.0;
 
     public static final Matrix<N3, N1> kMultiTagBaseStandardDeviations = VecBuilder.fill(
         0.25,//X

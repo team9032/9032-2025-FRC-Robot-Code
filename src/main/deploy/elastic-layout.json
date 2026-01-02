@@ -374,7 +374,7 @@
             }
           },
           {
-            "title": "BackCenterCamera Usable",
+            "title": "Usable",
             "x": 1152.0,
             "y": 128.0,
             "width": 128.0,
@@ -391,7 +391,7 @@
             }
           },
           {
-            "title": "BackCenterCamera Present",
+            "title": "Present",
             "x": 1152.0,
             "y": 0.0,
             "width": 128.0,
