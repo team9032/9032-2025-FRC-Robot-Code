@@ -48,46 +48,18 @@ public class ObjectTrackingCamera {
     }
 
     private void processTarget(PhotonTrackedTarget target, Pose2d poseAtDetectionTime, List<TrackedObject> objectList, double timestamp) {
-        Transform3d robotToCamera = constants.robotToCameraTransform();
-
-        double targetYaw = Units.degreesToRadians(target.getYaw());
         var targetType = ObjectType.fromClassId(target.getDetectedObjectClassID());
-
-        /* Find the distance from the camera's lense to the object using target pitch and yaw */
-        double cameraToTargetDistance = 
-            ((targetType.getHeight() / 2.0) - robotToCamera.getZ())//TODO compensate for lollipop coral height
-                / Math.tan(-robotToCamera.getRotation().getY() + Units.degreesToRadians(target.getPitch()))
-                / Math.cos(-targetYaw);
-
-        /* Find the camera's pose in field space using camera offsets and the robot's pose */
-        Pose2d cameraInFieldSpace = poseAtDetectionTime.transformBy(
-            new Transform2d(robotToCamera.getX(), robotToCamera.getY(), robotToCamera.getRotation().toRotation2d())   
-        );
-
-        /* Find the target's pose in field space by projecting outwards from the camera's pose in field space */
-        Pose2d targetPoseInField =
-            cameraInFieldSpace
-                /* Rotate by the target yaw */
-                .transformBy(new Transform2d(Translation2d.kZero, new Rotation2d(-targetYaw)))
-                /* Project outwards using the camera to target distance */
-                .transformBy(new Transform2d(new Translation2d(cameraToTargetDistance, 0), Rotation2d.kZero));
-        
-        /* Find the target's rotation */
-        targetPoseInField = 
-            /* Undo the rotation from projecting outwards */
-            new Pose2d(targetPoseInField.getTranslation(), Rotation2d.kZero)
-            /* Rotate using bounding box */
-            .rotateBy(Rotation2d.fromRadians(0));//TODO rotate using bounding box
+        var targetPose = getTargetPoseInFieldSpace(target, poseAtDetectionTime, targetType.getHeight());
 
         boolean updatedObject = false;
         for (var object : objectList) {
-            boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPoseInField.getTranslation()) < kSameObjectDistance;
+            boolean withinSameDistance = object.getFieldPosition().getTranslation().getDistance(targetPose.getTranslation()) < kSameObjectDistance;
             boolean sameType = object.getObjectType().equals(targetType);//TODO fix class ids in sim
 
             /* If an object is close to a previous detection with the same object type, assume it's the same object 
                 and update the previous detection */
             if (withinSameDistance && sameType) {
-                object.update(targetPoseInField, target, getName(), timestamp);
+                object.update(targetPose, target, getName(), timestamp);
  
                 updatedObject = true;
 
@@ -99,8 +71,31 @@ public class ObjectTrackingCamera {
         if (!updatedObject) {
             targetIdCounter++;
 
-            objectList.add(new TrackedObject(targetPoseInField, target, getName(), timestamp, targetIdCounter));
+            objectList.add(new TrackedObject(targetPose, target, getName(), timestamp, targetIdCounter));
         }
+    }
+
+    private Pose2d getTargetPoseInFieldSpace(PhotonTrackedTarget target, Pose2d robotPose, double targetHeight) {
+        Transform3d robotToCamera = constants.robotToCameraTransform();
+        
+        /* Find target pitch and yaw in robot space by applying the camera's rotation offsets */
+        double targetYawInRobotSpace = -robotToCamera.getRotation().getZ() - Units.degreesToRadians(target.getYaw());
+        double targetPitchInRobotSpace = robotToCamera.getRotation().getY() - Units.degreesToRadians(target.getPitch());
+
+        double cameraHeightAboveTarget = robotToCamera.getZ() - (targetHeight / 2.0);//TODO compensate for lollipop coral height
+
+        /* Find the magnitude of the 2d vector that points from the 2d location of the camera to the target */
+        double distanceToTargetOnFieldPlane = cameraHeightAboveTarget / Math.tan(targetPitchInRobotSpace);
+
+        /* Find the x and y components of the vector and apply the camera's translation offsets to find the target in robot space */
+        double x = (distanceToTargetOnFieldPlane * Math.cos(targetYawInRobotSpace)) + robotToCamera.getX();
+        double y = (distanceToTargetOnFieldPlane * Math.sin(targetYawInRobotSpace)) + robotToCamera.getY();
+        var targetInRobotSpace = new Translation2d(x, y);
+
+        /* Transform the robot's pose by the target's location in robot space to find the target's location in field space */
+        Translation2d targetInFieldSpace = robotPose.transformBy(new Transform2d(targetInRobotSpace, Rotation2d.kZero)).getTranslation();
+
+        return new Pose2d(targetInFieldSpace, Rotation2d.kZero);//TODO rotate using bounding box
     }
 
     public String getName() {

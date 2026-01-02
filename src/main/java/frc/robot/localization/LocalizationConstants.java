@@ -55,7 +55,7 @@ public final class LocalizationConstants {
 
     public static final CameraConstants[] kCameraConstants = new CameraConstants[] {
         new CameraConstants("FrontCenterCamera", new Transform3d(
-            new Translation3d(Units.inchesToMeters(8), Units.inchesToMeters(-5.5), Units.inchesToMeters(31.125)), 
+            new Translation3d(Units.inchesToMeters(8), Units.inchesToMeters(5.5), Units.inchesToMeters(31.125)), 
             new Rotation3d(0, Units.degreesToRadians(30), 0)),
             true
         ),
