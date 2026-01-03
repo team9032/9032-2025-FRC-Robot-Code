@@ -10,9 +10,9 @@ public class AccelerationLimiter {
     private Translation2d previousVelocity;
     private double previousTime;
 
-    private Translation2d previousTangentialAcceleration;
-    private Translation2d previousCentripetalAcceleration;
-    private Translation2d previousTargetAcceleration;
+    private Translation2d previousAcceleration;
+    private boolean limitedTangentialAccel = false;
+    private boolean limitedCentripetalAccel = false;
 
     public AccelerationLimiter() {}
 
@@ -22,7 +22,7 @@ public class AccelerationLimiter {
     }   
 
     /** Limits the target velocity based on the acceleration component limits. Call this every loop cycle. */
-    public Translation2d applyLimits(Translation2d targetVelocity, double maxTangentialAcceleration, double maxCentripetalAcceleration) {
+    public Translation2d applyLimits(Translation2d targetVelocity, double maxForwardTangentialAcceleration, double maxCentripetalAcceleration) {
         /* Find target acceleration */
         double currentTime = Utils.getCurrentTimeSeconds();
         double dt = currentTime - previousTime;
@@ -31,11 +31,17 @@ public class AccelerationLimiter {
         /* Break acceleration into components in the direction of and orthogonal to velocity */
         Translation2d tangentialAcceleration = GeometryUtil.project(targetAcceleration, targetVelocity);
         Translation2d centripetalAcceleration = targetAcceleration.minus(tangentialAcceleration);
-        previousTangentialAcceleration = tangentialAcceleration;
-        previousCentripetalAcceleration = centripetalAcceleration;
 
-        /* Apply limits */
-        tangentialAcceleration = GeometryUtil.limitMagnitude(tangentialAcceleration, maxTangentialAcceleration);
+        /* Only limit tangential acceleration if it will cause forward acceleration and not deceleration */
+        if (GeometryUtil.dotProduct(targetAcceleration, targetVelocity) > 0) {
+            limitedTangentialAccel = tangentialAcceleration.getNorm() > maxForwardTangentialAcceleration;
+            tangentialAcceleration = GeometryUtil.limitMagnitude(tangentialAcceleration, maxForwardTangentialAcceleration);
+        } 
+        else
+            limitedTangentialAccel = false;
+
+        /* Always limit centripetal acceleration */
+        limitedCentripetalAccel = centripetalAcceleration.getNorm() > maxCentripetalAcceleration;
         centripetalAcceleration = GeometryUtil.limitMagnitude(centripetalAcceleration, maxCentripetalAcceleration);
 
         /* Go from acceleration components to target acceleration */
@@ -47,14 +53,14 @@ public class AccelerationLimiter {
         /* Store previous values */
         previousVelocity = targetVelocity;
         previousTime = currentTime;
-        previousTargetAcceleration = targetAcceleration;
+        previousAcceleration = targetAcceleration;
 
         return targetVelocity;
     }
 
-    public void publishLimitingStatus(String prefix, double maxTangentialAcceleration, double maxCentripetalAcceleration) {
-        SmartDashboard.putBoolean(prefix + "/Tangential Acceleration Limited", previousTangentialAcceleration.getNorm() > maxTangentialAcceleration);
-        SmartDashboard.putBoolean(prefix + "/Centripetal Acceleration Limited", previousCentripetalAcceleration.getNorm() > maxCentripetalAcceleration);
-        SmartDashboard.putNumber(prefix + "/Limited Acceleration Magnitude", previousTargetAcceleration.getNorm());
+    public void publishLimitingStatus(String prefix) {
+        SmartDashboard.putBoolean(prefix + "/Tangential Acceleration Limited", limitedTangentialAccel);
+        SmartDashboard.putBoolean(prefix + "/Centripetal Acceleration Limited", limitedCentripetalAccel);
+        SmartDashboard.putNumber(prefix + "/Limited Acceleration Magnitude", previousAcceleration.getNorm());
     }
 }
