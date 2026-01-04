@@ -206,12 +206,10 @@ public class Localization {
         if (trackedObjects.isEmpty())
             return Optional.empty();
 
-        var currentTranslation = drivetrain.getState().Pose.getTranslation(); 
-
         double closestDistance = Double.MAX_VALUE;
         TrackedObject closestObject = trackedObjects.get(0);
         for (var object : trackedObjects) {
-            double distance = object.getFieldPosition().getTranslation().getDistance(currentTranslation);
+            double distance = object.getFieldPosition().getTranslation().getDistance(currentPose.getTranslation());
 
             if (distance < closestDistance) {
                 closestObject = object;
