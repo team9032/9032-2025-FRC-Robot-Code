@@ -80,11 +80,11 @@ public class FollowCurvedPath extends Command {
         /* If we are in the torque limited part of the motor curve, limit forward acceleration based on available torque */
         SmartDashboard.putBoolean("Pathing/Torque Limited", currentSpeed >= kTorqueLimitedSpeedStart);
         if (currentSpeed >= kTorqueLimitedSpeedStart) 
-            maxTangentialAcceleration = kTorqueLimitedMaxAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
+            maxTangentialAcceleration = kCurrentLimitedMaxForwardAcceleration * (1.0 - (currentSpeed / kTrueMaxSpeed));
 
         /* Use the true max acceleration since we are in the current limited part of the motor curves */
         else 
-            maxTangentialAcceleration = kTorqueLimitedMaxAcceleration;
+            maxTangentialAcceleration = kCurrentLimitedMaxForwardAcceleration;
 
         /* Apply acceleration limits */
         targetVelocity = accelerationLimiter.applyLimits(targetVelocity, maxTangentialAcceleration, kMaxCentripetalAcceleration);
@@ -96,7 +96,7 @@ public class FollowCurvedPath extends Command {
                 .withRotationalRate(angularVelocity)
         );
 
-        accelerationLimiter.publishLimitingStatus("Pathing", maxTangentialAcceleration, kMaxCentripetalAcceleration);
+        accelerationLimiter.publishLimitingStatus("Pathing");
         SmartDashboard.putNumber("Pathing/Target Speed", driveSpeed);
         SmartDashboard.putNumber("Pathing/Target Angular Velocity", angularVelocity);
     }
