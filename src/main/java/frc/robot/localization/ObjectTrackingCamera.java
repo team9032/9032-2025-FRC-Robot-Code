@@ -2,6 +2,7 @@ package frc.robot.localization;
 
 import static frc.robot.localization.LocalizationConstants.kSameObjectDistance;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
@@ -34,6 +35,9 @@ public class ObjectTrackingCamera {
     /** Adds new detected objects to the list and updates previous detections if they have changed */
     public void addResultsToObjectList(SwerveDrivetrain<?, ?, ?> drivetrain, List<TrackedObject> objectList) {
         var results = camera.getAllUnreadResults();
+
+        /* Since getAllUnreadResults uses a FIFO, we need to reverse the list as we want to process older results first */
+        Collections.reverse(results);
 
         for (var result : results) {
             double timestamp = Utils.fpgaToCurrentTime(result.getTimestampSeconds());
